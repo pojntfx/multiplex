@@ -3,6 +3,8 @@ module github.com/pojntfx/vintangle
 go 1.18
 
 require (
+	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20220417101956-dcc3707dc307
+	github.com/diamondburned/gotk4/pkg v0.0.0-20220417091308-856167c02355
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/pojntfx/htorrent v0.2.0
 	github.com/rs/zerolog v1.27.0
@@ -70,6 +72,7 @@ require (
 	github.com/rs/dnscache v0.0.0-20210201191234-295bba877686 // indirect
 	github.com/tidwall/btree v0.7.2-0.20211211132910-4215444137fc // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
+	go4.org/unsafe/assume-no-moving-gc v0.0.0-20211027215541-db492cf91b37 // indirect
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f // indirect
 	golang.org/x/exp v0.0.0-20220428152302-39d4317da171 // indirect
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
