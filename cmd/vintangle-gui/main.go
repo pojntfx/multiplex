@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -55,49 +56,58 @@ func main() {
 		magnetActions.SetHAlign(gtk.AlignCenter)
 		magnetActions.SetVAlign(gtk.AlignCenter)
 
-		entry := gtk.NewEntry()
-		button := gtk.NewButton()
+		magnetLinkEntry := gtk.NewEntry()
+		searchButton := gtk.NewButton()
 
 		onSubmit := func() {
-			if text := entry.Text(); strings.TrimSpace(text) != "" {
-				button.SetSensitive(false)
-				entry.SetSensitive(false)
+			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
+				searchButton.SetSensitive(false)
+				magnetLinkEntry.SetSensitive(false)
 
 				spinner.SetSpinning(true)
 
 				go func() {
 					time.Sleep(2 * time.Second)
 
+					searchButton.RemoveCSSClass("suggested-action")
 					spinner.SetSpinning(false)
-
-					separator := gtk.NewSeparator(gtk.OrientationHorizontal)
-
-					entryBox.Append(separator)
+					status.SetDescription("Select the media you want to stream")
 
 					pathActions := gtk.NewBox(gtk.OrientationHorizontal, 12)
 					pathActions.SetHAlign(gtk.AlignCenter)
 					pathActions.SetVAlign(gtk.AlignCenter)
 
-					dropdown := gtk.NewDropDownFromStrings([]string{"sadf.jpg", "asdf.mkv"})
+					media := []string{"sadf.jpg", "asdf.mkv"}
+					dropdown := gtk.NewDropDownFromStrings(media)
 
 					pathActions.Append(dropdown)
+
+					playButton := gtk.NewButton()
+					playButton.SetIconName("media-playback-start-symbolic")
+					playButton.AddCSSClass("suggested-action")
+					playButton.AddCSSClass("circular")
+					playButton.ConnectClicked(func() {
+						log.Println("Playing", media[dropdown.Selected()])
+					})
+
+					pathActions.Append(playButton)
 
 					entryBox.Append(pathActions)
 				}()
 			}
 		}
 
-		entry.SetPlaceholderText("Magnet link")
-		entry.ConnectActivate(onSubmit)
+		magnetLinkEntry.SetPlaceholderText("Magnet link")
+		magnetLinkEntry.ConnectActivate(onSubmit)
 
-		magnetActions.Append(entry)
+		magnetActions.Append(magnetLinkEntry)
 
-		button.SetIconName("system-search-symbolic")
-		button.AddCSSClass("suggested-action")
-		button.AddCSSClass("circular")
-		button.ConnectClicked(onSubmit)
+		searchButton.SetIconName("system-search-symbolic")
+		searchButton.AddCSSClass("suggested-action")
+		searchButton.AddCSSClass("circular")
+		searchButton.ConnectClicked(onSubmit)
 
-		magnetActions.Append(button)
+		magnetActions.Append(searchButton)
 
 		entryBox.Append(magnetActions)
 
