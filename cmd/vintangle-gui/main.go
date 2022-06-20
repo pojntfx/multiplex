@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -25,6 +25,11 @@ func main() {
 
 		header := gtk.NewHeaderBar()
 		header.AddCSSClass("flat")
+
+		spinner := gtk.NewSpinner()
+		spinner.SetMarginEnd(6)
+
+		header.PackEnd(spinner)
 
 		title := gtk.NewBox(gtk.OrientationHorizontal, 0)
 		title.SetVisible(false)
@@ -49,24 +54,35 @@ func main() {
 		actions.SetVAlign(gtk.AlignCenter)
 
 		entry := gtk.NewEntry()
-		entry.SetPlaceholderText("Magnet link")
-		entry.ConnectActivate(func() {
+		button := gtk.NewButton()
+
+		onSubmit := func() {
 			if text := entry.Text(); strings.TrimSpace(text) != "" {
-				log.Println("Using link", entry.Text())
+				button.SetSensitive(false)
+				entry.SetSensitive(false)
+
+				spinner.SetSpinning(true)
+
+				go func() {
+					time.Sleep(2 * time.Second)
+
+					spinner.SetSpinning(false)
+
+					button.SetSensitive(true)
+					entry.SetSensitive(true)
+				}()
 			}
-		})
+		}
+
+		entry.SetPlaceholderText("Magnet link")
+		entry.ConnectActivate(onSubmit)
 
 		actions.Append(entry)
 
-		button := gtk.NewButton()
 		button.SetIconName("media-playback-start-symbolic")
 		button.AddCSSClass("suggested-action")
 		button.AddCSSClass("circular")
-		button.ConnectClicked(func() {
-			if text := entry.Text(); strings.TrimSpace(text) != "" {
-				log.Println("Using link", entry.Text())
-			}
-		})
+		button.ConnectClicked(onSubmit)
 
 		actions.Append(button)
 
