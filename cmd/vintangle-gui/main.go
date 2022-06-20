@@ -21,7 +21,7 @@ func main() {
 		handle := gtk.NewWindowHandle()
 		stack := gtk.NewStack()
 
-		box := gtk.NewBox(gtk.OrientationVertical, 6)
+		settingsPage := gtk.NewBox(gtk.OrientationVertical, 6)
 
 		header := gtk.NewHeaderBar()
 		header.AddCSSClass("flat")
@@ -35,7 +35,7 @@ func main() {
 		title.SetVisible(false)
 		header.SetTitleWidget(title)
 
-		box.Append(header)
+		settingsPage.Append(header)
 
 		clamp := adw.NewClamp()
 		clamp.SetMaximumSize(450)
@@ -49,9 +49,11 @@ func main() {
 		status.SetTitle("Vintangle")
 		status.SetDescription("Enter a magnet link to start streaming")
 
-		actions := gtk.NewBox(gtk.OrientationHorizontal, 12)
-		actions.SetHAlign(gtk.AlignCenter)
-		actions.SetVAlign(gtk.AlignCenter)
+		entryBox := gtk.NewBox(gtk.OrientationVertical, 12)
+
+		magnetActions := gtk.NewBox(gtk.OrientationHorizontal, 12)
+		magnetActions.SetHAlign(gtk.AlignCenter)
+		magnetActions.SetVAlign(gtk.AlignCenter)
 
 		entry := gtk.NewEntry()
 		button := gtk.NewButton()
@@ -68,8 +70,19 @@ func main() {
 
 					spinner.SetSpinning(false)
 
-					button.SetSensitive(true)
-					entry.SetSensitive(true)
+					separator := gtk.NewSeparator(gtk.OrientationHorizontal)
+
+					entryBox.Append(separator)
+
+					pathActions := gtk.NewBox(gtk.OrientationHorizontal, 12)
+					pathActions.SetHAlign(gtk.AlignCenter)
+					pathActions.SetVAlign(gtk.AlignCenter)
+
+					dropdown := gtk.NewDropDownFromStrings([]string{"sadf.jpg", "asdf.mkv"})
+
+					pathActions.Append(dropdown)
+
+					entryBox.Append(pathActions)
 				}()
 			}
 		}
@@ -77,22 +90,24 @@ func main() {
 		entry.SetPlaceholderText("Magnet link")
 		entry.ConnectActivate(onSubmit)
 
-		actions.Append(entry)
+		magnetActions.Append(entry)
 
-		button.SetIconName("media-playback-start-symbolic")
+		button.SetIconName("system-search-symbolic")
 		button.AddCSSClass("suggested-action")
 		button.AddCSSClass("circular")
 		button.ConnectClicked(onSubmit)
 
-		actions.Append(button)
+		magnetActions.Append(button)
 
-		status.SetChild(actions)
+		entryBox.Append(magnetActions)
+
+		status.SetChild(entryBox)
 
 		clamp.SetChild(status)
 
-		box.Append(clamp)
+		settingsPage.Append(clamp)
 
-		stack.AddChild(box)
+		stack.AddChild(settingsPage)
 
 		handle.SetChild(stack)
 
