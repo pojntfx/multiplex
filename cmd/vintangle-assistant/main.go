@@ -16,35 +16,36 @@ func main() {
 		window.SetTitle("Vintangle")
 		window.SetDefaultSize(700, 500)
 
+		stack := gtk.NewStack()
+
+		calendarPage := gtk.NewBox(gtk.OrientationVertical, 6)
+
+		header := gtk.NewHeaderBar()
+		header.AddCSSClass("flat")
+
+		clamp := adw.NewClamp()
+		clamp.SetMaximumSize(600)
+		clamp.SetVExpand(true)
+		clamp.SetVAlign(gtk.AlignFill)
+
 		calendar := gtk.NewCalendar()
-		entry := gtk.NewEntry()
-		text := gtk.NewTextView()
-		text.SetEditable(false)
-		buf := text.Buffer()
-		buf.SetText(`You chose to:
-    * Frobnicate the foo.
-    * Reverse the glop.
-    * Enable future auto-frobnication.`)
 
-		assistant := gtk.NewAssistant()
+		calendarPage.Append(header)
+		clamp.SetChild(calendar)
 
-		assistant.AppendPage(calendar)
-		assistant.AppendPage(entry)
-		assistant.AppendPage(text)
+		calendarPage.Append(clamp)
 
-		assistant.SetPageType(calendar, gtk.AssistantPageIntro)
-		assistant.SetPageTitle(calendar, "This is an assistant.")
-		assistant.SetPageComplete(calendar, true)
+		stack.AddChild(calendarPage)
+		// 	entry := gtk.NewEntry()
+		// 	text := gtk.NewTextView()
+		// 	text.SetEditable(false)
+		// 	buf := text.Buffer()
+		// 	buf.SetText(`You chose to:
+		// * Frobnicate the foo.
+		// * Reverse the glop.
+		// * Enable future auto-frobnication.`)
 
-		assistant.SetPageType(entry, gtk.AssistantPageContent)
-		assistant.SetPageTitle(entry, "Enter some information on this page.")
-		assistant.SetPageComplete(entry, true)
-
-		assistant.SetPageType(text, gtk.AssistantPageSummary)
-		assistant.SetPageTitle(entry, "Congratulations, you're done.")
-
-		assistant.Show()
-
+		window.SetContent(stack)
 		window.Show()
 	})
 
