@@ -18,24 +18,73 @@ func main() {
 
 		stack := gtk.NewStack()
 
-		calendarPage := gtk.NewBox(gtk.OrientationVertical, 6)
+		var (
+			calendarPage = gtk.NewBox(gtk.OrientationVertical, 6)
+			entryPage    = gtk.NewBox(gtk.OrientationVertical, 6)
+			textPage     = gtk.NewBox(gtk.OrientationVertical, 6)
+		)
 
-		header := gtk.NewHeaderBar()
-		header.AddCSSClass("flat")
+		// Calendar page
+		calendarHeader := adw.NewHeaderBar()
+		calendarHeader.AddCSSClass("flat")
+
+		forwardToEntryButton := gtk.NewButtonWithLabel("Next")
+		forwardToEntryButton.AddCSSClass("suggested-action")
+		forwardToEntryButton.ConnectClicked(func() {
+			stack.SetVisibleChild(entryPage)
+		})
+
+		calendarHeader.PackEnd(forwardToEntryButton)
+
+		calendarPage.Append(calendarHeader)
 
 		clamp := adw.NewClamp()
 		clamp.SetMaximumSize(600)
 		clamp.SetVExpand(true)
-		clamp.SetVAlign(gtk.AlignFill)
+		clamp.SetVAlign(gtk.AlignCenter)
+		clamp.SetMarginStart(12)
+		clamp.SetMarginEnd(12)
+		clamp.SetMarginBottom(12)
 
 		calendar := gtk.NewCalendar()
 
-		calendarPage.Append(header)
 		clamp.SetChild(calendar)
 
 		calendarPage.Append(clamp)
 
 		stack.AddChild(calendarPage)
+
+		// Entry page
+		entryHeader := adw.NewHeaderBar()
+		entryHeader.AddCSSClass("flat")
+
+		entryHeaderTitle := gtk.NewLabel("Media")
+		entryHeaderTitle.AddCSSClass("title")
+
+		entryHeader.SetTitleWidget(entryHeaderTitle)
+
+		backToCalendarPage := gtk.NewButtonWithLabel("Previous")
+		backToCalendarPage.ConnectClicked(func() {
+			stack.SetVisibleChild(calendarPage)
+		})
+
+		entryHeader.PackStart(backToCalendarPage)
+
+		forwardToTextPage := gtk.NewButtonWithLabel("Next")
+		forwardToTextPage.AddCSSClass("suggested-action")
+		forwardToTextPage.ConnectClicked(func() {
+			stack.SetVisibleChild(textPage)
+		})
+
+		entryHeader.PackEnd(forwardToTextPage)
+
+		entryPage.Append(entryHeader)
+
+		stack.AddChild(entryPage)
+
+		// Text page
+		stack.AddChild(textPage)
+
 		// 	entry := gtk.NewEntry()
 		// 	text := gtk.NewTextView()
 		// 	text.SetEditable(false)
