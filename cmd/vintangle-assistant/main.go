@@ -8,6 +8,26 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
+type page struct {
+	title  string
+	widget *gtk.Widget
+}
+
+func createClamp(withMargins bool) *adw.Clamp {
+	clamp := adw.NewClamp()
+	clamp.SetMaximumSize(600)
+	clamp.SetVExpand(true)
+	clamp.SetVAlign(gtk.AlignCenter)
+
+	if withMargins {
+		clamp.SetMarginStart(12)
+		clamp.SetMarginEnd(12)
+		clamp.SetMarginBottom(12)
+	}
+
+	return clamp
+}
+
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintangle.assistant", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
@@ -16,85 +36,126 @@ func main() {
 		window.SetTitle("Vintangle")
 		window.SetDefaultSize(700, 500)
 
-		stack := gtk.NewStack()
+		mainStack := gtk.NewStack()
+		mainStack.SetTransitionType(gtk.StackTransitionTypeCrossfade)
 
-		var (
-			calendarPage = gtk.NewBox(gtk.OrientationVertical, 6)
-			entryPage    = gtk.NewBox(gtk.OrientationVertical, 6)
-			textPage     = gtk.NewBox(gtk.OrientationVertical, 6)
-		)
+		// Welcome page
+		welcomePage := gtk.NewBox(gtk.OrientationVertical, 6)
 
-		// Calendar page
-		calendarHeader := adw.NewHeaderBar()
-		calendarHeader.AddCSSClass("flat")
+		welcomePageClamp := createClamp(false)
 
-		forwardToEntryButton := gtk.NewButtonWithLabel("Next")
-		forwardToEntryButton.AddCSSClass("suggested-action")
-		forwardToEntryButton.ConnectClicked(func() {
-			stack.SetVisibleChild(entryPage)
-		})
+		welcomeStatus := adw.NewStatusPage()
+		welcomeStatus.SetMarginStart(12)
+		welcomeStatus.SetMarginEnd(12)
+		welcomeStatus.SetIconName("multimedia-player-symbolic")
+		welcomeStatus.SetTitle("Vintangle")
+		welcomeStatus.SetDescription("Enter a magnet link to start streaming")
 
-		calendarHeader.PackEnd(forwardToEntryButton)
+		welcomePageClamp.SetChild(welcomeStatus)
 
-		calendarPage.Append(calendarHeader)
+		welcomePage.Append(welcomePageClamp)
 
-		clamp := adw.NewClamp()
-		clamp.SetMaximumSize(600)
-		clamp.SetVExpand(true)
-		clamp.SetVAlign(gtk.AlignCenter)
-		clamp.SetMarginStart(12)
-		clamp.SetMarginEnd(12)
-		clamp.SetMarginBottom(12)
+		// Media page
+		mediaPage := gtk.NewBox(gtk.OrientationVertical, 6)
+
+		mediaPageClamp := createClamp(true)
 
 		calendar := gtk.NewCalendar()
 
-		clamp.SetChild(calendar)
+		mediaPageClamp.SetChild(calendar)
 
-		calendarPage.Append(clamp)
+		mediaPage.Append(mediaPageClamp)
 
-		stack.AddChild(calendarPage)
+		// Ready page
+		readyPage := gtk.NewBox(gtk.OrientationVertical, 6)
 
-		// Entry page
-		entryHeader := adw.NewHeaderBar()
-		entryHeader.AddCSSClass("flat")
+		assistantStack := gtk.NewStack()
+		assistantStack.SetTransitionType(gtk.StackTransitionTypeSlideLeftRight)
 
-		entryHeaderTitle := gtk.NewLabel("Media")
+		pages := []page{
+			{
+				title:  "Welcome",
+				widget: &welcomePage.Widget,
+			},
+			{
+				title:  "Media",
+				widget: &mediaPage.Widget,
+			},
+			{
+				title:  "Ready to Go",
+				widget: &readyPage.Widget,
+			},
+		}
+
+		for _, page := range pages {
+			assistantStack.AddChild(page.widget)
+		}
+
+		currentPage := 0
+
+		// Assistant layout
+		assistantHeader := adw.NewHeaderBar()
+		assistantHeader.AddCSSClass("flat")
+
+		nextButton := gtk.NewButtonWithLabel("Next")
+		previousButton := gtk.NewButtonWithLabel("Previous")
+
+		nextButton.AddCSSClass("suggested-action")
+		nextButton.ConnectClicked(func() {
+			currentPage++
+
+			assistantStack.SetVisibleChild(pages[currentPage].widget)
+
+			entryHeaderTitle := gtk.NewLabel(pages[currentPage].title)
+			entryHeaderTitle.AddCSSClass("title")
+
+			assistantHeader.SetTitleWidget(entryHeaderTitle)
+
+			if currentPage >= len(pages)-1 {
+				nextButton.Hide()
+			} else {
+				previousButton.Show()
+			}
+		})
+
+		previousButton.ConnectClicked(func() {
+			currentPage--
+
+			assistantStack.SetVisibleChild(pages[currentPage].widget)
+
+			entryHeaderTitle := gtk.NewLabel(pages[currentPage].title)
+			entryHeaderTitle.AddCSSClass("title")
+
+			assistantHeader.SetTitleWidget(entryHeaderTitle)
+
+			if currentPage <= 0 {
+				previousButton.Hide()
+			} else {
+				nextButton.Show()
+			}
+		})
+
+		assistantHeader.PackStart(previousButton)
+
+		assistantHeader.PackEnd(nextButton)
+
+		assistantPage := gtk.NewBox(gtk.OrientationVertical, 6)
+
+		assistantPage.Append(assistantHeader)
+		assistantPage.Append(assistantStack)
+
+		previousButton.Hide()
+
+		assistantStack.SetVisibleChild(pages[currentPage].widget)
+
+		entryHeaderTitle := gtk.NewLabel(pages[currentPage].title)
 		entryHeaderTitle.AddCSSClass("title")
 
-		entryHeader.SetTitleWidget(entryHeaderTitle)
+		assistantHeader.SetTitleWidget(entryHeaderTitle)
 
-		backToCalendarPage := gtk.NewButtonWithLabel("Previous")
-		backToCalendarPage.ConnectClicked(func() {
-			stack.SetVisibleChild(calendarPage)
-		})
+		mainStack.AddChild(assistantPage)
 
-		entryHeader.PackStart(backToCalendarPage)
-
-		forwardToTextPage := gtk.NewButtonWithLabel("Next")
-		forwardToTextPage.AddCSSClass("suggested-action")
-		forwardToTextPage.ConnectClicked(func() {
-			stack.SetVisibleChild(textPage)
-		})
-
-		entryHeader.PackEnd(forwardToTextPage)
-
-		entryPage.Append(entryHeader)
-
-		stack.AddChild(entryPage)
-
-		// Text page
-		stack.AddChild(textPage)
-
-		// 	entry := gtk.NewEntry()
-		// 	text := gtk.NewTextView()
-		// 	text.SetEditable(false)
-		// 	buf := text.Buffer()
-		// 	buf.SetText(`You chose to:
-		// * Frobnicate the foo.
-		// * Reverse the glop.
-		// * Enable future auto-frobnication.`)
-
-		window.SetContent(stack)
+		window.SetContent(mainStack)
 		window.Show()
 	})
 
