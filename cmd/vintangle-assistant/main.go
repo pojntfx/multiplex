@@ -41,11 +41,60 @@ func main() {
 		mainStack := gtk.NewStack()
 		mainStack.SetTransitionType(gtk.StackTransitionTypeCrossfade)
 
-		// CSD
+		// Header
+		currentPage := 0
+
+		assistantHeader := adw.NewHeaderBar()
+		assistantHeader.AddCSSClass("flat")
+
 		assistantSpinner := gtk.NewSpinner()
 		assistantSpinner.SetMarginEnd(6)
 
 		nextButton := gtk.NewButtonWithLabel("Next")
+		nextButton.SetSensitive(false)
+		nextButton.AddCSSClass("suggested-action")
+
+		previousButton := gtk.NewButtonWithLabel("Previous")
+
+		var onSubmitMagnetLink func(onSuccess func())
+		var pages []page
+
+		assistantStack := gtk.NewStack()
+		assistantStack.SetTransitionType(gtk.StackTransitionTypeSlideLeftRight)
+
+		onNavigateNext := func() {
+			done := make(chan bool)
+			if currentPage == 0 {
+				onSubmitMagnetLink(func() {
+					done <- true
+				})
+			} else {
+				go func() {
+					done <- true
+				}()
+			}
+
+			currentPage++
+
+			go func() {
+				if success := <-done; !success {
+					return
+				}
+
+				assistantStack.SetVisibleChild(pages[currentPage].widget)
+
+				entryHeaderTitle := gtk.NewLabel(pages[currentPage].title)
+				entryHeaderTitle.AddCSSClass("title")
+
+				assistantHeader.SetTitleWidget(entryHeaderTitle)
+
+				if currentPage >= len(pages)-1 {
+					nextButton.Hide()
+				} else {
+					previousButton.Show()
+				}
+			}()
+		}
 
 		readyPage := gtk.NewBox(gtk.OrientationVertical, 6)
 		welcomePage := gtk.NewBox(gtk.OrientationVertical, 6)
@@ -62,7 +111,7 @@ func main() {
 		welcomeStatus.SetDescription("Enter a magnet link to start streaming")
 
 		magnetLinkEntry := gtk.NewEntry()
-		onSubmitMagnetLink := func() {
+		onSubmitMagnetLink = func(onSuccess func()) {
 			nextButton.SetSensitive(false)
 			magnetLinkEntry.SetSensitive(false)
 			assistantSpinner.SetSpinning(true)
@@ -72,7 +121,10 @@ func main() {
 
 				nextButton.SetSensitive(true)
 				magnetLinkEntry.SetSensitive(true)
+
 				assistantSpinner.SetSpinning(false)
+
+				onSuccess()
 			}()
 		}
 
@@ -84,7 +136,11 @@ func main() {
 				nextButton.SetSensitive(false)
 			}
 		})
-		magnetLinkEntry.ConnectActivate(onSubmitMagnetLink)
+		magnetLinkEntry.ConnectActivate(func() {
+			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
+				onNavigateNext()
+			}
+		})
 
 		welcomeStatus.SetChild(magnetLinkEntry)
 
@@ -102,10 +158,9 @@ func main() {
 		mediaPage.Append(mediaPageClamp)
 
 		// Ready page
-		assistantStack := gtk.NewStack()
-		assistantStack.SetTransitionType(gtk.StackTransitionTypeSlideLeftRight)
 
-		pages := []page{
+		// Stack
+		pages = []page{
 			{
 				title:  "Welcome",
 				widget: &welcomePage.Widget,
@@ -124,32 +179,8 @@ func main() {
 			assistantStack.AddChild(page.widget)
 		}
 
-		currentPage := 0
-
 		// Assistant layout
-		assistantHeader := adw.NewHeaderBar()
-		assistantHeader.AddCSSClass("flat")
-		nextButton.SetSensitive(false)
-
-		previousButton := gtk.NewButtonWithLabel("Previous")
-
-		nextButton.AddCSSClass("suggested-action")
-		nextButton.ConnectClicked(func() {
-			currentPage++
-
-			assistantStack.SetVisibleChild(pages[currentPage].widget)
-
-			entryHeaderTitle := gtk.NewLabel(pages[currentPage].title)
-			entryHeaderTitle.AddCSSClass("title")
-
-			assistantHeader.SetTitleWidget(entryHeaderTitle)
-
-			if currentPage >= len(pages)-1 {
-				nextButton.Hide()
-			} else {
-				previousButton.Show()
-			}
-		})
+		nextButton.ConnectClicked(onNavigateNext)
 
 		previousButton.ConnectClicked(func() {
 			currentPage--
