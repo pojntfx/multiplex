@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"strings"
+	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -13,9 +15,9 @@ type page struct {
 	widget *gtk.Widget
 }
 
-func createClamp(withMargins bool) *adw.Clamp {
+func createClamp(maxWidth int, withMargins bool) *adw.Clamp {
 	clamp := adw.NewClamp()
-	clamp.SetMaximumSize(600)
+	clamp.SetMaximumSize(maxWidth)
 	clamp.SetVExpand(true)
 	clamp.SetVAlign(gtk.AlignCenter)
 
@@ -39,10 +41,18 @@ func main() {
 		mainStack := gtk.NewStack()
 		mainStack.SetTransitionType(gtk.StackTransitionTypeCrossfade)
 
-		// Welcome page
-		welcomePage := gtk.NewBox(gtk.OrientationVertical, 6)
+		// CSD
+		assistantSpinner := gtk.NewSpinner()
+		assistantSpinner.SetMarginEnd(6)
 
-		welcomePageClamp := createClamp(false)
+		nextButton := gtk.NewButtonWithLabel("Next")
+
+		readyPage := gtk.NewBox(gtk.OrientationVertical, 6)
+		welcomePage := gtk.NewBox(gtk.OrientationVertical, 6)
+		mediaPage := gtk.NewBox(gtk.OrientationVertical, 6)
+
+		// Welcome page
+		welcomePageClamp := createClamp(295, false)
 
 		welcomeStatus := adw.NewStatusPage()
 		welcomeStatus.SetMarginStart(12)
@@ -51,14 +61,39 @@ func main() {
 		welcomeStatus.SetTitle("Vintangle")
 		welcomeStatus.SetDescription("Enter a magnet link to start streaming")
 
+		magnetLinkEntry := gtk.NewEntry()
+		onSubmitMagnetLink := func() {
+			nextButton.SetSensitive(false)
+			magnetLinkEntry.SetSensitive(false)
+			assistantSpinner.SetSpinning(true)
+
+			go func() {
+				time.Sleep(2 * time.Second)
+
+				nextButton.SetSensitive(true)
+				magnetLinkEntry.SetSensitive(true)
+				assistantSpinner.SetSpinning(false)
+			}()
+		}
+
+		magnetLinkEntry.SetPlaceholderText("Magnet link")
+		magnetLinkEntry.ConnectChanged(func() {
+			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
+				nextButton.SetSensitive(true)
+			} else {
+				nextButton.SetSensitive(false)
+			}
+		})
+		magnetLinkEntry.ConnectActivate(onSubmitMagnetLink)
+
+		welcomeStatus.SetChild(magnetLinkEntry)
+
 		welcomePageClamp.SetChild(welcomeStatus)
 
 		welcomePage.Append(welcomePageClamp)
 
 		// Media page
-		mediaPage := gtk.NewBox(gtk.OrientationVertical, 6)
-
-		mediaPageClamp := createClamp(true)
+		mediaPageClamp := createClamp(600, true)
 
 		calendar := gtk.NewCalendar()
 
@@ -67,8 +102,6 @@ func main() {
 		mediaPage.Append(mediaPageClamp)
 
 		// Ready page
-		readyPage := gtk.NewBox(gtk.OrientationVertical, 6)
-
 		assistantStack := gtk.NewStack()
 		assistantStack.SetTransitionType(gtk.StackTransitionTypeSlideLeftRight)
 
@@ -96,8 +129,8 @@ func main() {
 		// Assistant layout
 		assistantHeader := adw.NewHeaderBar()
 		assistantHeader.AddCSSClass("flat")
+		nextButton.SetSensitive(false)
 
-		nextButton := gtk.NewButtonWithLabel("Next")
 		previousButton := gtk.NewButtonWithLabel("Previous")
 
 		nextButton.AddCSSClass("suggested-action")
@@ -138,6 +171,7 @@ func main() {
 		assistantHeader.PackStart(previousButton)
 
 		assistantHeader.PackEnd(nextButton)
+		assistantHeader.PackEnd(assistantSpinner)
 
 		assistantPage := gtk.NewBox(gtk.OrientationVertical, 6)
 
