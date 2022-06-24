@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -36,13 +37,14 @@ func main() {
 	app.ConnectActivate(func() {
 		window := adw.NewApplicationWindow(&app.Application)
 		window.SetTitle("Vintangle")
-		window.SetDefaultSize(700, 500)
+		window.SetDefaultSize(1024, 680)
 
 		mainStack := gtk.NewStack()
 		mainStack.SetTransitionType(gtk.StackTransitionTypeCrossfade)
 
 		// Header
 		currentPage := 0
+		selectedFile := ""
 
 		assistantHeader := adw.NewHeaderBar()
 		assistantHeader.AddCSSClass("flat")
@@ -112,14 +114,15 @@ func main() {
 
 		magnetLinkEntry := gtk.NewEntry()
 		onSubmitMagnetLink = func(onSuccess func()) {
-			nextButton.SetSensitive(false)
+			if selectedFile == "" {
+				nextButton.SetSensitive(false)
+			}
 			magnetLinkEntry.SetSensitive(false)
 			assistantSpinner.SetSpinning(true)
 
 			go func() {
-				time.Sleep(2 * time.Second)
+				time.Sleep(100 * time.Millisecond)
 
-				nextButton.SetSensitive(true)
 				magnetLinkEntry.SetSensitive(true)
 
 				assistantSpinner.SetSpinning(false)
@@ -128,12 +131,18 @@ func main() {
 			}()
 		}
 
+		activators := []*gtk.CheckButton{}
 		magnetLinkEntry.SetPlaceholderText("Magnet link")
 		magnetLinkEntry.ConnectChanged(func() {
 			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
 				nextButton.SetSensitive(true)
 			} else {
 				nextButton.SetSensitive(false)
+			}
+
+			selectedFile = ""
+			for _, activator := range activators {
+				activator.SetActive(false)
 			}
 		})
 		magnetLinkEntry.ConnectActivate(func() {
@@ -149,11 +158,48 @@ func main() {
 		welcomePage.Append(welcomePageClamp)
 
 		// Media page
-		mediaPageClamp := createClamp(600, true)
+		mediaPageClamp := createClamp(600, false)
 
-		calendar := gtk.NewCalendar()
+		mediaStatus := adw.NewStatusPage()
+		mediaStatus.SetMarginStart(12)
+		mediaStatus.SetMarginEnd(12)
+		mediaStatus.SetIconName("applications-multimedia-symbolic")
+		mediaStatus.SetTitle("Media")
+		mediaStatus.SetDescription("Select the file you want to play")
 
-		mediaPageClamp.SetChild(calendar)
+		mediaPreferencesGroup := adw.NewPreferencesGroup()
+		for i, file := range []string{"poster.png", "description.txt", "movie.mkv"} {
+			row := adw.NewActionRow()
+
+			activator := gtk.NewCheckButton()
+			if i > 0 {
+				activator.SetGroup(activators[i-1])
+			}
+			activators = append(activators, activator)
+
+			activator.SetActive(false)
+
+			row.SetTitle(file)
+			row.SetActivatable(true)
+
+			row.AddPrefix(activator)
+			row.SetActivatableWidget(activator)
+
+			f := file
+			activator.ConnectActivate(func() {
+				nextButton.SetSensitive(true)
+
+				selectedFile = f
+
+				log.Println("Selected file", selectedFile)
+			})
+
+			mediaPreferencesGroup.Add(row)
+		}
+
+		mediaStatus.SetChild(mediaPreferencesGroup)
+
+		mediaPageClamp.SetChild(mediaStatus)
 
 		mediaPage.Append(mediaPageClamp)
 
@@ -191,6 +237,8 @@ func main() {
 			entryHeaderTitle.AddCSSClass("title")
 
 			assistantHeader.SetTitleWidget(entryHeaderTitle)
+
+			nextButton.SetSensitive(true)
 
 			if currentPage <= 0 {
 				previousButton.Hide()
