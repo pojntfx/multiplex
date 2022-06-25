@@ -11,10 +11,13 @@ import (
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglecontrols", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
+	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
+
 	app.ConnectActivate(func() {
 		window := adw.NewApplicationWindow(&app.Application)
 		window.SetTitle("Vintangle - movie.mkv")
-		window.SetDefaultSize(650, 100)
+		window.SetDefaultSize(700, 100)
+		window.SetResizable(false)
 
 		handle := gtk.NewWindowHandle()
 		stack := gtk.NewStack()
@@ -32,18 +35,14 @@ func main() {
 
 		controlsPage.Append(header)
 
-		clamp := adw.NewClamp()
-		clamp.SetMaximumSize(1500)
-		clamp.SetVExpand(true)
-		clamp.SetVAlign(gtk.AlignCenter)
-		clamp.SetMarginTop(0)
-		clamp.SetMarginStart(24)
-		clamp.SetMarginEnd(24)
-		clamp.SetMarginBottom(24)
-
 		controls := gtk.NewBox(gtk.OrientationHorizontal, 6)
 		controls.SetHAlign(gtk.AlignFill)
 		controls.SetVAlign(gtk.AlignCenter)
+		controls.SetVExpand(true)
+		controls.SetMarginTop(0)
+		controls.SetMarginStart(18)
+		controls.SetMarginEnd(18)
+		controls.SetMarginBottom(24)
 
 		playPauseButton := gtk.NewButtonFromIconName("media-playback-start-symbolic")
 		playPauseButton.AddCSSClass("flat")
@@ -81,9 +80,7 @@ func main() {
 
 		controls.Append(fullscreenButton)
 
-		clamp.SetChild(controls)
-
-		controlsPage.Append(clamp)
+		controlsPage.Append(controls)
 
 		stack.AddChild(controlsPage)
 
