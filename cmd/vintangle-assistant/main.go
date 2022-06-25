@@ -34,6 +34,8 @@ func createClamp(maxWidth int, withMargins bool) *adw.Clamp {
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintangle.assistant", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
+	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
+
 	app.ConnectActivate(func() {
 		window := adw.NewApplicationWindow(&app.Application)
 		window.SetTitle("Vintangle")
@@ -59,7 +61,7 @@ func main() {
 		previousButton := gtk.NewButtonWithLabel("Previous")
 
 		playButton := gtk.NewButtonWithLabel("Play")
-		confirmationCheckbox := gtk.NewCheckButtonWithLabel("I have the right to stream the selected media")
+		confirmationCheckbox := gtk.NewCheckButtonWithLabel(" I have the right to stream the selected media")
 
 		revokePlayConsent := func() {
 			playButton.SetSensitive(false)
