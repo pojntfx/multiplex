@@ -58,6 +58,16 @@ func main() {
 
 		previousButton := gtk.NewButtonWithLabel("Previous")
 
+		playButton := gtk.NewButtonWithLabel("Play")
+		confirmationCheckbox := gtk.NewCheckButtonWithLabel("I have the right to stream the selected media")
+
+		revokePlayConsent := func() {
+			playButton.SetSensitive(false)
+			playButton.RemoveCSSClass("suggested-action")
+
+			confirmationCheckbox.SetActive(false)
+		}
+
 		var onSubmitMagnetLink func(onSuccess func())
 		var pages []page
 
@@ -144,6 +154,8 @@ func main() {
 			for _, activator := range activators {
 				activator.SetActive(false)
 			}
+
+			revokePlayConsent()
 		})
 		magnetLinkEntry.ConnectActivate(func() {
 			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
@@ -188,6 +200,7 @@ func main() {
 			f := file
 			activator.ConnectActivate(func() {
 				nextButton.SetSensitive(true)
+				revokePlayConsent()
 
 				selectedFile = f
 
@@ -204,6 +217,40 @@ func main() {
 		mediaPage.Append(mediaPageClamp)
 
 		// Ready page
+		readyPageClamp := createClamp(295, false)
+
+		readyStatus := adw.NewStatusPage()
+		readyStatus.SetMarginStart(12)
+		readyStatus.SetMarginEnd(12)
+		readyStatus.SetIconName("emblem-ok-symbolic")
+		readyStatus.SetTitle("You're all set!")
+
+		readyActions := gtk.NewBox(gtk.OrientationVertical, 12)
+		readyActions.SetHAlign(gtk.AlignCenter)
+		readyActions.SetVAlign(gtk.AlignCenter)
+
+		confirmationCheckbox.ConnectToggled(func() {
+			if confirmationCheckbox.Active() {
+				playButton.SetSensitive(true)
+				playButton.AddCSSClass("suggested-action")
+			} else {
+				revokePlayConsent()
+			}
+		})
+
+		playButton.SetSensitive(false)
+		playButton.AddCSSClass("pill")
+		playButton.SetHAlign(gtk.AlignCenter)
+		playButton.SetMarginTop(24)
+
+		readyActions.Append(confirmationCheckbox)
+		readyActions.Append(playButton)
+
+		readyStatus.SetChild(readyActions)
+
+		readyPageClamp.SetChild(readyStatus)
+
+		readyPage.Append(readyPageClamp)
 
 		// Stack
 		pages = []page{
