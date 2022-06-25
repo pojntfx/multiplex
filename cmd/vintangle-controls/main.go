@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"time"
@@ -20,15 +21,17 @@ func formatDuration(duration time.Duration) string {
 	return fmt.Sprintf("%02d:%02d:%02d", int(hours), int(minutes), int(seconds))
 }
 
+const (
+	playIcon  = "media-playback-start-symbolic"
+	pauseIcon = "media-playback-pause-symbolic"
+)
+
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglecontrols", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	prov := gtk.NewCSSProvider()
-	prov.ConnectParsingError(func(section *gtk.CSSSection, err error) {
-		panic(err)
-	})
 	prov.LoadFromData(`.tabular-nums {
   font-variant-numeric: tabular-nums;
 }`)
@@ -40,8 +43,11 @@ func main() {
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
 
+		mediaName := "movie.mkv"
+		magnetLink := "magnet:awfjwierjweiorjweijioje"
+
 		window := adw.NewApplicationWindow(&app.Application)
-		window.SetTitle("Vintangle - movie.mkv")
+		window.SetTitle(fmt.Sprintf("Vintangle - %v", mediaName))
 		window.SetDefaultSize(700, 100)
 		window.SetResizable(false)
 
@@ -56,6 +62,11 @@ func main() {
 		copyButton := gtk.NewButtonFromIconName("edit-copy-symbolic")
 		copyButton.AddCSSClass("flat")
 		copyButton.SetTooltipText("Copy magnet link to media")
+		copyButton.ConnectClicked(func() {
+			log.Println("Copying magnet link to clipboard")
+
+			window.Clipboard().SetText(magnetLink)
+		})
 
 		header.PackEnd(copyButton)
 
@@ -70,13 +81,27 @@ func main() {
 		controls.SetMarginEnd(18)
 		controls.SetMarginBottom(24)
 
-		playPauseButton := gtk.NewButtonFromIconName("media-playback-start-symbolic")
+		playPauseButton := gtk.NewButtonFromIconName(playIcon)
 		playPauseButton.AddCSSClass("flat")
+		playPauseButton.ConnectClicked(func() {
+			if playPauseButton.IconName() == playIcon {
+				log.Println("Starting playback")
+
+				playPauseButton.SetIconName(pauseIcon)
+			} else {
+				log.Println("Pausing playback")
+
+				playPauseButton.SetIconName(playIcon)
+			}
+		})
 
 		controls.Append(playPauseButton)
 
 		stopButton := gtk.NewButtonFromIconName("media-playback-stop-symbolic")
 		stopButton.AddCSSClass("flat")
+		stopButton.ConnectClicked(func() {
+			log.Println("Stopping playback")
+		})
 
 		controls.Append(stopButton)
 
@@ -102,6 +127,9 @@ func main() {
 			seeker.SetValue(value)
 
 			elapsed := time.Duration(int64(value))
+
+			log.Printf("Seeking to %vs", int(elapsed.Seconds()))
+
 			remaining := total - elapsed
 
 			leftTrack.SetLabel(formatDuration(elapsed))
@@ -116,11 +144,17 @@ func main() {
 
 		volumeButton := gtk.NewVolumeButton()
 		volumeButton.AddCSSClass("circular")
+		volumeButton.ConnectValueChanged(func(value float64) {
+			log.Println("Setting volume to", value)
+		})
 
 		controls.Append(volumeButton)
 
 		fullscreenButton := gtk.NewButtonFromIconName("view-fullscreen-symbolic")
 		fullscreenButton.AddCSSClass("flat")
+		fullscreenButton.ConnectClicked(func() {
+			log.Println("Toggling fullscreen")
+		})
 
 		controls.Append(fullscreenButton)
 
