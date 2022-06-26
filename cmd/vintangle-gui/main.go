@@ -5,12 +5,14 @@ import (
 	"log"
 	"math"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 )
 
@@ -488,13 +490,53 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	return controlsWindow, nil
 }
 
+const (
+	verboseFlag = "verbose"
+	storageFlag = "storage"
+	mpvFlag     = "mpv"
+
+	verboseFlagDefault = 5
+	mpvFlagDefault     = "mpv"
+)
+
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintangle", gio.ApplicationFlags(gio.ApplicationFlagsNone))
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	storageFlagDefault := filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data")
+
+	app.AddMainOption(verboseFlag, byte('v'), glib.OptionFlagInMain, glib.OptionArgInt64, fmt.Sprintf(`Verbosity level (0 is disabled, default is info, 7 is trace) (default %v)`, verboseFlagDefault), "")
+	app.AddMainOption(storageFlag, byte('s'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Path to store downloaded torrents in (default "%v")`, storageFlagDefault), "")
+	app.AddMainOption(mpvFlag, byte('m'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Command to launch mpv with (default "%v")`, mpvFlagDefault), "")
 
 	prov := gtk.NewCSSProvider()
 	prov.LoadFromData(`.tabular-nums {
   font-variant-numeric: tabular-nums;
 }`)
+
+	app.ConnectHandleLocalOptions(func(options *glib.VariantDict) (gint int) {
+		verbose := int64(verboseFlagDefault)
+		if options.Contains(verboseFlag) {
+			verbose = options.LookupValue(verboseFlag, glib.NewVariantInt64(0).Type()).Int64()
+		}
+
+		storage := storageFlagDefault
+		if options.Contains(storageFlag) {
+			storage = options.LookupValue(storageFlag, glib.NewVariantString("").Type()).String()
+		}
+
+		mpv := mpvFlagDefault
+		if options.Contains(mpvFlag) {
+			mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
+		}
+
+		log.Println("verbose", verbose, "storage", storage, "mpv", mpv)
+
+		return -1
+	})
 
 	app.ConnectActivate(func() {
 		gtk.StyleContextAddProviderForDisplay(
