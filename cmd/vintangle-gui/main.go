@@ -532,6 +532,8 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			if err := command.Wait(); err != nil && err.Error() != errKilled {
 				panic(err)
 			}
+
+			controlsWindow.Destroy()
 		}()
 	})
 
@@ -670,10 +672,23 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	controls.Append(volumeButton)
 
-	fullscreenButton := gtk.NewButtonFromIconName("view-fullscreen-symbolic")
+	fullscreenButton := gtk.NewToggleButton()
+	fullscreenButton.SetIconName("view-fullscreen-symbolic")
 	fullscreenButton.AddCSSClass("flat")
 	fullscreenButton.ConnectClicked(func() {
-		log.Info().Msg("Toggling fullscreen")
+		if fullscreenButton.Active() {
+			log.Info().Msg("Enabling fullscreen")
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
+				panic(err)
+			}
+		} else {
+			log.Info().Msg("Disabling fullscreen")
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
+				panic(err)
+			}
+		}
 	})
 
 	controls.Append(fullscreenButton)
