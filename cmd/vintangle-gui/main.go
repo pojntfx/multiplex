@@ -49,6 +49,10 @@ type mpvCommand struct {
 	Command []interface{} `json:"command"`
 }
 
+type mpvFloat64Response struct {
+	Data float64 `json:"data"`
+}
+
 func createClamp(maxWidth int, withMargins bool) *adw.Clamp {
 	clamp := adw.NewClamp()
 	clamp.SetMaximumSize(maxWidth)
@@ -473,7 +477,14 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 		commandLine[1:]...,
 	)
 
-	var ipc *json.Encoder
+	total := time.Duration(0)
+
+	rightTrack := gtk.NewLabel("")
+	seeker := gtk.NewScale(gtk.OrientationHorizontal, nil)
+
+	var encoder *json.Encoder
+	var decoder *json.Decoder
+
 	controlsWindow.ConnectShow(func() {
 		if err := command.Start(); err != nil {
 			panic(err)
@@ -482,7 +493,8 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 		for {
 			sock, err := net.Dial("unix", ipcFile)
 			if err == nil {
-				ipc = json.NewEncoder(sock)
+				encoder = json.NewEncoder(sock)
+				decoder = json.NewDecoder(sock)
 
 				break
 			}
@@ -491,6 +503,23 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 			log.Error().Err(err).Msg("Could not dial IPC socket, retrying in 100ms")
 		}
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
+			panic(err)
+		}
+
+		var curr mpvFloat64Response
+		if err := decoder.Decode(&curr); err != nil {
+			panic(err)
+		}
+
+		total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(curr.Data)))
+		if err != nil {
+			panic(err)
+		}
+
+		rightTrack.SetLabel(formatDuration(total))
+		seeker.SetRange(0, float64(total.Nanoseconds()))
 
 		go func() {
 			if err := command.Wait(); err != nil && err.Error() != errKilled {
@@ -551,13 +580,13 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 			playPauseButton.SetIconName(pauseIcon)
 
-			if err := ipc.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
 				panic(err)
 			}
 		} else {
 			log.Info().Msg("Pausing playback")
 
-			if err := ipc.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
 				panic(err)
 			}
 
@@ -590,30 +619,26 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	controls.Append(stopButton)
 
-	total, err := time.ParseDuration("2h")
-	if err != nil {
-		panic(err)
-	}
-
 	leftTrack := gtk.NewLabel(formatDuration(time.Duration(0)))
 	leftTrack.SetMarginStart(12)
 	leftTrack.AddCSSClass("tabular-nums")
 
 	controls.Append(leftTrack)
 
-	rightTrack := gtk.NewLabel(formatDuration(total))
 	rightTrack.SetMarginEnd(12)
 	rightTrack.AddCSSClass("tabular-nums")
 
-	seeker := gtk.NewScale(gtk.OrientationHorizontal, nil)
-	seeker.SetRange(0, float64(total.Nanoseconds()))
 	seeker.SetHExpand(true)
 	seeker.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
 		seeker.SetValue(value)
 
 		elapsed := time.Duration(int64(value))
 
-		log.Info().Dur("seconds", elapsed).Msg("Seeking")
+		if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
+			panic(err)
+		}
+
+		log.Info().Dur("duration", elapsed).Msg("Seeking")
 
 		remaining := total - elapsed
 
