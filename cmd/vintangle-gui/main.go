@@ -481,6 +481,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	rightTrack := gtk.NewLabel("")
 	seeker := gtk.NewScale(gtk.OrientationHorizontal, nil)
+	volumeButton := gtk.NewVolumeButton()
 
 	var encoder *json.Encoder
 	var decoder *json.Decoder
@@ -520,6 +521,12 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 		rightTrack.SetLabel(formatDuration(total))
 		seeker.SetRange(0, float64(total.Nanoseconds()))
+
+		volumeButton.SetValue(1)
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
+			panic(err)
+		}
 
 		go func() {
 			if err := command.Wait(); err != nil && err.Error() != errKilled {
@@ -652,10 +659,13 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	controls.Append(rightTrack)
 
-	volumeButton := gtk.NewVolumeButton()
 	volumeButton.AddCSSClass("circular")
 	volumeButton.ConnectValueChanged(func(value float64) {
 		log.Info().Float64("value", value).Msg("Setting volume")
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
+			panic(err)
+		}
 	})
 
 	controls.Append(volumeButton)
