@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -27,6 +26,8 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 const (
@@ -38,6 +39,8 @@ const (
 
 var (
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 type page struct {
@@ -479,12 +482,16 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	total := time.Duration(0)
 
-	rightTrack := gtk.NewLabel("")
+	elapsedTrack := gtk.NewLabel(formatDuration(time.Duration(0)))
 	seeker := gtk.NewScale(gtk.OrientationHorizontal, nil)
+	remainingTrack := gtk.NewLabel("")
 	volumeButton := gtk.NewVolumeButton()
 
-	var encoder *json.Encoder
-	var decoder *json.Decoder
+	seekerIsUnderPointer := false
+
+	var sock net.Conn
+	var encoder *jsoniter.Encoder
+	var decoder *jsoniter.Decoder
 
 	controlsWindow.ConnectShow(func() {
 		if err := command.Start(); err != nil {
@@ -492,7 +499,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 		}
 
 		for {
-			sock, err := net.Dial("unix", ipcFile)
+			sock, err = net.Dial("unix", ipcFile)
 			if err == nil {
 				encoder = json.NewEncoder(sock)
 				decoder = json.NewDecoder(sock)
@@ -505,33 +512,86 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			log.Error().Err(err).Msg("Could not dial IPC socket, retrying in 100ms")
 		}
 
-		if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
-			panic(err)
-		}
-
-		var curr mpvFloat64Response
-		if err := decoder.Decode(&curr); err != nil {
-			panic(err)
-		}
-
-		total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(curr.Data)))
-		if err != nil {
-			panic(err)
-		}
-
-		rightTrack.SetLabel(formatDuration(total))
-		seeker.SetRange(0, float64(total.Nanoseconds()))
-
 		volumeButton.SetValue(1)
 
 		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
 			panic(err)
 		}
 
+		done := make(chan struct{})
+		go func() {
+			t := time.NewTicker(100 * time.Millisecond)
+
+			updateSeeker := func() {
+				encoder = json.NewEncoder(sock)
+				decoder = json.NewDecoder(sock)
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
+					panic(err)
+				}
+
+				var durationResponse mpvFloat64Response
+				if err := decoder.Decode(&durationResponse); err != nil {
+					log.Error().Err(err).Msg("Could not parse JSON from socket")
+
+					return
+				}
+
+				total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(durationResponse.Data)))
+				if err != nil {
+					panic(err)
+				}
+
+				seeker.SetRange(0, float64(total.Nanoseconds()))
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
+					panic(err)
+				}
+
+				var elapsedResponse mpvFloat64Response
+				if err := decoder.Decode(&elapsedResponse); err != nil {
+					log.Error().Err(err).Msg("Could not parse JSON from socket")
+
+					return
+				}
+
+				elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
+				if err != nil {
+					panic(err)
+				}
+
+				seeker.SetValue(float64(elapsed.Nanoseconds()))
+
+				remaining := total - elapsed
+
+				log.Debug().
+					Float64("total", total.Seconds()).
+					Float64("elapsed", elapsed.Seconds()).
+					Float64("remaining", remaining.Seconds()).
+					Msg("Updating scale")
+
+				elapsedTrack.SetLabel(formatDuration(elapsed))
+				remainingTrack.SetLabel("-" + formatDuration(remaining))
+			}
+
+			for {
+				select {
+				case <-t.C:
+					if !seekerIsUnderPointer {
+						updateSeeker()
+					}
+				case <-done:
+					return
+				}
+			}
+		}()
+
 		go func() {
 			if err := command.Wait(); err != nil && err.Error() != errKilled {
 				panic(err)
 			}
+
+			done <- struct{}{}
 
 			controlsWindow.Destroy()
 		}()
@@ -628,14 +688,21 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	controls.Append(stopButton)
 
-	leftTrack := gtk.NewLabel(formatDuration(time.Duration(0)))
-	leftTrack.SetMarginStart(12)
-	leftTrack.AddCSSClass("tabular-nums")
+	elapsedTrack.SetMarginStart(12)
+	elapsedTrack.AddCSSClass("tabular-nums")
 
-	controls.Append(leftTrack)
+	controls.Append(elapsedTrack)
 
-	rightTrack.SetMarginEnd(12)
-	rightTrack.AddCSSClass("tabular-nums")
+	remainingTrack.SetMarginEnd(12)
+	remainingTrack.AddCSSClass("tabular-nums")
+
+	ctrl := gtk.NewEventControllerMotion()
+	ctrl.ConnectEnter(func(x, y float64) {
+		seekerIsUnderPointer = true
+	})
+	ctrl.ConnectLeave(func() {
+		seekerIsUnderPointer = false
+	})
 
 	seeker.SetHExpand(true)
 	seeker.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
@@ -651,15 +718,16 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 		remaining := total - elapsed
 
-		leftTrack.SetLabel(formatDuration(elapsed))
-		rightTrack.SetLabel("-" + formatDuration(remaining))
+		elapsedTrack.SetLabel(formatDuration(elapsed))
+		remainingTrack.SetLabel("-" + formatDuration(remaining))
 
 		return true
 	})
+	seeker.AddController(ctrl)
 
 	controls.Append(seeker)
 
-	controls.Append(rightTrack)
+	controls.Append(remainingTrack)
 
 	volumeButton.AddCSSClass("circular")
 	volumeButton.ConnectValueChanged(func(value float64) {
