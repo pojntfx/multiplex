@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"math"
 	"math/rand"
 	"net"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -27,6 +30,8 @@ import (
 const (
 	playIcon  = "media-playback-start-symbolic"
 	pauseIcon = "media-playback-pause-symbolic"
+
+	errKilled = "signal: killed"
 )
 
 var (
@@ -126,7 +131,7 @@ func createFileSelector(parent *adw.StatusPage, activators []*gtk.CheckButton, f
 	parent.SetChild(mediaPreferencesGroup)
 }
 
-func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr string) (*adw.ApplicationWindow, error) {
+func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr string, apiUsername string, apiPassword string, mpv string) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	assistantWindow := adw.NewApplicationWindow(&app.Application)
@@ -350,7 +355,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 	playButton.ConnectClicked(func() {
 		assistantWindow.Destroy()
 
-		controlsWindow, err := makeControlsWindow(app, manager, magnetLinkEntry.Text(), path, streamURL, apiAddr)
+		controlsWindow, err := makeControlsWindow(app, manager, magnetLinkEntry.Text(), path, streamURL, apiAddr, apiUsername, apiPassword, mpv)
 		if err != nil {
 			panic(err)
 		}
@@ -435,7 +440,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 	return assistantWindow, nil
 }
 
-func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLink string, path string, streamURL string, apiAddr string) (*adw.ApplicationWindow, error) {
+func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLink string, path string, streamURL string, apiAddr string, apiUsername string, apiPassword string, mpv string) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	controlsWindow := adw.NewApplicationWindow(&app.Application)
@@ -443,8 +448,40 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 	controlsWindow.SetDefaultSize(700, 100)
 	controlsWindow.SetResizable(false)
 
+	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
+
+	shell := []string{"sh", "-c"}
+	if runtime.GOOS == "windows" {
+		shell = []string{"cmd", "/c"}
+	}
+	commandLine := append(shell, fmt.Sprintf("%v --keep-open=always --sub-visibility=no --no-osc --no-input-default-bindings '--http-header-fields=Authorization: Basic %v' '%v'", mpv, usernameAndPassword, streamURL))
+
+	command := exec.Command(
+		commandLine[0],
+		commandLine[1:]...,
+	)
+
+	controlsWindow.ConnectShow(func() {
+		go func() {
+			output, err := command.CombinedOutput()
+			if err != nil && err.Error() != errKilled {
+				log.Info().
+					Str("output", string(output)).
+					Msg("MPV command output")
+
+				panic(err)
+			}
+		}()
+	})
+
 	controlsWindow.ConnectCloseRequest(func() (ok bool) {
 		log.Info().Msg("Stopping playback")
+
+		if command.Process != nil {
+			if err := command.Process.Kill(); err != nil {
+				panic(err)
+			}
+		}
 
 		controlsWindow.Destroy()
 
@@ -502,9 +539,15 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 	stopButton.ConnectClicked(func() {
 		log.Info().Msg("Stopping playback")
 
+		if command.Process != nil {
+			if err := command.Process.Kill(); err != nil {
+				panic(err)
+			}
+		}
+
 		controlsWindow.Destroy()
 
-		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr)
+		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv)
 		if err != nil {
 			panic(err)
 		}
@@ -607,7 +650,7 @@ func main() {
 
 	verbose := int64(verboseFlagDefault)
 	storage := storageFlagDefault
-	// mpv := mpvFlagDefault
+	mpv := mpvFlagDefault
 
 	app.ConnectHandleLocalOptions(func(options *glib.VariantDict) (gint int) {
 		if options.Contains(verboseFlag) {
@@ -618,9 +661,9 @@ func main() {
 			storage = options.LookupValue(storageFlag, glib.NewVariantString("").Type()).String()
 		}
 
-		// if options.Contains(mpvFlag) {
-		// 	mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
-		// }
+		if options.Contains(mpvFlag) {
+			mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
+		}
 
 		switch verbose {
 		case 0:
@@ -711,7 +754,7 @@ func main() {
 			ctx,
 		)
 
-		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr)
+		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv)
 		if err != nil {
 			panic(err)
 		}
