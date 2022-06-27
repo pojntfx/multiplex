@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -42,6 +43,10 @@ var (
 type page struct {
 	title  string
 	widget *gtk.Widget
+}
+
+type mpvCommand struct {
+	Command []interface{} `json:"command"`
 }
 
 func createClamp(maxWidth int, withMargins bool) *adw.Clamp {
@@ -451,30 +456,44 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
 
-	ipcFile, err := ioutil.TempFile(os.TempDir(), "mpv.sock")
+	ipcDir, err := ioutil.TempDir(os.TempDir(), "mpv-ipc")
 	if err != nil {
 		panic(err)
 	}
+	ipcFile := filepath.Join(ipcDir, "mpv.sock")
 
 	shell := []string{"sh", "-c"}
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd", "/c"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", mpv, ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", mpv, ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
 		commandLine[1:]...,
 	)
 
+	var ipc *json.Encoder
 	controlsWindow.ConnectShow(func() {
-		go func() {
-			output, err := command.CombinedOutput()
-			if err != nil && err.Error() != errKilled {
-				log.Info().
-					Str("output", string(output)).
-					Msg("MPV command output")
+		if err := command.Start(); err != nil {
+			panic(err)
+		}
 
+		for {
+			sock, err := net.Dial("unix", ipcFile)
+			if err == nil {
+				ipc = json.NewEncoder(sock)
+
+				break
+			}
+
+			time.Sleep(time.Millisecond * 100)
+
+			log.Error().Err(err).Msg("Could not dial IPC socket, retrying in 100ms")
+		}
+
+		go func() {
+			if err := command.Wait(); err != nil && err.Error() != errKilled {
 				panic(err)
 			}
 		}()
@@ -487,10 +506,6 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			if err := command.Process.Kill(); err != nil {
 				panic(err)
 			}
-		}
-
-		if err := os.Remove(ipcFile.Name()); err != nil {
-			panic(err)
 		}
 
 		controlsWindow.Destroy()
@@ -535,8 +550,16 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			log.Info().Msg("Starting playback")
 
 			playPauseButton.SetIconName(pauseIcon)
+
+			if err := ipc.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+				panic(err)
+			}
 		} else {
 			log.Info().Msg("Pausing playback")
+
+			if err := ipc.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
+				panic(err)
+			}
 
 			playPauseButton.SetIconName(playIcon)
 		}
@@ -553,10 +576,6 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			if err := command.Process.Kill(); err != nil {
 				panic(err)
 			}
-		}
-
-		if err := os.Remove(ipcFile.Name()); err != nil {
-			panic(err)
 		}
 
 		controlsWindow.Destroy()
