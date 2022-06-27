@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"math"
 	"math/rand"
 	"net"
@@ -450,11 +451,16 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
 
+	ipcFile, err := ioutil.TempFile(os.TempDir(), "mpv.sock")
+	if err != nil {
+		panic(err)
+	}
+
 	shell := []string{"sh", "-c"}
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd", "/c"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v --keep-open=always --sub-visibility=no --no-osc --no-input-default-bindings '--http-header-fields=Authorization: Basic %v' '%v'", mpv, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", mpv, ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -481,6 +487,10 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			if err := command.Process.Kill(); err != nil {
 				panic(err)
 			}
+		}
+
+		if err := os.Remove(ipcFile.Name()); err != nil {
+			panic(err)
 		}
 
 		controlsWindow.Destroy()
@@ -543,6 +553,10 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 			if err := command.Process.Kill(); err != nil {
 				panic(err)
 			}
+		}
+
+		if err := os.Remove(ipcFile.Name()); err != nil {
+			panic(err)
 		}
 
 		controlsWindow.Destroy()
