@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"math"
+	"math/rand"
+	"net"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,11 +17,20 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/phayes/freeport"
+	"github.com/pojntfx/htorrent/pkg/client"
+	"github.com/pojntfx/htorrent/pkg/server"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 const (
 	playIcon  = "media-playback-start-symbolic"
 	pauseIcon = "media-playback-pause-symbolic"
+)
+
+var (
+	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 type page struct {
@@ -49,7 +61,39 @@ func formatDuration(duration time.Duration) string {
 	return fmt.Sprintf("%02d:%02d:%02d", int(hours), int(minutes), int(seconds))
 }
 
-func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
+// See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
+func randSeq(n int) string {
+	b := make([]rune, n)
+
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(b)
+}
+
+func getStreamURL(base string, magnet, path string) (string, error) {
+	baseURL, err := url.Parse(base)
+	if err != nil {
+		return "", err
+	}
+
+	streamSuffix, err := url.Parse("/stream")
+	if err != nil {
+		return "", err
+	}
+
+	stream := baseURL.ResolveReference(streamSuffix)
+
+	q := stream.Query()
+	q.Set("magnet", magnet)
+	q.Set("path", path)
+	stream.RawQuery = q.Encode()
+
+	return stream.String(), nil
+}
+
+func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	assistantWindow := adw.NewApplicationWindow(&app.Application)
@@ -85,7 +129,7 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 		confirmationCheckbox.SetActive(false)
 	}
 
-	var onSubmitMagnetLink func(onSuccess func())
+	var onSubmitMagnetLink func(onSuccess func(bool))
 	var pages []page
 
 	assistantStack := gtk.NewStack()
@@ -94,8 +138,8 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 	onNavigateNext := func() {
 		done := make(chan bool)
 		if currentPage == 0 {
-			onSubmitMagnetLink(func() {
-				done <- true
+			onSubmitMagnetLink(func(success bool) {
+				done <- success
 			})
 		} else {
 			go func() {
@@ -103,12 +147,12 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 			}()
 		}
 
-		currentPage++
-
 		go func() {
 			if success := <-done; !success {
 				return
 			}
+
+			currentPage++
 
 			assistantStack.SetVisibleChild(pages[currentPage].widget)
 
@@ -140,7 +184,7 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 	welcomeStatus.SetDescription("Enter a magnet link to start streaming")
 
 	magnetLinkEntry := gtk.NewEntry()
-	onSubmitMagnetLink = func(onSuccess func()) {
+	onSubmitMagnetLink = func(onSuccess func(bool)) {
 		if selectedFile == "" {
 			nextButton.SetSensitive(false)
 		}
@@ -148,13 +192,40 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 		assistantSpinner.SetSpinning(true)
 
 		go func() {
-			time.Sleep(100 * time.Millisecond)
+			magnetLink := magnetLinkEntry.Text()
+
+			log.Info().
+				Str("magnetLink", magnetLink).
+				Msg("Getting info for magnet link")
+
+			files, err := manager.GetInfo(magnetLink)
+			if err != nil {
+				log.Error().Err(err).Msg("Could not get info for magnet link")
+
+				magnetLinkEntry.SetSensitive(true)
+				assistantSpinner.SetSpinning(false)
+
+				nextButton.SetSensitive(true)
+
+				onSuccess(false)
+
+				return
+			}
+
+			filePreview := []string{}
+			for _, f := range files {
+				filePreview = append(filePreview, f.Path)
+			}
+
+			log.Info().
+				Str("magnetLink", magnetLink).
+				Strs("files", filePreview).
+				Msg("Got info for magnet link")
 
 			magnetLinkEntry.SetSensitive(true)
-
 			assistantSpinner.SetSpinning(false)
 
-			onSuccess()
+			onSuccess(true)
 		}()
 	}
 
@@ -221,7 +292,7 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 
 			selectedFile = f
 
-			log.Println("Selected file", selectedFile)
+			log.Info().Str("path", selectedFile).Msg("Selected file")
 		})
 
 		mediaPreferencesGroup.Add(row)
@@ -262,7 +333,7 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 	playButton.ConnectClicked(func() {
 		assistantWindow.Destroy()
 
-		controlsWindow, err := makeControlsWindow(app, magnetLinkEntry.Text(), selectedFile)
+		controlsWindow, err := makeControlsWindow(app, manager, magnetLinkEntry.Text(), selectedFile)
 		if err != nil {
 			panic(err)
 		}
@@ -347,7 +418,7 @@ func makeAssistantWindow(app *adw.Application) (*adw.ApplicationWindow, error) {
 	return assistantWindow, nil
 }
 
-func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*adw.ApplicationWindow, error) {
+func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLink string, path string) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	controlsWindow := adw.NewApplicationWindow(&app.Application)
@@ -356,7 +427,7 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	controlsWindow.SetResizable(false)
 
 	controlsWindow.ConnectCloseRequest(func() (ok bool) {
-		log.Println("Stopping playback")
+		log.Info().Msg("Stopping playback")
 
 		controlsWindow.Destroy()
 
@@ -375,7 +446,7 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	copyButton.AddCSSClass("flat")
 	copyButton.SetTooltipText("Copy magnet link to media")
 	copyButton.ConnectClicked(func() {
-		log.Println("Copying magnet link to clipboard")
+		log.Info().Msg("Copying magnet link to clipboard")
 
 		controlsWindow.Clipboard().SetText(magnetLink)
 	})
@@ -397,11 +468,11 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	playPauseButton.AddCSSClass("flat")
 	playPauseButton.ConnectClicked(func() {
 		if playPauseButton.IconName() == playIcon {
-			log.Println("Starting playback")
+			log.Info().Msg("Starting playback")
 
 			playPauseButton.SetIconName(pauseIcon)
 		} else {
-			log.Println("Pausing playback")
+			log.Info().Msg("Pausing playback")
 
 			playPauseButton.SetIconName(playIcon)
 		}
@@ -412,11 +483,11 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	stopButton := gtk.NewButtonFromIconName("media-playback-stop-symbolic")
 	stopButton.AddCSSClass("flat")
 	stopButton.ConnectClicked(func() {
-		log.Println("Stopping playback")
+		log.Info().Msg("Stopping playback")
 
 		controlsWindow.Destroy()
 
-		assistantWindow, err := makeAssistantWindow(app)
+		assistantWindow, err := makeAssistantWindow(app, manager)
 		if err != nil {
 			panic(err)
 		}
@@ -466,7 +537,7 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	volumeButton := gtk.NewVolumeButton()
 	volumeButton.AddCSSClass("circular")
 	volumeButton.ConnectValueChanged(func(value float64) {
-		log.Println("Setting volume to", value)
+		log.Info().Float64("value", value).Msg("Setting volume")
 	})
 
 	controls.Append(volumeButton)
@@ -474,7 +545,7 @@ func makeControlsWindow(app *adw.Application, magnetLink string, path string) (*
 	fullscreenButton := gtk.NewButtonFromIconName("view-fullscreen-symbolic")
 	fullscreenButton.AddCSSClass("flat")
 	fullscreenButton.ConnectClicked(func() {
-		log.Println("Toggling fullscreen")
+		log.Info().Msg("Toggling fullscreen")
 	})
 
 	controls.Append(fullscreenButton)
@@ -517,26 +588,47 @@ func main() {
   font-variant-numeric: tabular-nums;
 }`)
 
+	verbose := int64(verboseFlagDefault)
+	storage := storageFlagDefault
+	// mpv := mpvFlagDefault
+
 	app.ConnectHandleLocalOptions(func(options *glib.VariantDict) (gint int) {
-		verbose := int64(verboseFlagDefault)
 		if options.Contains(verboseFlag) {
 			verbose = options.LookupValue(verboseFlag, glib.NewVariantInt64(0).Type()).Int64()
 		}
 
-		storage := storageFlagDefault
 		if options.Contains(storageFlag) {
 			storage = options.LookupValue(storageFlag, glib.NewVariantString("").Type()).String()
 		}
 
-		mpv := mpvFlagDefault
-		if options.Contains(mpvFlag) {
-			mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
-		}
+		// if options.Contains(mpvFlag) {
+		// 	mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
+		// }
 
-		log.Println("verbose", verbose, "storage", storage, "mpv", mpv)
+		switch verbose {
+		case 0:
+			zerolog.SetGlobalLevel(zerolog.Disabled)
+		case 1:
+			zerolog.SetGlobalLevel(zerolog.PanicLevel)
+		case 2:
+			zerolog.SetGlobalLevel(zerolog.FatalLevel)
+		case 3:
+			zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+		case 4:
+			zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		case 5:
+			zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		case 6:
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		default:
+			zerolog.SetGlobalLevel(zerolog.TraceLevel)
+		}
 
 		return -1
 	})
+
+	var gateway *server.Gateway
+	ctx, cancel := context.WithCancel(context.Background())
 
 	app.ConnectActivate(func() {
 		gtk.StyleContextAddProviderForDisplay(
@@ -545,12 +637,76 @@ func main() {
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
 
-		assistantWindow, err := makeAssistantWindow(app)
+		addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+		if err != nil {
+			panic(err)
+		}
+
+		port, err := freeport.GetFreePort()
+		if err != nil {
+			panic(err)
+		}
+		addr.Port = port
+
+		rand.Seed(time.Now().UnixNano())
+
+		apiUsername := randSeq(20)
+		apiPassword := randSeq(20)
+
+		gateway = server.NewGateway(
+			addr.String(),
+			storage,
+			apiUsername,
+			apiPassword,
+			"",
+			"",
+			verbose > 5,
+			func(peers int, total, completed int64, path string) {
+				log.Info().
+					Int("peers", peers).
+					Int64("total", total).
+					Int64("completed", completed).
+					Str("path", path).
+					Msg("Streaming")
+			},
+			ctx,
+		)
+
+		if err := gateway.Open(); err != nil {
+			panic(err)
+		}
+
+		go func() {
+			log.Info().
+				Str("address", addr.String()).
+				Msg("Gateway listening")
+
+			if err := gateway.Wait(); err != nil {
+				panic(err)
+			}
+		}()
+
+		manager := client.NewManager(
+			"http://"+addr.String(),
+			apiUsername,
+			apiPassword,
+			ctx,
+		)
+
+		assistantWindow, err := makeAssistantWindow(app, manager)
 		if err != nil {
 			panic(err)
 		}
 
 		assistantWindow.Show()
+	})
+
+	app.ConnectShutdown(func() {
+		if err := gateway.Close(); err != nil {
+			panic(err)
+		}
+
+		cancel()
 	})
 
 	if code := app.Run(os.Args); code > 0 {
