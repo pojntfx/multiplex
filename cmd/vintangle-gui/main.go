@@ -93,7 +93,40 @@ func getStreamURL(base string, magnet, path string) (string, error) {
 	return stream.String(), nil
 }
 
-func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.ApplicationWindow, error) {
+func createFileSelector(parent *adw.StatusPage, activators []*gtk.CheckButton, files []string, onSelect func(file string)) {
+	mediaPreferencesGroup := adw.NewPreferencesGroup()
+
+	for i, file := range files {
+		row := adw.NewActionRow()
+
+		activator := gtk.NewCheckButton()
+		if i > 0 {
+			activator.SetGroup(activators[i-1])
+		}
+		activators = append(activators, activator)
+
+		activator.SetActive(false)
+
+		row.SetTitle(file)
+		row.SetActivatable(true)
+
+		row.AddPrefix(activator)
+		row.SetActivatableWidget(activator)
+
+		f := file
+		activator.ConnectActivate(func() {
+			log.Info().Str("path", f).Msg("Selected file")
+
+			onSelect(f)
+		})
+
+		mediaPreferencesGroup.Add(row)
+	}
+
+	parent.SetChild(mediaPreferencesGroup)
+}
+
+func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr string) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	assistantWindow := adw.NewApplicationWindow(&app.Application)
@@ -105,7 +138,8 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 
 	// Header
 	currentPage := 0
-	selectedFile := ""
+	streamURL := ""
+	path := ""
 
 	assistantHeader := adw.NewHeaderBar()
 	assistantHeader.AddCSSClass("flat")
@@ -184,8 +218,12 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 	welcomeStatus.SetDescription("Enter a magnet link to start streaming")
 
 	magnetLinkEntry := gtk.NewEntry()
+
+	mediaStatus := adw.NewStatusPage()
+	activators := []*gtk.CheckButton{}
+
 	onSubmitMagnetLink = func(onSuccess func(bool)) {
-		if selectedFile == "" {
+		if streamURL == "" {
 			nextButton.SetSensitive(false)
 		}
 		magnetLinkEntry.SetSensitive(false)
@@ -222,6 +260,19 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 				Strs("files", filePreview).
 				Msg("Got info for magnet link")
 
+			createFileSelector(mediaStatus, activators, filePreview, func(file string) {
+				nextButton.SetSensitive(true)
+				revokePlayConsent()
+
+				u, err := getStreamURL(apiAddr, magnetLink, file)
+				if err != nil {
+					panic(err)
+				}
+
+				streamURL = u
+				path = file
+			})
+
 			magnetLinkEntry.SetSensitive(true)
 			assistantSpinner.SetSpinning(false)
 
@@ -229,7 +280,6 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 		}()
 	}
 
-	activators := []*gtk.CheckButton{}
 	magnetLinkEntry.SetPlaceholderText("Magnet link")
 	magnetLinkEntry.ConnectChanged(func() {
 		if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
@@ -238,7 +288,8 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 			nextButton.SetSensitive(false)
 		}
 
-		selectedFile = ""
+		streamURL = ""
+		path = ""
 		for _, activator := range activators {
 			activator.SetActive(false)
 		}
@@ -260,45 +311,11 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 	// Media page
 	mediaPageClamp := createClamp(600, false)
 
-	mediaStatus := adw.NewStatusPage()
 	mediaStatus.SetMarginStart(12)
 	mediaStatus.SetMarginEnd(12)
 	mediaStatus.SetIconName("applications-multimedia-symbolic")
 	mediaStatus.SetTitle("Media")
 	mediaStatus.SetDescription("Select the file you want to play")
-
-	mediaPreferencesGroup := adw.NewPreferencesGroup()
-	for i, file := range []string{"poster.png", "description.txt", "movie.mkv"} {
-		row := adw.NewActionRow()
-
-		activator := gtk.NewCheckButton()
-		if i > 0 {
-			activator.SetGroup(activators[i-1])
-		}
-		activators = append(activators, activator)
-
-		activator.SetActive(false)
-
-		row.SetTitle(file)
-		row.SetActivatable(true)
-
-		row.AddPrefix(activator)
-		row.SetActivatableWidget(activator)
-
-		f := file
-		activator.ConnectActivate(func() {
-			nextButton.SetSensitive(true)
-			revokePlayConsent()
-
-			selectedFile = f
-
-			log.Info().Str("path", selectedFile).Msg("Selected file")
-		})
-
-		mediaPreferencesGroup.Add(row)
-	}
-
-	mediaStatus.SetChild(mediaPreferencesGroup)
 
 	mediaPageClamp.SetChild(mediaStatus)
 
@@ -333,7 +350,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 	playButton.ConnectClicked(func() {
 		assistantWindow.Destroy()
 
-		controlsWindow, err := makeControlsWindow(app, manager, magnetLinkEntry.Text(), selectedFile)
+		controlsWindow, err := makeControlsWindow(app, manager, magnetLinkEntry.Text(), path, streamURL, apiAddr)
 		if err != nil {
 			panic(err)
 		}
@@ -418,7 +435,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager) (*adw.Ap
 	return assistantWindow, nil
 }
 
-func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLink string, path string) (*adw.ApplicationWindow, error) {
+func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLink string, path string, streamURL string, apiAddr string) (*adw.ApplicationWindow, error) {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	controlsWindow := adw.NewApplicationWindow(&app.Application)
@@ -487,7 +504,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 		controlsWindow.Destroy()
 
-		assistantWindow, err := makeAssistantWindow(app, manager)
+		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr)
 		if err != nil {
 			panic(err)
 		}
@@ -520,7 +537,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 		elapsed := time.Duration(int64(value))
 
-		log.Printf("Seeking to %vs", int(elapsed.Seconds()))
+		log.Info().Dur("seconds", elapsed).Msg("Seeking")
 
 		remaining := total - elapsed
 
@@ -686,14 +703,15 @@ func main() {
 			}
 		}()
 
+		apiAddr := "http://" + addr.String()
 		manager := client.NewManager(
-			"http://"+addr.String(),
+			apiAddr,
 			apiUsername,
 			apiPassword,
 			ctx,
 		)
 
-		assistantWindow, err := makeAssistantWindow(app, manager)
+		assistantWindow, err := makeAssistantWindow(app, manager, apiAddr)
 		if err != nil {
 			panic(err)
 		}
