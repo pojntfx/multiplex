@@ -487,7 +487,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 	remainingTrack := gtk.NewLabel("")
 	volumeButton := gtk.NewVolumeButton()
 
-	seekerIsUnderPointer := false
+	seekerIsSeeking := false
 
 	var sock net.Conn
 	var encoder *jsoniter.Encoder
@@ -520,7 +520,7 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 
 		done := make(chan struct{})
 		go func() {
-			t := time.NewTicker(100 * time.Millisecond)
+			t := time.NewTicker(time.Millisecond * 100)
 
 			updateSeeker := func() {
 				encoder = json.NewEncoder(sock)
@@ -542,8 +542,6 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 					panic(err)
 				}
 
-				seeker.SetRange(0, float64(total.Nanoseconds()))
-
 				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
 					panic(err)
 				}
@@ -560,26 +558,27 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 					panic(err)
 				}
 
-				seeker.SetValue(float64(elapsed.Nanoseconds()))
+				if !seekerIsSeeking {
+					seeker.SetRange(0, float64(total.Nanoseconds()))
+					seeker.SetValue(float64(elapsed.Nanoseconds()))
 
-				remaining := total - elapsed
+					remaining := total - elapsed
 
-				log.Debug().
-					Float64("total", total.Seconds()).
-					Float64("elapsed", elapsed.Seconds()).
-					Float64("remaining", remaining.Seconds()).
-					Msg("Updating scale")
+					log.Debug().
+						Float64("total", total.Seconds()).
+						Float64("elapsed", elapsed.Seconds()).
+						Float64("remaining", remaining.Seconds()).
+						Msg("Updating scale")
 
-				elapsedTrack.SetLabel(formatDuration(elapsed))
-				remainingTrack.SetLabel("-" + formatDuration(remaining))
+					elapsedTrack.SetLabel(formatDuration(elapsed))
+					remainingTrack.SetLabel("-" + formatDuration(remaining))
+				}
 			}
 
 			for {
 				select {
 				case <-t.C:
-					if !seekerIsUnderPointer {
-						updateSeeker()
-					}
+					updateSeeker()
 				case <-done:
 					return
 				}
@@ -696,6 +695,8 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 	remainingTrack.SetMarginEnd(12)
 	remainingTrack.AddCSSClass("tabular-nums")
 
+	seekerIsUnderPointer := false
+
 	ctrl := gtk.NewEventControllerMotion()
 	ctrl.ConnectEnter(func(x, y float64) {
 		seekerIsUnderPointer = true
@@ -703,9 +704,12 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 	ctrl.ConnectLeave(func() {
 		seekerIsUnderPointer = false
 	})
+	seeker.AddController(ctrl)
 
 	seeker.SetHExpand(true)
 	seeker.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
+		seekerIsSeeking = true
+
 		seeker.SetValue(value)
 
 		elapsed := time.Duration(int64(value))
@@ -721,9 +725,21 @@ func makeControlsWindow(app *adw.Application, manager *client.Manager, magnetLin
 		elapsedTrack.SetLabel(formatDuration(elapsed))
 		remainingTrack.SetLabel("-" + formatDuration(remaining))
 
+		var updateScalePosition func()
+		updateScalePosition = func() {
+			if seekerIsUnderPointer {
+				updateScalePosition()
+
+				return
+			}
+
+			seekerIsSeeking = false
+		}
+
+		go time.AfterFunc(time.Millisecond*200, updateScalePosition)
+
 		return true
 	})
-	seeker.AddController(ctrl)
 
 	controls.Append(seeker)
 

@@ -5,8 +5,9 @@ go 1.18
 require (
 	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20220417101956-dcc3707dc307
 	github.com/diamondburned/gotk4/pkg v0.0.0-20220417091308-856167c02355
+	github.com/json-iterator/go v1.1.12
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/htorrent v0.2.0
+	github.com/pojntfx/htorrent v0.2.1
 	github.com/rs/zerolog v1.27.0
 )
 
@@ -43,7 +44,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/lispad/go-generics-tools v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
