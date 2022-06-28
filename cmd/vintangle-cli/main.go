@@ -190,26 +190,26 @@ func main() {
 		ctx,
 	)
 
-	log.Debug().Msg("Getting info")
+	log.Debug().Msg("Getting file list")
 
-	files, err := manager.GetInfo(*magnet)
+	info, err := manager.GetInfo(*magnet)
 	if err != nil {
 		panic(err)
 	}
 
 	filePreview := []string{}
-	for _, f := range files {
+	for _, f := range info.Files {
 		filePreview = append(filePreview, f.Path)
 	}
 
 	log.Info().
 		Strs("files", filePreview).
-		Msg("Got info")
+		Msg("Got file list")
 
 	streamURL := ""
 
 	exp := regexp.MustCompile(*expression)
-	for _, f := range files {
+	for _, f := range info.Files {
 		if exp.Match([]byte(f.Path)) {
 			u, err := getStreamURL("http://"+addr.String(), *magnet, f.Path)
 			if err != nil {
