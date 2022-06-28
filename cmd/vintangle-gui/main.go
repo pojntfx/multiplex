@@ -254,7 +254,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 				Str("magnetLink", magnetLink).
 				Msg("Getting info for magnet link")
 
-			files, err := manager.GetInfo(magnetLink)
+			info, err := manager.GetInfo(magnetLink)
 			if err != nil {
 				log.Error().Err(err).Msg("Could not get info for magnet link")
 
@@ -269,7 +269,7 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 			}
 
 			filePreview := []string{}
-			for _, f := range files {
+			for _, f := range info.Files {
 				filePreview = append(filePreview, f.Path)
 			}
 
