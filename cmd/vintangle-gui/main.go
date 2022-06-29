@@ -151,6 +151,8 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 	assistantWindow.SetTitle("Vintangle")
 	assistantWindow.SetDefaultSize(1024, 680)
 
+	overlay := adw.NewToastOverlay()
+
 	mainStack := gtk.NewStack()
 	mainStack.SetTransitionType(gtk.StackTransitionTypeCrossfade)
 
@@ -258,10 +260,16 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 			if err != nil {
 				log.Error().Err(err).Msg("Could not get info for magnet link")
 
+				toast := adw.NewToast("Could not get info for this magnet link.")
+
+				overlay.AddToast(toast)
+
 				magnetLinkEntry.SetSensitive(true)
 				assistantSpinner.SetSpinning(false)
 
 				nextButton.SetSensitive(true)
+
+				magnetLinkEntry.GrabFocus()
 
 				onSuccess(false)
 
@@ -448,7 +456,9 @@ func makeAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr 
 
 	mainStack.AddChild(assistantPage)
 
-	assistantWindow.SetContent(mainStack)
+	overlay.SetChild(mainStack)
+
+	assistantWindow.SetContent(overlay)
 
 	return assistantWindow, nil
 }
