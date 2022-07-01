@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -15,6 +16,11 @@ var (
 	assistantUI string
 )
 
+const (
+	WELCOME_PAGE_NAME = "welcome-page"
+	MEDIA_PAGE_NAME   = "media-page"
+)
+
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglexml", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
@@ -22,6 +28,49 @@ func main() {
 		builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 		window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+		previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
+		nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
+		headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
+		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
+		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
+
+		stack.ConnectShow(func() {
+			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+		})
+
+		magnetLinkEntry.ConnectChanged(func() {
+			if magnetLinkEntry.Text() == "" {
+				nextButton.SetSensitive(false)
+
+				return
+			} else {
+				nextButton.SetSensitive(true)
+
+				return
+			}
+		})
+
+		onNavigateToMediaPage := func() {
+			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
+				previousButton.SetVisible(true)
+				headerbarTitle.SetText("Media")
+				nextButton.SetSensitive(false)
+
+				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+			}
+		}
+
+		onNavigateToWelcomePage := func() {
+			previousButton.SetVisible(false)
+			headerbarTitle.SetText("Welcome")
+			nextButton.SetSensitive(false)
+
+			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+		}
+
+		magnetLinkEntry.ConnectActivate(onNavigateToMediaPage)
+		nextButton.ConnectClicked(onNavigateToMediaPage)
+		previousButton.ConnectClicked(onNavigateToWelcomePage)
 
 		app.AddWindow(&window.Window)
 
