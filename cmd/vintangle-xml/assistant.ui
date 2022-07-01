@@ -114,31 +114,7 @@
                                                         <property name="description">Select the file you want to play</property>
 
                                                         <child>
-                                                            <object class="AdwPreferencesGroup">
-                                                                <child>
-                                                                    <object class="AdwActionRow">
-                                                                        <property name="title">movie.mkv</property>
-                                                                        <property name="subtitle">2.2 GB</property>
-                                                                        <property name="activatable">true</property>
-
-                                                                        <child type="prefix">
-                                                                            <object class="GtkCheckButton"></object>
-                                                                        </child>
-                                                                    </object>
-                                                                </child>
-
-                                                                <child>
-                                                                    <object class="AdwActionRow">
-                                                                        <property name="title">extras.mp4</property>
-                                                                        <property name="subtitle">1.3 GB</property>
-                                                                        <property name="activatable">true</property>
-
-                                                                        <child type="prefix">
-                                                                            <object class="GtkCheckButton"></object>
-                                                                        </child>
-                                                                    </object>
-                                                                </child>
-                                                            </object>
+                                                            <object class="AdwPreferencesGroup" id="media-selection-group"></object>
                                                         </child>
                                                     </object>
                                                 </child>

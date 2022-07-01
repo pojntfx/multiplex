@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -12,9 +13,25 @@ import (
 	_ "embed"
 )
 
+type media struct {
+	name string
+	size int
+}
+
 var (
 	//go:embed assistant.ui
 	assistantUI string
+
+	files = []media{
+		{
+			name: "movie.mkv",
+			size: 2200000000,
+		},
+		{
+			name: "extras.mp4",
+			size: 130000000,
+		},
+	}
 )
 
 const (
@@ -35,12 +52,16 @@ func main() {
 		headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
 		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
+		mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
+		selectedMedia := ""
 
 		stack.ConnectShow(func() {
 			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
 		})
 
 		magnetLinkEntry.ConnectChanged(func() {
+			selectedMedia = ""
+
 			if magnetLinkEntry.Text() == "" {
 				nextButton.SetSensitive(false)
 
@@ -54,7 +75,10 @@ func main() {
 
 		onNavigateToMediaPage := func() {
 			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
-				nextButton.SetSensitive(false)
+				if selectedMedia == "" {
+					nextButton.SetSensitive(false)
+				}
+
 				headerbarSpinner.SetSpinning(true)
 
 				go func() {
@@ -81,6 +105,43 @@ func main() {
 		magnetLinkEntry.ConnectActivate(onNavigateToMediaPage)
 		nextButton.ConnectClicked(onNavigateToMediaPage)
 		previousButton.ConnectClicked(onNavigateToWelcomePage)
+
+		mediaRows := []*adw.ActionRow{}
+		mediaSelectionGroup.ConnectRealize(func() {
+			for _, row := range mediaRows {
+				mediaSelectionGroup.Remove(row)
+			}
+			mediaRows = []*adw.ActionRow{}
+
+			var lastActivator *gtk.CheckButton
+			for _, file := range files {
+				row := adw.NewActionRow()
+
+				activator := gtk.NewCheckButton()
+				if activator != nil {
+					activator.SetGroup(lastActivator)
+				}
+				lastActivator = activator
+
+				m := file.name
+				activator.SetActive(false)
+				activator.ConnectActivate(func() {
+					selectedMedia = m
+
+					nextButton.SetSensitive(true)
+				})
+
+				row.SetTitle(file.name)
+				row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
+				row.SetActivatable(true)
+
+				row.AddPrefix(activator)
+				row.SetActivatableWidget(activator)
+
+				mediaRows = append(mediaRows, row)
+				mediaSelectionGroup.Add(row)
+			}
+		})
 
 		app.AddWindow(&window.Window)
 
