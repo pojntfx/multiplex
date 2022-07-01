@@ -38,10 +38,10 @@
                         <child type="end">
                             <object class="GtkBox">
                                 <property name="orientation">horizontal</property>
-                                <property name="spacing">6</property>
+                                <property name="spacing">12</property>
 
                                 <child>
-                                    <object class="GtkSpinner"></object>
+                                    <object class="GtkSpinner" id="headerbar-spinner"></object>
                                 </child>
 
                                 <child>

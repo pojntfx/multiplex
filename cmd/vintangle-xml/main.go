@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strings"
+	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -31,6 +32,7 @@ func main() {
 		previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 		nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
 		headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
+		headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
 		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
 
@@ -52,18 +54,26 @@ func main() {
 
 		onNavigateToMediaPage := func() {
 			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
-				previousButton.SetVisible(true)
-				headerbarTitle.SetText("Media")
 				nextButton.SetSensitive(false)
+				headerbarSpinner.SetSpinning(true)
 
-				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+				go func() {
+					time.AfterFunc(time.Second, func() {
+						headerbarSpinner.SetSpinning(false)
+
+						previousButton.SetVisible(true)
+						headerbarTitle.SetText("Media")
+
+						stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+					})
+				}()
 			}
 		}
 
 		onNavigateToWelcomePage := func() {
 			previousButton.SetVisible(false)
 			headerbarTitle.SetText("Welcome")
-			nextButton.SetSensitive(false)
+			nextButton.SetSensitive(true)
 
 			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
 		}
