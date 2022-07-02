@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
@@ -37,6 +36,7 @@ var (
 const (
 	WELCOME_PAGE_NAME = "welcome-page"
 	MEDIA_PAGE_NAME   = "media-page"
+	READY_PAGE_NAME   = "ready-page"
 )
 
 func main() {
@@ -53,6 +53,9 @@ func main() {
 		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
 		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
 		mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
+		rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
+		playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+
 		selectedMedia := ""
 
 		stack.ConnectShow(func() {
@@ -66,15 +69,14 @@ func main() {
 				nextButton.SetSensitive(false)
 
 				return
-			} else {
-				nextButton.SetSensitive(true)
-
-				return
 			}
+
+			nextButton.SetSensitive(true)
 		})
 
-		onNavigateToMediaPage := func() {
-			if text := magnetLinkEntry.Text(); strings.TrimSpace(text) != "" {
+		onNext := func() {
+			switch stack.VisibleChildName() {
+			case WELCOME_PAGE_NAME:
 				if selectedMedia == "" {
 					nextButton.SetSensitive(false)
 				}
@@ -91,20 +93,33 @@ func main() {
 						stack.SetVisibleChildName(MEDIA_PAGE_NAME)
 					})
 				}()
+			case MEDIA_PAGE_NAME:
+				nextButton.SetVisible(false)
+				headerbarTitle.SetText("Ready to Go")
+
+				stack.SetVisibleChildName(READY_PAGE_NAME)
 			}
 		}
 
-		onNavigateToWelcomePage := func() {
-			previousButton.SetVisible(false)
-			headerbarTitle.SetText("Welcome")
-			nextButton.SetSensitive(true)
+		onPrevious := func() {
+			switch stack.VisibleChildName() {
+			case MEDIA_PAGE_NAME:
+				previousButton.SetVisible(false)
+				headerbarTitle.SetText("Welcome")
+				nextButton.SetSensitive(true)
 
-			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+				stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+			case READY_PAGE_NAME:
+				nextButton.SetVisible(true)
+				headerbarTitle.SetText("Media")
+
+				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+			}
 		}
 
-		magnetLinkEntry.ConnectActivate(onNavigateToMediaPage)
-		nextButton.ConnectClicked(onNavigateToMediaPage)
-		previousButton.ConnectClicked(onNavigateToWelcomePage)
+		magnetLinkEntry.ConnectActivate(onNext)
+		nextButton.ConnectClicked(onNext)
+		previousButton.ConnectClicked(onPrevious)
 
 		mediaRows := []*adw.ActionRow{}
 		mediaSelectionGroup.ConnectRealize(func() {
@@ -126,7 +141,11 @@ func main() {
 				m := file.name
 				activator.SetActive(false)
 				activator.ConnectActivate(func() {
-					selectedMedia = m
+					if m != selectedMedia {
+						selectedMedia = m
+
+						rightsConfirmationButton.SetActive(false)
+					}
 
 					nextButton.SetSensitive(true)
 				})
@@ -141,6 +160,22 @@ func main() {
 				mediaRows = append(mediaRows, row)
 				mediaSelectionGroup.Add(row)
 			}
+		})
+
+		rightsConfirmationButton.ConnectToggled(func() {
+			if rightsConfirmationButton.Active() {
+				playButton.AddCSSClass("suggested-action")
+				playButton.SetSensitive(true)
+
+				return
+			}
+
+			playButton.RemoveCSSClass("suggested-action")
+			playButton.SetSensitive(false)
+		})
+
+		playButton.ConnectClicked(func() {
+			window.Close()
 		})
 
 		app.AddWindow(&window.Window)
