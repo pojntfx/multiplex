@@ -4,21 +4,36 @@ import (
 	"os"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 
 	_ "embed"
 )
 
-//go:embed controls.ui
-var controlsUI string
+var (
+	//go:embed controls.ui
+	controlsUI string
+
+	//go:embed style.css
+	styleCSS string
+)
 
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglecontrols", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
+	prov := gtk.NewCSSProvider()
+	prov.LoadFromData(styleCSS)
+
 	app.ConnectActivate(func() {
+		gtk.StyleContextAddProviderForDisplay(
+			gdk.DisplayGetDefault(),
+			prov,
+			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+		)
+
 		builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
 
 		window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
