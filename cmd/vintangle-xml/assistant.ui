@@ -122,6 +122,56 @@
                                         </property>
                                     </object>
                                 </child>
+
+                                <child>
+                                    <object class="GtkStackPage">
+                                        <property name="name">ready-page</property>
+
+                                        <property name="child">
+                                            <object class="AdwClamp">
+                                                <property name="maximum-size">295</property>
+                                                <property name="vexpand">true</property>
+                                                <property name="valign">center</property>
+
+                                                <child>
+                                                    <object class="AdwStatusPage">
+                                                        <property name="margin-start">12</property>
+                                                        <property name="margin-end">12</property>
+                                                        <property name="icon-name">emblem-ok-symbolic</property>
+                                                        <property name="title">You're all set!</property>
+
+                                                        <child>
+                                                            <object class="GtkBox">
+                                                                <property name="orientation">vertical</property>
+                                                                <property name="spacing">36</property>
+                                                                <property name="halign">center</property>
+                                                                <property name="valign">center</property>
+
+                                                                <child>
+                                                                    <object class="GtkCheckButton" id="rights-confirmation-button">
+                                                                        <property name="label"> I have the right to stream the selected media</property>
+                                                                    </object>
+                                                                </child>
+
+                                                                <child>
+                                                                    <object class="GtkButton" id="play-button">
+                                                                        <style>
+                                                                            <class name="pill"></class>
+                                                                        </style>
+
+                                                                        <property name="label">Play</property>
+                                                                        <property name="sensitive">false</property>
+                                                                        <property name="halign">center</property>
+                                                                    </object>
+                                                                </child>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </property>
+                                    </object>
+                                </child>
                             </object>
                         </child>
                     </object>
