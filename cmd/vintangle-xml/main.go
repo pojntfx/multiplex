@@ -46,6 +46,177 @@ const (
 	READY_PAGE_NAME   = "ready-page"
 )
 
+func openAssistantWindow(app *adw.Application) error {
+	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
+
+	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
+
+	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
+	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
+	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
+	stack := builder.GetObject("stack").Cast().(*gtk.Stack)
+	magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
+	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
+	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
+	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+
+	selectedMedia := ""
+
+	stack.ConnectShow(func() {
+		stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+	})
+
+	magnetLinkEntry.ConnectChanged(func() {
+		selectedMedia = ""
+
+		if magnetLinkEntry.Text() == "" {
+			nextButton.SetSensitive(false)
+
+			return
+		}
+
+		nextButton.SetSensitive(true)
+	})
+
+	onNext := func() {
+		switch stack.VisibleChildName() {
+		case WELCOME_PAGE_NAME:
+			if selectedMedia == "" {
+				nextButton.SetSensitive(false)
+			}
+
+			headerbarSpinner.SetSpinning(true)
+
+			go func() {
+				time.AfterFunc(time.Millisecond*100, func() {
+					headerbarSpinner.SetSpinning(false)
+
+					previousButton.SetVisible(true)
+					window.SetTitle("Media")
+
+					stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+				})
+			}()
+		case MEDIA_PAGE_NAME:
+			nextButton.SetVisible(false)
+			window.SetTitle("Ready to Go")
+
+			stack.SetVisibleChildName(READY_PAGE_NAME)
+		}
+	}
+
+	onPrevious := func() {
+		switch stack.VisibleChildName() {
+		case MEDIA_PAGE_NAME:
+			previousButton.SetVisible(false)
+			window.SetTitle("Welcome")
+			nextButton.SetSensitive(true)
+
+			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+		case READY_PAGE_NAME:
+			nextButton.SetVisible(true)
+			window.SetTitle("Media")
+
+			stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+		}
+	}
+
+	magnetLinkEntry.ConnectActivate(onNext)
+	nextButton.ConnectClicked(onNext)
+	previousButton.ConnectClicked(onPrevious)
+
+	mediaRows := []*adw.ActionRow{}
+	mediaSelectionGroup.ConnectRealize(func() {
+		for _, row := range mediaRows {
+			mediaSelectionGroup.Remove(row)
+		}
+		mediaRows = []*adw.ActionRow{}
+
+		var lastActivator *gtk.CheckButton
+		for _, file := range files {
+			row := adw.NewActionRow()
+
+			activator := gtk.NewCheckButton()
+			if activator != nil {
+				activator.SetGroup(lastActivator)
+			}
+			lastActivator = activator
+
+			m := file.name
+			activator.SetActive(false)
+			activator.ConnectActivate(func() {
+				if m != selectedMedia {
+					selectedMedia = m
+
+					rightsConfirmationButton.SetActive(false)
+				}
+
+				nextButton.SetSensitive(true)
+			})
+
+			row.SetTitle(file.name)
+			row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
+			row.SetActivatable(true)
+
+			row.AddPrefix(activator)
+			row.SetActivatableWidget(activator)
+
+			mediaRows = append(mediaRows, row)
+			mediaSelectionGroup.Add(row)
+		}
+	})
+
+	rightsConfirmationButton.ConnectToggled(func() {
+		if rightsConfirmationButton.Active() {
+			playButton.AddCSSClass("suggested-action")
+			playButton.SetSensitive(true)
+
+			return
+		}
+
+		playButton.RemoveCSSClass("suggested-action")
+		playButton.SetSensitive(false)
+	})
+
+	playButton.ConnectClicked(func() {
+		window.Close()
+
+		if err := openControlsWindow(app); err != nil {
+			panic(err)
+		}
+	})
+
+	app.AddWindow(&window.Window)
+
+	window.Show()
+
+	return nil
+}
+
+func openControlsWindow(app *adw.Application) error {
+	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
+
+	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
+
+	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+
+	stopButton.ConnectClicked(func() {
+		window.Close()
+
+		if err := openAssistantWindow(app); err != nil {
+			panic(err)
+		}
+	})
+
+	app.AddWindow(&window.Window)
+
+	window.Show()
+
+	return nil
+}
+
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglexml", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
@@ -59,153 +230,9 @@ func main() {
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
 
-		builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
-
-		assistantWindow := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
-		previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
-		nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
-		headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
-		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
-		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
-		mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
-		rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
-		playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
-
-		selectedMedia := ""
-
-		stack.ConnectShow(func() {
-			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
-		})
-
-		magnetLinkEntry.ConnectChanged(func() {
-			selectedMedia = ""
-
-			if magnetLinkEntry.Text() == "" {
-				nextButton.SetSensitive(false)
-
-				return
-			}
-
-			nextButton.SetSensitive(true)
-		})
-
-		onNext := func() {
-			switch stack.VisibleChildName() {
-			case WELCOME_PAGE_NAME:
-				if selectedMedia == "" {
-					nextButton.SetSensitive(false)
-				}
-
-				headerbarSpinner.SetSpinning(true)
-
-				go func() {
-					time.AfterFunc(time.Millisecond*100, func() {
-						headerbarSpinner.SetSpinning(false)
-
-						previousButton.SetVisible(true)
-						assistantWindow.SetTitle("Media")
-
-						stack.SetVisibleChildName(MEDIA_PAGE_NAME)
-					})
-				}()
-			case MEDIA_PAGE_NAME:
-				nextButton.SetVisible(false)
-				assistantWindow.SetTitle("Ready to Go")
-
-				stack.SetVisibleChildName(READY_PAGE_NAME)
-			}
+		if err := openAssistantWindow(app); err != nil {
+			panic(err)
 		}
-
-		onPrevious := func() {
-			switch stack.VisibleChildName() {
-			case MEDIA_PAGE_NAME:
-				previousButton.SetVisible(false)
-				assistantWindow.SetTitle("Welcome")
-				nextButton.SetSensitive(true)
-
-				stack.SetVisibleChildName(WELCOME_PAGE_NAME)
-			case READY_PAGE_NAME:
-				nextButton.SetVisible(true)
-				assistantWindow.SetTitle("Media")
-
-				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
-			}
-		}
-
-		magnetLinkEntry.ConnectActivate(onNext)
-		nextButton.ConnectClicked(onNext)
-		previousButton.ConnectClicked(onPrevious)
-
-		mediaRows := []*adw.ActionRow{}
-		mediaSelectionGroup.ConnectRealize(func() {
-			for _, row := range mediaRows {
-				mediaSelectionGroup.Remove(row)
-			}
-			mediaRows = []*adw.ActionRow{}
-
-			var lastActivator *gtk.CheckButton
-			for _, file := range files {
-				row := adw.NewActionRow()
-
-				activator := gtk.NewCheckButton()
-				if activator != nil {
-					activator.SetGroup(lastActivator)
-				}
-				lastActivator = activator
-
-				m := file.name
-				activator.SetActive(false)
-				activator.ConnectActivate(func() {
-					if m != selectedMedia {
-						selectedMedia = m
-
-						rightsConfirmationButton.SetActive(false)
-					}
-
-					nextButton.SetSensitive(true)
-				})
-
-				row.SetTitle(file.name)
-				row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
-				row.SetActivatable(true)
-
-				row.AddPrefix(activator)
-				row.SetActivatableWidget(activator)
-
-				mediaRows = append(mediaRows, row)
-				mediaSelectionGroup.Add(row)
-			}
-		})
-
-		rightsConfirmationButton.ConnectToggled(func() {
-			if rightsConfirmationButton.Active() {
-				playButton.AddCSSClass("suggested-action")
-				playButton.SetSensitive(true)
-
-				return
-			}
-
-			playButton.RemoveCSSClass("suggested-action")
-			playButton.SetSensitive(false)
-		})
-
-		playButton.ConnectClicked(func() {
-			assistantWindow.Close()
-
-			app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
-
-			builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
-
-			controlsWindow := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
-
-			app.AddWindow(&controlsWindow.Window)
-
-			controlsWindow.Show()
-		})
-
-		app.AddWindow(&assistantWindow.Window)
-
-		assistantWindow.Show()
 	})
 
 	if code := app.Run(os.Args); code > 0 {
