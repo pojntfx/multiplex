@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="AdwApplicationWindow" id="main-window">
+        <property name="default-width">700</property>
+        <property name="default-height">100</property>
+        <property name="title">Vintangle - movie.mkv</property>
+        <property name="resizable">false</property>
+
+        <property name="content">
+            <object class="GtkWindowHandle">
+                <child>
+                    <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+
+                        <child>
+                            <object class="AdwHeaderBar">
+                                <style>
+                                    <class name="flat"></class>
+                                </style>
+
+                                <child type="end">
+                                    <object class="GtkButton">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
+
+                                        <property name="icon-name">edit-copy-symbolic</property>
+                                        <property name="tooltip-text">Copy magnet link to media</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="GtkBox">
+                                <property name="spacing">6</property>
+                                <property name="halign">fill</property>
+                                <property name="valign">center</property>
+                                <property name="vexpand">true</property>
+                                <property name="margin-top">0</property>
+                                <property name="margin-start">18</property>
+                                <property name="margin-end">18</property>
+                                <property name="margin-bottom">24</property>
+
+                                <child>
+                                    <object class="GtkButton">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
+
+                                        <property name="icon-name">media-playback-start-symbolic</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </property>
+    </object>
+</interface>
