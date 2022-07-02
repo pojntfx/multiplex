@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
+	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 
@@ -20,6 +21,12 @@ type media struct {
 var (
 	//go:embed assistant.ui
 	assistantUI string
+
+	//go:embed controls.ui
+	controlsUI string
+
+	//go:embed style.css
+	styleCSS string
 
 	files = []media{
 		{
@@ -42,10 +49,19 @@ const (
 func main() {
 	app := adw.NewApplication("com.pojtinger.felicitas.vintanglexml", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
+	prov := gtk.NewCSSProvider()
+	prov.LoadFromData(styleCSS)
+
 	app.ConnectActivate(func() {
+		gtk.StyleContextAddProviderForDisplay(
+			gdk.DisplayGetDefault(),
+			prov,
+			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+		)
+
 		builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
-		window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+		assistantWindow := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 		previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 		nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
 		headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -83,18 +99,18 @@ func main() {
 				headerbarSpinner.SetSpinning(true)
 
 				go func() {
-					time.AfterFunc(time.Second, func() {
+					time.AfterFunc(time.Millisecond*100, func() {
 						headerbarSpinner.SetSpinning(false)
 
 						previousButton.SetVisible(true)
-						window.SetTitle("Media")
+						assistantWindow.SetTitle("Media")
 
 						stack.SetVisibleChildName(MEDIA_PAGE_NAME)
 					})
 				}()
 			case MEDIA_PAGE_NAME:
 				nextButton.SetVisible(false)
-				window.SetTitle("Ready to Go")
+				assistantWindow.SetTitle("Ready to Go")
 
 				stack.SetVisibleChildName(READY_PAGE_NAME)
 			}
@@ -104,13 +120,13 @@ func main() {
 			switch stack.VisibleChildName() {
 			case MEDIA_PAGE_NAME:
 				previousButton.SetVisible(false)
-				window.SetTitle("Welcome")
+				assistantWindow.SetTitle("Welcome")
 				nextButton.SetSensitive(true)
 
 				stack.SetVisibleChildName(WELCOME_PAGE_NAME)
 			case READY_PAGE_NAME:
 				nextButton.SetVisible(true)
-				window.SetTitle("Media")
+				assistantWindow.SetTitle("Media")
 
 				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
 			}
@@ -174,12 +190,22 @@ func main() {
 		})
 
 		playButton.ConnectClicked(func() {
-			window.Close()
+			assistantWindow.Close()
+
+			app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
+
+			builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
+
+			controlsWindow := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+
+			app.AddWindow(&controlsWindow.Window)
+
+			controlsWindow.Show()
 		})
 
-		app.AddWindow(&window.Window)
+		app.AddWindow(&assistantWindow.Window)
 
-		window.Show()
+		assistantWindow.Show()
 	})
 
 	if code := app.Run(os.Args); code > 0 {
