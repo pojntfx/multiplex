@@ -48,7 +48,6 @@ func main() {
 		window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 		previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 		nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
-		headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
 		headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 		stack := builder.GetObject("stack").Cast().(*gtk.Stack)
 		magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
@@ -88,14 +87,14 @@ func main() {
 						headerbarSpinner.SetSpinning(false)
 
 						previousButton.SetVisible(true)
-						headerbarTitle.SetText("Media")
+						window.SetTitle("Media")
 
 						stack.SetVisibleChildName(MEDIA_PAGE_NAME)
 					})
 				}()
 			case MEDIA_PAGE_NAME:
 				nextButton.SetVisible(false)
-				headerbarTitle.SetText("Ready to Go")
+				window.SetTitle("Ready to Go")
 
 				stack.SetVisibleChildName(READY_PAGE_NAME)
 			}
@@ -105,13 +104,13 @@ func main() {
 			switch stack.VisibleChildName() {
 			case MEDIA_PAGE_NAME:
 				previousButton.SetVisible(false)
-				headerbarTitle.SetText("Welcome")
+				window.SetTitle("Welcome")
 				nextButton.SetSensitive(true)
 
 				stack.SetVisibleChildName(WELCOME_PAGE_NAME)
 			case READY_PAGE_NAME:
 				nextButton.SetVisible(true)
-				headerbarTitle.SetText("Media")
+				window.SetTitle("Media")
 
 				stack.SetVisibleChildName(MEDIA_PAGE_NAME)
 			}
