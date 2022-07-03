@@ -55,6 +55,8 @@ func openAssistantWindow(app *adw.Application) error {
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
+	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
 	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -64,7 +66,10 @@ func openAssistantWindow(app *adw.Application) error {
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 
+	selectedTorrent := "Sintel (2010)"
 	selectedMedia := ""
+
+	activators := []*gtk.CheckButton{}
 
 	stack.ConnectShow(func() {
 		stack.SetVisibleChildName(welcomePageName)
@@ -72,6 +77,9 @@ func openAssistantWindow(app *adw.Application) error {
 
 	magnetLinkEntry.ConnectChanged(func() {
 		selectedMedia = ""
+		for _, activator := range activators {
+			activator.SetActive(false)
+		}
 
 		if magnetLinkEntry.Text() == "" {
 			nextButton.SetSensitive(false)
@@ -96,14 +104,17 @@ func openAssistantWindow(app *adw.Application) error {
 					headerbarSpinner.SetSpinning(false)
 
 					previousButton.SetVisible(true)
-					window.SetTitle("Media")
+
+					headerbarTitle.SetLabel(selectedTorrent)
 
 					stack.SetVisibleChildName(mediaPageName)
 				})
 			}()
 		case mediaPageName:
 			nextButton.SetVisible(false)
-			window.SetTitle("Ready to Go")
+
+			headerbarSubtitle.SetVisible(true)
+			headerbarSubtitle.SetLabel(selectedMedia)
 
 			stack.SetVisibleChildName(readyPageName)
 		}
@@ -113,13 +124,17 @@ func openAssistantWindow(app *adw.Application) error {
 		switch stack.VisibleChildName() {
 		case mediaPageName:
 			previousButton.SetVisible(false)
-			window.SetTitle("Welcome")
 			nextButton.SetSensitive(true)
+
+			headerbarTitle.SetLabel("Welcome")
+			headerbarSubtitle.SetVisible(false)
 
 			stack.SetVisibleChildName(welcomePageName)
 		case readyPageName:
 			nextButton.SetVisible(true)
-			window.SetTitle("Media")
+
+			headerbarTitle.SetLabel(selectedTorrent)
+			headerbarSubtitle.SetVisible(false)
 
 			stack.SetVisibleChildName(mediaPageName)
 		}
@@ -136,15 +151,16 @@ func openAssistantWindow(app *adw.Application) error {
 		}
 		mediaRows = []*adw.ActionRow{}
 
-		var lastActivator *gtk.CheckButton
-		for _, file := range files {
+		activators = []*gtk.CheckButton{}
+		for i, file := range files {
 			row := adw.NewActionRow()
 
 			activator := gtk.NewCheckButton()
-			if activator != nil {
-				activator.SetGroup(lastActivator)
+
+			if len(activators) > 0 {
+				activator.SetGroup(activators[i-1])
 			}
-			lastActivator = activator
+			activators = append(activators, activator)
 
 			m := file.name
 			activator.SetActive(false)
