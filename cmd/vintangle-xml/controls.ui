@@ -6,7 +6,7 @@
     <object class="AdwApplicationWindow" id="main-window">
         <property name="default-width">700</property>
         <property name="default-height">0</property>
-        <property name="title">Vintangle - movie.mkv</property>
+        <property name="title">Vintangle</property>
         <property name="resizable">false</property>
 
         <property name="content">
@@ -20,6 +20,30 @@
                                 <style>
                                     <class name="flat"></class>
                                 </style>
+
+                                <property name="title-widget">
+                                    <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">center</property>
+
+                                        <child>
+                                            <object class="GtkLabel" id="headerbar-title">
+                                                <style>
+                                                    <class name="title"></class>
+                                                </style>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkLabel" id="headerbar-subtitle">
+                                                <style>
+                                                    <class name="subtitle"></class>
+                                                </style>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </property>
 
                                 <child type="end">
                                     <object class="GtkButton">

@@ -6,7 +6,7 @@
     <object class="AdwApplicationWindow" id="main-window">
         <property name="default-width">1024</property>
         <property name="default-height">680</property>
-        <property name="title">Welcome</property>
+        <property name="title">Vintangle</property>
 
         <property name="content">
             <object class="GtkBox">

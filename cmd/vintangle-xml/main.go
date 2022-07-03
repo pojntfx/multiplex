@@ -201,7 +201,7 @@ func openAssistantWindow(app *adw.Application) error {
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app); err != nil {
+		if err := openControlsWindow(app, selectedTorrent, selectedMedia); err != nil {
 			panic(err)
 		}
 	})
@@ -213,14 +213,19 @@ func openAssistantWindow(app *adw.Application) error {
 	return nil
 }
 
-func openControlsWindow(app *adw.Application) error {
+func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
+	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+
+	headerbarTitle.SetLabel(selectedTorrent)
+	headerbarSubtitle.SetLabel(selectedMedia)
 
 	playButton.ConnectClicked(func() {
 		if playButton.IconName() == playIcon {
