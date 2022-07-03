@@ -46,7 +46,7 @@
                                 <property name="margin-bottom">24</property>
 
                                 <child>
-                                    <object class="GtkButton">
+                                    <object class="GtkButton" id="play-button">
                                         <style>
                                             <class name="flat"></class>
                                         </style>
@@ -98,7 +98,7 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkButton">
+                                    <object class="GtkToggleButton">
                                         <style>
                                             <class name="flat"></class>
                                         </style>

@@ -41,9 +41,12 @@ var (
 )
 
 const (
-	WELCOME_PAGE_NAME = "welcome-page"
-	MEDIA_PAGE_NAME   = "media-page"
-	READY_PAGE_NAME   = "ready-page"
+	welcomePageName = "welcome-page"
+	mediaPageName   = "media-page"
+	readyPageName   = "ready-page"
+
+	playIcon  = "media-playback-start-symbolic"
+	pauseIcon = "media-playback-pause-symbolic"
 )
 
 func openAssistantWindow(app *adw.Application) error {
@@ -64,7 +67,7 @@ func openAssistantWindow(app *adw.Application) error {
 	selectedMedia := ""
 
 	stack.ConnectShow(func() {
-		stack.SetVisibleChildName(WELCOME_PAGE_NAME)
+		stack.SetVisibleChildName(welcomePageName)
 	})
 
 	magnetLinkEntry.ConnectChanged(func() {
@@ -81,7 +84,7 @@ func openAssistantWindow(app *adw.Application) error {
 
 	onNext := func() {
 		switch stack.VisibleChildName() {
-		case WELCOME_PAGE_NAME:
+		case welcomePageName:
 			if selectedMedia == "" {
 				nextButton.SetSensitive(false)
 			}
@@ -95,30 +98,30 @@ func openAssistantWindow(app *adw.Application) error {
 					previousButton.SetVisible(true)
 					window.SetTitle("Media")
 
-					stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+					stack.SetVisibleChildName(mediaPageName)
 				})
 			}()
-		case MEDIA_PAGE_NAME:
+		case mediaPageName:
 			nextButton.SetVisible(false)
 			window.SetTitle("Ready to Go")
 
-			stack.SetVisibleChildName(READY_PAGE_NAME)
+			stack.SetVisibleChildName(readyPageName)
 		}
 	}
 
 	onPrevious := func() {
 		switch stack.VisibleChildName() {
-		case MEDIA_PAGE_NAME:
+		case mediaPageName:
 			previousButton.SetVisible(false)
 			window.SetTitle("Welcome")
 			nextButton.SetSensitive(true)
 
-			stack.SetVisibleChildName(WELCOME_PAGE_NAME)
-		case READY_PAGE_NAME:
+			stack.SetVisibleChildName(welcomePageName)
+		case readyPageName:
 			nextButton.SetVisible(true)
 			window.SetTitle("Media")
 
-			stack.SetVisibleChildName(MEDIA_PAGE_NAME)
+			stack.SetVisibleChildName(mediaPageName)
 		}
 	}
 
@@ -200,7 +203,18 @@ func openControlsWindow(app *adw.Application) error {
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+
+	playButton.ConnectClicked(func() {
+		if playButton.IconName() == playIcon {
+			playButton.SetIconName(pauseIcon)
+
+			return
+		}
+
+		playButton.SetIconName(playIcon)
+	})
 
 	stopButton.ConnectClicked(func() {
 		window.Close()
