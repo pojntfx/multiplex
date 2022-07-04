@@ -55,6 +55,10 @@
                                             <object class="GtkBox">
                                                 <child>
                                                     <object class="GtkPopover" id="headerbar-popover">
+                                                        <style>
+                                                            <class name="headerbar-readme-popover"></class>
+                                                        </style>
+
                                                         <property name="width-request">400</property>
 
                                                         <child>
@@ -74,7 +78,7 @@
                                                         <style>
                                                             <class name="flat"></class>
                                                             <class name="circular"></class>
-                                                            <class name="info-button"></class>
+                                                            <class name="headerbar-readme-button"></class>
                                                         </style>
 
                                                         <property name="icon-name">info-symbolic</property>
