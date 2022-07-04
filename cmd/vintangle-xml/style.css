@@ -2,6 +2,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-.info-button {
+.headerbar-readme-button {
   margin-left: -6px;
+}
+
+.headerbar-readme-popover {
+  margin-left: -3px;
 }
