@@ -1,3 +1,7 @@
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+.info-button {
+  margin-left: -6px;
+}
