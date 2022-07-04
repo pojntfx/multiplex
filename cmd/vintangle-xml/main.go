@@ -220,7 +220,7 @@ func openAssistantWindow(app *adw.Application) error {
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, selectedTorrent, selectedMedia); err != nil {
+		if err := openControlsWindow(app, selectedTorrent, selectedMedia, selectedReadme); err != nil {
 			panic(err)
 		}
 	})
@@ -232,16 +232,20 @@ func openAssistantWindow(app *adw.Application) error {
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia string) error {
+func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, selectedReadme string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
+	headerbarTitles := builder.GetObject("headerbar-titles").Cast().(*gtk.Box)
 	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
 	headerbarTitle.SetLabel(selectedTorrent)
 	headerbarSubtitle.SetLabel(selectedMedia)
@@ -264,7 +268,22 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia str
 		}
 	})
 
+	mediaInfoButton.ConnectClicked(func() {
+		headerbarPopover.SetVisible(!headerbarPopover.Visible())
+	})
+
+	if selectedReadme != "" {
+		headerbarTitles.SetMarginStart(30)
+		mediaInfoButton.SetVisible(true)
+		headerbarReadme.SetWrapMode(gtk.WrapWord)
+		headerbarReadme.Buffer().SetText(selectedReadme)
+	}
+
 	app.AddWindow(&window.Window)
+
+	window.ConnectShow(func() {
+		playButton.GrabFocus()
+	})
 
 	window.Show()
 
