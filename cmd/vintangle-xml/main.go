@@ -55,8 +55,11 @@ func openAssistantWindow(app *adw.Application) error {
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
+	headerbarTitles := builder.GetObject("headerbar-titles").Cast().(*gtk.Box)
 	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
 	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -65,9 +68,11 @@ func openAssistantWindow(app *adw.Application) error {
 	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
 	selectedTorrent := "Sintel (2010)"
 	selectedMedia := ""
+	selectedReadme := `A lonely young woman, Sintel, helps and befriends a dragon, whom she calls Scales. But when he is kidnapped by an adult dragon, Sintel decides to embark on a dangerous quest to find her lost friend Scales.`
 
 	activators := []*gtk.CheckButton{}
 
@@ -116,6 +121,13 @@ func openAssistantWindow(app *adw.Application) error {
 			headerbarSubtitle.SetVisible(true)
 			headerbarSubtitle.SetLabel(selectedMedia)
 
+			if selectedReadme != "" {
+				headerbarTitles.SetMarginStart(30)
+				mediaInfoButton.SetVisible(true)
+				headerbarReadme.SetWrapMode(gtk.WrapWord)
+				headerbarReadme.Buffer().SetText(selectedReadme)
+			}
+
 			stack.SetVisibleChildName(readyPageName)
 		}
 	}
@@ -135,6 +147,9 @@ func openAssistantWindow(app *adw.Application) error {
 
 			headerbarTitle.SetLabel(selectedTorrent)
 			headerbarSubtitle.SetVisible(false)
+
+			headerbarTitles.SetMarginStart(0)
+			mediaInfoButton.SetVisible(false)
 
 			stack.SetVisibleChildName(mediaPageName)
 		}
@@ -184,6 +199,10 @@ func openAssistantWindow(app *adw.Application) error {
 			mediaRows = append(mediaRows, row)
 			mediaSelectionGroup.Add(row)
 		}
+	})
+
+	mediaInfoButton.ConnectClicked(func() {
+		headerbarPopover.SetVisible(!headerbarPopover.Visible())
 	})
 
 	rightsConfirmationButton.ConnectToggled(func() {
