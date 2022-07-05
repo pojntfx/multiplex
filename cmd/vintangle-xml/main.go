@@ -56,9 +56,9 @@ func openAssistantWindow(app *adw.Application) error {
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
-	headerbarTitles := builder.GetObject("headerbar-titles").Cast().(*gtk.Box)
 	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
-	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
+	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
@@ -68,6 +68,7 @@ func openAssistantWindow(app *adw.Application) error {
 	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
 	selectedTorrent := "Sintel (2010)"
@@ -111,6 +112,7 @@ func openAssistantWindow(app *adw.Application) error {
 					previousButton.SetVisible(true)
 
 					headerbarTitle.SetLabel(selectedTorrent)
+					buttonHeaderbarTitle.SetLabel(selectedTorrent)
 
 					stack.SetVisibleChildName(mediaPageName)
 				})
@@ -118,15 +120,14 @@ func openAssistantWindow(app *adw.Application) error {
 		case mediaPageName:
 			nextButton.SetVisible(false)
 
-			headerbarSubtitle.SetVisible(true)
-			headerbarSubtitle.SetLabel(selectedMedia)
+			buttonHeaderbarSubtitle.SetVisible(true)
+			buttonHeaderbarSubtitle.SetLabel(selectedMedia)
 
-			if selectedReadme != "" {
-				headerbarTitles.SetMarginStart(30)
-				mediaInfoButton.SetVisible(true)
-				headerbarReadme.SetWrapMode(gtk.WrapWord)
-				headerbarReadme.Buffer().SetText(selectedReadme)
-			}
+			mediaInfoDisplay.SetVisible(false)
+			mediaInfoButton.SetVisible(true)
+
+			headerbarReadme.SetWrapMode(gtk.WrapWord)
+			headerbarReadme.Buffer().SetText(selectedReadme)
 
 			stack.SetVisibleChildName(readyPageName)
 		}
@@ -139,16 +140,15 @@ func openAssistantWindow(app *adw.Application) error {
 			nextButton.SetSensitive(true)
 
 			headerbarTitle.SetLabel("Welcome")
-			headerbarSubtitle.SetVisible(false)
 
 			stack.SetVisibleChildName(welcomePageName)
 		case readyPageName:
 			nextButton.SetVisible(true)
 
 			headerbarTitle.SetLabel(selectedTorrent)
-			headerbarSubtitle.SetVisible(false)
+			buttonHeaderbarTitle.SetLabel(selectedTorrent)
 
-			headerbarTitles.SetMarginStart(0)
+			mediaInfoDisplay.SetVisible(true)
 			mediaInfoButton.SetVisible(false)
 
 			stack.SetVisibleChildName(mediaPageName)
@@ -199,6 +199,10 @@ func openAssistantWindow(app *adw.Application) error {
 			mediaRows = append(mediaRows, row)
 			mediaSelectionGroup.Add(row)
 		}
+	})
+
+	headerbarPopover.ConnectShow(func() {
+		headerbarPopover.SetOffset(0, 6)
 	})
 
 	mediaInfoButton.ConnectClicked(func() {

@@ -13,26 +13,25 @@
                 <property name="orientation">vertical</property>
 
                 <child>
-                    <object class="AdwHeaderBar">
+                    <object class="AdwHeaderBar" id="headerbar">
                         <style>
                             <class name="flat"></class>
                         </style>
+
+                        <property name="show-end-title-buttons">false</property>
 
                         <child type="start">
                             <object class="GtkButton" id="previous-button">
                                 <property name="label">Previous</property>
                                 <property name="visible">false</property>
+                                <property name="valign">start</property>
                             </object>
                         </child>
 
-                        <property name="title-widget">
+                        <child type="title">
                             <object class="GtkBox">
-                                <property name="orientation">horizontal</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-
                                 <child>
-                                    <object class="GtkBox" id="headerbar-titles">
+                                    <object class="GtkBox" id="media-info-display">
                                         <property name="orientation">vertical</property>
                                         <property name="halign">center</property>
                                         <property name="valign">center</property>
@@ -46,62 +45,74 @@
                                                 <property name="label">Welcome</property>
                                             </object>
                                         </child>
-
-                                        <child>
-                                            <object class="GtkLabel" id="headerbar-subtitle">
-                                                <style>
-                                                    <class name="subtitle"></class>
-                                                </style>
-
-                                                <property name="visible">false</property>
-                                            </object>
-                                        </child>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="GtkBox">
+                                    <object class="GtkButton" id="media-info-button">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
+
+                                        <property name="visible">false</property>
+
                                         <child>
-                                            <object class="GtkPopover" id="headerbar-popover">
-                                                <style>
-                                                    <class name="headerbar-readme-popover"></class>
-                                                </style>
-
-                                                <property name="width-request">400</property>
-
+                                            <object class="GtkBox">
                                                 <child>
-                                                    <object class="GtkTextView" id="headerbar-readme">
-                                                        <property name="margin-top">6</property>
-                                                        <property name="margin-start">6</property>
-                                                        <property name="margin-end">6</property>
-                                                        <property name="margin-bottom">6</property>
-                                                        <property name="editable">false</property>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="halign">center</property>
+                                                        <property name="valign">center</property>
+
+                                                        <child>
+                                                            <object class="GtkLabel" id="button-headerbar-title">
+                                                                <style>
+                                                                    <class name="title"></class>
+                                                                </style>
+
+                                                                <property name="label">Welcome</property>
+                                                            </object>
+                                                        </child>
+
+                                                        <child>
+                                                            <object class="GtkLabel" id="button-headerbar-subtitle">
+                                                                <style>
+                                                                    <class name="subtitle"></class>
+                                                                </style>
+
+                                                                <property name="visible">false</property>
+                                                            </object>
+                                                        </child>
                                                     </object>
                                                 </child>
-                                            </object>
-                                        </child>
 
-                                        <child>
-                                            <object class="GtkButton" id="media-info-button">
-                                                <style>
-                                                    <class name="flat"></class>
-                                                    <class name="circular"></class>
-                                                    <class name="headerbar-readme-button"></class>
-                                                </style>
+                                                <child>
+                                                    <object class="GtkPopover" id="headerbar-popover">
+                                                        <property name="width-request">400</property>
 
-                                                <property name="icon-name">info-symbolic</property>
-                                                <property name="visible">false</property>
+                                                        <child>
+                                                            <object class="GtkTextView" id="headerbar-readme">
+                                                                <property name="margin-top">6</property>
+                                                                <property name="margin-start">6</property>
+                                                                <property name="margin-end">6</property>
+                                                                <property name="margin-bottom">6</property>
+                                                                <property name="editable">false</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
                             </object>
-                        </property>
+                        </child>
 
                         <child type="end">
                             <object class="GtkBox">
                                 <property name="orientation">horizontal</property>
                                 <property name="spacing">12</property>
+                                <property name="valign">start</property>
 
                                 <child>
                                     <object class="GtkSpinner" id="headerbar-spinner"></object>
@@ -115,6 +126,12 @@
 
                                         <property name="label">Next</property>
                                         <property name="sensitive">false</property>
+                                    </object>
+                                </child>
+
+                                <child>
+                                    <object class="GtkWindowControls">
+                                        <property name="side">end</property>
                                     </object>
                                 </child>
                             </object>
