@@ -47,6 +47,8 @@ const (
 
 	playIcon  = "media-playback-start-symbolic"
 	pauseIcon = "media-playback-pause-symbolic"
+
+	readmePlaceholder = "No README found."
 )
 
 func openAssistantWindow(app *adw.Application) error {
@@ -125,7 +127,11 @@ func openAssistantWindow(app *adw.Application) error {
 			mediaInfoButton.SetVisible(true)
 
 			headerbarReadme.SetWrapMode(gtk.WrapWord)
-			headerbarReadme.Buffer().SetText(selectedReadme)
+			if selectedReadme == "" {
+				headerbarReadme.Buffer().SetText(readmePlaceholder)
+			} else {
+				headerbarReadme.Buffer().SetText(selectedReadme)
+			}
 
 			stack.SetVisibleChildName(readyPageName)
 		}
@@ -274,7 +280,11 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 	})
 
 	headerbarReadme.SetWrapMode(gtk.WrapWord)
-	headerbarReadme.Buffer().SetText(selectedReadme)
+	if selectedReadme == "" {
+		headerbarReadme.Buffer().SetText(readmePlaceholder)
+	} else {
+		headerbarReadme.Buffer().SetText(selectedReadme)
+	}
 
 	app.AddWindow(&window.Window)
 
