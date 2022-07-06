@@ -77,9 +77,7 @@ func openAssistantWindow(app *adw.Application) error {
 
 	activators := []*gtk.CheckButton{}
 
-	stack.ConnectShow(func() {
-		stack.SetVisibleChildName(welcomePageName)
-	})
+	stack.SetVisibleChildName(welcomePageName)
 
 	magnetLinkEntry.ConnectChanged(func() {
 		selectedMedia = ""
@@ -201,9 +199,7 @@ func openAssistantWindow(app *adw.Application) error {
 		}
 	})
 
-	headerbarPopover.ConnectShow(func() {
-		headerbarPopover.SetOffset(0, 6)
-	})
+	headerbarPopover.SetOffset(0, 6)
 
 	mediaInfoButton.ConnectClicked(func() {
 		headerbarPopover.SetVisible(!headerbarPopover.Visible())
@@ -243,16 +239,15 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
-	headerbarTitles := builder.GetObject("headerbar-titles").Cast().(*gtk.Box)
-	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
-	headerbarSubtitle := builder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
+	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	headerbarTitle.SetLabel(selectedTorrent)
-	headerbarSubtitle.SetLabel(selectedMedia)
+	buttonHeaderbarTitle.SetLabel(selectedTorrent)
+	buttonHeaderbarSubtitle.SetLabel(selectedMedia)
 
 	playButton.ConnectClicked(func() {
 		if playButton.IconName() == playIcon {
@@ -272,16 +267,14 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 		}
 	})
 
+	headerbarPopover.SetOffset(0, 6)
+
 	mediaInfoButton.ConnectClicked(func() {
 		headerbarPopover.SetVisible(!headerbarPopover.Visible())
 	})
 
-	if selectedReadme != "" {
-		headerbarTitles.SetMarginStart(30)
-		mediaInfoButton.SetVisible(true)
-		headerbarReadme.SetWrapMode(gtk.WrapWord)
-		headerbarReadme.Buffer().SetText(selectedReadme)
-	}
+	headerbarReadme.SetWrapMode(gtk.WrapWord)
+	headerbarReadme.Buffer().SetText(selectedReadme)
 
 	app.AddWindow(&window.Window)
 
