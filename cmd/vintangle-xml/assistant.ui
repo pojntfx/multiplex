@@ -13,7 +13,7 @@
                 <property name="orientation">vertical</property>
 
                 <child>
-                    <object class="AdwHeaderBar" id="headerbar">
+                    <object class="AdwHeaderBar">
                         <style>
                             <class name="flat"></class>
                         </style>

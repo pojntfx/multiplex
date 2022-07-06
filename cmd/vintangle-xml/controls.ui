@@ -21,44 +21,42 @@
                                     <class name="flat"></class>
                                 </style>
 
-                                <property name="title-widget">
-                                    <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">center</property>
+                                <property name="show-end-title-buttons">false</property>
 
-                                        <child>
-                                            <object class="GtkBox" id="headerbar-titles">
-                                                <property name="orientation">vertical</property>
-                                                <property name="halign">center</property>
-                                                <property name="valign">center</property>
-
-                                                <child>
-                                                    <object class="GtkLabel" id="headerbar-title">
-                                                        <style>
-                                                            <class name="title"></class>
-                                                        </style>
-                                                    </object>
-                                                </child>
-
-                                                <child>
-                                                    <object class="GtkLabel" id="headerbar-subtitle">
-                                                        <style>
-                                                            <class name="subtitle"></class>
-                                                        </style>
-                                                    </object>
-                                                </child>
-                                            </object>
-                                        </child>
+                                <child type="title">
+                                    <object class="GtkButton" id="media-info-button">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
 
                                         <child>
                                             <object class="GtkBox">
                                                 <child>
-                                                    <object class="GtkPopover" id="headerbar-popover">
-                                                        <style>
-                                                            <class name="headerbar-readme-popover"></class>
-                                                        </style>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="halign">center</property>
+                                                        <property name="valign">center</property>
 
+                                                        <child>
+                                                            <object class="GtkLabel" id="button-headerbar-title">
+                                                                <style>
+                                                                    <class name="title"></class>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+
+                                                        <child>
+                                                            <object class="GtkLabel" id="button-headerbar-subtitle">
+                                                                <style>
+                                                                    <class name="subtitle"></class>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+
+                                                <child>
+                                                    <object class="GtkPopover" id="headerbar-popover">
                                                         <property name="width-request">400</property>
 
                                                         <child>
@@ -72,32 +70,33 @@
                                                         </child>
                                                     </object>
                                                 </child>
-
-                                                <child>
-                                                    <object class="GtkButton" id="media-info-button">
-                                                        <style>
-                                                            <class name="flat"></class>
-                                                            <class name="circular"></class>
-                                                            <class name="headerbar-readme-button"></class>
-                                                        </style>
-
-                                                        <property name="icon-name">info-symbolic</property>
-                                                        <property name="visible">false</property>
-                                                    </object>
-                                                </child>
                                             </object>
                                         </child>
                                     </object>
-                                </property>
+                                </child>
 
                                 <child type="end">
-                                    <object class="GtkButton">
-                                        <style>
-                                            <class name="flat"></class>
-                                        </style>
+                                    <object class="GtkBox">
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">12</property>
+                                        <property name="valign">start</property>
 
-                                        <property name="icon-name">edit-copy-symbolic</property>
-                                        <property name="tooltip-text">Copy magnet link to media</property>
+                                        <child>
+                                            <object class="GtkButton">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                </style>
+
+                                                <property name="icon-name">edit-copy-symbolic</property>
+                                                <property name="tooltip-text">Copy magnet link to media</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkWindowControls">
+                                                <property name="side">end</property>
+                                            </object>
+                                        </child>
                                     </object>
                                 </child>
                             </object>
