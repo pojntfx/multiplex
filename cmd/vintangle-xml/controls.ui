@@ -134,13 +134,20 @@
                                 </child>
 
                                 <child>
+                                    <object class="GtkSeparator">
+                                        <style>
+                                            <class name="spacer"></class>
+                                        </style>
+                                    </object>
+                                </child>
+
+                                <child>
                                     <object class="GtkLabel">
                                         <style>
                                             <class name="tabular-nums"></class>
                                         </style>
 
                                         <property name="label">00:00:00</property>
-                                        <property name="margin-start">12</property>
                                     </object>
                                 </child>
 
@@ -157,7 +164,14 @@
                                         </style>
 
                                         <property name="label">-00:00:00</property>
-                                        <property name="margin-end">12</property>
+                                    </object>
+                                </child>
+
+                                <child>
+                                    <object class="GtkSeparator">
+                                        <style>
+                                            <class name="spacer"></class>
+                                        </style>
                                     </object>
                                 </child>
 
