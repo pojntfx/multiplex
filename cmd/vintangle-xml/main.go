@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"time"
 
@@ -68,6 +70,27 @@ func randSeq(n int) string {
 	}
 
 	return string(b)
+}
+
+func getStreamURL(base string, magnet, path string) (string, error) {
+	baseURL, err := url.Parse(base)
+	if err != nil {
+		return "", err
+	}
+
+	streamSuffix, err := url.Parse("/stream")
+	if err != nil {
+		return "", err
+	}
+
+	stream := baseURL.ResolveReference(streamSuffix)
+
+	q := stream.Query()
+	q.Set("magnet", magnet)
+	q.Set("path", path)
+	stream.RawQuery = q.Encode()
+
+	return stream.String(), nil
 }
 
 func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
@@ -176,7 +199,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			nextButton.SetVisible(false)
 
 			buttonHeaderbarSubtitle.SetVisible(true)
-			buttonHeaderbarSubtitle.SetLabel(selectedTorrentMedia)
+			buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
 
 			mediaInfoDisplay.SetVisible(false)
 			mediaInfoButton.SetVisible(true)
@@ -281,7 +304,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text()); err != nil {
 			panic(err)
 		}
 	})
@@ -293,7 +316,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, selectedReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
+func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -306,9 +329,19 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
 
-	buttonHeaderbarTitle.SetLabel(selectedTorrent)
-	buttonHeaderbarSubtitle.SetLabel(selectedMedia)
+	// streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	buttonHeaderbarTitle.SetLabel(torrentTitle)
+	buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
+
+	copyButton.ConnectClicked(func() {
+		window.Clipboard().SetText(magnetLink)
+	})
 
 	playButton.ConnectClicked(func() {
 		if playButton.IconName() == playIcon {
@@ -335,10 +368,10 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 	})
 
 	headerbarReadme.SetWrapMode(gtk.WrapWord)
-	if selectedReadme == "" {
+	if torrentReadme == "" {
 		headerbarReadme.Buffer().SetText(readmePlaceholder)
 	} else {
-		headerbarReadme.Buffer().SetText(selectedReadme)
+		headerbarReadme.Buffer().SetText(torrentReadme)
 	}
 
 	app.AddWindow(&window.Window)

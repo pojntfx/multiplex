@@ -82,7 +82,7 @@
                                         <property name="valign">start</property>
 
                                         <child>
-                                            <object class="GtkButton">
+                                            <object class="GtkButton" id="copy-button">
                                                 <style>
                                                     <class name="flat"></class>
                                                 </style>
