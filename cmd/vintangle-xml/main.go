@@ -1,14 +1,24 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"math/rand"
+	"net"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/phayes/freeport"
+	"github.com/pojntfx/htorrent/pkg/client"
+	"github.com/pojntfx/htorrent/pkg/server"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	_ "embed"
 )
@@ -38,6 +48,8 @@ var (
 			size: 130000000,
 		},
 	}
+
+	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 const (
@@ -49,14 +61,33 @@ const (
 	pauseIcon = "media-playback-pause-symbolic"
 
 	readmePlaceholder = "No README found."
+
+	verboseFlag = "verbose"
+	storageFlag = "storage"
+	mpvFlag     = "mpv"
+
+	verboseFlagDefault = 5
+	mpvFlagDefault     = "mpv"
 )
 
-func openAssistantWindow(app *adw.Application) error {
+// See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
+func randSeq(n int) string {
+	b := make([]rune, n)
+
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(b)
+}
+
+func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
 	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
@@ -73,7 +104,7 @@ func openAssistantWindow(app *adw.Application) error {
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	selectedTorrent := "Sintel (2010)"
+	selectedTorrent := ""
 	selectedMedia := ""
 	selectedReadme := `A lonely young woman, Sintel, helps and befriends a dragon, whom she calls Scales. But when he is kidnapped by an adult dragon, Sintel decides to embark on a dangerous quest to find her lost friend Scales.`
 
@@ -104,18 +135,44 @@ func openAssistantWindow(app *adw.Application) error {
 			}
 
 			headerbarSpinner.SetSpinning(true)
+			magnetLinkEntry.SetSensitive(false)
 
 			go func() {
-				time.AfterFunc(time.Millisecond*100, func() {
+				magnetLink := magnetLinkEntry.Text()
+
+				log.Info().
+					Str("magnetLink", magnetLink).
+					Msg("Getting info for magnet link")
+
+				info, err := manager.GetInfo(magnetLink)
+				if err != nil {
+					log.Warn().
+						Str("magnetLink", magnetLink).
+						Err(err).
+						Msg("Could not get info for magnet link")
+
+					toast := adw.NewToast("Could not get info for this magnet link.")
+
+					overlay.AddToast(toast)
+
 					headerbarSpinner.SetSpinning(false)
+					magnetLinkEntry.SetSensitive(true)
 
-					previousButton.SetVisible(true)
+					magnetLinkEntry.GrabFocus()
 
-					headerbarTitle.SetLabel(selectedTorrent)
-					buttonHeaderbarTitle.SetLabel(selectedTorrent)
+					return
+				}
 
-					stack.SetVisibleChildName(mediaPageName)
-				})
+				selectedTorrent = info.Name
+
+				headerbarSpinner.SetSpinning(false)
+				magnetLinkEntry.SetSensitive(true)
+				previousButton.SetVisible(true)
+
+				headerbarTitle.SetLabel(selectedTorrent)
+				buttonHeaderbarTitle.SetLabel(selectedTorrent)
+
+				stack.SetVisibleChildName(mediaPageName)
 			}()
 		case mediaPageName:
 			nextButton.SetVisible(false)
@@ -226,7 +283,7 @@ func openAssistantWindow(app *adw.Application) error {
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, selectedTorrent, selectedMedia, selectedReadme); err != nil {
+		if err := openControlsWindow(app, selectedTorrent, selectedMedia, selectedReadme, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
 			panic(err)
 		}
 	})
@@ -238,7 +295,7 @@ func openAssistantWindow(app *adw.Application) error {
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, selectedReadme string) error {
+func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, selectedReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -268,7 +325,7 @@ func openControlsWindow(app *adw.Application, selectedTorrent, selectedMedia, se
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(app); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
 			panic(err)
 		}
 	})
@@ -303,6 +360,58 @@ func main() {
 	prov := gtk.NewCSSProvider()
 	prov.LoadFromData(styleCSS)
 
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	storageFlagDefault := filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data")
+
+	app.AddMainOption(verboseFlag, byte('v'), glib.OptionFlagInMain, glib.OptionArgInt64, fmt.Sprintf(`Verbosity level (0 is disabled, default is info, 7 is trace) (default %v)`, verboseFlagDefault), "")
+	app.AddMainOption(storageFlag, byte('s'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Path to store downloaded torrents in (default "%v")`, storageFlagDefault), "")
+	app.AddMainOption(mpvFlag, byte('m'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Command to launch mpv with (default "%v")`, mpvFlagDefault), "")
+
+	verbose := int64(verboseFlagDefault)
+	storage := storageFlagDefault
+	mpv := mpvFlagDefault
+
+	app.ConnectHandleLocalOptions(func(options *glib.VariantDict) (gint int) {
+		if options.Contains(verboseFlag) {
+			verbose = options.LookupValue(verboseFlag, glib.NewVariantInt64(0).Type()).Int64()
+		}
+
+		if options.Contains(storageFlag) {
+			storage = options.LookupValue(storageFlag, glib.NewVariantString("").Type()).String()
+		}
+
+		if options.Contains(mpvFlag) {
+			mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
+		}
+
+		switch verbose {
+		case 0:
+			zerolog.SetGlobalLevel(zerolog.Disabled)
+		case 1:
+			zerolog.SetGlobalLevel(zerolog.PanicLevel)
+		case 2:
+			zerolog.SetGlobalLevel(zerolog.FatalLevel)
+		case 3:
+			zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+		case 4:
+			zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		case 5:
+			zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		case 6:
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		default:
+			zerolog.SetGlobalLevel(zerolog.TraceLevel)
+		}
+
+		return -1
+	})
+
+	var gateway *server.Gateway
+	ctx, cancel := context.WithCancel(context.Background())
+
 	app.ConnectActivate(func() {
 		gtk.StyleContextAddProviderForDisplay(
 			gdk.DisplayGetDefault(),
@@ -310,9 +419,74 @@ func main() {
 			gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
 		)
 
-		if err := openAssistantWindow(app); err != nil {
+		addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+		if err != nil {
 			panic(err)
 		}
+
+		port, err := freeport.GetFreePort()
+		if err != nil {
+			panic(err)
+		}
+		addr.Port = port
+
+		rand.Seed(time.Now().UnixNano())
+
+		apiUsername := randSeq(20)
+		apiPassword := randSeq(20)
+
+		gateway = server.NewGateway(
+			addr.String(),
+			storage,
+			apiUsername,
+			apiPassword,
+			"",
+			"",
+			verbose > 5,
+			func(peers int, total, completed int64, path string) {
+				log.Info().
+					Int("peers", peers).
+					Int64("total", total).
+					Int64("completed", completed).
+					Str("path", path).
+					Msg("Streaming")
+			},
+			ctx,
+		)
+
+		if err := gateway.Open(); err != nil {
+			panic(err)
+		}
+
+		go func() {
+			log.Info().
+				Str("address", addr.String()).
+				Msg("Gateway listening")
+
+			if err := gateway.Wait(); err != nil {
+				panic(err)
+			}
+		}()
+
+		apiAddr := "http://" + addr.String()
+		manager := client.NewManager(
+			apiAddr,
+			apiUsername,
+			apiPassword,
+			ctx,
+		)
+
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+			panic(err)
+		}
+	})
+
+	app.ConnectShutdown(func() {
+		if err := gateway.Close(); err != nil {
+			panic(err)
+		}
+
+		cancel()
 	})
 
 	if code := app.Run(os.Args); code > 0 {
