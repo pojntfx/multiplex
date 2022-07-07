@@ -38,17 +38,6 @@ var (
 	//go:embed style.css
 	styleCSS string
 
-	files = []media{
-		{
-			name: "movie.mkv",
-			size: 2200000000,
-		},
-		{
-			name: "extras.mp4",
-			size: 130000000,
-		},
-	}
-
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
@@ -104,16 +93,17 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	selectedTorrent := ""
-	selectedMedia := ""
-	selectedReadme := `A lonely young woman, Sintel, helps and befriends a dragon, whom she calls Scales. But when he is kidnapped by an adult dragon, Sintel decides to embark on a dangerous quest to find her lost friend Scales.`
+	torrentTitle := ""
+	torrentMedia := []media{}
+	torrentReadme := ""
 
+	selectedTorrentMedia := ""
 	activators := []*gtk.CheckButton{}
 
 	stack.SetVisibleChildName(welcomePageName)
 
 	magnetLinkEntry.ConnectChanged(func() {
-		selectedMedia = ""
+		selectedTorrentMedia = ""
 		for _, activator := range activators {
 			activator.SetActive(false)
 		}
@@ -130,7 +120,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	onNext := func() {
 		switch stack.VisibleChildName() {
 		case welcomePageName:
-			if selectedMedia == "" {
+			if selectedTorrentMedia == "" {
 				nextButton.SetSensitive(false)
 			}
 
@@ -163,14 +153,22 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 					return
 				}
 
-				selectedTorrent = info.Name
+				torrentTitle = info.Name
+				torrentReadme = info.Description
+				torrentMedia = []media{}
+				for _, file := range info.Files {
+					torrentMedia = append(torrentMedia, media{
+						name: file.Path,
+						size: int(file.Length),
+					})
+				}
 
 				headerbarSpinner.SetSpinning(false)
 				magnetLinkEntry.SetSensitive(true)
 				previousButton.SetVisible(true)
 
-				headerbarTitle.SetLabel(selectedTorrent)
-				buttonHeaderbarTitle.SetLabel(selectedTorrent)
+				headerbarTitle.SetLabel(torrentTitle)
+				buttonHeaderbarTitle.SetLabel(torrentTitle)
 
 				stack.SetVisibleChildName(mediaPageName)
 			}()
@@ -178,16 +176,16 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			nextButton.SetVisible(false)
 
 			buttonHeaderbarSubtitle.SetVisible(true)
-			buttonHeaderbarSubtitle.SetLabel(selectedMedia)
+			buttonHeaderbarSubtitle.SetLabel(selectedTorrentMedia)
 
 			mediaInfoDisplay.SetVisible(false)
 			mediaInfoButton.SetVisible(true)
 
 			headerbarReadme.SetWrapMode(gtk.WrapWord)
-			if selectedReadme == "" {
+			if torrentReadme == "" {
 				headerbarReadme.Buffer().SetText(readmePlaceholder)
 			} else {
-				headerbarReadme.Buffer().SetText(selectedReadme)
+				headerbarReadme.Buffer().SetText(torrentReadme)
 			}
 
 			stack.SetVisibleChildName(readyPageName)
@@ -206,8 +204,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		case readyPageName:
 			nextButton.SetVisible(true)
 
-			headerbarTitle.SetLabel(selectedTorrent)
-			buttonHeaderbarTitle.SetLabel(selectedTorrent)
+			headerbarTitle.SetLabel(torrentTitle)
+			buttonHeaderbarTitle.SetLabel(torrentTitle)
 
 			mediaInfoDisplay.SetVisible(true)
 			mediaInfoButton.SetVisible(false)
@@ -228,7 +226,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		mediaRows = []*adw.ActionRow{}
 
 		activators = []*gtk.CheckButton{}
-		for i, file := range files {
+		for i, file := range torrentMedia {
 			row := adw.NewActionRow()
 
 			activator := gtk.NewCheckButton()
@@ -241,8 +239,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			m := file.name
 			activator.SetActive(false)
 			activator.ConnectActivate(func() {
-				if m != selectedMedia {
-					selectedMedia = m
+				if m != selectedTorrentMedia {
+					selectedTorrentMedia = m
 
 					rightsConfirmationButton.SetActive(false)
 				}
@@ -283,7 +281,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, selectedTorrent, selectedMedia, selectedReadme, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
 			panic(err)
 		}
 	})
