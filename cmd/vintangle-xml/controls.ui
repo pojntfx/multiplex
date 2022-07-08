@@ -176,7 +176,9 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkVolumeButton"></object>
+                                    <object class="GtkVolumeButton">
+                                        <property name="value">1</property>
+                                    </object>
                                 </child>
 
                                 <child>
