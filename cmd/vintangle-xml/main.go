@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net"
 	"net/url"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
@@ -16,6 +20,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/phayes/freeport"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
@@ -30,6 +35,14 @@ type media struct {
 	size int
 }
 
+type mpvCommand struct {
+	Command []interface{} `json:"command"`
+}
+
+type mpvFloat64Response struct {
+	Data float64 `json:"data"`
+}
+
 var (
 	//go:embed assistant.ui
 	assistantUI string
@@ -41,6 +54,8 @@ var (
 	styleCSS string
 
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 const (
@@ -331,11 +346,6 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
 
-	// streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
 
@@ -374,9 +384,74 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 		headerbarReadme.Buffer().SetText(torrentReadme)
 	}
 
+	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
+
+	streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
+	if err != nil {
+		panic(err)
+	}
+
+	ipcDir, err := ioutil.TempDir(os.TempDir(), "mpv-ipc")
+	if err != nil {
+		panic(err)
+	}
+	ipcFile := filepath.Join(ipcDir, "mpv.sock")
+
+	shell := []string{"sh", "-c"}
+	if runtime.GOOS == "windows" {
+		shell = []string{"cmd", "/c"}
+	}
+	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", mpv, ipcFile, usernameAndPassword, streamURL))
+
+	command := exec.Command(
+		commandLine[0],
+		commandLine[1:]...,
+	)
+
 	app.AddWindow(&window.Window)
 
 	window.ConnectShow(func() {
+		if err := command.Start(); err != nil {
+			panic(err)
+		}
+
+		window.ConnectCloseRequest(func() (ok bool) {
+			if command.Process != nil {
+				if err := command.Process.Kill(); err != nil {
+					panic(err)
+				}
+			}
+
+			window.Destroy()
+
+			return true
+		})
+
+		var sock net.Conn
+		var encoder *jsoniter.Encoder
+		// var decoder *jsoniter.Decoder
+
+		for {
+			sock, err = net.Dial("unix", ipcFile)
+			if err == nil {
+				encoder = json.NewEncoder(sock)
+				// decoder = json.NewDecoder(sock)
+
+				break
+			}
+
+			time.Sleep(time.Millisecond * 100)
+
+			log.Error().
+				Str("path", ipcFile).
+				Err(err).
+				Msg("Could not dial IPC socket, retrying in 100ms")
+		}
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
+			panic(err)
+		}
+
 		playButton.GrabFocus()
 	})
 
