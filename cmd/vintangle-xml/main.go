@@ -15,6 +15,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
@@ -232,7 +233,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			mediaInfoButton.SetVisible(true)
 
 			headerbarReadme.SetWrapMode(gtk.WrapWord)
-			if torrentReadme == "" {
+			if strings.TrimSpace(torrentReadme) == "" {
 				headerbarReadme.Buffer().SetText(readmePlaceholder)
 			} else {
 				headerbarReadme.Buffer().SetText(torrentReadme)
@@ -355,6 +356,8 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
+	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
 	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
@@ -366,16 +369,6 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 
 	copyButton.ConnectClicked(func() {
 		window.Clipboard().SetText(magnetLink)
-	})
-
-	playButton.ConnectClicked(func() {
-		if playButton.IconName() == playIcon {
-			playButton.SetIconName(pauseIcon)
-
-			return
-		}
-
-		playButton.SetIconName(playIcon)
 	})
 
 	stopButton.ConnectClicked(func() {
@@ -393,7 +386,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	})
 
 	headerbarReadme.SetWrapMode(gtk.WrapWord)
-	if torrentReadme == "" {
+	if strings.TrimSpace(torrentReadme) == "" {
 		headerbarReadme.Buffer().SetText(readmePlaceholder)
 	} else {
 		headerbarReadme.Buffer().SetText(torrentReadme)
@@ -587,6 +580,56 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 			}
 		}()
 
+		volumeButton.ConnectValueChanged(func(value float64) {
+			log.Info().
+				Float64("value", value).
+				Msg("Setting volume")
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
+				panic(err)
+			}
+		})
+
+		fullscreenButton.ConnectClicked(func() {
+			if fullscreenButton.Active() {
+				log.Info().Msg("Enabling fullscreen")
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
+					panic(err)
+				}
+
+				return
+			}
+
+			log.Info().Msg("Disabling fullscreen")
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
+				panic(err)
+			}
+		})
+
+		playButton.ConnectClicked(func() {
+			if playButton.IconName() == playIcon {
+				log.Info().Msg("Starting playback")
+
+				playButton.SetIconName(pauseIcon)
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+					panic(err)
+				}
+
+				return
+			}
+
+			log.Info().Msg("Pausing playback")
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
+				panic(err)
+			}
+
+			playButton.SetIconName(playIcon)
+		})
+
 		go func() {
 			if err := command.Wait(); err != nil && err.Error() != errKilled.Error() {
 				panic(err)
@@ -733,11 +776,11 @@ func main() {
 	})
 
 	app.ConnectShutdown(func() {
+		cancel()
+
 		if err := gateway.Close(); err != nil {
 			panic(err)
 		}
-
-		cancel()
 	})
 
 	if code := app.Run(os.Args); code > 0 {
