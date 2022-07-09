@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"net"
 	"net/url"
@@ -56,6 +58,8 @@ var (
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+	errKilled = errors.New("signal: killed")
 )
 
 const (
@@ -106,6 +110,14 @@ func getStreamURL(base string, magnet, path string) (string, error) {
 	stream.RawQuery = q.Encode()
 
 	return stream.String(), nil
+}
+
+func formatDuration(duration time.Duration) string {
+	hours := math.Floor(duration.Hours())
+	minutes := math.Floor(duration.Minutes()) - (hours * 60)
+	seconds := math.Floor(duration.Seconds()) - (minutes * 60) - (hours * 3600)
+
+	return fmt.Sprintf("%02d:%02d:%02d", int(hours), int(minutes), int(seconds))
 }
 
 func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
@@ -345,6 +357,9 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
+	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
+	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
+	seeker := builder.GetObject("seeker").Cast().(*gtk.Scale)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
@@ -422,21 +437,13 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 				}
 			}
 
-			window.Destroy()
-
 			return true
 		})
 
 		var sock net.Conn
-		var encoder *jsoniter.Encoder
-		// var decoder *jsoniter.Decoder
-
 		for {
 			sock, err = net.Dial("unix", ipcFile)
 			if err == nil {
-				encoder = json.NewEncoder(sock)
-				// decoder = json.NewDecoder(sock)
-
 				break
 			}
 
@@ -448,9 +455,147 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 				Msg("Could not dial IPC socket, retrying in 100ms")
 		}
 
+		encoder := json.NewEncoder(sock)
 		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
 			panic(err)
 		}
+
+		seekerIsSeeking := false
+		seekerIsUnderPointer := false
+		total := time.Duration(0)
+
+		ctrl := gtk.NewEventControllerMotion()
+		ctrl.ConnectEnter(func(x, y float64) {
+			seekerIsUnderPointer = true
+		})
+		ctrl.ConnectLeave(func() {
+			seekerIsUnderPointer = false
+		})
+		seeker.AddController(ctrl)
+
+		seeker.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
+			seekerIsSeeking = true
+
+			seeker.SetValue(value)
+
+			elapsed := time.Duration(int64(value))
+
+			if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
+				panic(err)
+			}
+
+			log.Info().
+				Dur("duration", elapsed).
+				Msg("Seeking")
+
+			remaining := total - elapsed
+
+			elapsedTrackLabel.SetLabel(formatDuration(elapsed))
+			remainingTrackLabel.SetLabel("-" + formatDuration(remaining))
+
+			var updateScalePosition func(done bool)
+			updateScalePosition = func(done bool) {
+				if seekerIsUnderPointer {
+					if done {
+						return
+					}
+
+					updateScalePosition(true)
+				} else {
+					seekerIsSeeking = false
+				}
+			}
+
+			time.AfterFunc(
+				time.Millisecond*200,
+				func() {
+					updateScalePosition(false)
+				},
+			)
+
+			return true
+		})
+
+		done := make(chan struct{})
+		go func() {
+			t := time.NewTicker(time.Millisecond * 100)
+
+			updateSeeker := func() {
+				encoder := json.NewEncoder(sock)
+				decoder := json.NewDecoder(sock)
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
+					panic(err)
+				}
+
+				var durationResponse mpvFloat64Response
+				if err := decoder.Decode(&durationResponse); err != nil {
+					log.Error().
+						Err(err).
+						Msg("Could not parse JSON from socket")
+
+					return
+				}
+
+				total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(durationResponse.Data)))
+				if err != nil {
+					panic(err)
+				}
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
+					panic(err)
+				}
+
+				var elapsedResponse mpvFloat64Response
+				if err := decoder.Decode(&elapsedResponse); err != nil {
+					log.Error().Err(err).Msg("Could not parse JSON from socket")
+
+					return
+				}
+
+				elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
+				if err != nil {
+					panic(err)
+				}
+
+				if !seekerIsSeeking {
+					seeker.
+						SetRange(0, float64(total.Nanoseconds()))
+					seeker.
+						SetValue(float64(elapsed.Nanoseconds()))
+
+					remaining := total - elapsed
+
+					log.Debug().
+						Float64("total", total.Seconds()).
+						Float64("elapsed", elapsed.Seconds()).
+						Float64("remaining", remaining.Seconds()).
+						Msg("Updating scale")
+
+					elapsedTrackLabel.SetLabel(formatDuration(elapsed))
+					remainingTrackLabel.SetLabel("-" + formatDuration(remaining))
+				}
+			}
+
+			for {
+				select {
+				case <-t.C:
+					updateSeeker()
+				case <-done:
+					return
+				}
+			}
+		}()
+
+		go func() {
+			if err := command.Wait(); err != nil && err.Error() != errKilled.Error() {
+				panic(err)
+			}
+
+			done <- struct{}{}
+
+			window.Destroy()
+		}()
 
 		playButton.GrabFocus()
 	})
