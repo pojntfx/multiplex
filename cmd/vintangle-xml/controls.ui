@@ -142,7 +142,7 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkLabel">
+                                    <object class="GtkLabel" id="elapsed-track-label">
                                         <style>
                                             <class name="tabular-nums"></class>
                                         </style>
@@ -152,13 +152,13 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkScale">
+                                    <object class="GtkScale" id="seeker">
                                         <property name="hexpand">true</property>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="GtkLabel">
+                                    <object class="GtkLabel" id="remaining-track-label">
                                         <style>
                                             <class name="tabular-nums"></class>
                                         </style>
