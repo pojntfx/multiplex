@@ -12,11 +12,11 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
@@ -121,6 +121,16 @@ func formatDuration(duration time.Duration) string {
 	return fmt.Sprintf("%02d:%02d:%02d", int(hours), int(minutes), int(seconds))
 }
 
+func getDisplayPathWithoutRoot(p string) string {
+	parts := strings.Split(p, "/") // Incoming paths are always UNIX
+
+	if len(parts) < 2 {
+		return p
+	}
+
+	return filepath.Join(parts[1:]...) // Outgoing paths are OS-specific (display only)
+}
+
 func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
@@ -129,7 +139,6 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
-	headerbarTitle := builder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
@@ -218,8 +227,17 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 				magnetLinkEntry.SetSensitive(true)
 				previousButton.SetVisible(true)
 
-				headerbarTitle.SetLabel(torrentTitle)
 				buttonHeaderbarTitle.SetLabel(torrentTitle)
+
+				mediaInfoDisplay.SetVisible(false)
+				mediaInfoButton.SetVisible(true)
+
+				headerbarReadme.SetWrapMode(gtk.WrapWord)
+				if utf8.Valid([]byte(torrentReadme)) && strings.TrimSpace(torrentReadme) == "" {
+					headerbarReadme.Buffer().SetText(readmePlaceholder)
+				} else {
+					headerbarReadme.Buffer().SetText(torrentReadme)
+				}
 
 				stack.SetVisibleChildName(mediaPageName)
 			}()
@@ -227,17 +245,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			nextButton.SetVisible(false)
 
 			buttonHeaderbarSubtitle.SetVisible(true)
-			buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
-
-			mediaInfoDisplay.SetVisible(false)
-			mediaInfoButton.SetVisible(true)
-
-			headerbarReadme.SetWrapMode(gtk.WrapWord)
-			if strings.TrimSpace(torrentReadme) == "" {
-				headerbarReadme.Buffer().SetText(readmePlaceholder)
-			} else {
-				headerbarReadme.Buffer().SetText(torrentReadme)
-			}
+			buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
 			stack.SetVisibleChildName(readyPageName)
 		}
@@ -249,17 +257,14 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 			previousButton.SetVisible(false)
 			nextButton.SetSensitive(true)
 
-			headerbarTitle.SetLabel("Welcome")
+			mediaInfoDisplay.SetVisible(true)
+			mediaInfoButton.SetVisible(false)
 
 			stack.SetVisibleChildName(welcomePageName)
 		case readyPageName:
 			nextButton.SetVisible(true)
 
-			headerbarTitle.SetLabel(torrentTitle)
-			buttonHeaderbarTitle.SetLabel(torrentTitle)
-
-			mediaInfoDisplay.SetVisible(true)
-			mediaInfoButton.SetVisible(false)
+			buttonHeaderbarSubtitle.SetVisible(false)
 
 			stack.SetVisibleChildName(mediaPageName)
 		}
@@ -299,7 +304,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 				nextButton.SetSensitive(true)
 			})
 
-			row.SetTitle(file.name)
+			row.SetTitle(getDisplayPathWithoutRoot(file.name))
 			row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
 			row.SetActivatable(true)
 
@@ -365,7 +370,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	seeker := builder.GetObject("seeker").Cast().(*gtk.Scale)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
-	buttonHeaderbarSubtitle.SetLabel(path.Base(selectedTorrentMedia))
+	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
 	copyButton.ConnectClicked(func() {
 		window.Clipboard().SetText(magnetLink)
@@ -386,7 +391,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	})
 
 	headerbarReadme.SetWrapMode(gtk.WrapWord)
-	if strings.TrimSpace(torrentReadme) == "" {
+	if utf8.Valid([]byte(torrentReadme)) && strings.TrimSpace(torrentReadme) == "" {
 		headerbarReadme.Buffer().SetText(readmePlaceholder)
 	} else {
 		headerbarReadme.Buffer().SetText(torrentReadme)

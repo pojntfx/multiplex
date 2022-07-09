@@ -39,7 +39,7 @@
                                                 <property name="valign">center</property>
 
                                                 <child>
-                                                    <object class="GtkLabel" id="headerbar-title">
+                                                    <object class="GtkLabel">
                                                         <style>
                                                             <class name="title"></class>
                                                         </style>
