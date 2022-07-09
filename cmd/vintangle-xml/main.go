@@ -233,7 +233,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 				mediaInfoButton.SetVisible(true)
 
 				headerbarReadme.SetWrapMode(gtk.WrapWord)
-				if utf8.Valid([]byte(torrentReadme)) && strings.TrimSpace(torrentReadme) == "" {
+				if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
 					headerbarReadme.Buffer().SetText(readmePlaceholder)
 				} else {
 					headerbarReadme.Buffer().SetText(torrentReadme)
@@ -391,7 +391,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	})
 
 	headerbarReadme.SetWrapMode(gtk.WrapWord)
-	if utf8.Valid([]byte(torrentReadme)) && strings.TrimSpace(torrentReadme) == "" {
+	if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
 		headerbarReadme.Buffer().SetText(readmePlaceholder)
 	} else {
 		headerbarReadme.Buffer().SetText(torrentReadme)
