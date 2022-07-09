@@ -176,13 +176,13 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkVolumeButton">
+                                    <object class="GtkVolumeButton" id="volume-button">
                                         <property name="value">1</property>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="GtkToggleButton">
+                                    <object class="GtkToggleButton" id="fullscreen-button">
                                         <style>
                                             <class name="flat"></class>
                                         </style>
