@@ -79,6 +79,8 @@ const (
 
 	verboseFlagDefault = 5
 	mpvFlagDefault     = "mpv"
+
+	keycodeEscape = 66
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -137,11 +139,10 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
-	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
 	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
-	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
 	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
 	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -152,6 +153,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	descriptionWindow := builder.GetObject("description-window").Cast().(*adw.Window)
+	descriptionText := builder.GetObject("description-text").Cast().(*gtk.TextView)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -232,11 +235,11 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 				mediaInfoDisplay.SetVisible(false)
 				mediaInfoButton.SetVisible(true)
 
-				headerbarReadme.SetWrapMode(gtk.WrapWord)
+				descriptionText.SetWrapMode(gtk.WrapWord)
 				if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-					headerbarReadme.Buffer().SetText(readmePlaceholder)
+					descriptionText.Buffer().SetText(readmePlaceholder)
 				} else {
-					headerbarReadme.Buffer().SetText(torrentReadme)
+					descriptionText.Buffer().SetText(torrentReadme)
 				}
 
 				stack.SetVisibleChildName(mediaPageName)
@@ -316,10 +319,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		}
 	})
 
-	headerbarPopover.SetOffset(0, 6)
-
 	mediaInfoButton.ConnectClicked(func() {
-		headerbarPopover.SetVisible(!headerbarPopover.Visible())
+		descriptionWindow.Show()
 	})
 
 	rightsConfirmationButton.ConnectToggled(func() {
@@ -339,6 +340,24 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text()); err != nil {
 			panic(err)
+		}
+	})
+
+	ctrl := gtk.NewEventControllerKey()
+	descriptionWindow.AddController(ctrl)
+	descriptionWindow.SetTransientFor(&window.Window)
+
+	descriptionWindow.ConnectCloseRequest(func() (ok bool) {
+		descriptionWindow.Close()
+		descriptionWindow.SetVisible(false)
+
+		return ok
+	})
+
+	ctrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
+		if keycode == keycodeEscape {
+			descriptionWindow.Close()
+			descriptionWindow.SetVisible(false)
 		}
 	})
 
