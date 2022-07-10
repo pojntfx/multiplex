@@ -1,3 +1,8 @@
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+.rounded-corners {
+  padding: 8px;
+  border-radius: 8px;
+}
