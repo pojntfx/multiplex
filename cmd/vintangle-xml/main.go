@@ -53,6 +53,9 @@ var (
 	//go:embed controls.ui
 	controlsUI string
 
+	//go:embed description.ui
+	descriptionUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -153,8 +156,10 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
-	descriptionWindow := builder.GetObject("description-window").Cast().(*adw.Window)
-	descriptionText := builder.GetObject("description-text").Cast().(*gtk.TextView)
+
+	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
+	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
+	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -323,6 +328,24 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		descriptionWindow.Show()
 	})
 
+	ctrl := gtk.NewEventControllerKey()
+	descriptionWindow.AddController(ctrl)
+	descriptionWindow.SetTransientFor(&window.Window)
+
+	descriptionWindow.ConnectCloseRequest(func() (ok bool) {
+		descriptionWindow.Close()
+		descriptionWindow.SetVisible(false)
+
+		return ok
+	})
+
+	ctrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
+		if keycode == keycodeEscape {
+			descriptionWindow.Close()
+			descriptionWindow.SetVisible(false)
+		}
+	})
+
 	rightsConfirmationButton.ConnectToggled(func() {
 		if rightsConfirmationButton.Active() {
 			playButton.AddCSSClass("suggested-action")
@@ -343,6 +366,54 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		}
 	})
 
+	app.AddWindow(&window.Window)
+
+	window.Show()
+
+	return nil
+}
+
+func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string) error {
+	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
+
+	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
+
+	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
+	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
+	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
+	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
+	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
+	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
+	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
+	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
+	seeker := builder.GetObject("seeker").Cast().(*gtk.Scale)
+
+	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
+	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
+	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
+
+	buttonHeaderbarTitle.SetLabel(torrentTitle)
+	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+
+	copyButton.ConnectClicked(func() {
+		window.Clipboard().SetText(magnetLink)
+	})
+
+	stopButton.ConnectClicked(func() {
+		window.Close()
+
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+			panic(err)
+		}
+	})
+
+	mediaInfoButton.ConnectClicked(func() {
+		descriptionWindow.Show()
+	})
+
 	ctrl := gtk.NewEventControllerKey()
 	descriptionWindow.AddController(ctrl)
 	descriptionWindow.SetTransientFor(&window.Window)
@@ -361,59 +432,11 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		}
 	})
 
-	app.AddWindow(&window.Window)
-
-	window.Show()
-
-	return nil
-}
-
-func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string) error {
-	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
-
-	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
-
-	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
-	headerbarPopover := builder.GetObject("headerbar-popover").Cast().(*gtk.Popover)
-	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
-	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
-	headerbarReadme := builder.GetObject("headerbar-readme").Cast().(*gtk.TextView)
-	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
-	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
-	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
-	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
-	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
-	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
-	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
-	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
-	seeker := builder.GetObject("seeker").Cast().(*gtk.Scale)
-
-	buttonHeaderbarTitle.SetLabel(torrentTitle)
-	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
-
-	copyButton.ConnectClicked(func() {
-		window.Clipboard().SetText(magnetLink)
-	})
-
-	stopButton.ConnectClicked(func() {
-		window.Close()
-
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
-			panic(err)
-		}
-	})
-
-	headerbarPopover.SetOffset(0, 6)
-
-	mediaInfoButton.ConnectClicked(func() {
-		headerbarPopover.SetVisible(!headerbarPopover.Visible())
-	})
-
-	headerbarReadme.SetWrapMode(gtk.WrapWord)
+	descriptionText.SetWrapMode(gtk.WrapWord)
 	if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-		headerbarReadme.Buffer().SetText(readmePlaceholder)
+		descriptionText.Buffer().SetText(readmePlaceholder)
 	} else {
-		headerbarReadme.Buffer().SetText(torrentReadme)
+		descriptionText.Buffer().SetText(torrentReadme)
 	}
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
