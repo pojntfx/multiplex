@@ -247,45 +247,4 @@
             </object>
         </child>
     </object>
-
-    <object class="AdwWindow" id="description-window">
-        <property name="title">Description</property>
-        <property name="default-width">450</property>
-        <property name="default-height">250</property>
-        <property name="modal">true</property>
-
-        <child type="content">
-            <object class="GtkBox">
-                <property name="orientation">vertical</property>
-
-                <child>
-                    <object class="AdwHeaderBar">
-                        <style>
-                            <class name="flat"></class>
-                        </style>
-                    </object>
-                </child>
-
-                <child>
-                    <object class="GtkScrolledWindow">
-                        <property name="margin-start">12</property>
-                        <property name="margin-end">12</property>
-                        <property name="margin-bottom">12</property>
-
-                        <child>
-                            <object class="GtkTextView" id="description-text">
-                                <style>
-                                    <class name="rounded-corners"></class>
-                                </style>
-
-                                <property name="editable">false</property>
-                                <property name="vexpand">true</property>
-                                <property name="hexpand">true</property>
-                            </object>
-                        </child>
-                    </object>
-                </child>
-            </object>
-        </child>
-    </object>
 </interface>
