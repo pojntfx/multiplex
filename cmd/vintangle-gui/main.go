@@ -696,7 +696,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 }
 
 func main() {
-	app := adw.NewApplication("com.pojtinger.felicitas.vintanglexml", gio.ApplicationFlags(gio.ApplicationFlagsNone))
+	app := adw.NewApplication("com.pojtinger.felicitas.vintangle", gio.ApplicationFlags(gio.ApplicationFlagsNone))
 
 	prov := gtk.NewCSSProvider()
 	prov.LoadFromData(styleCSS)
