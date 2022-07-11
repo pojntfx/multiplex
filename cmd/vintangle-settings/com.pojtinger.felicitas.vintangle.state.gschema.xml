@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+    <schema id="com.pojtinger.felicitas.vintangle.state" path="/com/pojtinger/felicitas/vintangle/state/">
+        <key name='verbose' type='x'>
+            <default>5</default>
+            <summary>Automatically install updates</summary>
+            <description>Verbosity level (0 is disabled, default is info, 7 is trace)</description>
+        </key>
+    </schema>
+</schemalist>
