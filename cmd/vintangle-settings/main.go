@@ -14,6 +14,12 @@ import (
 
 const (
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
+
+	stateID = "com.pojtinger.felicitas.vintangle.state"
+
+	verboseFlag = "verbose"
+	storageFlag = "storage"
+	mpvFlag     = "mpv"
 )
 
 var (
@@ -36,13 +42,20 @@ func main() {
 		panic(err)
 	}
 
-	settings := gio.NewSettings("com.pojtinger.felicitas.vintangle.state")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(settings.Int64("verbose"))
+	settings := gio.NewSettings(stateID)
 
-	settings.SetInt64("verbose", 10)
+	fmt.Printf("verbose = %v storage = %v mpv = %v\n", settings.Int64(verboseFlag), settings.String(storageFlag), settings.String(mpvFlag))
 
-	fmt.Println(settings.Int64("verbose"))
+	settings.SetInt64(verboseFlag, 5)
+	settings.SetString(storageFlag, filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data"))
+	settings.SetString(mpvFlag, "mpv2")
+
+	fmt.Printf("verbose = %v storage = %v mpv = %v\n", settings.Int64(verboseFlag), settings.String(storageFlag), settings.String(mpvFlag))
 
 	gio.SettingsSync()
 }

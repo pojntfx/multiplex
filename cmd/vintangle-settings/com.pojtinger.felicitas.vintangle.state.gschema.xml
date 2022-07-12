@@ -3,8 +3,20 @@
     <schema id="com.pojtinger.felicitas.vintangle.state" path="/com/pojtinger/felicitas/vintangle/state/">
         <key name='verbose' type='x'>
             <default>5</default>
-            <summary>Automatically install updates</summary>
+            <summary>Verbosity level</summary>
             <description>Verbosity level (0 is disabled, default is info, 7 is trace)</description>
+        </key>
+
+        <key name='storage' type='s'>
+            <default>""</default>
+            <summary>Storage location</summary>
+            <description>Path to store downloaded torrents in</description>
+        </key>
+
+        <key name='mpv' type='s'>
+            <default>"mpv"</default>
+            <summary>mpv command</summary>
+            <description>Command to launch mpv with</description>
         </key>
     </schema>
 </schemalist>
