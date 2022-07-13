@@ -1,5 +1,7 @@
 package main
 
+//go:generate glib-compile-schemas .
+
 import (
 	"context"
 	"encoding/base64"
@@ -21,7 +23,6 @@ import (
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
-	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/phayes/freeport"
@@ -59,6 +60,9 @@ var (
 	//go:embed style.css
 	styleCSS string
 
+	//go:embed gschemas.compiled
+	geschemas []byte
+
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -67,6 +71,9 @@ var (
 )
 
 const (
+	appID   = "com.pojtinger.felicitas.vintangle"
+	stateID = appID + ".state"
+
 	welcomePageName = "welcome-page"
 	mediaPageName   = "media-page"
 	readyPageName   = "ready-page"
@@ -84,6 +91,8 @@ const (
 	mpvFlagDefault     = "mpv"
 
 	keycodeEscape = 66
+
+	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -696,59 +705,60 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 }
 
 func main() {
-	app := adw.NewApplication("com.pojtinger.felicitas.vintangle", gio.ApplicationFlags(gio.ApplicationFlagsNone))
-
-	prov := gtk.NewCSSProvider()
-	prov.LoadFromData(styleCSS)
-
-	home, err := os.UserHomeDir()
+	tmpDir, err := os.MkdirTemp(os.TempDir(), "vintangle-gschemas")
 	if err != nil {
 		panic(err)
 	}
-	storageFlagDefault := filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data")
+	defer os.RemoveAll(tmpDir)
 
-	app.AddMainOption(verboseFlag, byte('v'), glib.OptionFlagInMain, glib.OptionArgInt64, fmt.Sprintf(`Verbosity level (0 is disabled, default is info, 7 is trace) (default %v)`, verboseFlagDefault), "")
-	app.AddMainOption(storageFlag, byte('s'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Path to store downloaded torrents in (default "%v")`, storageFlagDefault), "")
-	app.AddMainOption(mpvFlag, byte('m'), glib.OptionFlagInMain, glib.OptionArgString, fmt.Sprintf(`Command to launch mpv with (default "%v")`, mpvFlagDefault), "")
+	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), geschemas, os.ModePerm); err != nil {
+		panic(err)
+	}
 
-	verbose := int64(verboseFlagDefault)
-	storage := storageFlagDefault
-	mpv := mpvFlagDefault
+	if err := os.Setenv(schemaDirEnvVar, tmpDir); err != nil {
+		panic(err)
+	}
 
-	app.ConnectHandleLocalOptions(func(options *glib.VariantDict) (gint int) {
-		if options.Contains(verboseFlag) {
-			verbose = options.LookupValue(verboseFlag, glib.NewVariantInt64(0).Type()).Int64()
+	settings := gio.NewSettings(stateID)
+
+	if storage := settings.String(storageFlag); strings.TrimSpace(storage) == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
 		}
 
-		if options.Contains(storageFlag) {
-			storage = options.LookupValue(storageFlag, glib.NewVariantString("").Type()).String()
-		}
+		settings.SetString(storageFlag, filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data"))
+	}
 
-		if options.Contains(mpvFlag) {
-			mpv = options.LookupValue(mpvFlag, glib.NewVariantString("").Type()).String()
-		}
+	settings.ConnectChanged(func(key string) {
+		if key == verboseFlag {
+			verbose := settings.Int64(verboseFlag)
 
-		switch verbose {
-		case 0:
-			zerolog.SetGlobalLevel(zerolog.Disabled)
-		case 1:
-			zerolog.SetGlobalLevel(zerolog.PanicLevel)
-		case 2:
-			zerolog.SetGlobalLevel(zerolog.FatalLevel)
-		case 3:
-			zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-		case 4:
-			zerolog.SetGlobalLevel(zerolog.WarnLevel)
-		case 5:
-			zerolog.SetGlobalLevel(zerolog.InfoLevel)
-		case 6:
-			zerolog.SetGlobalLevel(zerolog.DebugLevel)
-		default:
-			zerolog.SetGlobalLevel(zerolog.TraceLevel)
+			switch verbose {
+			case 0:
+				zerolog.SetGlobalLevel(zerolog.Disabled)
+			case 1:
+				zerolog.SetGlobalLevel(zerolog.PanicLevel)
+			case 2:
+				zerolog.SetGlobalLevel(zerolog.FatalLevel)
+			case 3:
+				zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+			case 4:
+				zerolog.SetGlobalLevel(zerolog.WarnLevel)
+			case 5:
+				zerolog.SetGlobalLevel(zerolog.InfoLevel)
+			case 6:
+				zerolog.SetGlobalLevel(zerolog.DebugLevel)
+			default:
+				zerolog.SetGlobalLevel(zerolog.TraceLevel)
+			}
 		}
-
-		return -1
 	})
+
+	app := adw.NewApplication(appID, gio.ApplicationFlags(gio.ApplicationFlagsNone))
+
+	prov := gtk.NewCSSProvider()
+	prov.LoadFromData(styleCSS)
 
 	var gateway *server.Gateway
 	ctx, cancel := context.WithCancel(context.Background())
@@ -778,12 +788,12 @@ func main() {
 
 		gateway = server.NewGateway(
 			addr.String(),
-			storage,
+			settings.String(storageFlag),
 			apiUsername,
 			apiPassword,
 			"",
 			"",
-			verbose > 5,
+			settings.Int64(verboseFlag) > 5,
 			func(peers int, total, completed int64, path string) {
 				log.Info().
 					Int("peers", peers).
@@ -817,7 +827,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag)); err != nil {
 			panic(err)
 		}
 	})
