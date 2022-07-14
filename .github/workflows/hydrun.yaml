@@ -18,12 +18,13 @@ jobs:
             flags: ""
             cmd: ./Hydrunfile fedora
             dst: out/*
-          - id: windows
-            src: .
-            os: fedora:36
-            flags: "-e '--privileged'"
-            cmd: ./Hydrunfile windows
-            dst: out/*
+          # Times out
+          # - id: windows
+          #   src: .
+          #   os: fedora:36
+          #   flags: "-e '--privileged'"
+          #   cmd: ./Hydrunfile windows
+          #   dst: out/*
 
     steps:
       - name: Maximize build space
