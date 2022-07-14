@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <menu id="main-menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Preferences</attribute>
+                <attribute name="action">app.preferences</attribute>
+                <attribute name="accel">&lt;Primary&gt;comma</attribute>
+            </item>
+
+            <item>
+                <attribute name="label" translatable="yes">About Vintangle</attribute>
+                <attribute name="action">app.about</attribute>
+            </item>
+        </section>
+    </menu>
+</interface>

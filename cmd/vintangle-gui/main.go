@@ -23,6 +23,7 @@ import (
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/phayes/freeport"
@@ -57,6 +58,9 @@ var (
 	//go:embed description.ui
 	descriptionUI string
 
+	//go:embed menu.ui
+	menuUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -87,12 +91,11 @@ const (
 	storageFlag = "storage"
 	mpvFlag     = "mpv"
 
-	verboseFlagDefault = 5
-	mpvFlagDefault     = "mpv"
-
 	keycodeEscape = 66
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
+
+	preferencesActionName = "preferences"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -157,6 +160,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
 	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
+	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
 	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 	stack := builder.GetObject("stack").Cast().(*gtk.Stack)
 	magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
@@ -169,6 +173,9 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
+
+	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
+	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -291,6 +298,21 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
+	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
+	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+		log.Info().Msg("Opening preferences")
+	})
+	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
+	app.AddAction(preferencesAction)
+
+	aboutAction := gio.NewSimpleAction("about", nil)
+	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
+		log.Info().Msg("Opening about dialog")
+	})
+	app.AddAction(aboutAction)
+
+	menuButton.SetMenuModel(menu)
+
 	mediaRows := []*adw.ActionRow{}
 	mediaSelectionGroup.ConnectRealize(func() {
 		for _, row := range mediaRows {
@@ -376,6 +398,10 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	})
 
 	app.AddWindow(&window.Window)
+
+	window.ConnectShow(func() {
+		magnetLinkEntry.GrabFocus()
+	})
 
 	window.Show()
 
