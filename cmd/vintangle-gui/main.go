@@ -61,6 +61,9 @@ var (
 	//go:embed menu.ui
 	menuUI string
 
+	//go:embed about.ui
+	aboutUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -176,6 +179,9 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
+
+	aboutBuilder := gtk.NewBuilderFromString(aboutUI, len(aboutUI))
+	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*gtk.AboutDialog)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -307,9 +313,17 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
-		log.Info().Msg("Opening about dialog")
+		aboutDialog.Show()
 	})
 	app.AddAction(aboutAction)
+
+	aboutDialog.SetTransientFor(&window.Window)
+	aboutDialog.ConnectCloseRequest(func() (ok bool) {
+		aboutDialog.Close()
+		aboutDialog.SetVisible(false)
+
+		return ok
+	})
 
 	menuButton.SetMenuModel(menu)
 
