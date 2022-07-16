@@ -64,6 +64,9 @@ var (
 	//go:embed about.ui
 	aboutUI string
 
+	//go:embed preferences.ui
+	preferencesUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -182,6 +185,9 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	aboutBuilder := gtk.NewBuilderFromString(aboutUI, len(aboutUI))
 	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*gtk.AboutDialog)
+
+	preferencesBuilder := gtk.NewBuilderFromString(preferencesUI, len(preferencesUI))
+	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -306,10 +312,18 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		log.Info().Msg("Opening preferences")
+		preferencesWindow.Show()
 	})
 	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
 	app.AddAction(preferencesAction)
+
+	preferencesWindow.SetTransientFor(&window.Window)
+	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
+		preferencesWindow.Close()
+		preferencesWindow.SetVisible(false)
+
+		return ok
+	})
 
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {

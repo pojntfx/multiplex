@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="AdwPreferencesWindow" id="preferences-window">
+        <property name="modal">true</property>
+
+        <child>
+            <object class="AdwPreferencesPage">
+                <property name="title" translatable="yes">General</property>
+                <property name="icon-name">preferences-system-symbolic</property>
+
+                <child>
+                    <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">General</property>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Storage location</property>
+                                <property name="subtitle" translatable="yes">Path to store downloaded torrents in</property>
+                                <property name="activatable-widget">storage-location-input</property>
+
+                                <child>
+                                    <object class="GtkButton" id="storage-location-input">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
+
+                                        <property name="icon-name">folder-symbolic</property>
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Player command</property>
+                                <property name="subtitle" translatable="yes">Command to launch mpv with</property>
+                                <property name="activatable-widget">mpv-command-input</property>
+
+                                <child>
+                                    <object class="GtkEntry" id="mpv-command-input">
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Advanced</property>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Verbosity level</property>
+                                <property name="subtitle" translatable="yes">Verbosity level (0 is disabled, default is info, 7 is trace)</property>
+                                <property name="activatable-widget">verbosity-level-input</property>
+
+                                <child>
+                                    <object class="GtkSpinButton" id="verbosity-level-input">
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+</interface>
