@@ -189,6 +189,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	preferencesBuilder := gtk.NewBuilderFromString(preferencesUI, len(preferencesUI))
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
+	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
+	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -344,6 +346,11 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 		filePicker.Show()
 	})
+
+	settings.Bind(mpvFlag, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
+
+	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
+	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
 
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
