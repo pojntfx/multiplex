@@ -154,7 +154,7 @@ func getDisplayPathWithoutRoot(p string) string {
 	return filepath.Join(parts[1:]...) // Outgoing paths are OS-specific (display only)
 }
 
-func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string) error {
+func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string, settings *gio.Settings) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
@@ -188,6 +188,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	preferencesBuilder := gtk.NewBuilderFromString(preferencesUI, len(preferencesUI))
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
+	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -325,6 +326,25 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		return ok
 	})
 
+	storageLocationInput.ConnectClicked(func() {
+		filePicker := gtk.NewFileChooserNative(
+			"Select storage location",
+			&preferencesWindow.Window.Window,
+			gtk.FileChooserActionSelectFolder,
+			"",
+			"")
+		filePicker.SetModal(true)
+		filePicker.ConnectResponse(func(responseId int) {
+			if responseId == int(gtk.ResponseAccept) {
+				settings.SetString(storageFlag, filePicker.File().Path())
+			}
+
+			filePicker.Destroy()
+		})
+
+		filePicker.Show()
+	})
+
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
 		aboutDialog.Show()
@@ -420,7 +440,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text()); err != nil {
+		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text(), settings); err != nil {
 			panic(err)
 		}
 	})
@@ -436,7 +456,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string) error {
+func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string, settings *gio.Settings) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -468,7 +488,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv, settings); err != nil {
 			panic(err)
 		}
 	})
@@ -881,7 +901,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag)); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag), settings); err != nil {
 			panic(err)
 		}
 	})
