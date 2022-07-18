@@ -4,13 +4,13 @@
         <section>
             <item>
                 <attribute name="label" translatable="yes">Preferences</attribute>
-                <attribute name="action">app.preferences</attribute>
+                <attribute name="action">win.preferences</attribute>
                 <attribute name="accel">&lt;Primary&gt;comma</attribute>
             </item>
 
             <item>
                 <attribute name="label" translatable="yes">About Vintangle</attribute>
-                <attribute name="action">app.about</attribute>
+                <attribute name="action">win.about</attribute>
             </item>
         </section>
     </menu>
