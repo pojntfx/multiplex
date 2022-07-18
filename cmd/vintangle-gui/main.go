@@ -17,6 +17,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 	"time"
 	"unicode/utf8"
 
@@ -101,7 +102,8 @@ const (
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
 
-	preferencesActionName = "preferences"
+	preferencesActionName      = "preferences"
+	applyPreferencesActionName = "applypreferences"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -154,7 +156,7 @@ func getDisplayPathWithoutRoot(p string) string {
 	return filepath.Join(parts[1:]...) // Outgoing paths are OS-specific (display only)
 }
 
-func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string, settings *gio.Settings) error {
+func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
@@ -313,20 +315,60 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
+	preferencesHaveChanged := false
+
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
 		preferencesWindow.Show()
 	})
 	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
-	app.AddAction(preferencesAction)
+	window.AddAction(preferencesAction)
 
 	preferencesWindow.SetTransientFor(&window.Window)
 	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
 		preferencesWindow.Close()
 		preferencesWindow.SetVisible(false)
 
+		if preferencesHaveChanged {
+			toast := adw.NewToast("Restart Vintangle to apply the changes.")
+			toast.SetButtonLabel("Reopen")
+			toast.SetActionName("win." + applyPreferencesActionName)
+
+			overlay.AddToast(toast)
+		}
+
+		preferencesHaveChanged = false
+
 		return ok
 	})
+
+	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
+	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+		cancel()
+
+		if err := gateway.Close(); err != nil {
+			panic(err)
+		}
+
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+
+		if _, err := syscall.ForkExec(
+			ex,
+			os.Args,
+			&syscall.ProcAttr{
+				Env:   os.Environ(),
+				Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
+			},
+		); err != nil {
+			panic(err)
+		}
+
+		os.Exit(0)
+	})
+	window.AddAction(applyPreferencesAction)
 
 	storageLocationInput.ConnectClicked(func() {
 		filePicker := gtk.NewFileChooserNative(
@@ -339,6 +381,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		filePicker.ConnectResponse(func(responseId int) {
 			if responseId == int(gtk.ResponseAccept) {
 				settings.SetString(storageFlag, filePicker.File().Path())
+
+				preferencesHaveChanged = true
 			}
 
 			filePicker.Destroy()
@@ -352,11 +396,18 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
 	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
 
+	mpvCommandInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	verbosityLevelInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
 		aboutDialog.Show()
 	})
-	app.AddAction(aboutAction)
+	window.AddAction(aboutAction)
 
 	aboutDialog.SetTransientFor(&window.Window)
 	aboutDialog.ConnectCloseRequest(func() (ok bool) {
@@ -447,7 +498,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text(), settings); err != nil {
+		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -463,7 +514,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string, settings *gio.Settings) error {
+func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -495,7 +546,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv, settings); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv, settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -908,7 +959,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag), settings); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag), settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
