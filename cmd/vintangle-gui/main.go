@@ -162,7 +162,6 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
-
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
@@ -181,18 +180,6 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
-
-	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
-	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
-
-	aboutBuilder := gtk.NewBuilderFromString(aboutUI, len(aboutUI))
-	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*gtk.AboutDialog)
-
-	preferencesBuilder := gtk.NewBuilderFromString(preferencesUI, len(preferencesUI))
-	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
-	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
-	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
-	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -315,109 +302,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
-	preferencesHaveChanged := false
-
-	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
-	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		preferencesWindow.Show()
-	})
-	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
-	window.AddAction(preferencesAction)
-
-	preferencesWindow.SetTransientFor(&window.Window)
-	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
-		preferencesWindow.Close()
-		preferencesWindow.SetVisible(false)
-
-		if preferencesHaveChanged {
-			toast := adw.NewToast("Restart Vintangle to apply the changes.")
-			toast.SetButtonLabel("Reopen")
-			toast.SetActionName("win." + applyPreferencesActionName)
-
-			overlay.AddToast(toast)
-		}
-
-		preferencesHaveChanged = false
-
-		return ok
-	})
-
-	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
-	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		cancel()
-
-		if err := gateway.Close(); err != nil {
-			panic(err)
-		}
-
-		ex, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-
-		if _, err := syscall.ForkExec(
-			ex,
-			os.Args,
-			&syscall.ProcAttr{
-				Env:   os.Environ(),
-				Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
-			},
-		); err != nil {
-			panic(err)
-		}
-
-		os.Exit(0)
-	})
-	window.AddAction(applyPreferencesAction)
-
-	storageLocationInput.ConnectClicked(func() {
-		filePicker := gtk.NewFileChooserNative(
-			"Select storage location",
-			&preferencesWindow.Window.Window,
-			gtk.FileChooserActionSelectFolder,
-			"",
-			"")
-		filePicker.SetModal(true)
-		filePicker.ConnectResponse(func(responseId int) {
-			if responseId == int(gtk.ResponseAccept) {
-				settings.SetString(storageFlag, filePicker.File().Path())
-
-				preferencesHaveChanged = true
-			}
-
-			filePicker.Destroy()
-		})
-
-		filePicker.Show()
-	})
-
-	settings.Bind(mpvFlag, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
-
-	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
-	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
-
-	mpvCommandInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-	verbosityLevelInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-
-	aboutAction := gio.NewSimpleAction("about", nil)
-	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
-		aboutDialog.Show()
-	})
-	window.AddAction(aboutAction)
-
-	aboutDialog.SetTransientFor(&window.Window)
-	aboutDialog.ConnectCloseRequest(func() (ok bool) {
-		aboutDialog.Close()
-		aboutDialog.SetVisible(false)
-
-		return ok
-	})
-
-	menuButton.SetMenuModel(menu)
+	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, cancel)
 
 	mediaRows := []*adw.ActionRow{}
 	mediaSelectionGroup.ConnectRealize(func() {
@@ -520,6 +405,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
+	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
@@ -527,6 +413,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
 	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
 	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
 	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
@@ -603,6 +490,16 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 		commandLine[0],
 		commandLine[1:]...,
 	)
+
+	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, func() {
+		cancel()
+
+		if command.Process != nil {
+			if err := command.Process.Kill(); err != nil {
+				panic(err)
+			}
+		}
+	})
 
 	app.AddWindow(&window.Window)
 
@@ -834,6 +731,124 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	window.Show()
 
 	return nil
+}
+
+func addPreferencesWindow(app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) {
+	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
+	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
+
+	aboutBuilder := gtk.NewBuilderFromString(aboutUI, len(aboutUI))
+	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*gtk.AboutDialog)
+
+	preferencesBuilder := gtk.NewBuilderFromString(preferencesUI, len(preferencesUI))
+	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
+	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
+	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
+	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
+
+	preferencesHaveChanged := false
+
+	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
+	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+		preferencesWindow.Show()
+	})
+	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
+	window.AddAction(preferencesAction)
+
+	preferencesWindow.SetTransientFor(&window.Window)
+	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
+		preferencesWindow.Close()
+		preferencesWindow.SetVisible(false)
+
+		if preferencesHaveChanged {
+			toast := adw.NewToast("Reopen to apply the changes.")
+			toast.SetButtonLabel("Reopen")
+			toast.SetActionName("win." + applyPreferencesActionName)
+
+			overlay.AddToast(toast)
+		}
+
+		preferencesHaveChanged = false
+
+		return ok
+	})
+
+	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
+	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+		cancel()
+
+		if err := gateway.Close(); err != nil {
+			panic(err)
+		}
+
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+
+		if _, err := syscall.ForkExec(
+			ex,
+			os.Args,
+			&syscall.ProcAttr{
+				Env:   os.Environ(),
+				Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
+			},
+		); err != nil {
+			panic(err)
+		}
+
+		os.Exit(0)
+	})
+	window.AddAction(applyPreferencesAction)
+
+	storageLocationInput.ConnectClicked(func() {
+		filePicker := gtk.NewFileChooserNative(
+			"Select storage location",
+			&preferencesWindow.Window.Window,
+			gtk.FileChooserActionSelectFolder,
+			"",
+			"")
+		filePicker.SetModal(true)
+		filePicker.ConnectResponse(func(responseId int) {
+			if responseId == int(gtk.ResponseAccept) {
+				settings.SetString(storageFlag, filePicker.File().Path())
+
+				preferencesHaveChanged = true
+			}
+
+			filePicker.Destroy()
+		})
+
+		filePicker.Show()
+	})
+
+	settings.Bind(mpvFlag, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
+
+	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
+	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
+
+	mpvCommandInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	verbosityLevelInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+
+	aboutAction := gio.NewSimpleAction("about", nil)
+	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
+		aboutDialog.Show()
+	})
+	window.AddAction(aboutAction)
+
+	aboutDialog.SetTransientFor(&window.Window)
+	aboutDialog.ConnectCloseRequest(func() (ok bool) {
+		aboutDialog.Close()
+		aboutDialog.SetVisible(false)
+
+		return ok
+	})
+
+	menuButton.SetMenuModel(menu)
 }
 
 func main() {

@@ -105,13 +105,6 @@
                                         </child>
 
                                         <child>
-                                            <object class="GtkMenuButton" id="menu-button">
-                                                <property name="icon-name">open-menu-symbolic</property>
-                                                <property name="primary">true</property>
-                                            </object>
-                                        </child>
-
-                                        <child>
                                             <object class="GtkButton" id="next-button">
                                                 <style>
                                                     <class name="suggested-action"></class>
@@ -119,6 +112,13 @@
 
                                                 <property name="label">Next</property>
                                                 <property name="sensitive">false</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkMenuButton" id="menu-button">
+                                                <property name="icon-name">open-menu-symbolic</property>
+                                                <property name="primary">true</property>
                                             </object>
                                         </child>
 
