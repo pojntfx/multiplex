@@ -60,11 +60,18 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: /tmp/out
-      - name: Isolate the repositories
+      - name: Isolate the unstable repositories
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p /tmp/out/github-pages/flatpak
 
-          cp -r /tmp/out/flatpak/repositories/* /tmp/out/github-pages/flatpak
+          cp -r /tmp/out/flatpak/repositories/unstable /tmp/out/github-pages/flatpak/unstable
+      - name: Isolate the stable repositories
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p /tmp/out/github-pages/flatpak
+
+          cp -r /tmp/out/flatpak/repositories/stable /tmp/out/github-pages/flatpak/stable
       - name: Publish pre-release to GitHub releases
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: marvinpinto/action-automatic-releases@latest
@@ -83,8 +90,7 @@ jobs:
           files: |
             /tmp/out/*/*
       - name: Publish release to GitHub pages
-        if: ${{ github.ref == 'refs/heads/main' }}
-        # if: startsWith(github.ref, 'refs/tags/v') # Enable this after releases are ready
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
           branch: gh-pages
