@@ -12,17 +12,11 @@ jobs:
     strategy:
       matrix:
         target:
-          - id: fedora
+          - id: flatpak
             src: .
             os: fedora:36
-            flags: ""
-            cmd: ./Hydrunfile fedora
-            dst: out/*
-          - id: windows
-            src: .
-            os: fedora:rawhide
             flags: "-e '--privileged'"
-            cmd: ./Hydrunfile windows
+            cmd: ./Hydrunfile flatpak
             dst: out/*
 
     steps:
@@ -62,6 +56,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: /tmp/out
+      - name: Isolate the repositories
+        run: |
+          mkdir -p /tmp/out/github-pages/flatpak
+
+          cp -r /tmp/out/flatpak/repositories/* /tmp/out/github-pages/flatpak
       - name: Publish pre-release to GitHub releases
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: marvinpinto/action-automatic-releases@latest
@@ -79,3 +78,12 @@ jobs:
           prerelease: false
           files: |
             /tmp/out/*/*
+      - name: Publish release to GitHub pages
+        if: ${{ github.ref == 'refs/heads/main' }}
+        # if: startsWith(github.ref, 'refs/tags/v') # Enable this after releases are ready
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: /tmp/out/github-pages
+          git-config-name: GitHub Pages Bot
+          git-config-email: bot@example.com
