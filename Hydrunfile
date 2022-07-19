@@ -2,71 +2,42 @@
 
 set -e
 
-# Fedora
-if [ "$1" = "fedora" ]; then
+# Flatpak
+if [ "$1" = "flatpak" ]; then
     # Install native dependencies
-    dnf install -y gtk4-devel libadwaita-devel gobject-introspection-devel go gcc g++
+    dnf install -y flatpak-builder
 
-    # Generate dependencies
-    make depend
+    # Setup Flatpak
+    flatpak remote-add --if-not-exists "flathub" "https://flathub.org/repo/flathub.flatpakrepo"
 
-    # Build
-    export GOFLAGS='-x -buildvcs=false'
-    make
+    # Setup GPG
+    echo "${GPG_KEY_PASSWORD}" | base64 -d >"/tmp/gpg-pass"
+    mkdir -p "${HOME}/.gnupg"
+    cat >"${HOME}/.gnupg/gpg.conf" <<EOT
+yes
+passphrase-file /tmp/gpg-pass
+pinentry-mode loopback
+EOT
+    echo "${GPG_KEY_CONTENT}" | base64 -d >"/tmp/private.asc"
+    gpg --import "/tmp/private.asc"
+    gpg --output "/tmp/public.asc" --armor --export
 
-    # Stage
-    for file in ./out/*; do
-        mv "${file}" "${file}.fedora-$(uname -m)"
+    # Setup repo
+    mkdir -p "out/repositories"
+    echo "[Flatpak Repo]
+Title=Vintangle Flatpak repo
+Url=https://pojntfx.github.io/vintangle/flatpak/
+Homepage=https://github.com/pojntfx/vintangle/
+Description=Synchronized torrent streaming for distributed watch parties.
+GPGKey=$(base64 -w 0 /tmp/public.asc)
+" >"out/repositories/vintangle.flatpakrepo"
+
+    # Generate dependencies and build
+    for ARCH in "x86_64"; do
+        flatpak install -y --arch="${ARCH}" "org.gnome.Platform//42" "org.gnome.Sdk//42" "org.freedesktop.Sdk.Extension.golang//21.08"
+        flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories" --force-clean build-dir "com.pojtinger.felicitas.vintangle.yaml"
+        flatpak -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" build-bundle out/repositories "out/com.pojtinger.felicitas.vintangle.yaml.linux-${ARCH}.flatpak" "com.pojtinger.felicitas.vintangle"
     done
-
-    exit 0
-fi
-
-# Windows
-if [ "$1" = "windows" ]; then
-    # Install native dependencies
-    dnf update -y
-    dnf install -y curl wine
-
-    # Install MSYS2
-    curl -L -o /tmp/msys2.exe 'https://github.com/msys2/msys2-installer/releases/download/2021-11-30/msys2-base-x86_64-20211130.sfx.exe'
-    wine64 /tmp/msys2.exe x -y -oC:/
-
-    # Fix MSYS2
-    sed -i ~/.wine/drive_c/msys64/etc/pacman.conf -e 's/SigLevel    = Required/SigLevel = Never/g'
-    cat /etc/pki/tls/certs/ca-bundle.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.crt
-    cat /etc/pki/tls/certs/ca-bundle.trust.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.trust.crt
-    export WINEPATH='C:\msys64\usr\bin'
-
-    # Install GCC, Go, GTK4, libadwaita and MPV
-    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
-    wine64 bash.exe -c 'pacman --verbose --debug --noconfirm --ignore pacman -Syu' || true # It won't upgrade due to locks, but we only need it to refresh it's caches
-    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
-    wine64 bash.exe -c 'pacman --verbose --debug --noconfirm --ignore pacman --needed -S git mingw-w64-x86_64-gcc mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gtk4 mingw-w64-x86_64-gobject-introspection mingw-w64-x86_64-gobject-introspection-runtime mingw-w64-x86_64-glib2 mingw-w64-x86_64-libadwaita mingw-w64-x86_64-mpv'
-    sed -i ~/.wine/drive_c/msys64/mingw64/lib/pkgconfig/* -e 's/-Wl,-luuid/-luuid/g' # See https://github.com/gotk3/gotk3/wiki/Installing-on-Windows#chocolatey, fails with invalid flag in pkg-config --libs: -Wl,-luuid otherwise
-    mkdir -p ~/.wine/drive_c/go ~/.wine/drive_c/tmp
-
-    # Copy source code to directory on C drive
-    rm -rf ~/.wine/drive_c/users/root/Documents/gotk4-workspace
-    mkdir -p ~/.wine/drive_c/users/root/Documents/gotk4-workspace
-    rm -rf out
-    cp -r . ~/.wine/drive_c/users/root/Documents/gotk4-workspace
-
-    # Build
-    wine64 bash.exe -c "export PATH=${PATH}:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOFLAGS='-x -buildvcs=false -ldflags -linkmode=external -H=windowsgui' && cd /c/users/root/Documents/gotk4-workspace && make depend && make"
-
-    # Copy binaries to staging directory
-    rm -rf out
-    mkdir -p out/dist/bin
-    yes | cp -f ~/.wine/drive_c/users/root/Documents/gotk4-workspace/out/* out/dist/bin
-
-    # Package (you can distribute the resulting .zip)
-    cp -r ~/.wine/drive_c/msys64/mingw64/* out/dist
-
-    cd out/dist || exit
-    zip -FSr "../vintangle.windows-$(uname -m).zip" .
-    cd ..
-    rm -rf dist
 
     exit 0
 fi

@@ -1,3 +1,5 @@
 out
 hack
 *.compiled
+.flatpak-builder
+build-dir

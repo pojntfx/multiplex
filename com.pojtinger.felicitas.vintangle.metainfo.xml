@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>com.pojtinger.felicitas.vintangle</id>
+    <metadata_license>AGPL-3.0+</metadata_license>
+    <project_license>AGPL-3.0-or-later</project_license>
+    <name>Vintangle</name>
+    <summary>Synchronized torrent streaming for distributed watch parties.</summary>
+
+    <description>
+        <p>Synchronized torrent streaming for distributed watch parties.</p>
+    </description>
+
+    <launchable type="desktop-id">com.pojtinger.felicitas.vintangle.desktop</launchable>
+
+    <url type="homepage">https://github.com/pojntfx/vintangle</url>
+
+    <provides>
+        <binary>vintangle-gui</binary>
+    </provides>
+
+    <releases>
+        <release version="0.1.0" date="2022-07-19">
+            <description>
+                <p>Initial Release</p>
+            </description>
+        </release>
+    </releases>
+</component>

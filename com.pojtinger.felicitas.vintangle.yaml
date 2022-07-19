@@ -1,0 +1,30 @@
+app-id: com.pojtinger.felicitas.vintangle
+runtime: org.gnome.Platform
+runtime-version: "42"
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+command: vintangle-gui
+finish-args:
+  - --socket=session-bus
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=home
+modules:
+  - name: com.pojtinger.felicitas.vintangle
+    buildsystem: simple
+    build-commands:
+      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make depend
+      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make PREFIX=/app
+      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make install PREFIX=/app
+      - desktop-file-install --dir=/app/share/applications com.pojtinger.felicitas.vintangle.desktop
+      - appstream-util validate-relax com.pojtinger.felicitas.vintangle.metainfo.xml
+      - install -D -m 0644 com.pojtinger.felicitas.vintangle.metainfo.xml /app/share/metainfo/com.pojtinger.felicitas.vintangle.metainfo.xml
+    build-options:
+      build-args:
+        - "--share=network"
+    sources:
+      - type: dir
+        path: .
