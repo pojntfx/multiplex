@@ -37,7 +37,11 @@ jobs:
           sudo install /tmp/hydrun /usr/local/bin
       - name: Build with hydrun
         working-directory: ${{ matrix.target.src }}
-        run: hydrun -o ${{ matrix.target.os }} ${{ matrix.target.flags }} "${{ matrix.target.cmd }}"
+        env:
+          GPG_KEY_CONTENT: ${{ secrets.GPG_KEY_CONTENT }} # GPG_KEY_CONTENT must be a unarmored PGP private key which is base64 encoded with -w0
+          GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }} # GPG_KEY_PASSWORD must be base64 encoded with -w0
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+        run: hydrun -o ${{ matrix.target.os }} ${{ matrix.target.flags }} "GPG_KEY_CONTENT=\"${GPG_KEY_CONTENT}\" GPG_KEY_PASSWORD=\"${GPG_KEY_PASSWORD}\" GPG_KEY_ID=\"${GPG_KEY_ID}\" "${{ matrix.target.cmd }}"
       - name: Fix permissions for output
         run: sudo chown -R $USER .
       - name: Upload output
