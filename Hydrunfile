@@ -18,7 +18,7 @@ yes
 passphrase-file /tmp/gpg-pass
 pinentry-mode loopback
 EOT
-    echo "${GPG_KEY_CONTENT}" | base64 -d >"/tmp/private.asc"
+    echo "${GPG_KEY_CONTENT}" >"/tmp/private.asc"
     gpg --import "/tmp/private.asc"
     gpg --output "/tmp/public.asc" --armor --export
 
