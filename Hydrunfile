@@ -11,14 +11,14 @@ if [ "$1" = "flatpak" ]; then
     flatpak remote-add --if-not-exists "flathub" "https://flathub.org/repo/flathub.flatpakrepo"
 
     # Setup GPG
-    echo "${GPG_KEY_PASSWORD}" | base64 -d >"/tmp/gpg-pass" # GPG_KEY_PASSWORD must be base64 encoded with -w0
+    echo "${GPG_KEY_PASSWORD}" | base64 -d >"/tmp/gpg-pass"
     mkdir -p "${HOME}/.gnupg"
     cat >"${HOME}/.gnupg/gpg.conf" <<EOT
 yes
 passphrase-file /tmp/gpg-pass
 pinentry-mode loopback
 EOT
-    echo "${GPG_KEY_CONTENT}" | base64 -d >"/tmp/private.gpg" # GPG_KEY_CONTENT must be base64 encoded with -w0
+    echo "${GPG_KEY_CONTENT}" | base64 -d >"/tmp/private.gpg"
     gpg --import "/tmp/private.gpg"
     gpg --output "/tmp/public.asc" --armor --export
 
