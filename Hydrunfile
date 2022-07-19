@@ -36,7 +36,7 @@ GPGKey=$(base64 -w 0 /tmp/public.asc)
     for ARCH in "x86_64"; do
         flatpak install -y --arch="${ARCH}" "org.gnome.Platform//42" "org.gnome.Sdk//42" "org.freedesktop.Sdk.Extension.golang//21.08"
         flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories/unstable" --force-clean "build-dir" "com.pojtinger.felicitas.vintangle.yaml"
-        flatpak -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" build-bundle "out/repositories/unstable" "out/com.pojtinger.felicitas.vintangle.yaml.linux-${ARCH}.flatpak" "com.pojtinger.felicitas.vintangle"
+        flatpak --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" build-bundle "out/repositories/unstable" "out/com.pojtinger.felicitas.vintangle.yaml.linux-${ARCH}.flatpak" "com.pojtinger.felicitas.vintangle"
     done
 
     # Setup stable repo
