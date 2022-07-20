@@ -14,7 +14,7 @@
         </key>
 
         <key name='mpv' type='s'>
-            <default>"mpv"</default>
+            <default>""</default>
             <summary>mpv command</summary>
             <description>Command to launch mpv with</description>
         </key>

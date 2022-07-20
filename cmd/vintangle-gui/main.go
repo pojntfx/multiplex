@@ -775,6 +775,8 @@ func addPreferencesWindow(app *adw.Application, window *adw.ApplicationWindow, s
 		preferencesWindow.SetVisible(false)
 
 		if preferencesHaveChanged {
+			settings.Apply()
+
 			toast := adw.NewToast("Reopen to apply the changes.")
 			toast.SetButtonLabel("Reopen")
 			toast.SetActionName("win." + applyPreferencesActionName)
@@ -889,6 +891,18 @@ func main() {
 		}
 
 		settings.SetString(storageFlag, filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data"))
+
+		settings.Apply()
+	}
+
+	if mpv := settings.String(mpvFlag); strings.TrimSpace(mpv) == "" {
+		if _, err := os.Stat("/.flatpak-info"); err == nil {
+			settings.SetString(mpv, "flatpak-spawn --host mpv")
+		} else {
+			settings.SetString(mpv, "mpv")
+		}
+
+		settings.Apply()
 	}
 
 	settings.ConnectChanged(func(key string) {
