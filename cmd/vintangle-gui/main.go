@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math"
 	"math/rand"
 	"net"
@@ -474,10 +473,21 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 		panic(err)
 	}
 
-	ipcDir, err := ioutil.TempDir(os.TempDir(), "mpv-ipc")
+	userCacheDir, err := os.UserCacheDir()
 	if err != nil {
 		panic(err)
 	}
+
+	vintangleCacheDir := filepath.Join(userCacheDir, "vintangle")
+	if err := os.MkdirAll(vintangleCacheDir, os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	ipcDir, err := os.MkdirTemp(vintangleCacheDir, "mpv-ipc")
+	if err != nil {
+		panic(err)
+	}
+
 	ipcFile := filepath.Join(ipcDir, "mpv.sock")
 
 	shell := []string{"sh", "-c"}
@@ -513,6 +523,10 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 				if err := command.Process.Kill(); err != nil {
 					panic(err)
 				}
+			}
+
+			if err := os.RemoveAll(ipcDir); err != nil {
+				panic(err)
 			}
 
 			return true
