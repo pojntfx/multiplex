@@ -155,7 +155,7 @@ func getDisplayPathWithoutRoot(p string) string {
 	return filepath.Join(parts[1:]...) // Outgoing paths are OS-specific (display only)
 }
 
-func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
@@ -382,7 +382,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, mpv, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
+		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -398,7 +398,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, mpv, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -432,7 +432,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, mpv, settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -494,7 +494,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd", "/c"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", mpv, ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(mpvFlag), ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -895,9 +895,10 @@ func main() {
 		settings.Apply()
 	}
 
+	// TODO: Move this check to `onShow` and cascade from Flatpak ? MPV flatpak runs ? continue : MPV host binary works ? continue : dialog with link to Flathub and mpv.io
 	if mpv := settings.String(mpvFlag); strings.TrimSpace(mpv) == "" {
 		if _, err := os.Stat("/.flatpak-info"); err == nil {
-			settings.SetString(mpv, "flatpak-spawn --host mpv")
+			settings.SetString(mpv, "flatpak-spawn --host mpv") // Also consider `flatpak-spawn --host flatpak run io.mpv.Mpv`
 		} else {
 			settings.SetString(mpv, "mpv")
 		}
@@ -1002,7 +1003,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings.String(mpvFlag), settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
