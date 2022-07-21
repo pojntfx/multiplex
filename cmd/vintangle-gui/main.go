@@ -186,6 +186,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 
 	selectedTorrentMedia := ""
 	activators := []*gtk.CheckButton{}
+	mediaRows := []*adw.ActionRow{}
 
 	stack.SetVisibleChildName(welcomePageName)
 
@@ -250,6 +251,45 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 					})
 				}
 
+				for _, row := range mediaRows {
+					mediaSelectionGroup.Remove(row)
+				}
+				mediaRows = []*adw.ActionRow{}
+
+				activators = []*gtk.CheckButton{}
+				for i, file := range torrentMedia {
+					row := adw.NewActionRow()
+
+					activator := gtk.NewCheckButton()
+
+					if len(activators) > 0 {
+						activator.SetGroup(activators[i-1])
+					}
+					activators = append(activators, activator)
+
+					m := file.name
+					activator.SetActive(false)
+					activator.ConnectActivate(func() {
+						if m != selectedTorrentMedia {
+							selectedTorrentMedia = m
+
+							rightsConfirmationButton.SetActive(false)
+						}
+
+						nextButton.SetSensitive(true)
+					})
+
+					row.SetTitle(getDisplayPathWithoutRoot(file.name))
+					row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
+					row.SetActivatable(true)
+
+					row.AddPrefix(activator)
+					row.SetActivatableWidget(activator)
+
+					mediaRows = append(mediaRows, row)
+					mediaSelectionGroup.Add(row)
+				}
+
 				headerbarSpinner.SetSpinning(false)
 				magnetLinkEntry.SetSensitive(true)
 				previousButton.SetVisible(true)
@@ -302,48 +342,6 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	previousButton.ConnectClicked(onPrevious)
 
 	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, cancel)
-
-	mediaRows := []*adw.ActionRow{}
-	mediaSelectionGroup.ConnectRealize(func() {
-		for _, row := range mediaRows {
-			mediaSelectionGroup.Remove(row)
-		}
-		mediaRows = []*adw.ActionRow{}
-
-		activators = []*gtk.CheckButton{}
-		for i, file := range torrentMedia {
-			row := adw.NewActionRow()
-
-			activator := gtk.NewCheckButton()
-
-			if len(activators) > 0 {
-				activator.SetGroup(activators[i-1])
-			}
-			activators = append(activators, activator)
-
-			m := file.name
-			activator.SetActive(false)
-			activator.ConnectActivate(func() {
-				if m != selectedTorrentMedia {
-					selectedTorrentMedia = m
-
-					rightsConfirmationButton.SetActive(false)
-				}
-
-				nextButton.SetSensitive(true)
-			})
-
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
-			row.SetActivatable(true)
-
-			row.AddPrefix(activator)
-			row.SetActivatableWidget(activator)
-
-			mediaRows = append(mediaRows, row)
-			mediaSelectionGroup.Add(row)
-		}
-	})
 
 	mediaInfoButton.ConnectClicked(func() {
 		descriptionWindow.Show()
