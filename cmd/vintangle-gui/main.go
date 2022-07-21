@@ -572,6 +572,11 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		commandLine[0],
 		commandLine[1:]...,
 	)
+	if runtime.GOOS != "windows" {
+		command.SysProcAttr = &syscall.SysProcAttr{
+			Setsid: true,
+		}
+	}
 
 	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, func() {
 		cancel()
@@ -592,8 +597,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 		window.ConnectCloseRequest(func() (ok bool) {
 			if command.Process != nil {
-				if err := command.Process.Kill(); err != nil {
-					panic(err)
+				if runtime.GOOS == "windows" {
+					if err := command.Process.Kill(); err != nil {
+						panic(err)
+					}
+				} else {
+					if err := syscall.Kill(-command.Process.Pid, syscall.SIGKILL); err != nil {
+						panic(err)
+					}
 				}
 			}
 
@@ -661,6 +672,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 			updateScalePosition = func(done bool) {
 				if seekerIsUnderPointer {
 					if done {
+						seekerIsSeeking = false
+
 						return
 					}
 
