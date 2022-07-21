@@ -555,17 +555,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		panic(err)
 	}
 
-	userCacheDir, err := os.UserCacheDir()
-	if err != nil {
-		panic(err)
-	}
-
-	vintangleCacheDir := filepath.Join(userCacheDir, "vintangle")
-	if err := os.MkdirAll(vintangleCacheDir, os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	ipcDir, err := os.MkdirTemp(vintangleCacheDir, "mpv-ipc")
+	ipcDir, err := os.MkdirTemp(os.TempDir(), "mpv-ipc")
 	if err != nil {
 		panic(err)
 	}
@@ -972,7 +962,7 @@ func main() {
 			panic(err)
 		}
 
-		settings.SetString(storageFlag, filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data"))
+		settings.SetString(storageFlag, filepath.Join(home, "Downloads", "Vintangle"))
 
 		settings.Apply()
 	}
@@ -1032,6 +1022,10 @@ func main() {
 
 		apiUsername := randSeq(20)
 		apiPassword := randSeq(20)
+
+		if err := os.MkdirAll(settings.String(storageFlag), os.ModePerm); err != nil {
+			panic(err)
+		}
 
 		gateway = server.NewGateway(
 			addr.String(),

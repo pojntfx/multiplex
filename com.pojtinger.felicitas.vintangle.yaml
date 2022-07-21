@@ -11,7 +11,9 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --device=dri
-  - --filesystem=home
+  - --filesystem=xdg-download:rw
+  - --filesystem=xdg-videos:rw
+  - --filesystem=/tmp:rw
 modules:
   - name: com.pojtinger.felicitas.vintangle
     buildsystem: simple
