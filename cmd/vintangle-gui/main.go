@@ -180,7 +180,7 @@ func findWorkingMPV() (string, error) {
 	}
 
 	if err := exec.Command("flatpak", "run", "io.mpv.Mpv", "--version").Run(); err == nil {
-		return "flatpak run io.mpv.Mpv --version", nil
+		return "flatpak run io.mpv.Mpv", nil
 	}
 
 	return "", errNoWorkingMPVFound
