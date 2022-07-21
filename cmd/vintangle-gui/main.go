@@ -107,6 +107,9 @@ const (
 
 	preferencesActionName      = "preferences"
 	applyPreferencesActionName = "applypreferences"
+
+	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
+	mpvWebsiteURL = "https://mpv.io/installation/"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -183,7 +186,7 @@ func findWorkingMPV() (string, error) {
 	return "", errNoWorkingMPVFound
 }
 
-func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openAssistantWindow(ctx context.Context, app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
@@ -211,6 +214,8 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	warningBuilder := gtk.NewBuilderFromString(warningUI, len(warningUI))
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
+	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
+	mpvIgnoreDownloadButton := warningBuilder.GetObject("mpv-download-ignore-button").Cast().(*gtk.Button)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -412,12 +417,38 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
 
-	warningDialog.SetDefaultWidget(mpvFlathubDownloadButton)
+	if runtime.GOOS == "linux" {
+		mpvFlathubDownloadButton.SetVisible(true)
+		warningDialog.SetDefaultWidget(mpvFlathubDownloadButton)
+	} else {
+		warningDialog.SetDefaultWidget(mpvWebsiteDownloadButton)
+	}
+
+	mpvFlathubDownloadButton.ConnectClicked(func() {
+		gtk.ShowURIFull(ctx, &window.Window, mpvFlathubURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
+			warningDialog.Close()
+
+			os.Exit(0)
+		})
+	})
+
+	mpvWebsiteDownloadButton.ConnectClicked(func() {
+		gtk.ShowURIFull(ctx, &window.Window, mpvWebsiteURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
+			warningDialog.Close()
+
+			os.Exit(0)
+		})
+	})
+
+	mpvIgnoreDownloadButton.ConnectClicked(func() {
+		warningDialog.Close()
+	})
+
 	warningDialog.SetTransientFor(&window.Window)
 	warningDialog.ConnectCloseRequest(func() (ok bool) {
 		warningDialog.Close()
@@ -449,7 +480,7 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	return nil
 }
 
-func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -483,7 +514,7 @@ func openControlsWindow(app *adw.Application, torrentTitle, selectedTorrentMedia
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -1043,7 +1074,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
