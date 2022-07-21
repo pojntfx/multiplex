@@ -77,7 +77,8 @@ var (
 
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-	errKilled = errors.New("signal: killed")
+	errKilled            = errors.New("signal: killed")
+	errNoWorkingMPVFound = errors.New("could not find working a working mpv")
 )
 
 const (
@@ -153,6 +154,30 @@ func getDisplayPathWithoutRoot(p string) string {
 	}
 
 	return filepath.Join(parts[1:]...) // Outgoing paths are OS-specific (display only)
+}
+
+func findWorkingMPV() (string, error) {
+	if _, err := os.Stat("/.flatpak-info"); err == nil {
+		if err := exec.Command("flatpak-spawn", "--host", "mpv", "--version").Run(); err == nil {
+			return "flatpak-spawn --host mpv", nil
+		}
+
+		if err := exec.Command("flatpak-spawn", "--host", "flatpak", "run", "io.mpv.Mpv", "--version").Run(); err == nil {
+			return "flatpak-spawn --host flatpak run io.mpv.Mpv", nil
+		}
+
+		return "", errNoWorkingMPVFound
+	}
+
+	if err := exec.Command("mpv", "--version").Run(); err == nil {
+		return "mpv", nil
+	}
+
+	if err := exec.Command("flatpak", "run", "io.mpv.Mpv", "--version").Run(); err == nil {
+		return "flatpak run io.mpv.Mpv --version", nil
+	}
+
+	return "", errNoWorkingMPVFound
 }
 
 func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
@@ -388,6 +413,16 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	app.AddWindow(&window.Window)
 
 	window.ConnectShow(func() {
+		if oldMPVCommand := settings.String(mpvFlag); strings.TrimSpace(oldMPVCommand) == "" {
+			newMPVCommand, err := findWorkingMPV()
+			if err != nil {
+				panic(err)
+			}
+
+			settings.SetString(mpvFlag, newMPVCommand)
+			settings.Apply()
+		}
+
 		magnetLinkEntry.GrabFocus()
 	})
 
@@ -889,17 +924,6 @@ func main() {
 		}
 
 		settings.SetString(storageFlag, filepath.Join(home, ".local", "share", "htorrent", "var", "lib", "htorrent", "data"))
-
-		settings.Apply()
-	}
-
-	// TODO: Move this check to `onShow` and cascade from Flatpak ? MPV flatpak runs ? continue : MPV host binary works ? continue : dialog with link to Flathub and mpv.io
-	if mpv := settings.String(mpvFlag); strings.TrimSpace(mpv) == "" {
-		if _, err := os.Stat("/.flatpak-info"); err == nil {
-			settings.SetString(mpv, "flatpak-spawn --host mpv") // Also consider `flatpak-spawn --host flatpak run io.mpv.Mpv`
-		} else {
-			settings.SetString(mpv, "mpv")
-		}
 
 		settings.Apply()
 	}
