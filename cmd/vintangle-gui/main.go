@@ -58,6 +58,9 @@ var (
 	//go:embed description.ui
 	descriptionUI string
 
+	//go:embed warning.ui
+	warningUI string
+
 	//go:embed menu.ui
 	menuUI string
 
@@ -204,6 +207,10 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
+
+	warningBuilder := gtk.NewBuilderFromString(warningUI, len(warningUI))
+	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
+	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -410,13 +417,24 @@ func openAssistantWindow(app *adw.Application, manager *client.Manager, apiAddr,
 		}
 	})
 
+	warningDialog.SetDefaultWidget(mpvFlathubDownloadButton)
+	warningDialog.SetTransientFor(&window.Window)
+	warningDialog.ConnectCloseRequest(func() (ok bool) {
+		warningDialog.Close()
+		warningDialog.SetVisible(false)
+
+		return ok
+	})
+
 	app.AddWindow(&window.Window)
 
 	window.ConnectShow(func() {
 		if oldMPVCommand := settings.String(mpvFlag); strings.TrimSpace(oldMPVCommand) == "" {
 			newMPVCommand, err := findWorkingMPV()
 			if err != nil {
-				panic(err)
+				warningDialog.Show()
+
+				return
 			}
 
 			settings.SetString(mpvFlag, newMPVCommand)

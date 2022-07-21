@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="GtkMessageDialog" id="warning-dialog">
+        <property name="modal">true</property>
+        <property name="text">Media Player Could Not Be Found</property>
+        <property name="secondary-text">To play media, please install mpv to continue.</property>
+
+        <child type="action">
+            <object class="GtkButton" id="mpv-download-flathub-button">
+                <property name="label">Get from Flathub</property>
+            </object>
+        </child>
+
+        <child type="action">
+            <object class="GtkButton" id="mpv-download-mpvio-button">
+                <property name="label">Get from mpv.io</property>
+            </object>
+        </child>
+
+        <child type="action">
+            <object class="GtkButton" id="mpv-download-cancel-button">
+                <property name="label">Cancel</property>
+            </object>
+        </child>
+    </object>
+</interface>
