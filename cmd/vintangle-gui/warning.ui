@@ -6,7 +6,7 @@
     <object class="GtkMessageDialog" id="warning-dialog">
         <property name="modal">true</property>
         <property name="text">No Media Player Could Be Found</property>
-        <property name="secondary-text">Please install mpv to able to play media.</property>
+        <property name="secondary-text">Please install mpv or configure the exisiting installation to able to play media.</property>
 
         <child type="action">
             <object class="GtkButton" id="mpv-download-flathub-button">
@@ -22,12 +22,8 @@
         </child>
 
         <child type="action">
-            <object class="GtkButton" id="mpv-download-ignore-button">
-                <style>
-                    <class name="destructive-action"></class>
-                </style>
-
-                <property name="label">Ignore</property>
+            <object class="GtkButton" id="mpv-manual-configuration-button">
+                <property name="label">Manual configuration</property>
             </object>
         </child>
     </object>

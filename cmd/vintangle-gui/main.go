@@ -215,7 +215,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
-	mpvIgnoreDownloadButton := warningBuilder.GetObject("mpv-download-ignore-button").Cast().(*gtk.Button)
+	mpvManualConfigurationButton := warningBuilder.GetObject("mpv-manual-configuration-button").Cast().(*gtk.Button)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -378,7 +378,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
-	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, cancel)
+	preferencesWindow, mpvCommandInput := addMainMenu(app, window, settings, menuButton, overlay, gateway, cancel)
 
 	mediaInfoButton.ConnectClicked(func() {
 		descriptionWindow.Show()
@@ -445,8 +445,11 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		})
 	})
 
-	mpvIgnoreDownloadButton.ConnectClicked(func() {
+	mpvManualConfigurationButton.ConnectClicked(func() {
 		warningDialog.Close()
+
+		preferencesWindow.Show()
+		mpvCommandInput.GrabFocus()
 	})
 
 	warningDialog.SetTransientFor(&window.Window)
@@ -578,7 +581,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		}
 	}
 
-	addPreferencesWindow(app, window, settings, menuButton, overlay, gateway, func() {
+	addMainMenu(app, window, settings, menuButton, overlay, gateway, func() {
 		cancel()
 
 		if command.Process != nil {
@@ -832,7 +835,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	return nil
 }
 
-func addPreferencesWindow(app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) {
+func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) (*adw.PreferencesWindow, *gtk.Entry) {
 	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -950,6 +953,8 @@ func addPreferencesWindow(app *adw.Application, window *adw.ApplicationWindow, s
 	})
 
 	menuButton.SetMenuModel(menu)
+
+	return preferencesWindow, mpvCommandInput
 }
 
 func main() {
