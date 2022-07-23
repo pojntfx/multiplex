@@ -101,10 +101,10 @@ const (
 	storageFlag = "storage"
 	mpvFlag     = "mpv"
 
-	gatewayremoteFlag   = "gatewayremote"
-	gatewayurlFlag      = "gatewayurl"
-	gatewayusernameFlag = "gatewayusername"
-	gatewaypasswordFlag = "gatewaypassword"
+	gatewayRemoteFlag   = "gatewayremote"
+	gatewayURLFlag      = "gatewayurl"
+	gatewayUsernameFlag = "gatewayusername"
+	gatewayPasswordFlag = "gatewaypassword"
 
 	keycodeEscape = 66
 
@@ -906,8 +906,10 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
 		cancel()
 
-		if err := gateway.Close(); err != nil {
-			panic(err)
+		if gateway != nil {
+			if err := gateway.Close(); err != nil {
+				panic(err)
+			}
 		}
 
 		ex, err := os.Executable()
@@ -956,10 +958,10 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
 	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
 
-	settings.Bind(gatewayremoteFlag, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
-	settings.Bind(gatewayurlFlag, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(gatewayusernameFlag, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(gatewaypasswordFlag, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(gatewayRemoteFlag, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
+	settings.Bind(gatewayURLFlag, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(gatewayUsernameFlag, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(gatewayPasswordFlag, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
 
 	mpvCommandInput.ConnectChanged(func() {
 		preferencesHaveChanged = true
@@ -1088,47 +1090,53 @@ func main() {
 
 		rand.Seed(time.Now().UnixNano())
 
-		apiUsername := randSeq(20)
-		apiPassword := randSeq(20)
-
 		if err := os.MkdirAll(settings.String(storageFlag), os.ModePerm); err != nil {
 			panic(err)
 		}
 
-		gateway = server.NewGateway(
-			addr.String(),
-			settings.String(storageFlag),
-			apiUsername,
-			apiPassword,
-			"",
-			"",
-			settings.Int64(verboseFlag) > 5,
-			func(peers int, total, completed int64, path string) {
-				log.Info().
-					Int("peers", peers).
-					Int64("total", total).
-					Int64("completed", completed).
-					Str("path", path).
-					Msg("Streaming")
-			},
-			ctx,
-		)
+		apiAddr := settings.String(gatewayURLFlag)
+		apiUsername := settings.String(gatewayUsernameFlag)
+		apiPassword := settings.String(gatewayPasswordFlag)
+		if !settings.Boolean(gatewayRemoteFlag) {
+			apiUsername = randSeq(20)
+			apiPassword = randSeq(20)
 
-		if err := gateway.Open(); err != nil {
-			panic(err)
-		}
+			gateway = server.NewGateway(
+				addr.String(),
+				settings.String(storageFlag),
+				apiUsername,
+				apiPassword,
+				"",
+				"",
+				settings.Int64(verboseFlag) > 5,
+				func(peers int, total, completed int64, path string) {
+					log.Info().
+						Int("peers", peers).
+						Int64("total", total).
+						Int64("completed", completed).
+						Str("path", path).
+						Msg("Streaming")
+				},
+				ctx,
+			)
 
-		go func() {
-			log.Info().
-				Str("address", addr.String()).
-				Msg("Gateway listening")
-
-			if err := gateway.Wait(); err != nil {
+			if err := gateway.Open(); err != nil {
 				panic(err)
 			}
-		}()
 
-		apiAddr := "http://" + addr.String()
+			go func() {
+				log.Info().
+					Str("address", addr.String()).
+					Msg("Gateway listening")
+
+				if err := gateway.Wait(); err != nil {
+					panic(err)
+				}
+			}()
+
+			apiAddr = "http://" + addr.String()
+		}
+
 		manager := client.NewManager(
 			apiAddr,
 			apiUsername,
@@ -1144,8 +1152,10 @@ func main() {
 	app.ConnectShutdown(func() {
 		cancel()
 
-		if err := gateway.Close(); err != nil {
-			panic(err)
+		if gateway != nil {
+			if err := gateway.Close(); err != nil {
+				panic(err)
+			}
 		}
 	})
 
