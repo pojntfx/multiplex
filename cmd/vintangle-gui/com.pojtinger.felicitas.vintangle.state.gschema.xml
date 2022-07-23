@@ -18,5 +18,29 @@
             <summary>mpv command</summary>
             <description>Command to launch mpv with</description>
         </key>
+
+        <key name='gatewayremote' type='b'>
+            <default>false</default>
+            <summary>Use remote gateway</summary>
+            <description>Use a remote hTorrent gateway instead of the local one</description>
+        </key>
+
+        <key name='gatewayurl' type='s'>
+            <default>""</default>
+            <summary>hTorrent URL</summary>
+            <description>URL of the remote hTorrent gateway to use</description>
+        </key>
+
+        <key name='gatewayusername' type='s'>
+            <default>""</default>
+            <summary>hTorrent username</summary>
+            <description>Username for the remote hTorrent gateway</description>
+        </key>
+
+        <key name='gatewaypassword' type='s'>
+            <default>""</default>
+            <summary>hTorrent password</summary>
+            <description>Password for the remote hTorrent gateway</description>
+        </key>
     </schema>
 </schemalist>

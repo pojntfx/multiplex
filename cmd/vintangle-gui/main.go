@@ -101,6 +101,11 @@ const (
 	storageFlag = "storage"
 	mpvFlag     = "mpv"
 
+	gatewayremoteFlag   = "gatewayremote"
+	gatewayurlFlag      = "gatewayurl"
+	gatewayusernameFlag = "gatewayusername"
+	gatewaypasswordFlag = "gatewaypassword"
+
 	keycodeEscape = 66
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
@@ -847,6 +852,13 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
 	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
+	remoteGatewaySwitchInput := preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast().(*gtk.Switch)
+	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*gtk.Entry)
+	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*gtk.Entry)
+	remoteGatewayPasswordInput := preferencesBuilder.GetObject("htorrent-password-input").Cast().(*gtk.Entry)
+	remoteGatewayURLRow := preferencesBuilder.GetObject("htorrent-url-row").Cast().(*adw.ActionRow)
+	remoteGatewayUsernameRow := preferencesBuilder.GetObject("htorrent-username-row").Cast().(*adw.ActionRow)
+	remoteGatewayPasswordRow := preferencesBuilder.GetObject("htorrent-password-row").Cast().(*adw.ActionRow)
 
 	preferencesHaveChanged := false
 
@@ -876,6 +888,19 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 
 		return ok
 	})
+
+	syncSensitivityState := func() {
+		if remoteGatewaySwitchInput.State() {
+			remoteGatewayURLRow.SetSensitive(true)
+			remoteGatewayUsernameRow.SetSensitive(true)
+			remoteGatewayPasswordRow.SetSensitive(true)
+		} else {
+			remoteGatewayURLRow.SetSensitive(false)
+			remoteGatewayUsernameRow.SetSensitive(false)
+			remoteGatewayPasswordRow.SetSensitive(false)
+		}
+	}
+	preferencesWindow.ConnectShow(syncSensitivityState)
 
 	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
 	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
@@ -931,10 +956,35 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
 	settings.Bind(verboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
 
+	settings.Bind(gatewayremoteFlag, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
+	settings.Bind(gatewayurlFlag, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(gatewayusernameFlag, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(gatewaypasswordFlag, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
+
 	mpvCommandInput.ConnectChanged(func() {
 		preferencesHaveChanged = true
 	})
 	verbosityLevelInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+
+	remoteGatewaySwitchInput.ConnectStateSet(func(state bool) (ok bool) {
+		preferencesHaveChanged = true
+
+		remoteGatewaySwitchInput.SetState(state)
+
+		syncSensitivityState()
+
+		return true
+	})
+
+	remoteGatewayURLInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	remoteGatewayUsernameInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	remoteGatewayPasswordInput.ConnectChanged(func() {
 		preferencesHaveChanged = true
 	})
 
