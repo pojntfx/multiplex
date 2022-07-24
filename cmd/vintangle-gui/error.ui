@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="GtkMessageDialog" id="error-dialog">
+        <property name="modal">true</property>
+        <property name="text">A Fatal Error Occured</property>
+        <property name="secondary-text"></property>
+        <property name="message-type">error</property>
+
+        <child type="action">
+            <object class="GtkButton" id="report-error-button">
+                <property name="label">Report Error</property>
+            </object>
+        </child>
+
+        <child type="action">
+            <object class="GtkButton" id="close-vintangle-button">
+                <style>
+                    <class name="destructive-action"></class>
+                </style>
+
+                <property name="label">Close Vintangle</property>
+            </object>
+        </child>
+    </object>
+</interface>
