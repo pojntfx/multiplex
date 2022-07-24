@@ -61,6 +61,9 @@ var (
 	//go:embed warning.ui
 	warningUI string
 
+	//go:embed error.ui
+	errorUI string
+
 	//go:embed menu.ui
 	menuUI string
 
@@ -115,6 +118,8 @@ const (
 
 	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
 	mpvWebsiteURL = "https://mpv.io/installation/"
+
+	issuesURL = "https://github.com/pojntfx/vintangle/issues"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -1007,6 +1012,41 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 	menuButton.SetMenuModel(menu)
 
 	return preferencesWindow, mpvCommandInput
+}
+
+func openErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err error) {
+	errorBuilder := gtk.NewBuilderFromString(errorUI, len(errorUI))
+	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
+	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
+	closeVintangleButton := errorBuilder.GetObject("close-vintangle-button").Cast().(*gtk.Button)
+
+	// TODO: Set `secondary-text` property to `err.Error()`
+	// errorDialog.SetMarkup(err.Error())
+
+	errorDialog.SetDefaultWidget(reportErrorButton)
+	errorDialog.SetTransientFor(&window.Window)
+	errorDialog.ConnectCloseRequest(func() (ok bool) {
+		errorDialog.Close()
+		errorDialog.SetVisible(false)
+
+		return ok
+	})
+
+	reportErrorButton.ConnectClicked(func() {
+		gtk.ShowURIFull(ctx, &window.Window, issuesURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
+			errorDialog.Close()
+
+			os.Exit(1)
+		})
+	})
+
+	closeVintangleButton.ConnectClicked(func() {
+		errorDialog.Close()
+
+		os.Exit(1)
+	})
+
+	errorDialog.Show()
 }
 
 func main() {
