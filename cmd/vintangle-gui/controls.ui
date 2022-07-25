@@ -175,6 +175,16 @@
                                         </child>
 
                                         <child>
+                                            <object class="GtkMenuButton" id="subtitle-button">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                </style>
+
+                                                <property name="icon-name">media-view-subtitles-symbolic</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
                                             <object class="GtkToggleButton" id="fullscreen-button">
                                                 <style>
                                                     <class name="flat"></class>
