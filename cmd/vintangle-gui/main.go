@@ -388,7 +388,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
-	preferencesWindow, mpvCommandInput := addMainMenu(app, window, settings, menuButton, overlay, gateway, cancel)
+	preferencesWindow, mpvCommandInput := addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, cancel)
 
 	mediaInfoButton.ConnectClicked(func() {
 		descriptionWindow.Show()
@@ -528,7 +528,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		window.Close()
 
 		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
-			panic(err)
+			openErrorDialog(ctx, window, err)
+
+			return
 		}
 	})
 
@@ -565,12 +567,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 	streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	ipcDir, err := os.MkdirTemp(os.TempDir(), "mpv-ipc")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	ipcFile := filepath.Join(ipcDir, "mpv.sock")
@@ -591,12 +593,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		}
 	}
 
-	addMainMenu(app, window, settings, menuButton, overlay, gateway, func() {
+	addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, func() {
 		cancel()
 
 		if command.Process != nil {
 			if err := command.Process.Kill(); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 		}
 	})
@@ -605,24 +609,32 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 	window.ConnectShow(func() {
 		if err := command.Start(); err != nil {
-			panic(err)
+			openErrorDialog(ctx, window, err)
+
+			return
 		}
 
 		window.ConnectCloseRequest(func() (ok bool) {
 			if command.Process != nil {
 				if runtime.GOOS == "windows" {
 					if err := command.Process.Kill(); err != nil {
-						panic(err)
+						openErrorDialog(ctx, window, err)
+
+						return false
 					}
 				} else {
 					if err := syscall.Kill(-command.Process.Pid, syscall.SIGKILL); err != nil {
-						panic(err)
+						openErrorDialog(ctx, window, err)
+
+						return false
 					}
 				}
 			}
 
 			if err := os.RemoveAll(ipcDir); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return false
 			}
 
 			return true
@@ -645,7 +657,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 		encoder := json.NewEncoder(sock)
 		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
-			panic(err)
+			openErrorDialog(ctx, window, err)
+
+			return
 		}
 
 		seekerIsSeeking := false
@@ -669,7 +683,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 			elapsed := time.Duration(int64(value))
 
 			if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return false
 			}
 
 			log.Info().
@@ -715,7 +731,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 				decoder := json.NewDecoder(sock)
 
 				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				var durationResponse mpvFloat64Response
@@ -729,11 +747,15 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 				total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(durationResponse.Data)))
 				if err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				var elapsedResponse mpvFloat64Response
@@ -745,7 +767,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 				elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
 				if err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				if !seekerIsSeeking {
@@ -783,7 +807,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 				Msg("Setting volume")
 
 			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 		})
 
@@ -792,7 +818,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 				log.Info().Msg("Enabling fullscreen")
 
 				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				return
@@ -801,7 +829,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 			log.Info().Msg("Disabling fullscreen")
 
 			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 		})
 
@@ -812,7 +842,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 				playButton.SetIconName(pauseIcon)
 
 				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
-					panic(err)
+					openErrorDialog(ctx, window, err)
+
+					return
 				}
 
 				return
@@ -821,7 +853,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 			log.Info().Msg("Pausing playback")
 
 			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 
 			playButton.SetIconName(playIcon)
@@ -829,7 +863,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 		go func() {
 			if err := command.Wait(); err != nil && err.Error() != errKilled.Error() {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 
 			done <- struct{}{}
@@ -845,7 +881,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	return nil
 }
 
-func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) (*adw.PreferencesWindow, *gtk.Entry) {
+func addMainMenu(ctx context.Context, app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) (*adw.PreferencesWindow, *gtk.Entry) {
 	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -913,13 +949,17 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 
 		if gateway != nil {
 			if err := gateway.Close(); err != nil {
-				panic(err)
+				openErrorDialog(ctx, window, err)
+
+				return
 			}
 		}
 
 		ex, err := os.Executable()
 		if err != nil {
-			panic(err)
+			openErrorDialog(ctx, window, err)
+
+			return
 		}
 
 		if _, err := syscall.ForkExec(
@@ -930,7 +970,9 @@ func addMainMenu(app *adw.Application, window *adw.ApplicationWindow, settings *
 				Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
 			},
 		); err != nil {
-			panic(err)
+			openErrorDialog(ctx, window, err)
+
+			return
 		}
 
 		os.Exit(0)
@@ -1020,8 +1062,7 @@ func openErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
 	closeVintangleButton := errorBuilder.GetObject("close-vintangle-button").Cast().(*gtk.Button)
 
-	// TODO: Set `secondary-text` property to `err.Error()`
-	// errorDialog.SetMarkup(err.Error())
+	errorDialog.Object.SetObjectProperty("secondary-text", err.Error())
 
 	errorDialog.SetDefaultWidget(reportErrorButton)
 	errorDialog.SetTransientFor(&window.Window)
