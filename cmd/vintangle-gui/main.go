@@ -505,6 +505,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
+	subtitleButton := builder.GetObject("subtitle-button").Cast().(*gtk.Button)
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
@@ -581,7 +582,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd", "/c"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--sub-visibility=no' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(mpvFlag), ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(mpvFlag), ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -811,6 +812,33 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 
 				return
 			}
+		})
+
+		subtitleButton.ConnectClicked(func() {
+			filePicker := gtk.NewFileChooserNative(
+				"Select storage location",
+				&window.Window,
+				gtk.FileChooserActionOpen,
+				"",
+				"")
+			filePicker.SetModal(true)
+			filePicker.ConnectResponse(func(responseId int) {
+				if responseId == int(gtk.ResponseAccept) {
+					log.Info().
+						Str("path", filePicker.File().Path()).
+						Msg("Setting subtitles")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", filePicker.File().Path()}}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+				}
+
+				filePicker.Destroy()
+			})
+
+			filePicker.Show()
 		})
 
 		fullscreenButton.ConnectClicked(func() {
