@@ -73,6 +73,9 @@ var (
 	//go:embed preferences.ui
 	preferencesUI string
 
+	//go:embed subtitles.ui
+	subtitlesUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -518,6 +521,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 
+	subtitlesBuilder := gtk.NewBuilderFromString(subtitlesUI, len(subtitlesUI))
+	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
+	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
+	subtitlesOKButton := subtitlesBuilder.GetObject("button-ok").Cast().(*gtk.Button)
+	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
+
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
@@ -815,6 +824,36 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		})
 
 		subtitleButton.ConnectClicked(func() {
+			subtitlesDialog.Show()
+		})
+
+		escCtrl := gtk.NewEventControllerKey()
+		subtitlesDialog.AddController(escCtrl)
+		subtitlesDialog.SetTransientFor(&window.Window)
+
+		subtitlesDialog.ConnectCloseRequest(func() (ok bool) {
+			subtitlesDialog.Close()
+			subtitlesDialog.SetVisible(false)
+
+			return ok
+		})
+
+		escCtrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
+			if keycode == keycodeEscape {
+				subtitlesDialog.Close()
+				subtitlesDialog.SetVisible(false)
+			}
+		})
+
+		subtitlesCancelButton.ConnectClicked(func() {
+			subtitlesDialog.Close()
+		})
+
+		subtitlesOKButton.ConnectClicked(func() {
+			subtitlesDialog.Close()
+		})
+
+		addSubtitlesFromFileButton.ConnectClicked(func() {
 			filePicker := gtk.NewFileChooserNative(
 				"Select storage location",
 				&window.Window,
