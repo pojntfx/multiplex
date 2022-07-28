@@ -40,6 +40,11 @@ type media struct {
 	size int
 }
 
+type mediaWithPriority struct {
+	media
+	priority int
+}
+
 type mpvCommand struct {
 	Command []interface{} `json:"command"`
 }
@@ -238,6 +243,8 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	activators := []*gtk.CheckButton{}
 	mediaRows := []*adw.ActionRow{}
 
+	subtitles := []mediaWithPriority{}
+
 	stack.SetVisibleChildName(welcomePageName)
 
 	magnetLinkEntry.ConnectChanged(func() {
@@ -430,7 +437,24 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	playButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openControlsWindow(ctx, app, torrentTitle, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
+		subtitles = []mediaWithPriority{}
+		for _, media := range torrentMedia {
+			if media.name != selectedTorrentMedia {
+				if strings.HasSuffix(media.name, ".srt") || strings.HasSuffix(media.name, ".vtt") || strings.HasSuffix(media.name, ".ass") {
+					subtitles = append(subtitles, mediaWithPriority{
+						media:    media,
+						priority: 0,
+					})
+				} else {
+					subtitles = append(subtitles, mediaWithPriority{
+						media:    media,
+						priority: 1,
+					})
+				}
+			}
+		}
+
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
 			panic(err)
 		}
 	})
@@ -496,7 +520,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -525,6 +549,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	subtitlesOKButton := subtitlesBuilder.GetObject("button-ok").Cast().(*gtk.Button)
+	subtitlesSelectionGroup := subtitlesBuilder.GetObject("subtitle-tracks").Cast().(*adw.PreferencesGroup)
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
@@ -571,6 +596,48 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle,
 		descriptionText.Buffer().SetText(readmePlaceholder)
 	} else {
 		descriptionText.Buffer().SetText(torrentReadme)
+	}
+
+	activators := []*gtk.CheckButton{}
+
+	for i, file := range append(
+		[]mediaWithPriority{
+			{media: media{
+				name: "None",
+				size: 0,
+			},
+				priority: -1,
+			},
+		},
+		subtitles...) {
+		row := adw.NewActionRow()
+
+		activator := gtk.NewCheckButton()
+
+		if len(activators) > 0 {
+			activator.SetGroup(activators[i-1])
+		}
+		activators = append(activators, activator)
+
+		activator.SetActive(false)
+
+		if i == 0 {
+			row.SetTitle(file.name)
+			row.SetSubtitle("Disable subtitles")
+		} else if file.priority == 0 {
+			row.SetTitle(getDisplayPathWithoutRoot(file.name))
+			row.SetSubtitle("Integrated subtitle")
+		} else {
+			row.SetTitle(getDisplayPathWithoutRoot(file.name))
+			row.SetSubtitle("Extra file from media")
+		}
+
+		row.SetActivatable(true)
+
+		row.AddPrefix(activator)
+		row.SetActivatableWidget(activator)
+
+		subtitlesSelectionGroup.Add(row)
 	}
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
