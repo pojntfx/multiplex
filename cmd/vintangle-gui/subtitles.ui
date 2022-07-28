@@ -27,98 +27,46 @@
         </child>
 
         <child>
-            <object class="AdwClamp">
-                <property name="maximum-size">600</property>
-                <property name="vexpand">true</property>
-                <property name="valign">fill</property>
-                <property name="margin-top">12</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-bottom">12</property>
-
+            <object class="GtkScrolledWindow">
                 <child>
-                    <object class="AdwPreferencesGroup" id="subtitle-tracks">
-                        <property name="title" translatable="yes">Tracks</property>
+                    <object class="AdwClamp">
+                        <property name="maximum-size">600</property>
+                        <property name="vexpand">true</property>
+                        <property name="valign">fill</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-bottom">12</property>
 
-                        <child type="header-suffix">
-                            <object class="GtkButton" id="add-from-file-button">
-                                <style>
-                                    <class name="flat"></class>
-                                </style>
+                        <child>
+                            <object class="AdwPreferencesGroup" id="subtitle-tracks">
+                                <property name="title" translatable="yes">Tracks</property>
 
-                                <property name="valign">center</property>
+                                <child type="header-suffix">
+                                    <object class="GtkButton" id="add-from-file-button">
+                                        <style>
+                                            <class name="flat"></class>
+                                        </style>
 
-                                <child>
-                                    <object class="GtkBox">
-                                        <property name="spacing">6</property>
+                                        <property name="valign">center</property>
 
                                         <child>
-                                            <object class="GtkImage">
-                                                <property name="icon-name">list-add-symbolic</property>
+                                            <object class="GtkBox">
+                                                <property name="spacing">6</property>
+
+                                                <child>
+                                                    <object class="GtkImage">
+                                                        <property name="icon-name">list-add-symbolic</property>
+                                                    </object>
+                                                </child>
+
+                                                <child>
+                                                    <object class="GtkLabel">
+                                                        <property name="label">Add from file</property>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
-
-                                        <child>
-                                            <object class="GtkLabel">
-                                                <property name="label">Add from file</property>
-                                            </object>
-                                        </child>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-
-                        <child>
-                            <object class="AdwActionRow">
-                                <property name="title" translatable="yes">None</property>
-                                <property name="subtitle" translatable="yes">Disable subtitles</property>
-                                <property name="activatable-widget">none-button</property>
-
-                                <child>
-                                    <object class="GtkCheckButton" id="none-button">
-                                        <property name="valign">center</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-
-                        <child>
-                            <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Sintel.en.srt</property>
-                                <property name="subtitle" translatable="yes">Integrated in media</property>
-                                <property name="activatable-widget">media-button</property>
-
-                                <child>
-                                    <object class="GtkCheckButton" id="media-button">
-                                        <property name="valign">center</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-
-                        <child>
-                            <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Sintel.fr.srt</property>
-                                <property name="subtitle" translatable="yes">Integrated in media</property>
-                                <property name="activatable-widget">media-button-2</property>
-
-                                <child>
-                                    <object class="GtkCheckButton" id="media-button-2">
-                                        <property name="valign">center</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-
-                        <child>
-                            <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Sintel.de.srt</property>
-                                <property name="subtitle" translatable="yes">Manually added</property>
-                                <property name="activatable-widget">manual-button</property>
-
-                                <child>
-                                    <object class="GtkCheckButton" id="manual-button">
-                                        <property name="valign">center</property>
                                     </object>
                                 </child>
                             </object>
