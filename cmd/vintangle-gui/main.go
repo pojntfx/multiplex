@@ -934,11 +934,32 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						Str("path", filePicker.File().Path()).
 						Msg("Setting subtitles")
 
-					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", filePicker.File().Path()}}); err != nil {
-						openErrorDialog(ctx, window, err)
+					row := adw.NewActionRow()
 
-						return
-					}
+					activator := gtk.NewCheckButton()
+
+					activator.SetGroup(activators[len(activators)-1])
+					activators = append(activators, activator)
+
+					m := filePicker.File().Path()
+					activator.SetActive(true)
+					activator.ConnectActivate(func() {
+						if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", m}}); err != nil {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+					})
+
+					row.SetTitle(filePicker.File().Basename())
+					row.SetSubtitle("Manually added")
+
+					row.SetActivatable(true)
+
+					row.AddPrefix(activator)
+					row.SetActivatableWidget(activator)
+
+					subtitlesSelectionGroup.Add(row)
 				}
 
 				filePicker.Destroy()
