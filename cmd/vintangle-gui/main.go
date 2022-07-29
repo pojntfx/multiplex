@@ -7,12 +7,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"math/rand"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -204,7 +207,7 @@ func findWorkingMPV() (string, error) {
 	return "", errNoWorkingMPVFound
 }
 
-func openAssistantWindow(ctx context.Context, app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openAssistantWindow(ctx context.Context, app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
 	builder := gtk.NewBuilderFromString(assistantUI, len(assistantUI))
@@ -454,7 +457,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			}
 		}
 
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), settings, gateway, cancel, tmpDir); err != nil {
 			panic(err)
 		}
 	})
@@ -520,7 +523,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func()) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -562,7 +565,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	stopButton.ConnectClicked(func() {
 		window.Close()
 
-		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -596,48 +599,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		descriptionText.Buffer().SetText(readmePlaceholder)
 	} else {
 		descriptionText.Buffer().SetText(torrentReadme)
-	}
-
-	activators := []*gtk.CheckButton{}
-
-	for i, file := range append(
-		[]mediaWithPriority{
-			{media: media{
-				name: "None",
-				size: 0,
-			},
-				priority: -1,
-			},
-		},
-		subtitles...) {
-		row := adw.NewActionRow()
-
-		activator := gtk.NewCheckButton()
-
-		if len(activators) > 0 {
-			activator.SetGroup(activators[i-1])
-		}
-		activators = append(activators, activator)
-
-		activator.SetActive(false)
-
-		if i == 0 {
-			row.SetTitle(file.name)
-			row.SetSubtitle("Disable subtitles")
-		} else if file.priority == 0 {
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle("Integrated subtitle")
-		} else {
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle("Extra file from media")
-		}
-
-		row.SetActivatable(true)
-
-		row.AddPrefix(activator)
-		row.SetActivatableWidget(activator)
-
-		subtitlesSelectionGroup.Add(row)
 	}
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
@@ -737,6 +698,110 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			openErrorDialog(ctx, window, err)
 
 			return
+		}
+
+		activators := []*gtk.CheckButton{}
+
+		for i, file := range append(
+			[]mediaWithPriority{
+				{media: media{
+					name: "None",
+					size: 0,
+				},
+					priority: -1,
+				},
+			},
+			subtitles...) {
+			row := adw.NewActionRow()
+
+			activator := gtk.NewCheckButton()
+
+			if len(activators) > 0 {
+				activator.SetGroup(activators[i-1])
+			}
+			activators = append(activators, activator)
+
+			m := file.name
+			activator.SetActive(false)
+			activator.ConnectActivate(func() {
+				streamURL, err := getStreamURL(apiAddr, magnetLink, m)
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				log.Info().
+					Str("streamURL", streamURL).
+					Msg("Downloading subtitles")
+
+				hc := &http.Client{}
+
+				req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+				req.SetBasicAuth(apiUsername, apiPassword)
+
+				res, err := hc.Do(req)
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+				if res.Body != nil {
+					defer res.Body.Close()
+				}
+				if res.StatusCode != http.StatusOK {
+					openErrorDialog(ctx, window, errors.New(res.Status))
+
+					return
+				}
+
+				subtitlesFile := filepath.Join(tmpDir, path.Base(m))
+				f, err := os.Create(subtitlesFile)
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				if _, err := io.Copy(f, res.Body); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				log.Info().
+					Str("path", subtitlesFile).
+					Msg("Setting subtitles")
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", subtitlesFile}}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+			})
+
+			if i == 0 {
+				row.SetTitle(file.name)
+				row.SetSubtitle("Disable subtitles")
+			} else if file.priority == 0 {
+				row.SetTitle(getDisplayPathWithoutRoot(file.name))
+				row.SetSubtitle("Integrated subtitle")
+			} else {
+				row.SetTitle(getDisplayPathWithoutRoot(file.name))
+				row.SetSubtitle("Extra file from media")
+			}
+
+			row.SetActivatable(true)
+
+			row.AddPrefix(activator)
+			row.SetActivatableWidget(activator)
+
+			subtitlesSelectionGroup.Add(row)
 		}
 
 		seekerIsSeeking := false
@@ -934,6 +999,13 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						Str("path", filePicker.File().Path()).
 						Msg("Setting subtitles")
 
+					m := filePicker.File().Path()
+					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", m}}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+
 					row := adw.NewActionRow()
 
 					activator := gtk.NewCheckButton()
@@ -941,7 +1013,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					activator.SetGroup(activators[len(activators)-1])
 					activators = append(activators, activator)
 
-					m := filePicker.File().Path()
 					activator.SetActive(true)
 					activator.ConnectActivate(func() {
 						if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", m}}); err != nil {
@@ -1380,7 +1451,7 @@ func main() {
 			ctx,
 		)
 
-		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel); err != nil {
+		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
 			panic(err)
 		}
 	})
