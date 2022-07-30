@@ -6,3 +6,7 @@
   padding: 8px;
   border-radius: 8px;
 }
+
+.large-spinner {
+  min-height: 40px;
+}

@@ -84,6 +84,9 @@ var (
 	//go:embed subtitles.ui
 	subtitlesUI string
 
+	//go:embed preparing.ui
+	preparingUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -555,6 +558,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	subtitlesSelectionGroup := subtitlesBuilder.GetObject("subtitle-tracks").Cast().(*adw.PreferencesGroup)
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 
+	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
+	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
+
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
@@ -601,6 +607,15 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		descriptionText.Buffer().SetText(torrentReadme)
 	}
 
+	preparingWindow.SetTransientFor(&window.Window)
+
+	preparingWindow.ConnectCloseRequest(func() (ok bool) {
+		preparingWindow.Close()
+		preparingWindow.SetVisible(false)
+
+		return ok
+	})
+
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
 
 	streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
@@ -646,6 +661,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	app.AddWindow(&window.Window)
 
 	window.ConnectShow(func() {
+		preparingWindow.Show()
+
 		if err := command.Start(); err != nil {
 			openErrorDialog(ctx, window, err)
 
@@ -878,6 +895,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			return true
 		})
 
+		preparingClosed := false
 		done := make(chan struct{})
 		go func() {
 			t := time.NewTicker(time.Millisecond * 100)
@@ -906,6 +924,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					openErrorDialog(ctx, window, err)
 
 					return
+				}
+
+				if total != 0 && !preparingClosed {
+					preparingWindow.Close()
+
+					preparingClosed = true
 				}
 
 				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
