@@ -722,8 +722,22 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			activators = append(activators, activator)
 
 			m := file.name
+			j := i
 			activator.SetActive(false)
 			activator.ConnectActivate(func() {
+				if j == 0 {
+					log.Info().
+						Msg("Disabling subtitles")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "clr"}}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+
+					return
+				}
+
 				streamURL, err := getStreamURL(apiAddr, magnetLink, m)
 				if err != nil {
 					openErrorDialog(ctx, window, err)
