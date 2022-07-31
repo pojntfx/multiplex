@@ -560,6 +560,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
+	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
@@ -614,6 +615,18 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		preparingWindow.SetVisible(false)
 
 		return ok
+	})
+
+	preparingCancelButton.ConnectClicked(func() {
+		preparingWindow.Close()
+
+		window.Close()
+
+		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
+			openErrorDialog(ctx, window, err)
+
+			return
+		}
 	})
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))

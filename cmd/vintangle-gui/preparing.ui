@@ -38,6 +38,17 @@
                                 <property name="label">Preparing stream ...</property>
                             </object>
                         </child>
+
+                        <child type="action">
+                            <object class="GtkButton" id="cancel-preparing-button">
+                                <style>
+                                    <class name="destructive-action"></class>
+                                </style>
+
+                                <property name="margin-top">8</property>
+                                <property name="label">Cancel</property>
+                            </object>
+                        </child>
                     </object>
                 </child>
             </object>
