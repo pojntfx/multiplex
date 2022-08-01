@@ -1277,12 +1277,10 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				return
 			}
 
-			log.Info().Msg("Pausing playback")
-
 			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-				log.Info().Msg("Starting playback")
+				log.Info().Msg("Pausing playback")
 
-				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
 					return err
 				}
 
