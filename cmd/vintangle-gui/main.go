@@ -56,6 +56,20 @@ type mpvFloat64Response struct {
 	Data float64 `json:"data"`
 }
 
+type mpvTrackListResponse struct {
+	Data []mpvTrackDescription `json:"data"`
+}
+
+type mpvTrackDescription struct {
+	ID               int    `json:"id"`
+	Type             string `json:"type"`
+	ExternalFilename string `json:"external-filename"`
+}
+
+type mpvSuccessResponse struct {
+	Data []any `json:"data"`
+}
+
 var (
 	//go:embed assistant.ui
 	assistantUI string
@@ -97,8 +111,9 @@ var (
 
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-	errKilled            = errors.New("signal: killed")
-	errNoWorkingMPVFound = errors.New("could not find working a working mpv")
+	errKilled                = errors.New("signal: killed")
+	errNoWorkingMPVFound     = errors.New("could not find working a working mpv")
+	errSubtitleTrackNotFound = errors.New("could not find track for subtitle")
 )
 
 const (
@@ -134,6 +149,8 @@ const (
 	mpvWebsiteURL = "https://mpv.io/installation/"
 
 	issuesURL = "https://github.com/pojntfx/vintangle/issues"
+
+	mpvTypeSub = "sub"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -208,6 +225,19 @@ func findWorkingMPV() (string, error) {
 	}
 
 	return "", errNoWorkingMPVFound
+}
+
+func runMPVCommand(ipcFile string, command func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error) error {
+	sock, err := net.Dial("unix", ipcFile)
+	if err != nil {
+		return err
+	}
+	defer sock.Close()
+
+	encoder := json.NewEncoder(sock)
+	decoder := json.NewDecoder(sock)
+
+	return command(encoder, decoder)
 }
 
 func openAssistantWindow(ctx context.Context, app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string) error {
@@ -647,7 +677,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd", "/c"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(mpvFlag), ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--sub-auto=all' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(mpvFlag), ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -658,6 +688,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			Setsid: true,
 		}
 	}
+
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
 
 	addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, func() {
 		cancel()
@@ -708,10 +741,11 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			return true
 		})
 
-		var sock net.Conn
 		for {
-			sock, err = net.Dial("unix", ipcFile)
+			sock, err := net.Dial("unix", ipcFile)
 			if err == nil {
+				_ = sock.Close()
+
 				break
 			}
 
@@ -723,8 +757,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				Msg("Could not dial IPC socket, retrying in 100ms")
 		}
 
-		encoder := json.NewEncoder(sock)
-		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
+		if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
+				return err
+			}
+
+			var successResponse mpvSuccessResponse
+			return decoder.Decode(&successResponse)
+		}); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -759,11 +799,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					log.Info().
 						Msg("Disabling subtitles")
 
-					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "clr"}}); err != nil {
-						openErrorDialog(ctx, window, err)
-
-						return
-					}
+						// TODO: "set_property", "sid", "no"
 
 					return
 				}
@@ -804,7 +840,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 
-				subtitlesFile := filepath.Join(tmpDir, path.Base(m))
+				subtitlesDir, err := os.MkdirTemp(tmpDir, "subtitles")
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				subtitlesFile := filepath.Join(subtitlesDir, path.Base(m))
 				f, err := os.Create(subtitlesFile)
 				if err != nil {
 					openErrorDialog(ctx, window, err)
@@ -818,11 +861,81 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 
-				log.Info().
-					Str("path", subtitlesFile).
-					Msg("Setting subtitles")
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Debug().
+						Str("path", subtitlesFile).
+						Msg("Adding subtitles path")
 
-				if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", subtitlesFile}}); err != nil {
+					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-file-paths", "set", subtitlesDir}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Debug().Msg("Reloading subtitles")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"rescan-external-files"}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				var trackListResponse mpvTrackListResponse
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Debug().Msg("Getting tracklist")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "track-list"}}); err != nil {
+						return err
+					}
+
+					return decoder.Decode(&trackListResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				sid := -1
+				for _, track := range trackListResponse.Data {
+					if track.Type == mpvTypeSub && track.ExternalFilename == subtitlesFile {
+						sid = track.ID
+
+						break
+					}
+				}
+
+				if sid == -1 {
+					openErrorDialog(ctx, window, errSubtitleTrackNotFound)
+
+					return
+				}
+
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Debug().
+						Str("path", subtitlesFile).
+						Int("sid", sid).
+						Msg("Setting subtitle ID")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", sid}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
 					openErrorDialog(ctx, window, err)
 
 					return
@@ -868,7 +981,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			elapsed := time.Duration(int64(value))
 
-			if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
+			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
+					return err
+				}
+
+				var successResponse mpvSuccessResponse
+				return decoder.Decode(&successResponse)
+			}); err != nil {
 				openErrorDialog(ctx, window, err)
 
 				return false
@@ -914,17 +1034,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			t := time.NewTicker(time.Millisecond * 100)
 
 			updateSeeker := func() {
-				encoder := json.NewEncoder(sock)
-				decoder := json.NewDecoder(sock)
-
-				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
 				var durationResponse mpvFloat64Response
-				if err := decoder.Decode(&durationResponse); err != nil {
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
+						return err
+					}
+
+					return decoder.Decode(&durationResponse)
+				}); err != nil {
 					log.Error().
 						Err(err).
 						Msg("Could not parse JSON from socket")
@@ -945,15 +1062,17 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					preparingClosed = true
 				}
 
-				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
 				var elapsedResponse mpvFloat64Response
-				if err := decoder.Decode(&elapsedResponse); err != nil {
-					log.Error().Err(err).Msg("Could not parse JSON from socket")
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
+						return err
+					}
+
+					return decoder.Decode(&elapsedResponse)
+				}); err != nil {
+					log.Error().
+						Err(err).
+						Msg("Could not parse JSON from socket")
 
 					return
 				}
@@ -995,11 +1114,18 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		}()
 
 		volumeButton.ConnectValueChanged(func(value float64) {
-			log.Info().
-				Float64("value", value).
-				Msg("Setting volume")
+			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				log.Info().
+					Float64("value", value).
+					Msg("Setting volume")
 
-			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
+					return err
+				}
+
+				var successResponse mpvSuccessResponse
+				return decoder.Decode(&successResponse)
+			}); err != nil {
 				openErrorDialog(ctx, window, err)
 
 				return
@@ -1050,12 +1176,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						Str("path", filePicker.File().Path()).
 						Msg("Setting subtitles")
 
-					m := filePicker.File().Path()
-					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", m}}); err != nil {
-						openErrorDialog(ctx, window, err)
-
-						return
-					}
+					// TODO: Select file like for integrated subtitles
 
 					row := adw.NewActionRow()
 
@@ -1066,11 +1187,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					activator.SetActive(true)
 					activator.ConnectActivate(func() {
-						if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-files", "set", m}}); err != nil {
-							openErrorDialog(ctx, window, err)
-
-							return
-						}
+						// TODO: Select file like for integrated subtitles
 					})
 
 					row.SetTitle(filePicker.File().Basename())
@@ -1092,9 +1209,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 		fullscreenButton.ConnectClicked(func() {
 			if fullscreenButton.Active() {
-				log.Info().Msg("Enabling fullscreen")
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Info().Msg("Enabling fullscreen")
 
-				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
 					openErrorDialog(ctx, window, err)
 
 					return
@@ -1103,9 +1227,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				return
 			}
 
-			log.Info().Msg("Disabling fullscreen")
+			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				log.Info().Msg("Disabling fullscreen")
 
-			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
+					return err
+				}
+
+				var successResponse mpvSuccessResponse
+				return decoder.Decode(&successResponse)
+			}); err != nil {
 				openErrorDialog(ctx, window, err)
 
 				return
@@ -1114,11 +1245,18 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 		playButton.ConnectClicked(func() {
 			if playButton.IconName() == playIcon {
-				log.Info().Msg("Starting playback")
-
 				playButton.SetIconName(pauseIcon)
 
-				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Info().Msg("Starting playback")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
 					openErrorDialog(ctx, window, err)
 
 					return
@@ -1129,7 +1267,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			log.Info().Msg("Pausing playback")
 
-			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
+			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				log.Info().Msg("Starting playback")
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+					return err
+				}
+
+				var successResponse mpvSuccessResponse
+				return decoder.Decode(&successResponse)
+			}); err != nil {
 				openErrorDialog(ctx, window, err)
 
 				return
