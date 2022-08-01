@@ -689,6 +689,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		}
 	}
 
+	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
 
@@ -799,7 +800,18 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					log.Info().
 						Msg("Disabling subtitles")
 
-						// TODO: "set_property", "sid", "no"
+					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
+							return err
+						}
+
+						var successResponse mpvSuccessResponse
+						return decoder.Decode(&successResponse)
+					}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
 
 					return
 				}
@@ -1031,7 +1043,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		preparingClosed := false
 		done := make(chan struct{})
 		go func() {
-			t := time.NewTicker(time.Millisecond * 100)
+			t := time.NewTicker(time.Millisecond * 200)
 
 			updateSeeker := func() {
 				var durationResponse mpvFloat64Response
@@ -1092,7 +1104,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					remaining := total - elapsed
 
-					log.Debug().
+					log.Trace().
 						Float64("total", total.Seconds()).
 						Float64("elapsed", elapsed.Seconds()).
 						Float64("remaining", remaining.Seconds()).
