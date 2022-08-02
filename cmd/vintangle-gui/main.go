@@ -86,6 +86,9 @@ var (
 	//go:embed error.ui
 	errorUI string
 
+	//go:embed invalid.ui
+	invalidUI string
+
 	//go:embed menu.ui
 	menuUI string
 
@@ -930,7 +933,25 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 
 				if sid == -1 {
-					openErrorDialog(ctx, window, errSubtitleTrackNotFound)
+					log.Info().
+						Msg("Disabling subtitles")
+
+					activators[0].SetActive(true)
+
+					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
+							return err
+						}
+
+						var successResponse mpvSuccessResponse
+						return decoder.Decode(&successResponse)
+					}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+
+					openInvalidSubtitlesDialog(ctx, window)
 
 					return
 				}
@@ -1167,6 +1188,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		})
 
 		subtitlesCancelButton.ConnectClicked(func() {
+			// TODO: Disable subtitles
+
 			subtitlesDialog.Close()
 		})
 
@@ -1522,6 +1545,27 @@ func openErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	})
 
 	errorDialog.Show()
+}
+
+func openInvalidSubtitlesDialog(ctx context.Context, window *adw.ApplicationWindow) {
+	invalidBuilder := gtk.NewBuilderFromString(invalidUI, len(invalidUI))
+	invalidDialog := invalidBuilder.GetObject("invalid-dialog").Cast().(*gtk.MessageDialog)
+	okButton := invalidBuilder.GetObject("ok-button").Cast().(*gtk.Button)
+
+	invalidDialog.SetDefaultWidget(okButton)
+	invalidDialog.SetTransientFor(&window.Window)
+	invalidDialog.ConnectCloseRequest(func() (ok bool) {
+		invalidDialog.Close()
+		invalidDialog.SetVisible(false)
+
+		return ok
+	})
+
+	okButton.ConnectClicked(func() {
+		invalidDialog.Close()
+	})
+
+	invalidDialog.Show()
 }
 
 func main() {
