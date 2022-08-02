@@ -86,9 +86,6 @@ var (
 	//go:embed error.ui
 	errorUI string
 
-	//go:embed invalid.ui
-	invalidUI string
-
 	//go:embed menu.ui
 	menuUI string
 
@@ -590,6 +587,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	subtitlesOKButton := subtitlesBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	subtitlesSelectionGroup := subtitlesBuilder.GetObject("subtitle-tracks").Cast().(*adw.PreferencesGroup)
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
+	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
 	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
@@ -951,7 +949,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						return
 					}
 
-					openInvalidSubtitlesDialog(ctx, window)
+					toast := adw.NewToast("This file does not contain subtitles.")
+
+					subtitlesOverlay.AddToast(toast)
 
 					return
 				}
@@ -1545,27 +1545,6 @@ func openErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	})
 
 	errorDialog.Show()
-}
-
-func openInvalidSubtitlesDialog(ctx context.Context, window *adw.ApplicationWindow) {
-	invalidBuilder := gtk.NewBuilderFromString(invalidUI, len(invalidUI))
-	invalidDialog := invalidBuilder.GetObject("invalid-dialog").Cast().(*gtk.MessageDialog)
-	okButton := invalidBuilder.GetObject("ok-button").Cast().(*gtk.Button)
-
-	invalidDialog.SetDefaultWidget(okButton)
-	invalidDialog.SetTransientFor(&window.Window)
-	invalidDialog.ConnectCloseRequest(func() (ok bool) {
-		invalidDialog.Close()
-		invalidDialog.SetVisible(false)
-
-		return ok
-	})
-
-	okButton.ConnectClicked(func() {
-		invalidDialog.Close()
-	})
-
-	invalidDialog.Show()
 }
 
 func main() {
