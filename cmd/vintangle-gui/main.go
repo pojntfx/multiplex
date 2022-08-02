@@ -240,6 +240,142 @@ func runMPVCommand(ipcFile string, command func(encoder *jsoniter.Encoder, decod
 	return command(encoder, decoder)
 }
 
+func setSubtitles(
+	ctx context.Context,
+	window *adw.ApplicationWindow,
+
+	filePath string,
+	file io.Reader,
+	tmpDir string,
+	ipcFile string,
+
+	noneActivator *gtk.CheckButton,
+	subtitlesOverlay *adw.ToastOverlay,
+) {
+	subtitlesDir, err := os.MkdirTemp(tmpDir, "subtitles")
+	if err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	subtitlesFile := filepath.Join(subtitlesDir, path.Base(filePath))
+	f, err := os.Create(subtitlesFile)
+	if err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	if _, err := io.Copy(f, file); err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+		log.Debug().
+			Str("path", subtitlesFile).
+			Msg("Adding subtitles path")
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-file-paths", "set", subtitlesDir}}); err != nil {
+			return err
+		}
+
+		var successResponse mpvSuccessResponse
+		return decoder.Decode(&successResponse)
+	}); err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+		log.Debug().Msg("Reloading subtitles")
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"rescan-external-files"}}); err != nil {
+			return err
+		}
+
+		var successResponse mpvSuccessResponse
+		return decoder.Decode(&successResponse)
+	}); err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	var trackListResponse mpvTrackListResponse
+	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+		log.Debug().Msg("Getting tracklist")
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "track-list"}}); err != nil {
+			return err
+		}
+
+		return decoder.Decode(&trackListResponse)
+	}); err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+
+	sid := -1
+	for _, track := range trackListResponse.Data {
+		if track.Type == mpvTypeSub && track.ExternalFilename == subtitlesFile {
+			sid = track.ID
+
+			break
+		}
+	}
+
+	if sid == -1 {
+		log.Info().
+			Msg("Disabling subtitles")
+
+		time.AfterFunc(time.Millisecond*100, func() {
+			noneActivator.SetActive(true)
+		})
+
+		if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
+				return err
+			}
+
+			var successResponse mpvSuccessResponse
+			return decoder.Decode(&successResponse)
+		}); err != nil {
+			openErrorDialog(ctx, window, err)
+
+			return
+		}
+
+		toast := adw.NewToast("This file does not contain subtitles.")
+
+		subtitlesOverlay.AddToast(toast)
+
+		return
+	}
+
+	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+		log.Debug().
+			Str("path", subtitlesFile).
+			Int("sid", sid).
+			Msg("Setting subtitle ID")
+
+		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", sid}}); err != nil {
+			return err
+		}
+
+		var successResponse mpvSuccessResponse
+		return decoder.Decode(&successResponse)
+	}); err != nil {
+		openErrorDialog(ctx, window, err)
+
+		return
+	}
+}
+
 func openAssistantWindow(ctx context.Context, app *adw.Application, manager *client.Manager, apiAddr, apiUsername, apiPassword string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
@@ -853,126 +989,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 
-				subtitlesDir, err := os.MkdirTemp(tmpDir, "subtitles")
-				if err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				subtitlesFile := filepath.Join(subtitlesDir, path.Base(m))
-				f, err := os.Create(subtitlesFile)
-				if err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				if _, err := io.Copy(f, res.Body); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Debug().
-						Str("path", subtitlesFile).
-						Msg("Adding subtitles path")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-file-paths", "set", subtitlesDir}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Debug().Msg("Reloading subtitles")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"rescan-external-files"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				var trackListResponse mpvTrackListResponse
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Debug().Msg("Getting tracklist")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "track-list"}}); err != nil {
-						return err
-					}
-
-					return decoder.Decode(&trackListResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				sid := -1
-				for _, track := range trackListResponse.Data {
-					if track.Type == mpvTypeSub && track.ExternalFilename == subtitlesFile {
-						sid = track.ID
-
-						break
-					}
-				}
-
-				if sid == -1 {
-					log.Info().
-						Msg("Disabling subtitles")
-
-					activators[0].SetActive(true)
-
-					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
-							return err
-						}
-
-						var successResponse mpvSuccessResponse
-						return decoder.Decode(&successResponse)
-					}); err != nil {
-						openErrorDialog(ctx, window, err)
-
-						return
-					}
-
-					toast := adw.NewToast("This file does not contain subtitles.")
-
-					subtitlesOverlay.AddToast(toast)
-
-					return
-				}
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Debug().
-						Str("path", subtitlesFile).
-						Int("sid", sid).
-						Msg("Setting subtitle ID")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", sid}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
+				setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, activators[0], subtitlesOverlay)
 			})
 
 			if i == 0 {
@@ -1188,7 +1205,21 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		})
 
 		subtitlesCancelButton.ConnectClicked(func() {
-			// TODO: Disable subtitles
+			log.Info().
+				Msg("Disabling subtitles")
+
+			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
+					return err
+				}
+
+				var successResponse mpvSuccessResponse
+				return decoder.Decode(&successResponse)
+			}); err != nil {
+				openErrorDialog(ctx, window, err)
+
+				return
+			}
 
 			subtitlesDialog.Close()
 		})
@@ -1211,7 +1242,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						Str("path", filePicker.File().Path()).
 						Msg("Setting subtitles")
 
-					// TODO: Select file like for integrated subtitles
+					m := filePicker.File().Path()
+					subtitlesFile, err := os.Open(m)
+					if err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+					defer subtitlesFile.Close()
+
+					setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, activators[0], subtitlesOverlay)
 
 					row := adw.NewActionRow()
 
@@ -1222,7 +1262,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					activator.SetActive(true)
 					activator.ConnectActivate(func() {
-						// TODO: Select file like for integrated subtitles
+						m := filePicker.File().Path()
+						subtitlesFile, err := os.Open(m)
+						if err != nil {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+						defer subtitlesFile.Close()
+
+						setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, activators[0], subtitlesOverlay)
 					})
 
 					row.SetTitle(filePicker.File().Basename())
