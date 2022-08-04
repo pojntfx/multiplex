@@ -7,7 +7,7 @@ require (
 	github.com/diamondburned/gotk4/pkg v0.0.0-20220529201008-66c7fe5d2b7c
 	github.com/json-iterator/go v1.1.12
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/htorrent v0.3.0
+	github.com/pojntfx/htorrent v0.4.0
 	github.com/rs/zerolog v1.27.0
 )
 
