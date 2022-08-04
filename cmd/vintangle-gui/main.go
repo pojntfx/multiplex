@@ -30,6 +30,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/phayes/freeport"
+	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/rs/zerolog"
@@ -111,9 +112,8 @@ var (
 
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-	errKilled                = errors.New("signal: killed")
-	errNoWorkingMPVFound     = errors.New("could not find working a working mpv")
-	errSubtitleTrackNotFound = errors.New("could not find track for subtitle")
+	errKilled            = errors.New("signal: killed")
+	errNoWorkingMPVFound = errors.New("could not find working a working mpv")
 )
 
 const (
@@ -727,6 +727,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
+	preparingProgressBar := preparingBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
@@ -777,7 +778,50 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	preparingWindow.SetTransientFor(&window.Window)
 
+	progressBarTicker := time.NewTicker(time.Millisecond * 500)
+	go func() {
+		for range progressBarTicker.C {
+			metrics, err := manager.GetMetrics()
+			if err != nil {
+				openErrorDialog(ctx, window, err)
+
+				return
+			}
+
+			length := float64(0)
+			completed := float64(0)
+			peers := 0
+
+		l:
+			for _, t := range metrics {
+				if strings.HasPrefix(magnetLink, t.Magnet) {
+					peers = t.Peers
+
+					for _, f := range t.Files {
+						if f.Path == selectedTorrentMedia {
+							length = float64(f.Length)
+							completed = float64(f.Completed)
+
+							break l
+						}
+					}
+				}
+			}
+
+			if length > 0 {
+				preparingProgressBar.SetFraction(completed / length)
+				preparingProgressBar.SetText(fmt.Sprintf("%v MB/%v MB (%v peers)", int(completed/1000/1000), int(length/1000/1000), peers))
+
+				continue
+			}
+
+			preparingProgressBar.SetText("Searching for peers")
+		}
+	}()
+
 	preparingWindow.ConnectCloseRequest(func() (ok bool) {
+		progressBarTicker.Stop()
+
 		preparingWindow.Close()
 		preparingWindow.SetVisible(false)
 
@@ -1696,12 +1740,13 @@ func main() {
 				"",
 				"",
 				settings.Int64(verboseFlag) > 5,
-				func(peers int, total, completed int64, path string) {
+				func(torrentMetrics v1.TorrentMetrics, fileMetrics v1.FileMetrics) {
 					log.Info().
-						Int("peers", peers).
-						Int64("total", total).
-						Int64("completed", completed).
-						Str("path", path).
+						Str("magnet", torrentMetrics.Magnet).
+						Int("peers", torrentMetrics.Peers).
+						Str("path", fileMetrics.Path).
+						Int64("length", fileMetrics.Length).
+						Int64("completed", fileMetrics.Completed).
 						Msg("Streaming")
 				},
 				ctx,

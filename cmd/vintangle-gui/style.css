@@ -10,3 +10,7 @@
 .large-spinner {
   min-height: 40px;
 }
+
+.preparing-progress-bar text {
+  margin-bottom: 4px;
+}

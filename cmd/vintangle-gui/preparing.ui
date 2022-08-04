@@ -19,23 +19,24 @@
                         <property name="margin-bottom">12</property>
 
                         <child>
-                            <object class="GtkSpinner">
-                                <style>
-                                    <class name="large-spinner"></class>
-                                </style>
-
-                                <property name="spinning">true</property>
-                                <property name="margin-bottom">12</property>
-                            </object>
-                        </child>
-
-                        <child>
                             <object class="GtkLabel">
                                 <style>
                                     <class name="title"></class>
                                 </style>
 
                                 <property name="label">Preparing stream ...</property>
+                                <property name="margin-bottom">12</property>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="GtkProgressBar" id="preparing-progress-bar">
+                                <style>
+                                    <class name="preparing-progress-bar"></class>
+                                </style>
+
+                                <property name="show-text">true</property>
+                                <property name="margin-bottom">8</property>
                             </object>
                         </child>
 
