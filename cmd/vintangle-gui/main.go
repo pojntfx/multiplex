@@ -400,6 +400,8 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
+	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
+	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 
 	warningBuilder := gtk.NewBuilderFromString(warningUI, len(warningUI))
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
@@ -524,6 +526,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 				previousButton.SetVisible(true)
 
 				buttonHeaderbarTitle.SetLabel(torrentTitle)
+				descriptionHeaderbarTitle.SetLabel(torrentTitle)
 
 				mediaInfoDisplay.SetVisible(false)
 				mediaInfoButton.SetVisible(true)
@@ -541,7 +544,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			nextButton.SetVisible(false)
 
 			buttonHeaderbarSubtitle.SetVisible(true)
+			descriptionHeaderbarSubtitle.SetVisible(true)
 			buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+			descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
 			stack.SetVisibleChildName(readyPageName)
 		}
@@ -561,6 +566,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			nextButton.SetVisible(true)
 
 			buttonHeaderbarSubtitle.SetVisible(false)
+			descriptionHeaderbarSubtitle.SetVisible(false)
 
 			stack.SetVisibleChildName(mediaPageName)
 		}
@@ -716,6 +722,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
+	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
+	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	descriptionProgressBar := descriptionBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 
 	subtitlesBuilder := gtk.NewBuilderFromString(subtitlesUI, len(subtitlesUI))
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
@@ -731,7 +740,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
+	descriptionHeaderbarTitle.SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+	descriptionHeaderbarSubtitle.SetVisible(true)
+	descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+
+	descriptionProgressBar.SetVisible(true)
 
 	copyButton.ConnectClicked(func() {
 		window.Clipboard().SetText(magnetLink)
@@ -808,20 +822,21 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 			}
 
-			if length > 0 {
-				preparingProgressBar.SetFraction(completed / length)
-				preparingProgressBar.SetText(fmt.Sprintf("%v MB/%v MB (%v peers)", int(completed/1000/1000), int(length/1000/1000), peers))
+		n:
+			for _, progressBar := range []*gtk.ProgressBar{preparingProgressBar, descriptionProgressBar} {
+				if length > 0 {
+					progressBar.SetFraction(completed / length)
+					progressBar.SetText(fmt.Sprintf("%v MB/%v MB (%v peers)", int(completed/1000/1000), int(length/1000/1000), peers))
 
-				continue
+					continue n
+				}
+
+				progressBar.SetText("Searching for peers")
 			}
-
-			preparingProgressBar.SetText("Searching for peers")
 		}
 	}()
 
 	preparingWindow.ConnectCloseRequest(func() (ok bool) {
-		progressBarTicker.Stop()
-
 		preparingWindow.Close()
 		preparingWindow.SetVisible(false)
 
@@ -898,6 +913,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		}
 
 		window.ConnectCloseRequest(func() (ok bool) {
+			progressBarTicker.Stop()
+
 			if command.Process != nil {
 				if runtime.GOOS == "windows" {
 					if err := command.Process.Kill(); err != nil {
