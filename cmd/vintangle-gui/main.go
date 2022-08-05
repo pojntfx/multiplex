@@ -23,6 +23,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/anacrolix/torrent"
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -808,7 +809,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 		l:
 			for _, t := range metrics {
-				if strings.HasPrefix(magnetLink, t.Magnet) {
+				selectedTorrent, err := torrent.TorrentSpecFromMagnetUri(magnetLink)
+				if err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				if selectedTorrent.InfoHash.HexString() == t.InfoHash {
 					peers = t.Peers
 
 					for _, f := range t.Files {
