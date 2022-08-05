@@ -3,11 +3,12 @@ module github.com/pojntfx/vintangle
 go 1.18
 
 require (
+	github.com/anacrolix/torrent v1.44.0
 	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20220417101956-dcc3707dc307
 	github.com/diamondburned/gotk4/pkg v0.0.0-20220529201008-66c7fe5d2b7c
 	github.com/json-iterator/go v1.1.12
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/htorrent v0.4.0
+	github.com/pojntfx/htorrent v0.5.0
 	github.com/rs/zerolog v1.27.0
 )
 
@@ -29,7 +30,6 @@ require (
 	github.com/anacrolix/multiless v0.3.0 // indirect
 	github.com/anacrolix/stm v0.4.0 // indirect
 	github.com/anacrolix/sync v0.4.0 // indirect
-	github.com/anacrolix/torrent v1.44.0 // indirect
 	github.com/anacrolix/upnp v0.1.3-0.20220123035249-922794e51c96 // indirect
 	github.com/anacrolix/utp v0.1.0 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
