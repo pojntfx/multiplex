@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/phayes/freeport"
+	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/rs/zerolog"
@@ -134,12 +135,13 @@ func main() {
 		"",
 		"",
 		*verbose > 5,
-		func(peers int, total, completed int64, path string) {
+		func(torrentMetrics v1.TorrentMetrics, fileMetrics v1.FileMetrics) {
 			log.Info().
-				Int("peers", peers).
-				Int64("total", total).
-				Int64("completed", completed).
-				Str("path", path).
+				Str("magnet", torrentMetrics.Magnet).
+				Int("peers", torrentMetrics.Peers).
+				Str("path", fileMetrics.Path).
+				Int64("length", fileMetrics.Length).
+				Int64("completed", fileMetrics.Completed).
 				Msg("Streaming")
 		},
 		ctx,
