@@ -104,6 +104,9 @@ var (
 	//go:embed preparing.ui
 	preparingUI string
 
+	//go:embed streammenu.ui
+	streamMenuUI string
+
 	//go:embed style.css
 	styleCSS string
 
@@ -146,6 +149,7 @@ const (
 
 	preferencesActionName      = "preferences"
 	applyPreferencesActionName = "applypreferences"
+	downloadAndPlayActionName  = "downloadandplay"
 
 	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
 	mpvWebsiteURL = "https://mpv.io/installation/"
@@ -395,7 +399,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
 	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
-	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
+	streamButton := builder.GetObject("stream-button").Cast().(*adw.SplitButton)
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
@@ -410,6 +414,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
 	mpvManualConfigurationButton := warningBuilder.GetObject("mpv-manual-configuration-button").Cast().(*gtk.Button)
+
+	menuBuilder := gtk.NewBuilderFromString(streamMenuUI, len(streamMenuUI))
+	menu := menuBuilder.GetObject("stream-menu").Cast().(*gio.Menu)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -613,17 +620,17 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	rightsConfirmationButton.ConnectToggled(func() {
 		if rightsConfirmationButton.Active() {
-			playButton.AddCSSClass("suggested-action")
-			playButton.SetSensitive(true)
+			streamButton.AddCSSClass("suggested-action")
+			streamButton.SetSensitive(true)
 
 			return
 		}
 
-		playButton.RemoveCSSClass("suggested-action")
-		playButton.SetSensitive(false)
+		streamButton.RemoveCSSClass("suggested-action")
+		streamButton.SetSensitive(false)
 	})
 
-	playButton.ConnectClicked(func() {
+	streamButton.ConnectClicked(func() {
 		window.Close()
 
 		subtitles = []mediaWithPriority{}
@@ -647,6 +654,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			panic(err)
 		}
 	})
+
+	streamButton.SetMenuModel(menu)
+
+	downloadAndPlayAction := gio.NewSimpleAction(downloadAndPlayActionName, nil)
+	downloadAndPlayAction.ConnectActivate(func(parameter *glib.Variant) {
+		log.Info().Msg("Downloading and playing media")
+	})
+	window.AddAction(downloadAndPlayAction)
 
 	if runtime.GOOS == "linux" {
 		mpvFlathubDownloadButton.SetVisible(true)

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <menu id="stream-menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Download and play</attribute>
+                <attribute name="action">win.downloadandplay</attribute>
+            </item>
+        </section>
+    </menu>
+</interface>

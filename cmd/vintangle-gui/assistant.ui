@@ -227,12 +227,12 @@
                                                                         </child>
 
                                                                         <child>
-                                                                            <object class="GtkButton" id="play-button">
+                                                                            <object class="AdwSplitButton" id="stream-button">
                                                                                 <style>
                                                                                     <class name="pill"></class>
                                                                                 </style>
 
-                                                                                <property name="label">Play</property>
+                                                                                <property name="label">Stream</property>
                                                                                 <property name="sensitive">false</property>
                                                                                 <property name="halign">center</property>
                                                                             </object>
