@@ -75,6 +75,7 @@
                                         </style>
 
                                         <property name="editable">false</property>
+                                        <property name="cursor-visible">false</property>
                                         <property name="vexpand">true</property>
                                         <property name="hexpand">true</property>
                                     </object>

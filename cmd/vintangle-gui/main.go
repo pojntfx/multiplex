@@ -21,6 +21,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/anacrolix/torrent"
@@ -474,7 +475,16 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 				}
 
 				torrentTitle = info.Name
-				torrentReadme = info.Description
+				torrentReadme = strings.Map(
+					func(r rune) rune {
+						if r == '\n' || unicode.IsGraphic(r) && unicode.IsPrint(r) {
+							return r
+						}
+
+						return -1
+					},
+					info.Description,
+				)
 				torrentMedia = []media{}
 				for _, file := range info.Files {
 					torrentMedia = append(torrentMedia, media{
