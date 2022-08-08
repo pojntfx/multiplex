@@ -674,7 +674,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), streamURL, settings, gateway, cancel, tmpDir, ready); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -712,8 +712,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			return
 		}
 
+		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), dstFile, settings, gateway, cancel, tmpDir, ready); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), dstFile, settings, gateway, cancel, tmpDir, ready, cancel); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -728,14 +729,22 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 			req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
 			if err != nil {
+				if err == context.Canceled {
+					return
+				}
+
 				openErrorDialog(ctx, window, err)
 
 				return
 			}
 			req.SetBasicAuth(apiUsername, apiPassword)
 
-			res, err := hc.Do(req)
+			res, err := hc.Do(req.WithContext(ctxDownload))
 			if err != nil {
+				if err == context.Canceled {
+					return
+				}
+
 				openErrorDialog(ctx, window, err)
 
 				return
@@ -744,6 +753,10 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 				defer res.Body.Close()
 			}
 			if res.StatusCode != http.StatusOK {
+				if err == context.Canceled {
+					return
+				}
+
 				openErrorDialog(ctx, window, errors.New(res.Status))
 
 				return
@@ -751,6 +764,10 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 			f, err := os.Create(dstFile)
 			if err != nil {
+				if err == context.Canceled {
+					return
+				}
+
 				openErrorDialog(ctx, window, err)
 
 				return
@@ -758,6 +775,10 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			defer f.Close()
 
 			if _, err := io.Copy(f, res.Body); err != nil {
+				if err == context.Canceled {
+					return
+				}
+
 				openErrorDialog(ctx, window, err)
 
 				return
@@ -829,7 +850,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -982,9 +1003,13 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	})
 
 	preparingCancelButton.ConnectClicked(func() {
-		preparingWindow.Close()
+		progressBarTicker.Stop()
 
-		window.Close()
+		cancelDownload()
+
+		window.Destroy()
+
+		preparingWindow.Close()
 
 		if err := openAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
 			openErrorDialog(ctx, window, err)
