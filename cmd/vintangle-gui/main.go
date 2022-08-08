@@ -1234,6 +1234,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				if i == 0 {
 					row.SetTitle(file.name)
 					row.SetSubtitle("Disable subtitles")
+
+					activator.SetActive(true)
 				} else if file.priority == 0 {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
 					row.SetSubtitle("Integrated subtitle")
