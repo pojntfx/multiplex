@@ -9,6 +9,11 @@
             </item>
 
             <item>
+                <attribute name="label" translatable="yes">Open Downloads</attribute>
+                <attribute name="action">win.opendownloads</attribute>
+            </item>
+
+            <item>
                 <attribute name="label" translatable="yes">About Vintangle</attribute>
                 <attribute name="action">win.about</attribute>
             </item>
