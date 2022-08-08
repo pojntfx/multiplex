@@ -150,6 +150,7 @@ const (
 	preferencesActionName      = "preferences"
 	applyPreferencesActionName = "applypreferences"
 	downloadAndPlayActionName  = "downloadandplay"
+	openDownloadsActionName    = "opendownloads"
 
 	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
 	mpvWebsiteURL = "https://mpv.io/installation/"
@@ -1658,6 +1659,16 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
 
+	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
+	openDownloadsAction.ConnectActivate(func(parameter *glib.Variant) {
+		if err := gio.AppInfoLaunchDefaultForURI(fmt.Sprintf("file://%v", settings.String(storageFlag)), nil); err != nil {
+			openErrorDialog(ctx, window, err)
+
+			return
+		}
+	})
+	window.AddAction(openDownloadsAction)
+
 	preferencesWindow.SetTransientFor(&window.Window)
 	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
 		preferencesWindow.Close()
@@ -1861,7 +1872,13 @@ func main() {
 			panic(err)
 		}
 
-		settings.SetString(storageFlag, filepath.Join(home, "Downloads", "Vintangle"))
+		downloadPath := filepath.Join(home, "Downloads", "Vintangle")
+
+		settings.SetString(storageFlag, downloadPath)
+
+		if err := os.MkdirAll(downloadPath, os.ModePerm); err != nil {
+			panic(err)
+		}
 
 		settings.Apply()
 	}
