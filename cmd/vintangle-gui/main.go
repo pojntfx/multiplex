@@ -143,6 +143,11 @@ const (
 	gatewayUsernameFlag = "gatewayusername"
 	gatewayPasswordFlag = "gatewaypassword"
 
+	weronURLFlag        = "weronurl"
+	weronTimeoutFlag    = "werontimeout"
+	weronICEFlag        = "weronice"
+	weronForceRelayFlag = "weronforcerelay"
+
 	keycodeEscape = 66
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
@@ -1649,6 +1654,10 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 	remoteGatewayURLRow := preferencesBuilder.GetObject("htorrent-url-row").Cast().(*adw.ActionRow)
 	remoteGatewayUsernameRow := preferencesBuilder.GetObject("htorrent-username-row").Cast().(*adw.ActionRow)
 	remoteGatewayPasswordRow := preferencesBuilder.GetObject("htorrent-password-row").Cast().(*adw.ActionRow)
+	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*gtk.Entry)
+	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*gtk.Entry)
+	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*gtk.SpinButton)
+	weronForceRelayInput := preferencesBuilder.GetObject("weron-force-relay-input").Cast().(*gtk.Switch)
 
 	preferencesHaveChanged := false
 
@@ -1769,6 +1778,14 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 	settings.Bind(gatewayUsernameFlag, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
 	settings.Bind(gatewayPasswordFlag, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
 
+	settings.Bind(weronURLFlag, weronURLInput.Object, "text", gio.SettingsBindDefault)
+
+	weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
+	settings.Bind(weronTimeoutFlag, weronTimeoutInput.Object, "value", gio.SettingsBindDefault)
+
+	settings.Bind(weronICEFlag, weronICEInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(weronForceRelayFlag, weronForceRelayInput.Object, "active", gio.SettingsBindDefault)
+
 	mpvCommandInput.ConnectChanged(func() {
 		preferencesHaveChanged = true
 	})
@@ -1794,6 +1811,24 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 	})
 	remoteGatewayPasswordInput.ConnectChanged(func() {
 		preferencesHaveChanged = true
+	})
+
+	weronURLInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	weronTimeoutInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+	weronICEInput.ConnectChanged(func() {
+		preferencesHaveChanged = true
+	})
+
+	weronForceRelayInput.ConnectStateSet(func(state bool) (ok bool) {
+		preferencesHaveChanged = true
+
+		weronForceRelayInput.SetState(state)
+
+		return true
 	})
 
 	aboutAction := gio.NewSimpleAction("about", nil)

@@ -8,8 +8,8 @@
 
         <child>
             <object class="AdwPreferencesPage">
-                <property name="title" translatable="yes">General</property>
-                <property name="icon-name">preferences-system-symbolic</property>
+                <property name="title" translatable="yes">Playback</property>
+                <property name="icon-name">multimedia-player-symbolic</property>
 
                 <child>
                     <object class="AdwPreferencesGroup">
@@ -129,6 +129,81 @@
                                                 <property name="visibility">false</property>
                                             </object>
                                         </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="AdwPreferencesPage">
+                <property name="title" translatable="yes">Synchronization</property>
+                <property name="icon-name">video-joined-displays-symbolic</property>
+
+                <child>
+                    <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">General</property>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Signaling server URL</property>
+                                <property name="subtitle" translatable="yes">URL for the weron signaling server</property>
+                                <property name="activatable-widget">weron-url-input</property>
+
+                                <child>
+                                    <object class="GtkEntry" id="weron-url-input">
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">STUN/TURN servers</property>
+                                <property name="subtitle" translatable="yes">Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)</property>
+                                <property name="activatable-widget">weron-ice-input</property>
+
+                                <child>
+                                    <object class="GtkEntry" id="weron-ice-input">
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Advanced</property>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Connection timeout</property>
+                                <property name="subtitle" translatable="yes">Time to wait to connect to the weron signaling server</property>
+                                <property name="activatable-widget">weron-timeout-input</property>
+
+                                <child>
+                                    <object class="GtkSpinButton" id="weron-timeout-input">
+                                        <property name="valign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Relay mode</property>
+                                <property name="subtitle" translatable="yes">Force usage of TURN servers for weron</property>
+                                <property name="activatable-widget">weron-force-relay-input</property>
+
+                                <child>
+                                    <object class="GtkSwitch" id="weron-force-relay-input">
+                                        <property name="valign">center</property>
                                     </object>
                                 </child>
                             </object>
