@@ -3,14 +3,19 @@
     <menu id="main-menu">
         <section>
             <item>
-                <attribute name="label" translatable="yes">Preferences</attribute>
-                <attribute name="action">win.preferences</attribute>
-                <attribute name="accel">&lt;Primary&gt;comma</attribute>
+                <attribute name="label" translatable="yes">Open Downloads</attribute>
+                <attribute name="action">win.opendownloads</attribute>
             </item>
 
             <item>
-                <attribute name="label" translatable="yes">Open Downloads</attribute>
-                <attribute name="action">win.opendownloads</attribute>
+                <attribute name="label" translatable="yes">Copy Magnet Link</attribute>
+                <attribute name="action">win.copymagnetlink</attribute>
+            </item>
+
+            <item>
+                <attribute name="label" translatable="yes">Preferences</attribute>
+                <attribute name="action">win.preferences</attribute>
+                <attribute name="accel">&lt;Primary&gt;comma</attribute>
             </item>
 
             <item>

@@ -156,6 +156,7 @@ const (
 	applyPreferencesActionName = "applypreferences"
 	downloadAndPlayActionName  = "downloadandplay"
 	openDownloadsActionName    = "opendownloads"
+	copyMagnetLinkActionName   = "copymagnetlink"
 
 	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
 	mpvWebsiteURL = "https://mpv.io/installation/"
@@ -613,7 +614,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
-	preferencesWindow, mpvCommandInput := addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, cancel)
+	preferencesWindow, mpvCommandInput := addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, nil, cancel)
 
 	mediaInfoButton.ConnectClicked(func() {
 		descriptionWindow.Show()
@@ -1053,17 +1054,29 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
 
-	addMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, func() {
-		cancel()
+	addMainMenu(
+		ctx,
+		app,
+		window,
+		settings,
+		menuButton,
+		overlay,
+		gateway,
+		func() string {
+			return magnetLink
+		},
+		func() {
+			cancel()
 
-		if command.Process != nil {
-			if err := command.Process.Kill(); err != nil {
-				openErrorDialog(ctx, window, err)
+			if command.Process != nil {
+				if err := command.Process.Kill(); err != nil {
+					openErrorDialog(ctx, window, err)
 
-				return
+					return
+				}
 			}
-		}
-	})
+		},
+	)
 
 	app.AddWindow(&window.Window)
 
@@ -1635,7 +1648,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	return nil
 }
 
-func addMainMenu(ctx context.Context, app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, cancel func()) (*adw.PreferencesWindow, *gtk.Entry) {
+func addMainMenu(ctx context.Context, app *adw.Application, window *adw.ApplicationWindow, settings *gio.Settings, menuButton *gtk.MenuButton, overlay *adw.ToastOverlay, gateway *server.Gateway, getMagnetLink func() string, cancel func()) (*adw.PreferencesWindow, *gtk.Entry) {
 	menuBuilder := gtk.NewBuilderFromString(menuUI, len(menuUI))
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -1677,6 +1690,14 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 		}
 	})
 	window.AddAction(openDownloadsAction)
+
+	if getMagnetLink != nil {
+		copyMagnetLinkAction := gio.NewSimpleAction(copyMagnetLinkActionName, nil)
+		copyMagnetLinkAction.ConnectActivate(func(parameter *glib.Variant) {
+			window.Clipboard().SetText(getMagnetLink())
+		})
+		window.AddAction(copyMagnetLinkAction)
+	}
 
 	preferencesWindow.SetTransientFor(&window.Window)
 	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
