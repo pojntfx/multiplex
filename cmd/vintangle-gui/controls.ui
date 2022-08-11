@@ -68,13 +68,13 @@
                                                 <property name="valign">start</property>
 
                                                 <child>
-                                                    <object class="GtkButton" id="copy-button">
+                                                    <object class="GtkMenuButton">
                                                         <style>
                                                             <class name="flat"></class>
                                                         </style>
 
-                                                        <property name="icon-name">edit-copy-symbolic</property>
-                                                        <property name="tooltip-text">Copy magnet link to media</property>
+                                                        <property name="icon-name">system-users-symbolic</property>
+                                                        <property name="popover">users-popover</property>
                                                     </object>
                                                 </child>
 
@@ -201,5 +201,59 @@
                 </child>
             </object>
         </property>
+    </object>
+
+
+    <object class="GtkPopover" id="users-popover">
+        <child>
+            <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="spacing">12</property>
+                <property name="margin-top">8</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <property name="margin-bottom">8</property>
+
+                <child>
+                    <object class="GtkLabel" id="watching-with-title-label">
+                        <style>
+                            <class name="title"></class>
+                        </style>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="GtkLabel">
+                        <property name="justify">center</property>
+                        <property name="label">Ask the people you want you watch with
+to enter the following stream code:</property>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="GtkBox">
+                        <style>
+                            <class name="linked"></class>
+                        </style>
+
+                        <child>
+                            <object class="GtkEntry" id="stream-code-input">
+                                <property name="editable">false</property>
+                                <property name="hexpand">true</property>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="GtkButton" id="copy-stream-code-button">
+                                <property name="icon-name">edit-copy-symbolic</property>
+                                <property name="tooltip-text">Copy stream code to clipboard</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
     </object>
 </interface>
