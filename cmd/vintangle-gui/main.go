@@ -873,10 +873,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
-	copyButton := builder.GetObject("copy-button").Cast().(*gtk.Button)
 	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
 	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
 	seeker := builder.GetObject("seeker").Cast().(*gtk.Scale)
+	watchingWithTitleLabel := builder.GetObject("watching-with-title-label").Cast().(*gtk.Label)
+	streamCodeInput := builder.GetObject("stream-code-input").Cast().(*gtk.Entry)
+	copyStreamCodeButton := builder.GetObject("copy-stream-code-button").Cast().(*gtk.Button)
 
 	descriptionBuilder := gtk.NewBuilderFromString(descriptionUI, len(descriptionUI))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
@@ -906,8 +908,10 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	descriptionProgressBar.SetVisible(true)
 
-	copyButton.ConnectClicked(func() {
-		window.Clipboard().SetText(magnetLink)
+	watchingWithTitleLabel.SetText("You're currently watching alone.") // TODO: Add watching with title from weron protocol stats
+	streamCodeInput.SetText("VVDvc6i99J-NVovc6-QQy-VVoveui9QC")        // TODO: Add stream code from actual generated credentials
+	copyStreamCodeButton.ConnectClicked(func() {
+		window.Clipboard().SetText(streamCodeInput.Text())
 	})
 
 	stopButton.ConnectClicked(func() {
