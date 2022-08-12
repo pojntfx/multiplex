@@ -1,5 +1,6 @@
 package v1
 
 const (
-	TypePause = "pause" // TypePause synchronizes play/pause state
+	TypeMagnet = "magnet" // TypeMagnet contains a magnet link
+	TypePause  = "pause"  // TypePause synchronizes play/pause state
 )

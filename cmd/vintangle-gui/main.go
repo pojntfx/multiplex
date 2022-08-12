@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -31,12 +32,16 @@ import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/mitchellh/mapstructure"
 	"github.com/phayes/freeport"
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
+	api "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
+	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/teris-io/shortid"
 
 	_ "embed"
 )
@@ -114,8 +119,6 @@ var (
 	geschemas []byte
 
 	letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 	errKilled            = errors.New("signal: killed")
 	errNoWorkingMPVFound = errors.New("could not find working a working mpv")
@@ -247,8 +250,8 @@ func runMPVCommand(ipcFile string, command func(encoder *jsoniter.Encoder, decod
 	}
 	defer sock.Close()
 
-	encoder := json.NewEncoder(sock)
-	decoder := json.NewDecoder(sock)
+	encoder := jsoniter.NewEncoder(sock)
+	decoder := jsoniter.NewDecoder(sock)
 
 	return command(encoder, decoder)
 }
@@ -468,115 +471,140 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	onNext := func() {
 		switch stack.VisibleChildName() {
 		case welcomePageName:
-			if selectedTorrentMedia == "" {
-				nextButton.SetSensitive(false)
-			}
-
-			headerbarSpinner.SetSpinning(true)
-			magnetLinkEntry.SetSensitive(false)
-
 			go func() {
-				magnetLink := magnetLinkEntry.Text()
-
-				log.Info().
-					Str("magnetLink", magnetLink).
-					Msg("Getting info for magnet link")
-
-				info, err := manager.GetInfo(magnetLink)
+				magnetLinkOrStreamCode := magnetLinkEntry.Text()
+				u, err := url.Parse(magnetLinkOrStreamCode)
 				if err != nil {
 					log.Warn().
-						Str("magnetLink", magnetLink).
+						Str("magnetLinkOrStreamCode", magnetLinkOrStreamCode).
 						Err(err).
-						Msg("Could not get info for magnet link")
+						Msg("Could not get info for magnet link or stream code")
 
-					toast := adw.NewToast("Could not get info for this magnet link.")
+					toast := adw.NewToast("Could not get info for this magnet link or stream code.")
 
 					overlay.AddToast(toast)
-
-					headerbarSpinner.SetSpinning(false)
-					magnetLinkEntry.SetSensitive(true)
-
-					magnetLinkEntry.GrabFocus()
 
 					return
 				}
 
-				torrentTitle = info.Name
-				torrentReadme = strings.Map(
-					func(r rune) rune {
-						if r == '\n' || unicode.IsGraphic(r) && unicode.IsPrint(r) {
-							return r
-						}
-
-						return -1
-					},
-					info.Description,
-				)
-				torrentMedia = []media{}
-				for _, file := range info.Files {
-					torrentMedia = append(torrentMedia, media{
-						name: file.Path,
-						size: int(file.Length),
-					})
-				}
-
-				for _, row := range mediaRows {
-					mediaSelectionGroup.Remove(row)
-				}
-				mediaRows = []*adw.ActionRow{}
-
-				activators = []*gtk.CheckButton{}
-				for i, file := range torrentMedia {
-					row := adw.NewActionRow()
-
-					activator := gtk.NewCheckButton()
-
-					if len(activators) > 0 {
-						activator.SetGroup(activators[i-1])
+				if u.Scheme == "magnet" {
+					if selectedTorrentMedia == "" {
+						nextButton.SetSensitive(false)
 					}
-					activators = append(activators, activator)
 
-					m := file.name
-					activator.SetActive(false)
-					activator.ConnectActivate(func() {
-						if m != selectedTorrentMedia {
-							selectedTorrentMedia = m
+					headerbarSpinner.SetSpinning(true)
+					magnetLinkEntry.SetSensitive(false)
 
-							rightsConfirmationButton.SetActive(false)
+					log.Info().
+						Str("magnetLink", magnetLinkOrStreamCode).
+						Msg("Getting info for magnet link")
+
+					info, err := manager.GetInfo(magnetLinkOrStreamCode)
+					if err != nil {
+						log.Warn().
+							Str("magnetLink", magnetLinkOrStreamCode).
+							Err(err).
+							Msg("Could not get info for magnet link")
+
+						toast := adw.NewToast("Could not get info for this magnet link.")
+
+						overlay.AddToast(toast)
+
+						headerbarSpinner.SetSpinning(false)
+						magnetLinkEntry.SetSensitive(true)
+
+						magnetLinkEntry.GrabFocus()
+
+						return
+					}
+
+					torrentTitle = info.Name
+					torrentReadme = strings.Map(
+						func(r rune) rune {
+							if r == '\n' || unicode.IsGraphic(r) && unicode.IsPrint(r) {
+								return r
+							}
+
+							return -1
+						},
+						info.Description,
+					)
+					torrentMedia = []media{}
+					for _, file := range info.Files {
+						torrentMedia = append(torrentMedia, media{
+							name: file.Path,
+							size: int(file.Length),
+						})
+					}
+
+					for _, row := range mediaRows {
+						mediaSelectionGroup.Remove(row)
+					}
+					mediaRows = []*adw.ActionRow{}
+
+					activators = []*gtk.CheckButton{}
+					for i, file := range torrentMedia {
+						row := adw.NewActionRow()
+
+						activator := gtk.NewCheckButton()
+
+						if len(activators) > 0 {
+							activator.SetGroup(activators[i-1])
 						}
+						activators = append(activators, activator)
 
-						nextButton.SetSensitive(true)
-					})
+						m := file.name
+						activator.SetActive(false)
+						activator.ConnectActivate(func() {
+							if m != selectedTorrentMedia {
+								selectedTorrentMedia = m
 
-					row.SetTitle(getDisplayPathWithoutRoot(file.name))
-					row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
-					row.SetActivatable(true)
+								rightsConfirmationButton.SetActive(false)
+							}
 
-					row.AddPrefix(activator)
-					row.SetActivatableWidget(activator)
+							nextButton.SetSensitive(true)
+						})
 
-					mediaRows = append(mediaRows, row)
-					mediaSelectionGroup.Add(row)
+						row.SetTitle(getDisplayPathWithoutRoot(file.name))
+						row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
+						row.SetActivatable(true)
+
+						row.AddPrefix(activator)
+						row.SetActivatableWidget(activator)
+
+						mediaRows = append(mediaRows, row)
+						mediaSelectionGroup.Add(row)
+					}
+
+					headerbarSpinner.SetSpinning(false)
+					magnetLinkEntry.SetSensitive(true)
+					previousButton.SetVisible(true)
+
+					buttonHeaderbarTitle.SetLabel(torrentTitle)
+					descriptionHeaderbarTitle.SetLabel(torrentTitle)
+
+					mediaInfoDisplay.SetVisible(false)
+					mediaInfoButton.SetVisible(true)
+
+					descriptionText.SetWrapMode(gtk.WrapWord)
+					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
+						descriptionText.Buffer().SetText(readmePlaceholder)
+					} else {
+						descriptionText.Buffer().SetText(torrentReadme)
+					}
+
+					stack.SetVisibleChildName(mediaPageName)
+
+					return
 				}
 
-				headerbarSpinner.SetSpinning(false)
-				magnetLinkEntry.SetSensitive(true)
-				previousButton.SetVisible(true)
+				log.Info().
+					Str("streamCode", magnetLinkOrStreamCode).
+					Msg("Joining session for stream code")
 
-				buttonHeaderbarTitle.SetLabel(torrentTitle)
-				descriptionHeaderbarTitle.SetLabel(torrentTitle)
+				toast := adw.NewToast("Stream codes are not yet implemented.")
 
-				mediaInfoDisplay.SetVisible(false)
-				mediaInfoButton.SetVisible(true)
-
-				descriptionText.SetWrapMode(gtk.WrapWord)
-				if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-					descriptionText.Buffer().SetText(readmePlaceholder)
-				} else {
-					descriptionText.Buffer().SetText(torrentReadme)
-				}
-
-				stack.SetVisibleChildName(mediaPageName)
+				overlay.AddToast(toast)
 			}()
 		case mediaPageName:
 			nextButton.SetVisible(false)
@@ -908,8 +936,176 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	descriptionProgressBar.SetVisible(true)
 
+	sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
+	if err != nil {
+		return err
+	}
+
+	community, err := sid.Generate()
+	if err != nil {
+		return err
+	}
+
+	password, err := sid.Generate()
+	if err != nil {
+		return err
+	}
+
+	key, err := sid.Generate()
+	if err != nil {
+		return err
+	}
+
+	adapterCtx, cancelAdapterCtx := context.WithCancel(context.Background())
+
+	u, err := url.Parse(settings.String(weronURLFlag))
+	if err != nil {
+		panic(err)
+	}
+
+	q := u.Query()
+	q.Set("community", community)
+	q.Set("password", password)
+	u.RawQuery = q.Encode()
+
+	adapter := wrtcconn.NewAdapter(
+		u.String(),
+		key,
+		strings.Split(settings.String(weronICEFlag), ","),
+		[]string{"vintangle/sync"},
+		&wrtcconn.AdapterConfig{
+			Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(weronTimeoutFlag))),
+			ForceRelay: settings.Boolean(weronForceRelayFlag),
+			OnSignalerReconnect: func() {
+				log.Info().
+					Str("raddr", settings.String(weronURLFlag)).
+					Msg("Reconnecting to signaler")
+			},
+		},
+		adapterCtx,
+	)
+
+	ids, err := adapter.Open()
+	if err != nil {
+		cancelAdapterCtx()
+
+		return err
+	}
+
 	watchingWithTitleLabel.SetText("You're currently watching alone.") // TODO: Add watching with title from weron protocol stats
-	streamCodeInput.SetText("VVDvc6i99J-NVovc6-QQy-VVoveui9QC")        // TODO: Add stream code from actual generated credentials
+	streamCodeInput.SetText(fmt.Sprintf("%v:%v:%v", community, password, key))
+
+	var startPlayback func()
+	var pausePlayback func()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				if err := ctx.Err(); err != context.Canceled {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				return
+			case rid := <-ids:
+				log.Info().
+					Str("raddr", settings.String(weronURLFlag)).
+					Str("id", rid).
+					Msg("Reconnecting to signaler")
+			case peer := <-adapter.Accept():
+				go func() {
+					defer func() {
+						log.Info().
+							Str("peerID", peer.PeerID).
+							Str("channel", peer.ChannelID).
+							Msg("Disconnected from peer")
+					}()
+
+					log.Info().
+						Str("peerID", peer.PeerID).
+						Str("channel", peer.ChannelID).
+						Msg("Connected to peer")
+
+					encoder := json.NewEncoder(peer.Conn)
+					decoder := json.NewDecoder(peer.Conn)
+
+					if err := encoder.Encode(api.NewPause(true)); err != nil {
+						log.Debug().
+							Err(err).
+							Msg("Could not encode pause, stopping")
+
+						return
+					}
+
+					if err := encoder.Encode(api.NewMagnetLink(magnetLink)); err != nil {
+						log.Debug().
+							Err(err).
+							Msg("Could not encode magnet link, stopping")
+
+						return
+					}
+
+					for {
+						var j interface{}
+						if err := decoder.Decode(&j); err != nil {
+							log.Debug().
+								Err(err).
+								Msg("Could not decode structure, skipping")
+
+							return
+						}
+
+						var message api.Message
+						if err := mapstructure.Decode(j, &message); err != nil {
+							log.Debug().
+								Err(err).
+								Msg("Could not decode message, skipping")
+
+							continue
+						}
+
+						switch message.Type {
+						case api.TypePause:
+							var p api.Pause
+							if err := mapstructure.Decode(j, &p); err != nil {
+								log.Debug().
+									Err(err).
+									Msg("Could not decode pause, skipping")
+
+								continue
+							}
+
+							if p.Pause {
+								if pausePlayback != nil {
+									pausePlayback()
+								}
+							} else {
+								if startPlayback != nil {
+									startPlayback()
+								}
+							}
+						case api.TypeMagnet:
+							var m api.Magnet
+							if err := mapstructure.Decode(j, &m); err != nil {
+								log.Debug().
+									Err(err).
+									Msg("Could not decode magnet, skipping")
+
+								continue
+							}
+
+							log.Info().
+								Str("magnet", m.Magnet).
+								Msg("Got magnet link")
+						}
+					}
+				}()
+			}
+		}
+	}()
+
 	copyStreamCodeButton.ConnectClicked(func() {
 		window.Clipboard().SetText(streamCodeInput.Text())
 	})
@@ -1014,6 +1210,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	})
 
 	preparingCancelButton.ConnectClicked(func() {
+		adapter.Close()
+		cancelAdapterCtx()
+
 		progressBarTicker.Stop()
 
 		cancelDownload()
@@ -1098,6 +1297,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		}()
 
 		window.ConnectCloseRequest(func() (ok bool) {
+			adapter.Close()
+			cancelAdapterCtx()
+
 			progressBarTicker.Stop()
 
 			if command.Process != nil {
@@ -1591,27 +1793,27 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 			})
 
-			playButton.ConnectClicked(func() {
-				if playButton.IconName() == playIcon {
-					playButton.SetIconName(pauseIcon)
+			startPlayback = func() {
+				playButton.SetIconName(pauseIcon)
 
-					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-						log.Info().Msg("Starting playback")
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Info().Msg("Starting playback")
 
-						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
-							return err
-						}
-
-						var successResponse mpvSuccessResponse
-						return decoder.Decode(&successResponse)
-					}); err != nil {
-						openErrorDialog(ctx, window, err)
-
-						return
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+						return err
 					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
 
 					return
 				}
+			}
+
+			pausePlayback = func() {
+				playButton.SetIconName(playIcon)
 
 				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
 					log.Info().Msg("Pausing playback")
@@ -1627,8 +1829,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					return
 				}
+			}
 
-				playButton.SetIconName(playIcon)
+			playButton.ConnectClicked(func() {
+				if playButton.IconName() == playIcon {
+					startPlayback()
+
+					return
+				}
+
+				pausePlayback()
 			})
 
 			go func() {
