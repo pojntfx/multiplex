@@ -146,7 +146,7 @@
                                                     <object class="AdwClamp">
                                                         <property name="maximum-size">295</property>
                                                         <property name="vexpand">true</property>
-                                                        <property name="valign">center</property>
+                                                        <property name="valign">fill</property>
 
                                                         <child>
                                                             <object class="AdwStatusPage">
@@ -154,7 +154,9 @@
                                                                 <property name="margin-end">12</property>
                                                                 <property name="icon-name">multimedia-player-symbolic</property>
                                                                 <property name="title">Vintangle</property>
-                                                                <property name="description">Enter a magnet link to start streaming</property>
+                                                                <property name="description">
+                                                                    <![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/vintangle/wiki">stream code</a> to start streaming]]>
+                                                                </property>
 
                                                                 <child>
                                                                     <object class="GtkEntry" id="magnet-link-entry">
@@ -176,7 +178,7 @@
                                                     <object class="AdwClamp">
                                                         <property name="maximum-size">600</property>
                                                         <property name="vexpand">true</property>
-                                                        <property name="valign">center</property>
+                                                        <property name="valign">fill</property>
 
                                                         <child>
                                                             <object class="AdwStatusPage">
@@ -204,7 +206,7 @@
                                                     <object class="AdwClamp">
                                                         <property name="maximum-size">295</property>
                                                         <property name="vexpand">true</property>
-                                                        <property name="valign">center</property>
+                                                        <property name="valign">fill</property>
 
                                                         <child>
                                                             <object class="AdwStatusPage">

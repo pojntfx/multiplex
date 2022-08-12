@@ -13,6 +13,7 @@ require (
 	github.com/pojntfx/weron v0.2.1
 	github.com/rs/zerolog v1.27.0
 	github.com/teivah/broadcast v0.0.7-0.20220316095729-071f20229a32
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
 
 require (

@@ -227,7 +227,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="justify">center</property>
-                        <property name="label">Ask the people you want you watch with
+                        <property name="label">Ask the people you want to watch with
 to enter the following stream code:</property>
                     </object>
                 </child>

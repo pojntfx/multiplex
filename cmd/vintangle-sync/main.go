@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
 	v1 "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
@@ -20,20 +20,15 @@ import (
 )
 
 var (
-	errMissingCommunity = errors.New("missing community")
-	errMissingPassword  = errors.New("missing password")
-	errMissingKey       = errors.New("missing key")
-
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
+	errMissingStreamCode = errors.New("missing stream code")
+	errInvalidStreamCode = errors.New("invalid stream code")
 )
 
 func main() {
 	verboseFlag := flag.Int("verbose", 5, "Verbosity level (0 is disabled, default is info, 7 is trace)")
 	raddrFlag := flag.String("raddr", "wss://weron.herokuapp.com/", "Remote address")
 	timeoutFlag := flag.Duration("timeout", time.Second*10, "Time to wait for connections")
-	communityFlag := flag.String("community", "", "ID of community to join")
-	passwordFlag := flag.String("password", "", "Password for community")
-	keyFlag := flag.String("key", "", "Encryption key for community")
+	streamCodeFlag := flag.String("stream-code", "", "Stream code to join by (in format community:password:key)")
 	iceFlag := flag.String("ice", "stun:stun.l.google.com:19302", "Comma-separated list of STUN servers (in format stun:host:port) and TURN servers to use (in format username:credential@turn:host:port) (i.e. username:credential@turn:global.turn.twilio.com:3478?transport=tcp)")
 	forceRelayFlag := flag.Bool("force-relay", false, "Force usage of TURN servers")
 
@@ -61,16 +56,13 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if strings.TrimSpace(*communityFlag) == "" {
-		panic(errMissingCommunity)
+	if strings.TrimSpace(*streamCodeFlag) == "" {
+		panic(errMissingStreamCode)
 	}
 
-	if strings.TrimSpace(*passwordFlag) == "" {
-		panic(errMissingPassword)
-	}
-
-	if strings.TrimSpace(*keyFlag) == "" {
-		panic(errMissingKey)
+	streamCodeParts := strings.Split(*streamCodeFlag, ":")
+	if len(streamCodeParts) < 3 {
+		panic(errInvalidStreamCode)
 	}
 
 	log.Println("Connecting to signaler with address", *raddrFlag)
@@ -81,13 +73,13 @@ func main() {
 	}
 
 	q := u.Query()
-	q.Set("community", *communityFlag)
-	q.Set("password", *passwordFlag)
+	q.Set("community", streamCodeParts[0])
+	q.Set("password", streamCodeParts[1])
 	u.RawQuery = q.Encode()
 
 	adapter := wrtcconn.NewAdapter(
 		u.String(),
-		*keyFlag,
+		streamCodeParts[2],
 		strings.Split(*iceFlag, ","),
 		[]string{"vintangle/sync"},
 		&wrtcconn.AdapterConfig{
@@ -208,6 +200,15 @@ func main() {
 						} else {
 							fmt.Println("Unpausing")
 						}
+					case v1.TypeMagnet:
+						var m v1.Magnet
+						if err := mapstructure.Decode(j, &m); err != nil {
+							log.Println("Could not decode magnet, skipping:", err)
+
+							continue
+						}
+
+						log.Println("Got magnet link:", m.Magnet)
 					}
 				}
 			}()
