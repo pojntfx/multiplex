@@ -221,6 +221,8 @@
                         <style>
                             <class name="title"></class>
                         </style>
+
+                        <property name="label">You're currently watching alone.</property>
                     </object>
                 </child>
 
