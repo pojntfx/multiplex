@@ -41,6 +41,7 @@ import (
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/teivah/broadcast"
 	"github.com/teris-io/shortid"
 
 	_ "embed"
@@ -968,6 +969,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	q.Set("password", password)
 	u.RawQuery = q.Encode()
 
+	pauses := broadcast.NewRelay[bool]()
+
 	adapter := wrtcconn.NewAdapter(
 		u.String(),
 		key,
@@ -1030,6 +1033,26 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					encoder := json.NewEncoder(peer.Conn)
 					decoder := json.NewDecoder(peer.Conn)
+
+					go func() {
+						l := pauses.Listener(0)
+						defer l.Close()
+
+						for {
+							select {
+							case <-ctx.Done():
+								return
+							case pause := <-l.Ch():
+								if err := encoder.Encode(api.NewPause(pause)); err != nil {
+									log.Debug().
+										Err(err).
+										Msg("Could not encode pause, stopping")
+
+									return
+								}
+							}
+						}
+					}()
 
 					if err := encoder.Encode(api.NewPause(true)); err != nil {
 						log.Debug().
@@ -1213,6 +1236,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		adapter.Close()
 		cancelAdapterCtx()
 
+		pauses.Close()
+
 		progressBarTicker.Stop()
 
 		cancelDownload()
@@ -1299,6 +1324,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		window.ConnectCloseRequest(func() (ok bool) {
 			adapter.Close()
 			cancelAdapterCtx()
+
+			pauses.Close()
 
 			progressBarTicker.Stop()
 
@@ -1835,10 +1862,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				if playButton.IconName() == playIcon {
 					startPlayback()
 
+					pauses.Broadcast(false)
+
 					return
 				}
 
 				pausePlayback()
+
+				pauses.Broadcast(true)
 			})
 
 			go func() {
