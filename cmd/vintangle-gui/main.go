@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 	"unicode"
@@ -995,8 +996,42 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		return err
 	}
 
-	watchingWithTitleLabel.SetText("You're currently watching alone.") // TODO: Add watching with title from weron protocol stats
 	streamCodeInput.SetText(fmt.Sprintf("%v:%v:%v", community, password, key))
+
+	connectedPeers := 0
+	var connectedPeersLock sync.Mutex
+	syncWatchingWithLabel := func(connected bool) {
+		connectedPeersLock.Lock()
+		defer connectedPeersLock.Unlock()
+
+		if connected {
+			toast := adw.NewToast("Someone joined the session.")
+
+			overlay.AddToast(toast)
+
+			connectedPeers++
+		} else {
+			toast := adw.NewToast("Someone left the session.")
+
+			overlay.AddToast(toast)
+
+			connectedPeers--
+		}
+
+		if connectedPeers <= 0 {
+			watchingWithTitleLabel.SetText("You're currently watching alone.")
+
+			return
+		}
+
+		if connectedPeers == 1 {
+			watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other person.", connectedPeers))
+
+			return
+		}
+
+		watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other people.", connectedPeers))
+	}
 
 	var startPlayback func()
 	var pausePlayback func()
@@ -1024,12 +1059,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							Str("peerID", peer.PeerID).
 							Str("channel", peer.ChannelID).
 							Msg("Disconnected from peer")
+
+						syncWatchingWithLabel(false)
 					}()
 
 					log.Info().
 						Str("peerID", peer.PeerID).
 						Str("channel", peer.ChannelID).
 						Msg("Connected to peer")
+
+					syncWatchingWithLabel(true)
 
 					encoder := json.NewEncoder(peer.Conn)
 					decoder := json.NewDecoder(peer.Conn)
