@@ -200,6 +200,15 @@ func main() {
 						} else {
 							fmt.Println("Unpausing")
 						}
+					case v1.TypePosition:
+						var p v1.Position
+						if err := mapstructure.Decode(j, &p); err != nil {
+							log.Println("Could not decode position, skipping:", err)
+
+							continue
+						}
+
+						log.Println("Position:", p.Position)
 					case v1.TypeMagnet:
 						var m v1.Magnet
 						if err := mapstructure.Decode(j, &m); err != nil {

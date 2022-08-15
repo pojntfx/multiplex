@@ -971,6 +971,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	u.RawQuery = q.Encode()
 
 	pauses := broadcast.NewRelay[bool]()
+	positions := broadcast.NewRelay[float64]()
 
 	adapter := wrtcconn.NewAdapter(
 		u.String(),
@@ -1032,141 +1033,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 		watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other people.", connectedPeers))
 	}
-
-	var startPlayback func()
-	var pausePlayback func()
-
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				if err := ctx.Err(); err != context.Canceled {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-
-				return
-			case rid := <-ids:
-				log.Info().
-					Str("raddr", settings.String(weronURLFlag)).
-					Str("id", rid).
-					Msg("Reconnecting to signaler")
-			case peer := <-adapter.Accept():
-				go func() {
-					defer func() {
-						log.Info().
-							Str("peerID", peer.PeerID).
-							Str("channel", peer.ChannelID).
-							Msg("Disconnected from peer")
-
-						syncWatchingWithLabel(false)
-					}()
-
-					log.Info().
-						Str("peerID", peer.PeerID).
-						Str("channel", peer.ChannelID).
-						Msg("Connected to peer")
-
-					syncWatchingWithLabel(true)
-
-					encoder := json.NewEncoder(peer.Conn)
-					decoder := json.NewDecoder(peer.Conn)
-
-					go func() {
-						l := pauses.Listener(0)
-						defer l.Close()
-
-						for {
-							select {
-							case <-ctx.Done():
-								return
-							case pause := <-l.Ch():
-								if err := encoder.Encode(api.NewPause(pause)); err != nil {
-									log.Debug().
-										Err(err).
-										Msg("Could not encode pause, stopping")
-
-									return
-								}
-							}
-						}
-					}()
-
-					if err := encoder.Encode(api.NewPause(true)); err != nil {
-						log.Debug().
-							Err(err).
-							Msg("Could not encode pause, stopping")
-
-						return
-					}
-
-					if err := encoder.Encode(api.NewMagnetLink(magnetLink)); err != nil {
-						log.Debug().
-							Err(err).
-							Msg("Could not encode magnet link, stopping")
-
-						return
-					}
-
-					for {
-						var j interface{}
-						if err := decoder.Decode(&j); err != nil {
-							log.Debug().
-								Err(err).
-								Msg("Could not decode structure, skipping")
-
-							return
-						}
-
-						var message api.Message
-						if err := mapstructure.Decode(j, &message); err != nil {
-							log.Debug().
-								Err(err).
-								Msg("Could not decode message, skipping")
-
-							continue
-						}
-
-						switch message.Type {
-						case api.TypePause:
-							var p api.Pause
-							if err := mapstructure.Decode(j, &p); err != nil {
-								log.Debug().
-									Err(err).
-									Msg("Could not decode pause, skipping")
-
-								continue
-							}
-
-							if p.Pause {
-								if pausePlayback != nil {
-									pausePlayback()
-								}
-							} else {
-								if startPlayback != nil {
-									startPlayback()
-								}
-							}
-						case api.TypeMagnet:
-							var m api.Magnet
-							if err := mapstructure.Decode(j, &m); err != nil {
-								log.Debug().
-									Err(err).
-									Msg("Could not decode magnet, skipping")
-
-								continue
-							}
-
-							log.Info().
-								Str("magnet", m.Magnet).
-								Msg("Got magnet link")
-						}
-					}
-				}()
-			}
-		}
-	}()
 
 	copyStreamCodeButton.ConnectClicked(func() {
 		window.Clipboard().SetText(streamCodeInput.Text())
@@ -1276,6 +1142,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		cancelAdapterCtx()
 
 		pauses.Close()
+		positions.Close()
 
 		progressBarTicker.Stop()
 
@@ -1365,6 +1232,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			cancelAdapterCtx()
 
 			pauses.Close()
+			positions.Close()
 
 			progressBarTicker.Stop()
 
@@ -1411,6 +1279,287 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					Err(err).
 					Msg("Could not dial IPC socket, retrying in 100ms")
 			}
+
+			startPlayback := func() {
+				playButton.SetIconName(pauseIcon)
+
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Info().Msg("Starting playback")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+			}
+
+			pausePlayback := func() {
+				playButton.SetIconName(playIcon)
+
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					log.Info().Msg("Pausing playback")
+
+					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+			}
+
+			seekerIsSeeking := false
+			seekerIsUnderPointer := false
+			total := time.Duration(0)
+			seekToPosition := func(position float64) {
+				seekerIsSeeking = true
+
+				seeker.SetValue(position)
+
+				elapsed := time.Duration(int64(position))
+
+				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
+						return err
+					}
+
+					var successResponse mpvSuccessResponse
+					return decoder.Decode(&successResponse)
+				}); err != nil {
+					openErrorDialog(ctx, window, err)
+
+					return
+				}
+
+				log.Info().
+					Dur("duration", elapsed).
+					Msg("Seeking")
+
+				remaining := total - elapsed
+
+				elapsedTrackLabel.SetLabel(formatDuration(elapsed))
+				remainingTrackLabel.SetLabel("-" + formatDuration(remaining))
+
+				var updateScalePosition func(done bool)
+				updateScalePosition = func(done bool) {
+					if seekerIsUnderPointer {
+						if done {
+							seekerIsSeeking = false
+
+							return
+						}
+
+						updateScalePosition(true)
+					} else {
+						seekerIsSeeking = false
+					}
+				}
+
+				time.AfterFunc(
+					time.Millisecond*200,
+					func() {
+						updateScalePosition(false)
+					},
+				)
+			}
+
+			go func() {
+				for {
+					select {
+					case <-ctx.Done():
+						if err := ctx.Err(); err != context.Canceled {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+
+						return
+					case rid := <-ids:
+						log.Info().
+							Str("raddr", settings.String(weronURLFlag)).
+							Str("id", rid).
+							Msg("Reconnecting to signaler")
+					case peer := <-adapter.Accept():
+						go func() {
+							defer func() {
+								log.Info().
+									Str("peerID", peer.PeerID).
+									Str("channel", peer.ChannelID).
+									Msg("Disconnected from peer")
+
+								syncWatchingWithLabel(false)
+							}()
+
+							log.Info().
+								Str("peerID", peer.PeerID).
+								Str("channel", peer.ChannelID).
+								Msg("Connected to peer")
+
+							syncWatchingWithLabel(true)
+
+							encoder := json.NewEncoder(peer.Conn)
+							decoder := json.NewDecoder(peer.Conn)
+
+							go func() {
+								pl := pauses.Listener(0)
+								defer pl.Close()
+
+								ol := positions.Listener(0)
+								defer ol.Close()
+
+								for {
+									select {
+									case <-ctx.Done():
+										return
+									case pause, ok := <-pl.Ch():
+										if !ok {
+											continue
+										}
+
+										if err := encoder.Encode(api.NewPause(pause)); err != nil {
+											log.Debug().
+												Err(err).
+												Msg("Could not encode pause, stopping")
+
+											return
+										}
+									case position, ok := <-ol.Ch():
+										if !ok {
+											continue
+										}
+
+										if err := encoder.Encode(api.NewPosition(position)); err != nil {
+											log.Debug().
+												Err(err).
+												Msg("Could not encode pause, stopping")
+
+											return
+										}
+									}
+								}
+							}()
+
+							if err := encoder.Encode(api.NewPause(true)); err != nil {
+								log.Debug().
+									Err(err).
+									Msg("Could not encode pause, stopping")
+
+								return
+							}
+
+							if err := encoder.Encode(api.NewMagnetLink(magnetLink)); err != nil {
+								log.Debug().
+									Err(err).
+									Msg("Could not encode magnet link, stopping")
+
+								return
+							}
+
+							var elapsedResponse mpvFloat64Response
+							if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+								if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
+									return err
+								}
+
+								return decoder.Decode(&elapsedResponse)
+							}); err != nil {
+								log.Error().
+									Err(err).
+									Msg("Could not parse JSON from socket")
+
+								return
+							}
+
+							elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
+							if err != nil {
+								openErrorDialog(ctx, window, err)
+
+								return
+							}
+
+							positions.Broadcast(float64(elapsed.Nanoseconds()))
+
+							for {
+								var j interface{}
+								if err := decoder.Decode(&j); err != nil {
+									log.Debug().
+										Err(err).
+										Msg("Could not decode structure, skipping")
+
+									return
+								}
+
+								var message api.Message
+								if err := mapstructure.Decode(j, &message); err != nil {
+									log.Debug().
+										Err(err).
+										Msg("Could not decode message, skipping")
+
+									continue
+								}
+
+								switch message.Type {
+								case api.TypePause:
+									var p api.Pause
+									if err := mapstructure.Decode(j, &p); err != nil {
+										log.Debug().
+											Err(err).
+											Msg("Could not decode pause, skipping")
+
+										continue
+									}
+
+									if p.Pause {
+										if pausePlayback != nil {
+											pausePlayback()
+										}
+									} else {
+										if startPlayback != nil {
+											startPlayback()
+										}
+									}
+								case api.TypePosition:
+									var p api.Position
+									if err := mapstructure.Decode(j, &p); err != nil {
+										log.Debug().
+											Err(err).
+											Msg("Could not decode position, skipping")
+
+										continue
+									}
+
+									if seekToPosition != nil {
+										seekToPosition(p.Position)
+									}
+								case api.TypeMagnet:
+									var m api.Magnet
+									if err := mapstructure.Decode(j, &m); err != nil {
+										log.Debug().
+											Err(err).
+											Msg("Could not decode magnet, skipping")
+
+										continue
+									}
+
+									log.Info().
+										Str("magnet", m.Magnet).
+										Msg("Got magnet link")
+								}
+							}
+						}()
+					}
+				}
+			}()
 
 			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
 				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
@@ -1543,10 +1692,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				subtitlesSelectionGroup.Add(row)
 			}
 
-			seekerIsSeeking := false
-			seekerIsUnderPointer := false
-			total := time.Duration(0)
-
 			ctrl := gtk.NewEventControllerMotion()
 			ctrl.ConnectEnter(func(x, y float64) {
 				seekerIsUnderPointer = true
@@ -1557,55 +1702,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			seeker.AddController(ctrl)
 
 			seeker.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
-				seekerIsSeeking = true
+				seekToPosition(value)
 
-				seeker.SetValue(value)
-
-				elapsed := time.Duration(int64(value))
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return false
-				}
-
-				log.Info().
-					Dur("duration", elapsed).
-					Msg("Seeking")
-
-				remaining := total - elapsed
-
-				elapsedTrackLabel.SetLabel(formatDuration(elapsed))
-				remainingTrackLabel.SetLabel("-" + formatDuration(remaining))
-
-				var updateScalePosition func(done bool)
-				updateScalePosition = func(done bool) {
-					if seekerIsUnderPointer {
-						if done {
-							seekerIsSeeking = false
-
-							return
-						}
-
-						updateScalePosition(true)
-					} else {
-						seekerIsSeeking = false
-					}
-				}
-
-				time.AfterFunc(
-					time.Millisecond*200,
-					func() {
-						updateScalePosition(false)
-					},
-				)
+				positions.Broadcast(value)
 
 				return true
 			})
@@ -1858,44 +1957,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 			})
-
-			startPlayback = func() {
-				playButton.SetIconName(pauseIcon)
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Info().Msg("Starting playback")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-			}
-
-			pausePlayback = func() {
-				playButton.SetIconName(playIcon)
-
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
-					log.Info().Msg("Pausing playback")
-
-					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
-						return err
-					}
-
-					var successResponse mpvSuccessResponse
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					openErrorDialog(ctx, window, err)
-
-					return
-				}
-			}
 
 			playButton.ConnectClicked(func() {
 				if playButton.IconName() == playIcon {

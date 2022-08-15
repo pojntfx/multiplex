@@ -29,3 +29,18 @@ func NewMagnetLink(magnet string) *Magnet {
 		Magnet: magnet,
 	}
 }
+
+// Position synchronizes seek positions
+type Position struct {
+	Message
+	Position float64 `json:"position"` // Position to seek to
+}
+
+func NewPosition(position float64) *Position {
+	return &Position{
+		Message: Message{
+			Type: TypePosition,
+		},
+		Position: position,
+	}
+}
