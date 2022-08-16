@@ -19,14 +19,16 @@ func NewPause(pause bool) *Pause {
 type Magnet struct {
 	Message
 	Magnet string `json:"magnet"` // Encapsulated magnet link
+	Path   string `json:"path"`   // Path of the media to play
 }
 
-func NewMagnetLink(magnet string) *Magnet {
+func NewMagnetLink(magnet string, path string) *Magnet {
 	return &Magnet{
 		Message: Message{
 			Type: TypeMagnet,
 		},
 		Magnet: magnet,
+		Path:   path,
 	}
 }
 
