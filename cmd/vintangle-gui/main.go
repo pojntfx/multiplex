@@ -446,6 +446,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	torrentTitle := ""
 	torrentMedia := []media{}
 	torrentReadme := ""
+	isNewSession := true
 
 	selectedTorrentMedia := ""
 	activators := []*gtk.CheckButton{}
@@ -476,20 +477,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			go func() {
 				magnetLinkOrStreamCode := magnetLinkEntry.Text()
 				u, err := url.Parse(magnetLinkOrStreamCode)
-				if err != nil {
-					log.Warn().
-						Str("magnetLinkOrStreamCode", magnetLinkOrStreamCode).
-						Err(err).
-						Msg("Could not get info for magnet link or stream code")
+				if err == nil && u != nil && u.Scheme == "magnet" {
+					isNewSession = true
 
-					toast := adw.NewToast("Could not get info for this magnet link or stream code.")
-
-					overlay.AddToast(toast)
-
-					return
-				}
-
-				if u.Scheme == "magnet" {
 					if selectedTorrentMedia == "" {
 						nextButton.SetSensitive(false)
 					}
@@ -600,13 +590,170 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 					return
 				}
 
-				log.Info().
-					Str("streamCode", magnetLinkOrStreamCode).
-					Msg("Joining session for stream code")
+				go func() {
+					log.Info().
+						Str("streamCode", magnetLinkOrStreamCode).
+						Msg("Joining session for stream code")
 
-				toast := adw.NewToast("Stream codes are not yet implemented.")
+					isNewSession = false
 
-				overlay.AddToast(toast)
+					adapterCtx, cancelAdapterCtx := context.WithCancel(context.Background())
+					defer cancelAdapterCtx()
+
+					streamCodeParts := strings.Split(magnetLinkOrStreamCode, ":")
+					if len(streamCodeParts) < 3 {
+						toast := adw.NewToast("This stream code is invalid.")
+
+						overlay.AddToast(toast)
+
+						return
+					}
+
+					wu, err := url.Parse(settings.String(weronURLFlag))
+					if err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+
+					headerbarSpinner.SetSpinning(true)
+					magnetLinkEntry.SetSensitive(false)
+
+					q := wu.Query()
+					q.Set("community", streamCodeParts[0])
+					q.Set("password", streamCodeParts[1])
+					wu.RawQuery = q.Encode()
+
+					adapter := wrtcconn.NewAdapter(
+						wu.String(),
+						streamCodeParts[2],
+						strings.Split(settings.String(weronICEFlag), ","),
+						[]string{"vintangle/sync"},
+						&wrtcconn.AdapterConfig{
+							Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(weronTimeoutFlag))),
+							ForceRelay: settings.Boolean(weronForceRelayFlag),
+							OnSignalerReconnect: func() {
+								log.Info().
+									Str("raddr", settings.String(weronURLFlag)).
+									Msg("Reconnecting to signaler")
+							},
+						},
+						adapterCtx,
+					)
+
+					ids, err := adapter.Open()
+					if err != nil {
+						cancelAdapterCtx()
+
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+					defer adapter.Close()
+
+					var receivedMagnetLink api.Magnet
+				l:
+					for {
+						select {
+						case <-ctx.Done():
+							if err := ctx.Err(); err != context.Canceled {
+								openErrorDialog(ctx, window, err)
+
+								return
+							}
+
+							return
+						case rid := <-ids:
+							log.Info().
+								Str("raddr", settings.String(weronURLFlag)).
+								Str("id", rid).
+								Msg("Reconnecting to signaler")
+						case peer := <-adapter.Accept():
+							defer func() {
+								log.Info().
+									Str("peerID", peer.PeerID).
+									Str("channel", peer.ChannelID).
+									Msg("Disconnected from peer")
+							}()
+
+							log.Info().
+								Str("peerID", peer.PeerID).
+								Str("channel", peer.ChannelID).
+								Msg("Connected to peer")
+
+							decoder := json.NewDecoder(peer.Conn)
+
+							for {
+								var j interface{}
+								if err := decoder.Decode(&j); err != nil {
+									log.Debug().
+										Err(err).
+										Msg("Could not decode structure, skipping")
+
+									return
+								}
+
+								var message api.Message
+								if err := mapstructure.Decode(j, &message); err != nil {
+									log.Debug().
+										Err(err).
+										Msg("Could not decode message, skipping")
+
+									continue
+								}
+
+								log.Info().Interface("message", message).Msg("Decoded message")
+
+								switch message.Type {
+								case api.TypeMagnet:
+									var m api.Magnet
+									if err := mapstructure.Decode(j, &m); err != nil {
+										log.Debug().
+											Err(err).
+											Msg("Could not decode magnet, skipping")
+
+										continue
+									}
+
+									log.Info().
+										Str("magnet", m.Magnet).
+										Str("path", m.Path).
+										Msg("Got magnet link")
+
+									receivedMagnetLink = m
+
+									break l
+								}
+							}
+						}
+					}
+
+					headerbarSpinner.SetSpinning(false)
+					magnetLinkEntry.SetSensitive(true)
+					previousButton.SetVisible(true)
+
+					buttonHeaderbarTitle.SetLabel(receivedMagnetLink.Title)
+					descriptionHeaderbarTitle.SetLabel(receivedMagnetLink.Title)
+
+					mediaInfoDisplay.SetVisible(false)
+					mediaInfoButton.SetVisible(true)
+
+					descriptionText.SetWrapMode(gtk.WrapWord)
+					if !utf8.Valid([]byte(receivedMagnetLink.Description)) || strings.TrimSpace(receivedMagnetLink.Description) == "" {
+						descriptionText.Buffer().SetText(readmePlaceholder)
+					} else {
+						descriptionText.Buffer().SetText(receivedMagnetLink.Description)
+					}
+
+					nextButton.SetVisible(false)
+
+					buttonHeaderbarSubtitle.SetVisible(true)
+					descriptionHeaderbarSubtitle.SetVisible(true)
+					buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(receivedMagnetLink.Path))
+					descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(receivedMagnetLink.Path))
+
+					stack.SetVisibleChildName(readyPageName)
+				}()
 			}()
 		case mediaPageName:
 			nextButton.SetVisible(false)
@@ -635,6 +782,18 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 			buttonHeaderbarSubtitle.SetVisible(false)
 			descriptionHeaderbarSubtitle.SetVisible(false)
+
+			if !isNewSession {
+				previousButton.SetVisible(false)
+				nextButton.SetSensitive(true)
+
+				mediaInfoDisplay.SetVisible(true)
+				mediaInfoButton.SetVisible(false)
+
+				stack.SetVisibleChildName(welcomePageName)
+
+				return
+			}
 
 			stack.SetVisibleChildName(mediaPageName)
 		}
@@ -700,6 +859,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	}
 
 	streamButton.ConnectClicked(func() {
+		if !isNewSession {
+			toast := adw.NewToast("Joining an existing session is not supported yet.")
+
+			overlay.AddToast(toast)
+
+			return
+		}
+
 		window.Close()
 		refreshSubtitles()
 
@@ -724,6 +891,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	downloadAndPlayAction := gio.NewSimpleAction(downloadAndPlayActionName, nil)
 	downloadAndPlayAction.ConnectActivate(func(parameter *glib.Variant) {
+		if !isNewSession {
+			toast := adw.NewToast("Joining an existing session is not supported yet.")
+
+			overlay.AddToast(toast)
+
+			return
+		}
+
 		window.Close()
 		refreshSubtitles()
 
@@ -962,7 +1137,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	u, err := url.Parse(settings.String(weronURLFlag))
 	if err != nil {
-		panic(err)
+		cancelAdapterCtx()
+
+		return err
 	}
 
 	q := u.Query()
@@ -1457,7 +1634,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 								return
 							}
 
-							if err := encoder.Encode(api.NewMagnetLink(magnetLink, selectedTorrentMedia)); err != nil {
+							if err := encoder.Encode(api.NewMagnetLink(magnetLink, selectedTorrentMedia, torrentTitle, torrentReadme)); err != nil {
 								log.Debug().
 									Err(err).
 									Msg("Could not encode magnet link, stopping")

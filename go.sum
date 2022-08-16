@@ -359,8 +359,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pojntfx/go-auth-utils v0.1.0 h1:nM19hBX3zIs/tTv1ZAJN+m5occkUPQUKJtWG6sk66WY=
 github.com/pojntfx/go-auth-utils v0.1.0/go.mod h1:0GYzRzRxJ+sbMl1sJ3Ko0M4GAHJF2sWkL/MAqQmf5yc=
-github.com/pojntfx/htorrent v0.5.0 h1:rCAHVnCc2mqWkZKYfmpqqVmQnakDrWLRyD7721+8jpA=
-github.com/pojntfx/htorrent v0.5.0/go.mod h1:5IYFBcDaLm3uEuWF6jaGK1zqHlVdbeHes1Tfghu250Q=
+github.com/pojntfx/htorrent v0.5.1 h1:LD/Rt1YnFFmgzHdlVx0pzhiaqL1CAbTD/t0yVzFsAEc=
+github.com/pojntfx/htorrent v0.5.1/go.mod h1:NTw+lda5s6OLR9/TupIlgJKEM9EAyjCpB7AIiH/eMm8=
 github.com/pojntfx/weron v0.2.1 h1:4tETZ0o/ufVrg3coIwrED1OTXLge7Yw/nLL5idL1BJA=
 github.com/pojntfx/weron v0.2.1/go.mod h1:gg7jK67VcP6dH0dNXUbiKyDVJS0ka8Bj54EPPMnKY8o=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
