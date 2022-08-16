@@ -217,7 +217,7 @@ func main() {
 							continue
 						}
 
-						log.Println("Got magnet link:", m.Magnet)
+						log.Println("Got magnet link:", m.Magnet, "and path:", m.Path)
 					}
 				}
 			}()

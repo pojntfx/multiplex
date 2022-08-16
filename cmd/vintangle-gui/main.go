@@ -1457,7 +1457,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 								return
 							}
 
-							if err := encoder.Encode(api.NewMagnetLink(magnetLink)); err != nil {
+							if err := encoder.Encode(api.NewMagnetLink(magnetLink, selectedTorrentMedia)); err != nil {
 								log.Debug().
 									Err(err).
 									Msg("Could not encode magnet link, stopping")
@@ -1553,6 +1553,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 									log.Info().
 										Str("magnet", m.Magnet).
+										Str("path", m.Path).
 										Msg("Got magnet link")
 								}
 							}
