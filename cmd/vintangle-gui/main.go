@@ -422,6 +422,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
 	downloadAndPlayButton := builder.GetObject("download-and-play-button").Cast().(*adw.SplitButton)
 	streamWithoutDownloadingButton := builder.GetObject("stream-without-downloading-button").Cast().(*gtk.Button)
+	streamPopover := builder.GetObject("stream-popover").Cast().(*gtk.Popover)
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
@@ -437,6 +438,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
 	mpvManualConfigurationButton := warningBuilder.GetObject("mpv-manual-configuration-button").Cast().(*gtk.Button)
 
+	magnetLink := ""
 	torrentTitle := ""
 	torrentMedia := []media{}
 	torrentReadme := ""
@@ -581,6 +583,8 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 					stack.SetVisibleChildName(mediaPageName)
 
+					magnetLink = magnetLinkEntry.Text()
+
 					return
 				}
 
@@ -722,6 +726,8 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 						}
 					}
 
+					magnetLink = receivedMagnetLink.Magnet
+
 					headerbarSpinner.SetSpinning(false)
 					magnetLinkEntry.SetSensitive(true)
 					previousButton.SetVisible(true)
@@ -853,25 +859,17 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	}
 
 	downloadAndPlayButton.ConnectClicked(func() {
-		if !isNewSession {
-			toast := adw.NewToast("Joining an existing session is not supported yet.")
-
-			overlay.AddToast(toast)
-
-			return
-		}
-
 		window.Close()
 		refreshSubtitles()
 
-		streamURL, err := getStreamURL(apiAddr, magnetLinkEntry.Text(), selectedTorrentMedia)
+		streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
 		if err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
 		}
 
-		selectedTorrent, err := torrent.TorrentSpecFromMagnetUri(magnetLinkEntry.Text())
+		selectedTorrent, err := torrent.TorrentSpecFromMagnetUri(magnetLink)
 		if err != nil {
 			openErrorDialog(ctx, window, err)
 
@@ -888,7 +886,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), dstFile, settings, gateway, cancel, tmpDir, ready, cancel); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -963,18 +961,12 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	})
 
 	streamWithoutDownloadingButton.ConnectClicked(func() {
-		if !isNewSession {
-			toast := adw.NewToast("Joining an existing session is not supported yet.")
-
-			overlay.AddToast(toast)
-
-			return
-		}
+		streamPopover.Hide()
 
 		window.Close()
 		refreshSubtitles()
 
-		streamURL, err := getStreamURL(apiAddr, magnetLinkEntry.Text(), selectedTorrentMedia)
+		streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
 		if err != nil {
 			openErrorDialog(ctx, window, err)
 
@@ -982,7 +974,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -2480,7 +2472,7 @@ func main() {
 		}
 	})
 
-	app := adw.NewApplication(appID, gio.ApplicationFlags(gio.ApplicationFlagsNone))
+	app := adw.NewApplication(appID, gio.ApplicationNonUnique)
 
 	prov := gtk.NewCSSProvider()
 	prov.LoadFromData(styleCSS)
