@@ -10,7 +10,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/pojntfx/htorrent v0.5.1
-	github.com/pojntfx/weron v0.2.1
+	github.com/pojntfx/weron v0.2.2
 	github.com/rs/zerolog v1.27.0
 	github.com/teivah/broadcast v0.0.7-0.20220316095729-071f20229a32
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
