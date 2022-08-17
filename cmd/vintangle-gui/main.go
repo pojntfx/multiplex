@@ -111,9 +111,6 @@ var (
 	//go:embed preparing.ui
 	preparingUI string
 
-	//go:embed streammenu.ui
-	streamMenuUI string
-
 	//go:embed style.css
 	styleCSS string
 
@@ -159,7 +156,6 @@ const (
 
 	preferencesActionName      = "preferences"
 	applyPreferencesActionName = "applypreferences"
-	downloadAndPlayActionName  = "downloadandplay"
 	openDownloadsActionName    = "opendownloads"
 	copyMagnetLinkActionName   = "copymagnetlink"
 
@@ -424,7 +420,8 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
 	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
 	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
-	streamButton := builder.GetObject("stream-button").Cast().(*adw.SplitButton)
+	downloadAndPlayButton := builder.GetObject("download-and-play-button").Cast().(*adw.SplitButton)
+	streamWithoutDownloadingButton := builder.GetObject("stream-without-downloading-button").Cast().(*gtk.Button)
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
@@ -439,9 +436,6 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
 	mpvManualConfigurationButton := warningBuilder.GetObject("mpv-manual-configuration-button").Cast().(*gtk.Button)
-
-	menuBuilder := gtk.NewBuilderFromString(streamMenuUI, len(streamMenuUI))
-	menu := menuBuilder.GetObject("stream-menu").Cast().(*gio.Menu)
 
 	torrentTitle := ""
 	torrentMedia := []media{}
@@ -829,14 +823,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	rightsConfirmationButton.ConnectToggled(func() {
 		if rightsConfirmationButton.Active() {
-			streamButton.AddCSSClass("suggested-action")
-			streamButton.SetSensitive(true)
+			downloadAndPlayButton.AddCSSClass("suggested-action")
+			downloadAndPlayButton.SetSensitive(true)
 
 			return
 		}
 
-		streamButton.RemoveCSSClass("suggested-action")
-		streamButton.SetSensitive(false)
+		downloadAndPlayButton.RemoveCSSClass("suggested-action")
+		downloadAndPlayButton.SetSensitive(false)
 	})
 
 	refreshSubtitles := func() {
@@ -858,39 +852,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 	}
 
-	streamButton.ConnectClicked(func() {
-		if !isNewSession {
-			toast := adw.NewToast("Joining an existing session is not supported yet.")
-
-			overlay.AddToast(toast)
-
-			return
-		}
-
-		window.Close()
-		refreshSubtitles()
-
-		streamURL, err := getStreamURL(apiAddr, magnetLinkEntry.Text(), selectedTorrentMedia)
-		if err != nil {
-			openErrorDialog(ctx, window, err)
-
-			return
-		}
-
-		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
-			openErrorDialog(ctx, window, err)
-
-			return
-		}
-
-		close(ready)
-	})
-
-	streamButton.SetMenuModel(menu)
-
-	downloadAndPlayAction := gio.NewSimpleAction(downloadAndPlayActionName, nil)
-	downloadAndPlayAction.ConnectActivate(func(parameter *glib.Variant) {
+	downloadAndPlayButton.ConnectClicked(func() {
 		if !isNewSession {
 			toast := adw.NewToast("Joining an existing session is not supported yet.")
 
@@ -999,7 +961,35 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			close(ready)
 		}()
 	})
-	window.AddAction(downloadAndPlayAction)
+
+	streamWithoutDownloadingButton.ConnectClicked(func() {
+		if !isNewSession {
+			toast := adw.NewToast("Joining an existing session is not supported yet.")
+
+			overlay.AddToast(toast)
+
+			return
+		}
+
+		window.Close()
+		refreshSubtitles()
+
+		streamURL, err := getStreamURL(apiAddr, magnetLinkEntry.Text(), selectedTorrentMedia)
+		if err != nil {
+			openErrorDialog(ctx, window, err)
+
+			return
+		}
+
+		ready := make(chan struct{})
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLinkEntry.Text(), streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
+			openErrorDialog(ctx, window, err)
+
+			return
+		}
+
+		close(ready)
+	})
 
 	if runtime.GOOS == "linux" {
 		mpvFlathubDownloadButton.SetVisible(true)
@@ -2462,28 +2452,31 @@ func main() {
 		settings.Apply()
 	}
 
+	configureZerolog := func(verbose int64) {
+		switch verbose {
+		case 0:
+			zerolog.SetGlobalLevel(zerolog.Disabled)
+		case 1:
+			zerolog.SetGlobalLevel(zerolog.PanicLevel)
+		case 2:
+			zerolog.SetGlobalLevel(zerolog.FatalLevel)
+		case 3:
+			zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+		case 4:
+			zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		case 5:
+			zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		case 6:
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		default:
+			zerolog.SetGlobalLevel(zerolog.TraceLevel)
+		}
+	}
+
+	configureZerolog(settings.Int64(verboseFlag))
 	settings.ConnectChanged(func(key string) {
 		if key == verboseFlag {
-			verbose := settings.Int64(verboseFlag)
-
-			switch verbose {
-			case 0:
-				zerolog.SetGlobalLevel(zerolog.Disabled)
-			case 1:
-				zerolog.SetGlobalLevel(zerolog.PanicLevel)
-			case 2:
-				zerolog.SetGlobalLevel(zerolog.FatalLevel)
-			case 3:
-				zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-			case 4:
-				zerolog.SetGlobalLevel(zerolog.WarnLevel)
-			case 5:
-				zerolog.SetGlobalLevel(zerolog.InfoLevel)
-			case 6:
-				zerolog.SetGlobalLevel(zerolog.DebugLevel)
-			default:
-				zerolog.SetGlobalLevel(zerolog.TraceLevel)
-			}
+			configureZerolog(settings.Int64(verboseFlag))
 		}
 	})
 

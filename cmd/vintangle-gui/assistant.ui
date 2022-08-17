@@ -229,14 +229,15 @@
                                                                         </child>
 
                                                                         <child>
-                                                                            <object class="AdwSplitButton" id="stream-button">
+                                                                            <object class="AdwSplitButton" id="download-and-play-button">
                                                                                 <style>
                                                                                     <class name="pill"></class>
                                                                                 </style>
 
-                                                                                <property name="label">Stream</property>
+                                                                                <property name="label">Download and Play</property>
                                                                                 <property name="sensitive">false</property>
                                                                                 <property name="halign">center</property>
+                                                                                <property name="popover">stream-popover</property>
                                                                             </object>
                                                                         </child>
                                                                     </object>
@@ -251,6 +252,27 @@
                                 </child>
                             </object>
                         </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="stream-popover">
+        <child>
+            <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="spacing">12</property>
+
+                <child>
+                    <object class="GtkButton" id="stream-without-downloading-button">
+                        <style>
+                            <class name="flat"></class>
+                        </style>
+
+                        <property name="label">Stream without Downloading</property>
                     </object>
                 </child>
             </object>
