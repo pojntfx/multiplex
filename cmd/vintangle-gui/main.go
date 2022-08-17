@@ -450,6 +450,11 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	subtitles := []mediaWithPriority{}
 
+	var adapter *wrtcconn.Adapter
+	var ids chan string
+	var adapterCtx context.Context
+	var cancelAdapterCtx func()
+
 	stack.SetVisibleChildName(welcomePageName)
 
 	magnetLinkEntry.ConnectChanged(func() {
@@ -595,9 +600,6 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 					isNewSession = false
 
-					adapterCtx, cancelAdapterCtx := context.WithCancel(context.Background())
-					defer cancelAdapterCtx()
-
 					streamCodeParts := strings.Split(magnetLinkOrStreamCode, ":")
 					if len(streamCodeParts) < 3 {
 						toast := adw.NewToast("This stream code is invalid.")
@@ -622,7 +624,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 					q.Set("password", streamCodeParts[1])
 					wu.RawQuery = q.Encode()
 
-					adapter := wrtcconn.NewAdapter(
+					adapterCtx, cancelAdapterCtx = context.WithCancel(context.Background())
+
+					adapter = wrtcconn.NewAdapter(
 						wu.String(),
 						streamCodeParts[2],
 						strings.Split(settings.String(weronICEFlag), ","),
@@ -639,7 +643,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 						adapterCtx,
 					)
 
-					ids, err := adapter.Open()
+					ids, err = adapter.Open()
 					if err != nil {
 						cancelAdapterCtx()
 
@@ -647,7 +651,6 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 						return
 					}
-					defer adapter.Close()
 
 					var receivedMagnetLink api.Magnet
 				l:
@@ -657,8 +660,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 							if err := ctx.Err(); err != context.Canceled {
 								openErrorDialog(ctx, window, err)
 
+								adapter.Close()
+								cancelAdapterCtx()
+
 								return
 							}
+
+							adapter.Close()
+							cancelAdapterCtx()
 
 							return
 						case rid := <-ids:
@@ -687,6 +696,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 									log.Debug().
 										Err(err).
 										Msg("Could not decode structure, skipping")
+
+									adapter.Close()
+									cancelAdapterCtx()
 
 									return
 								}
@@ -727,30 +739,33 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 					}
 
 					magnetLink = receivedMagnetLink.Magnet
+					torrentTitle = receivedMagnetLink.Title
+					torrentReadme = receivedMagnetLink.Description
+					selectedTorrentMedia = receivedMagnetLink.Path
 
 					headerbarSpinner.SetSpinning(false)
 					magnetLinkEntry.SetSensitive(true)
 					previousButton.SetVisible(true)
 
-					buttonHeaderbarTitle.SetLabel(receivedMagnetLink.Title)
-					descriptionHeaderbarTitle.SetLabel(receivedMagnetLink.Title)
+					buttonHeaderbarTitle.SetLabel(torrentTitle)
+					descriptionHeaderbarTitle.SetLabel(torrentTitle)
 
 					mediaInfoDisplay.SetVisible(false)
 					mediaInfoButton.SetVisible(true)
 
 					descriptionText.SetWrapMode(gtk.WrapWord)
-					if !utf8.Valid([]byte(receivedMagnetLink.Description)) || strings.TrimSpace(receivedMagnetLink.Description) == "" {
+					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
 						descriptionText.Buffer().SetText(readmePlaceholder)
 					} else {
-						descriptionText.Buffer().SetText(receivedMagnetLink.Description)
+						descriptionText.Buffer().SetText(torrentReadme)
 					}
 
 					nextButton.SetVisible(false)
 
 					buttonHeaderbarSubtitle.SetVisible(true)
 					descriptionHeaderbarSubtitle.SetVisible(true)
-					buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(receivedMagnetLink.Path))
-					descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(receivedMagnetLink.Path))
+					buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+					descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
 					stack.SetVisibleChildName(readyPageName)
 				}()
@@ -784,6 +799,19 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 			descriptionHeaderbarSubtitle.SetVisible(false)
 
 			if !isNewSession {
+				if adapter != nil {
+					adapter.Close()
+				}
+
+				if cancelAdapterCtx != nil {
+					cancelAdapterCtx()
+				}
+
+				adapter = nil
+				ids = nil
+				adapterCtx = nil
+				cancelAdapterCtx = nil
+
 				previousButton.SetVisible(false)
 				nextButton.SetSensitive(true)
 
@@ -886,7 +914,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -974,7 +1002,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1044,7 +1072,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func()) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func()) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -1115,7 +1143,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 		return err
 	}
 
-	adapterCtx, cancelAdapterCtx := context.WithCancel(context.Background())
+	if adapter == nil {
+		adapterCtx, cancelAdapterCtx = context.WithCancel(context.Background())
+	}
 
 	u, err := url.Parse(settings.String(weronURLFlag))
 	if err != nil {
@@ -1132,28 +1162,30 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	pauses := broadcast.NewRelay[bool]()
 	positions := broadcast.NewRelay[float64]()
 
-	adapter := wrtcconn.NewAdapter(
-		u.String(),
-		key,
-		strings.Split(settings.String(weronICEFlag), ","),
-		[]string{"vintangle/sync"},
-		&wrtcconn.AdapterConfig{
-			Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(weronTimeoutFlag))),
-			ForceRelay: settings.Boolean(weronForceRelayFlag),
-			OnSignalerReconnect: func() {
-				log.Info().
-					Str("raddr", settings.String(weronURLFlag)).
-					Msg("Reconnecting to signaler")
+	if adapter == nil {
+		adapter = wrtcconn.NewAdapter(
+			u.String(),
+			key,
+			strings.Split(settings.String(weronICEFlag), ","),
+			[]string{"vintangle/sync"},
+			&wrtcconn.AdapterConfig{
+				Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(weronTimeoutFlag))),
+				ForceRelay: settings.Boolean(weronForceRelayFlag),
+				OnSignalerReconnect: func() {
+					log.Info().
+						Str("raddr", settings.String(weronURLFlag)).
+						Msg("Reconnecting to signaler")
+				},
 			},
-		},
-		adapterCtx,
-	)
+			adapterCtx,
+		)
 
-	ids, err := adapter.Open()
-	if err != nil {
-		cancelAdapterCtx()
+		ids, err = adapter.Open()
+		if err != nil {
+			cancelAdapterCtx()
 
-		return err
+			return err
+		}
 	}
 
 	streamCodeInput.SetText(fmt.Sprintf("%v:%v:%v", community, password, key))
@@ -2377,6 +2409,10 @@ func addMainMenu(ctx context.Context, app *adw.Application, window *adw.Applicat
 }
 
 func openErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err error) {
+	log.Error().
+		Err(err).
+		Msg("Could not continue due to a fatal error")
+
 	errorBuilder := gtk.NewBuilderFromString(errorUI, len(errorUI))
 	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
 	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
