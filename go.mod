@@ -9,7 +9,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/htorrent v0.5.1
+	github.com/pojntfx/htorrent v0.5.2
 	github.com/pojntfx/weron v0.2.2
 	github.com/rs/zerolog v1.27.0
 	github.com/teivah/broadcast v0.0.7-0.20220316095729-071f20229a32
