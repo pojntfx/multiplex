@@ -16,6 +16,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -1412,6 +1413,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	)
 
 	app.AddWindow(&window.Window)
+
+	s := make(chan os.Signal)
+	signal.Notify(s, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-s
+
+		log.Debug().Msg("Gracefully shutting down")
+
+		window.Close()
+	}()
 
 	window.ConnectShow(func() {
 		preparingWindow.Show()
