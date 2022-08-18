@@ -743,6 +743,14 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 					torrentReadme = receivedMagnetLink.Description
 					selectedTorrentMedia = receivedMagnetLink.Path
 
+					torrentMedia = []media{}
+					for _, subtitle := range receivedMagnetLink.Subtitles {
+						torrentMedia = append(torrentMedia, media{
+							name: subtitle.Name,
+							size: subtitle.Size,
+						})
+					}
+
 					headerbarSpinner.SetSpinning(false)
 					magnetLinkEntry.SetSensitive(true)
 					previousButton.SetVisible(true)
@@ -1648,7 +1656,15 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 								return
 							}
 
-							if err := encoder.Encode(api.NewMagnetLink(magnetLink, selectedTorrentMedia, torrentTitle, torrentReadme)); err != nil {
+							s := []api.Subtitle{}
+							for _, subtitle := range subtitles {
+								s = append(s, api.Subtitle{
+									Name: subtitle.name,
+									Size: subtitle.size,
+								})
+							}
+
+							if err := encoder.Encode(api.NewMagnetLink(magnetLink, selectedTorrentMedia, torrentTitle, torrentReadme, s)); err != nil {
 								log.Debug().
 									Err(err).
 									Msg("Could not encode magnet link, stopping")
