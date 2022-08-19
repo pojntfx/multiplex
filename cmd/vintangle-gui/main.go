@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 	"unicode"
@@ -455,6 +455,9 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	password := ""
 	key := ""
 
+	cp := int32(0)
+	connectedPeers := &cp
+
 	var adapter *wrtcconn.Adapter
 	var ids chan string
 	var adapterCtx context.Context
@@ -682,17 +685,12 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 								Str("id", rid).
 								Msg("Reconnecting to signaler")
 						case peer := <-adapter.Accept():
-							defer func() {
-								log.Info().
-									Str("peerID", peer.PeerID).
-									Str("channel", peer.ChannelID).
-									Msg("Disconnected from peer")
-							}()
-
 							log.Info().
 								Str("peerID", peer.PeerID).
 								Str("channel", peer.ChannelID).
 								Msg("Connected to peer")
+
+							atomic.AddInt32(connectedPeers, 1)
 
 							decoder := json.NewDecoder(peer.Conn)
 
@@ -826,6 +824,12 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 				adapterCtx = nil
 				cancelAdapterCtx = nil
 
+				community = ""
+				password = ""
+				key = ""
+
+				atomic.StoreInt32(connectedPeers, 0)
+
 				previousButton.SetVisible(false)
 				nextButton.SetSensitive(true)
 
@@ -928,7 +932,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, connectedPeers); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1016,7 +1020,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, connectedPeers); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1086,7 +1090,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string, connectedPeers *int32) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -1206,39 +1210,39 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	streamCodeInput.SetText(fmt.Sprintf("%v:%v:%v", community, password, key))
 
-	connectedPeers := 0
-	var connectedPeersLock sync.Mutex
-	syncWatchingWithLabel := func(connected bool) {
-		connectedPeersLock.Lock()
-		defer connectedPeersLock.Unlock()
-
-		if connected {
-			toast := adw.NewToast("Someone joined the session.")
-
-			overlay.AddToast(toast)
-
-			connectedPeers++
-		} else {
-			toast := adw.NewToast("Someone left the session.")
-
-			overlay.AddToast(toast)
-
-			connectedPeers--
-		}
-
-		if connectedPeers <= 0 {
+	syncJoinedCount := func() {
+		if *connectedPeers <= 0 {
 			watchingWithTitleLabel.SetText("You're currently watching alone.")
 
 			return
 		}
 
-		if connectedPeers == 1 {
-			watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other person.", connectedPeers))
+		if *connectedPeers == 1 {
+			watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other person.", *connectedPeers))
 
 			return
 		}
 
-		watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other people.", connectedPeers))
+		watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other people.", *connectedPeers))
+	}
+	syncJoinedCount()
+
+	syncWatchingWithLabel := func(connected bool) {
+		if connected {
+			toast := adw.NewToast("Someone joined the session.")
+
+			overlay.AddToast(toast)
+
+			atomic.AddInt32(connectedPeers, 1)
+		} else {
+			toast := adw.NewToast("Someone left the session.")
+
+			overlay.AddToast(toast)
+
+			atomic.AddInt32(connectedPeers, -1)
+		}
+
+		syncJoinedCount()
 	}
 
 	copyStreamCodeButton.ConnectClicked(func() {
