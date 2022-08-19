@@ -451,6 +451,10 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	subtitles := []mediaWithPriority{}
 
+	community := ""
+	password := ""
+	key := ""
+
 	var adapter *wrtcconn.Adapter
 	var ids chan string
 	var adapterCtx context.Context
@@ -609,6 +613,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 						return
 					}
+					community, password, key = streamCodeParts[0], streamCodeParts[1], streamCodeParts[2]
 
 					wu, err := url.Parse(settings.String(weronURLFlag))
 					if err != nil {
@@ -923,7 +928,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1011,7 +1016,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1081,7 +1086,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func()) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -1132,24 +1137,26 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	descriptionProgressBar.SetVisible(true)
 
-	sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
-	if err != nil {
-		return err
-	}
+	if community == "" || password == "" || key == "" {
+		sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
+		if err != nil {
+			return err
+		}
 
-	community, err := sid.Generate()
-	if err != nil {
-		return err
-	}
+		community, err = sid.Generate()
+		if err != nil {
+			return err
+		}
 
-	password, err := sid.Generate()
-	if err != nil {
-		return err
-	}
+		password, err = sid.Generate()
+		if err != nil {
+			return err
+		}
 
-	key, err := sid.Generate()
-	if err != nil {
-		return err
+		key, err = sid.Generate()
+		if err != nil {
+			return err
+		}
 	}
 
 	if adapter == nil {
