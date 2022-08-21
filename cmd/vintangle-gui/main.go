@@ -739,7 +739,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 									break l
 								default:
-									bufferedMessages = append(bufferedMessages, message)
+									bufferedMessages = append(bufferedMessages, j)
 								}
 							}
 						}
