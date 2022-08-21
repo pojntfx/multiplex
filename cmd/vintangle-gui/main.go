@@ -1690,14 +1690,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 
-				elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
-				if err != nil {
-					openErrorDialog(ctx, window, err)
+				if elapsedResponse.Data != 0 {
+					elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
+					if err != nil {
+						openErrorDialog(ctx, window, err)
 
-					return
+						return
+					}
+
+					positions.Broadcast(float64(elapsed.Nanoseconds()))
 				}
-
-				positions.Broadcast(float64(elapsed.Nanoseconds()))
 
 				for {
 					var j interface{}
