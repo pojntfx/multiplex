@@ -160,7 +160,7 @@
 
                                                                 <child>
                                                                     <object class="GtkEntry" id="magnet-link-entry">
-                                                                        <property name="placeholder-text">Magnet link</property>
+                                                                        <property name="placeholder-text">Magnet link or stream code</property>
                                                                     </object>
                                                                 </child>
                                                             </object>
