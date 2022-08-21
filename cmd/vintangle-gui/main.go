@@ -21,7 +21,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -34,7 +33,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
 	"github.com/phayes/freeport"
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
@@ -243,15 +241,15 @@ func findWorkingMPV() (string, error) {
 	return "", errNoWorkingMPVFound
 }
 
-func runMPVCommand(ipcFile string, command func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error) error {
+func runMPVCommand(ipcFile string, command func(encoder *json.Encoder, decoder *json.Decoder) error) error {
 	sock, err := net.Dial("unix", ipcFile)
 	if err != nil {
 		return err
 	}
 	defer sock.Close()
 
-	encoder := jsoniter.NewEncoder(sock)
-	decoder := jsoniter.NewDecoder(sock)
+	encoder := json.NewEncoder(sock)
+	decoder := json.NewDecoder(sock)
 
 	return command(encoder, decoder)
 }
@@ -289,7 +287,7 @@ func setSubtitles(
 		return
 	}
 
-	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().
 			Str("path", subtitlesFile).
 			Msg("Adding subtitles path")
@@ -306,7 +304,7 @@ func setSubtitles(
 		return
 	}
 
-	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().Msg("Reloading subtitles")
 
 		if err := encoder.Encode(mpvCommand{[]interface{}{"rescan-external-files"}}); err != nil {
@@ -322,7 +320,7 @@ func setSubtitles(
 	}
 
 	var trackListResponse mpvTrackListResponse
-	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().Msg("Getting tracklist")
 
 		if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "track-list"}}); err != nil {
@@ -353,7 +351,7 @@ func setSubtitles(
 			noneActivator.SetActive(true)
 		})
 
-		if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+		if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 			if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 				return err
 			}
@@ -373,7 +371,7 @@ func setSubtitles(
 		return
 	}
 
-	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().
 			Str("path", subtitlesFile).
 			Int("sid", sid).
@@ -391,7 +389,7 @@ func setSubtitles(
 		return
 	}
 
-	if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
 			return err
 		}
@@ -458,6 +456,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 	bufferedMessages := []interface{}{}
 	var bufferedPeer *wrtcconn.Peer
+	var bufferedDecoder *json.Decoder
 
 	var adapter *wrtcconn.Adapter
 	var ids chan string
@@ -692,12 +691,11 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 								Msg("Connected to peer")
 
 							bufferedPeer = peer
-
-							decoder := json.NewDecoder(peer.Conn)
+							bufferedDecoder = json.NewDecoder(peer.Conn)
 
 							for {
 								var j interface{}
-								if err := decoder.Decode(&j); err != nil {
+								if err := bufferedDecoder.Decode(&j); err != nil {
 									log.Debug().
 										Err(err).
 										Msg("Could not decode structure, skipping")
@@ -933,7 +931,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer, bufferedDecoder); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1021,7 +1019,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 		}
 
 		ready := make(chan struct{})
-		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer); err != nil {
+		if err := openControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer, bufferedDecoder); err != nil {
 			openErrorDialog(ctx, window, err)
 
 			return
@@ -1091,7 +1089,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string, bufferedMessages []interface{}, bufferedPeer *wrtcconn.Peer) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string, bufferedMessages []interface{}, bufferedPeer *wrtcconn.Peer, bufferedDecoder *json.Decoder) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -1502,7 +1500,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			startPlayback := func() {
 				playButton.SetIconName(pauseIcon)
 
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Starting playback")
 
 					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", false}}); err != nil {
@@ -1521,7 +1519,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			pausePlayback := func() {
 				playButton.SetIconName(playIcon)
 
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Pausing playback")
 
 					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "pause", true}}); err != nil {
@@ -1547,7 +1545,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				elapsed := time.Duration(int64(position))
 
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpvCommand{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
 						return err
 					}
@@ -1592,8 +1590,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				)
 			}
 
-			var bufferedMessagesLock sync.Mutex
-			handlePeer := func(peer *wrtcconn.Peer) {
+			handlePeer := func(peer *wrtcconn.Peer, decoder *json.Decoder) {
 				defer func() {
 					log.Info().
 						Str("peerID", peer.PeerID).
@@ -1611,7 +1608,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				syncWatchingWithLabel(true)
 
 				encoder := json.NewEncoder(peer.Conn)
-				decoder := json.NewDecoder(peer.Conn)
+				if decoder == nil {
+					decoder = json.NewDecoder(peer.Conn)
+				}
 
 				go func() {
 					pl := pauses.Listener(0)
@@ -1677,7 +1676,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 
 				var elapsedResponse mpvFloat64Response
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
 						return err
 					}
@@ -1702,7 +1701,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				for {
 					var j interface{}
-					bufferedMessagesLock.Lock()
 					if len(bufferedMessages) > 0 {
 						j = bufferedMessages[len(bufferedMessages)-1]
 						bufferedMessages = bufferedMessages[:len(bufferedMessages)-1]
@@ -1715,7 +1713,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							return
 						}
 					}
-					bufferedMessagesLock.Unlock()
 
 					var message api.Message
 					if err := mapstructure.Decode(j, &message); err != nil {
@@ -1725,6 +1722,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 						continue
 					}
+
+					log.Info().Interface("message", message).Msg("Decoded message")
 
 					switch message.Type {
 					case api.TypePause:
@@ -1778,7 +1777,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			}
 
 			if bufferedPeer != nil {
-				go handlePeer(bufferedPeer)
+				go handlePeer(bufferedPeer, bufferedDecoder)
 			}
 
 			go func() {
@@ -1798,12 +1797,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							Str("id", rid).
 							Msg("Reconnecting to signaler")
 					case peer := <-adapter.Accept():
-						go handlePeer(peer)
+						go handlePeer(peer, nil)
 					}
 				}
 			}()
 
-			if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+			if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 				if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "volume", 100}}); err != nil {
 					return err
 				}
@@ -1845,7 +1844,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						log.Info().
 							Msg("Disabling subtitles")
 
-						if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 								return err
 							}
@@ -1858,7 +1857,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							return
 						}
 
-						if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sub-visibility", "no"}}); err != nil {
 								return err
 							}
@@ -1958,7 +1957,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				updateSeeker := func() {
 					var durationResponse mpvFloat64Response
-					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "duration"}}); err != nil {
 							return err
 						}
@@ -1986,7 +1985,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					}
 
 					var elapsedResponse mpvFloat64Response
-					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "time-pos"}}); err != nil {
 							return err
 						}
@@ -2037,7 +2036,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			}()
 
 			volumeButton.ConnectValueChanged(func(value float64) {
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().
 						Float64("value", value).
 						Msg("Setting volume")
@@ -2081,7 +2080,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				log.Info().
 					Msg("Disabling subtitles")
 
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 						return err
 					}
@@ -2166,7 +2165,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			fullscreenButton.ConnectClicked(func() {
 				if fullscreenButton.Active() {
-					if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Info().Msg("Enabling fullscreen")
 
 						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
@@ -2184,7 +2183,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					return
 				}
 
-				if err := runMPVCommand(ipcFile, func(encoder *jsoniter.Encoder, decoder *jsoniter.Decoder) error {
+				if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Disabling fullscreen")
 
 					if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
