@@ -80,6 +80,10 @@ type mpvSuccessResponse struct {
 	Data []any `json:"data"`
 }
 
+type mpvBoolResponse struct {
+	Data bool `json:"data"`
+}
+
 var (
 	//go:embed assistant.ui
 	assistantUI string
@@ -1954,6 +1958,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			preparingClosed := false
 			done := make(chan struct{})
+			previouslyBuffered := false
 			go func() {
 				t := time.NewTicker(time.Millisecond * 200)
 
@@ -2006,6 +2011,35 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						openErrorDialog(ctx, window, err)
 
 						return
+					}
+
+					var pausedResponse mpvBoolResponse
+					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "pause"}}); err != nil {
+							return err
+						}
+
+						return decoder.Decode(&pausedResponse)
+					}); err != nil {
+						log.Error().
+							Err(err).
+							Msg("Could not parse JSON from socket")
+
+						return
+					}
+
+					if pausedResponse.Data {
+						if !previouslyBuffered {
+							previouslyBuffered = true
+							pauses.Broadcast(true)
+						}
+					} else {
+						if previouslyBuffered {
+							positions.Broadcast(float64(elapsed.Nanoseconds()))
+							pauses.Broadcast(false)
+
+							previouslyBuffered = false
+						}
 					}
 
 					if !seekerIsSeeking {
