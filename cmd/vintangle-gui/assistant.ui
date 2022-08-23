@@ -101,7 +101,9 @@
                                         <property name="valign">start</property>
 
                                         <child>
-                                            <object class="GtkSpinner" id="headerbar-spinner"></object>
+                                            <object class="GtkSpinner" id="headerbar-spinner">
+                                                <property name="tooltip-text">Getting metadata ...</property>
+                                            </object>
                                         </child>
 
                                         <child>
