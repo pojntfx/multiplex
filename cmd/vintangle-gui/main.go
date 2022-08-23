@@ -1184,6 +1184,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 	pauses := broadcast.NewRelay[bool]()
 	positions := broadcast.NewRelay[float64]()
+	buffering := broadcast.NewRelay[bool]()
 
 	if adapter == nil {
 		adapter = wrtcconn.NewAdapter(
@@ -1354,6 +1355,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 		pauses.Close()
 		positions.Close()
+		buffering.Close()
 
 		progressBarTicker.Stop()
 
@@ -1454,6 +1456,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			pauses.Close()
 			positions.Close()
+			buffering.Close()
 
 			progressBarTicker.Stop()
 
@@ -1623,6 +1626,9 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					ol := positions.Listener(0)
 					defer ol.Close()
 
+					bl := buffering.Listener(0)
+					defer bl.Close()
+
 					for {
 						select {
 						case <-ctx.Done():
@@ -1648,6 +1654,18 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 								log.Debug().
 									Err(err).
 									Msg("Could not encode pause, stopping")
+
+								return
+							}
+						case buffering, ok := <-bl.Ch():
+							if !ok {
+								continue
+							}
+
+							if err := encoder.Encode(api.NewBuffering(buffering)); err != nil {
+								log.Debug().
+									Err(err).
+									Msg("Could not encode buffering, stopping")
 
 								return
 							}
@@ -1778,6 +1796,22 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							Str("magnet", m.Magnet).
 							Str("path", m.Path).
 							Msg("Got magnet link")
+					case api.TypeBuffering:
+						var b api.Buffering
+						if err := mapstructure.Decode(j, &b); err != nil {
+							log.Debug().
+								Err(err).
+								Msg("Could not decode buffering, skipping")
+
+							continue
+						}
+
+						if b.Buffering {
+							// TODO: Start spinning buffering spinner
+						} else {
+							// TODO: Stop buffering spinner from spinning
+							// TODO: Stop buffering spinner when peer disconnects
+						}
 					}
 				}
 			}
@@ -2032,11 +2066,13 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						if !previouslyBuffered {
 							previouslyBuffered = true
 							pauses.Broadcast(true)
+							buffering.Broadcast(true)
 						}
 					} else {
 						if previouslyBuffered {
 							positions.Broadcast(float64(elapsed.Nanoseconds()))
 							pauses.Broadcast(false)
+							buffering.Broadcast(false)
 
 							previouslyBuffered = false
 						}
