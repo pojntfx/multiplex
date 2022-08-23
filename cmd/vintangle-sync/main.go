@@ -101,22 +101,22 @@ func main() {
 	pauses := broadcast.NewRelay[bool]()
 	defer pauses.Close()
 
-	pause := true
+	buffering := true
 	go func() {
 		b := make([]byte, 1)
 		for {
 			os.Stdin.Read(b)
 
 			if string(b) == "\n" {
-				pause = !pause
+				buffering = !buffering
 
-				if pause {
+				if buffering {
 					fmt.Println("Pausing")
 				} else {
 					fmt.Println("Unpausing")
 				}
 
-				pauses.Broadcast(pause)
+				pauses.Broadcast(buffering)
 			}
 		}
 	}()
@@ -145,7 +145,7 @@ func main() {
 				encoder := json.NewEncoder(peer.Conn)
 				decoder := json.NewDecoder(peer.Conn)
 
-				if err := encoder.Encode(v1.NewPause(pause)); err != nil {
+				if err := encoder.Encode(v1.NewPause(buffering)); err != nil {
 					log.Println("Could not encode pause, stopping:", err)
 
 					return
@@ -193,9 +193,9 @@ func main() {
 							continue
 						}
 
-						pause = p.Pause
+						buffering = p.Pause
 
-						if pause {
+						if buffering {
 							fmt.Println("Pausing")
 						} else {
 							fmt.Println("Unpausing")
@@ -218,6 +218,21 @@ func main() {
 						}
 
 						log.Println("Got magnet link:", m)
+					case v1.TypeBuffering:
+						var p v1.Buffering
+						if err := mapstructure.Decode(j, &p); err != nil {
+							log.Println("Could not decode buffering, skipping:", err)
+
+							continue
+						}
+
+						buffering = p.Buffering
+
+						if buffering {
+							fmt.Println("Showing buffering indicator")
+						} else {
+							fmt.Println("Removing buffering indicator")
+						}
 					}
 				}
 			}()

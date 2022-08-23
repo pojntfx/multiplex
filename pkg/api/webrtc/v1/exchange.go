@@ -58,3 +58,18 @@ func NewPosition(position float64) *Position {
 		Position: position,
 	}
 }
+
+// Buffering synchronizes buffering state
+type Buffering struct {
+	Message
+	Buffering bool `json:"buffering"` // Whether to show the buffering state
+}
+
+func NewBuffering(buffering bool) *Buffering {
+	return &Buffering{
+		Message: Message{
+			Type: TypeBuffering,
+		},
+		Buffering: buffering,
+	}
+}
