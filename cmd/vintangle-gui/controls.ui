@@ -68,6 +68,12 @@
                                                 <property name="valign">start</property>
 
                                                 <child>
+                                                    <object class="GtkSpinner" id="headerbar-spinner">
+                                                        <property name="tooltip-text">Preparing stream ...</property>
+                                                    </object>
+                                                </child>
+
+                                                <child>
                                                     <object class="GtkMenuButton">
                                                         <style>
                                                             <class name="flat"></class>

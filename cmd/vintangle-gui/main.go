@@ -1108,6 +1108,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	subtitleButton := builder.GetObject("subtitle-button").Cast().(*gtk.Button)
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
 	elapsedTrackLabel := builder.GetObject("elapsed-track-label").Cast().(*gtk.Label)
 	remainingTrackLabel := builder.GetObject("remaining-track-label").Cast().(*gtk.Label)
@@ -1604,6 +1605,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						Str("channel", peer.ChannelID).
 						Msg("Disconnected from peer")
 
+					headerbarSpinner.SetSpinning(false)
+
 					syncWatchingWithLabel(false)
 				}()
 
@@ -1807,10 +1810,19 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						}
 
 						if b.Buffering {
-							// TODO: Start spinning buffering spinner
+							headerbarSpinner.SetSpinning(true)
+
+							if pausePlayback != nil {
+								pausePlayback()
+							}
+
+							playButton.SetIconName(pauseIcon)
 						} else {
-							// TODO: Stop buffering spinner from spinning
-							// TODO: Stop buffering spinner when peer disconnects
+							headerbarSpinner.SetSpinning(false)
+
+							if startPlayback != nil {
+								startPlayback()
+							}
 						}
 					}
 				}
@@ -2062,19 +2074,24 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						return
 					}
 
-					if pausedResponse.Data {
+					// If MPV is paused, but the GUI is showing the playing state, assume we're buffering
+					if pausedResponse.Data == (playButton.IconName() == pauseIcon) {
 						if !previouslyBuffered {
 							previouslyBuffered = true
-							pauses.Broadcast(true)
+
+							headerbarSpinner.SetSpinning(true)
 							buffering.Broadcast(true)
+							pauses.Broadcast(true)
+							positions.Broadcast(float64(elapsed.Nanoseconds()))
 						}
 					} else {
 						if previouslyBuffered {
-							positions.Broadcast(float64(elapsed.Nanoseconds()))
-							pauses.Broadcast(false)
-							buffering.Broadcast(false)
-
 							previouslyBuffered = false
+
+							headerbarSpinner.SetSpinning(false)
+							buffering.Broadcast(false)
+							pauses.Broadcast(false)
+							positions.Broadcast(float64(elapsed.Nanoseconds()))
 						}
 					}
 
@@ -2272,17 +2289,19 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			})
 
 			playButton.ConnectClicked(func() {
-				if playButton.IconName() == playIcon {
-					startPlayback()
+				if !headerbarSpinner.Spinning() {
+					if playButton.IconName() == playIcon {
+						pauses.Broadcast(false)
 
-					pauses.Broadcast(false)
+						startPlayback()
 
-					return
+						return
+					}
+
+					pauses.Broadcast(true)
+
+					pausePlayback()
 				}
-
-				pausePlayback()
-
-				pauses.Broadcast(true)
 			})
 
 			go func() {
