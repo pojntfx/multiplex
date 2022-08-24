@@ -181,6 +181,16 @@
                                         </child>
 
                                         <child>
+                                            <object class="GtkButton" id="audiotracks-button">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                </style>
+
+                                                <property name="icon-name">media-optical-cd-audio-symbolic</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
                                             <object class="GtkButton" id="subtitle-button">
                                                 <style>
                                                     <class name="flat"></class>
