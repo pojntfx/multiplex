@@ -2061,7 +2061,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 					var pausedResponse mpvBoolResponse
 					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-						if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "pause"}}); err != nil {
+						if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "core-idle"}}); err != nil {
 							return err
 						}
 
