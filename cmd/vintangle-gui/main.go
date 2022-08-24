@@ -112,6 +112,9 @@ var (
 	//go:embed subtitles.ui
 	subtitlesUI string
 
+	//go:embed audiotracks.ui
+	audiotracksUI string
+
 	//go:embed preparing.ui
 	preparingUI string
 
@@ -1106,6 +1109,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
 	subtitleButton := builder.GetObject("subtitle-button").Cast().(*gtk.Button)
+	audiotracksButton := builder.GetObject("audiotracks-button").Cast().(*gtk.Button)
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -1131,6 +1135,13 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	subtitlesSelectionGroup := subtitlesBuilder.GetObject("subtitle-tracks").Cast().(*adw.PreferencesGroup)
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
+
+	audiotracksBuilder := gtk.NewBuilderFromString(audiotracksUI, len(audiotracksUI))
+	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
+	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
+	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
+	// audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
+	// audiotracksOverlay := audiotracksBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
 	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
@@ -2147,23 +2158,31 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				subtitlesDialog.Show()
 			})
 
-			escCtrl := gtk.NewEventControllerKey()
-			subtitlesDialog.AddController(escCtrl)
-			subtitlesDialog.SetTransientFor(&window.Window)
-
-			subtitlesDialog.ConnectCloseRequest(func() (ok bool) {
-				subtitlesDialog.Close()
-				subtitlesDialog.SetVisible(false)
-
-				return ok
+			audiotracksButton.ConnectClicked(func() {
+				audiotracksDialog.Show()
 			})
 
-			escCtrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
-				if keycode == keycodeEscape {
-					subtitlesDialog.Close()
-					subtitlesDialog.SetVisible(false)
-				}
-			})
+			for _, d := range []*gtk.Dialog{subtitlesDialog, audiotracksDialog} {
+				dialog := d
+
+				escCtrl := gtk.NewEventControllerKey()
+				dialog.AddController(escCtrl)
+				dialog.SetTransientFor(&window.Window)
+
+				dialog.ConnectCloseRequest(func() (ok bool) {
+					dialog.Close()
+					dialog.SetVisible(false)
+
+					return ok
+				})
+
+				escCtrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
+					if keycode == keycodeEscape {
+						dialog.Close()
+						dialog.SetVisible(false)
+					}
+				})
+			}
 
 			subtitlesCancelButton.ConnectClicked(func() {
 				log.Info().
@@ -2187,6 +2206,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			subtitlesOKButton.ConnectClicked(func() {
 				subtitlesDialog.Close()
+			})
+
+			audiotracksCancelButton.ConnectClicked(func() {
+				audiotracksDialog.Close()
+			})
+
+			audiotracksOKButton.ConnectClicked(func() {
+				audiotracksDialog.Close()
 			})
 
 			addSubtitlesFromFileButton.ConnectClicked(func() {
