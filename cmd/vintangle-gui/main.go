@@ -58,6 +58,11 @@ type mediaWithPriority struct {
 	priority int
 }
 
+type audioTrack struct {
+	lang string
+	id   int
+}
+
 type mpvCommand struct {
 	Command []interface{} `json:"command"`
 }
@@ -74,6 +79,7 @@ type mpvTrackDescription struct {
 	ID               int    `json:"id"`
 	Type             string `json:"type"`
 	ExternalFilename string `json:"external-filename"`
+	Lang             string `json:"lang"`
 }
 
 type mpvSuccessResponse struct {
@@ -171,7 +177,8 @@ const (
 
 	issuesURL = "https://github.com/pojntfx/vintangle/issues"
 
-	mpvTypeSub = "sub"
+	mpvTypeSub   = "sub"
+	mpvTypeAudio = "audio"
 )
 
 // See https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
@@ -1140,8 +1147,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
 	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
-	// audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
-	// audiotracksOverlay := audiotracksBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
+	audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
 
 	preparingBuilder := gtk.NewBuilderFromString(preparingUI, len(preparingUI))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
@@ -1554,6 +1560,31 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 			}
 
+			var trackListResponse mpvTrackListResponse
+			if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				log.Debug().Msg("Getting tracklist")
+
+				if err := encoder.Encode(mpvCommand{[]interface{}{"get_property", "track-list"}}); err != nil {
+					return err
+				}
+
+				return decoder.Decode(&trackListResponse)
+			}); err != nil {
+				openErrorDialog(ctx, window, err)
+
+				return
+			}
+
+			audiotracks := []audioTrack{}
+			for _, track := range trackListResponse.Data {
+				if track.Type == mpvTypeAudio {
+					audiotracks = append(audiotracks, audioTrack{
+						lang: track.Lang,
+						id:   track.ID,
+					})
+				}
+			}
+
 			seekerIsSeeking := false
 			seekerIsUnderPointer := false
 			total := time.Duration(0)
@@ -1878,7 +1909,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				return
 			}
 
-			activators := []*gtk.CheckButton{}
+			subtitleActivators := []*gtk.CheckButton{}
 
 			for i, file := range append(
 				[]mediaWithPriority{
@@ -1894,10 +1925,10 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				activator := gtk.NewCheckButton()
 
-				if len(activators) > 0 {
-					activator.SetGroup(activators[i-1])
+				if len(subtitleActivators) > 0 {
+					activator.SetGroup(subtitleActivators[i-1])
 				}
-				activators = append(activators, activator)
+				subtitleActivators = append(subtitleActivators, activator)
 
 				m := file.name
 				j := i
@@ -1972,7 +2003,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						return
 					}
 
-					setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, activators[0], subtitlesOverlay)
+					setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
 				})
 
 				if i == 0 {
@@ -1994,6 +2025,41 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				row.SetActivatableWidget(activator)
 
 				subtitlesSelectionGroup.Add(row)
+			}
+
+			audiotrackActivators := []*gtk.CheckButton{}
+
+			for i, audiotrack := range audiotracks {
+				row := adw.NewActionRow()
+
+				activator := gtk.NewCheckButton()
+
+				if len(audiotrackActivators) > 0 {
+					activator.SetGroup(audiotrackActivators[i-1])
+				}
+				audiotrackActivators = append(audiotrackActivators, activator)
+
+				a := audiotrack
+				activator.SetActive(false)
+				activator.ConnectActivate(func() {
+					log.Info().
+						Int("aid", a.id).
+						Msg("Selecting audio track")
+				})
+
+				row.SetSubtitle(fmt.Sprintf("Track %v", a.id))
+				if strings.TrimSpace(a.lang) == "" {
+					row.SetTitle("Untitled Track")
+				} else {
+					row.SetTitle(a.lang)
+				}
+
+				row.SetActivatable(true)
+
+				row.AddPrefix(activator)
+				row.SetActivatableWidget(activator)
+
+				audiotracksSelectionGroup.Add(row)
 			}
 
 			ctrl := gtk.NewEventControllerMotion()
@@ -2239,14 +2305,14 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						}
 						defer subtitlesFile.Close()
 
-						setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, activators[0], subtitlesOverlay)
+						setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
 
 						row := adw.NewActionRow()
 
 						activator := gtk.NewCheckButton()
 
-						activator.SetGroup(activators[len(activators)-1])
-						activators = append(activators, activator)
+						activator.SetGroup(subtitleActivators[len(subtitleActivators)-1])
+						subtitleActivators = append(subtitleActivators, activator)
 
 						activator.SetActive(true)
 						activator.ConnectActivate(func() {
@@ -2259,7 +2325,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 							}
 							defer subtitlesFile.Close()
 
-							setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, activators[0], subtitlesOverlay)
+							setSubtitles(ctx, window, m, subtitlesFile, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
 						})
 
 						row.SetTitle(filePicker.File().Basename())
