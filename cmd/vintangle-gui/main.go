@@ -2036,15 +2036,34 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				if len(audiotrackActivators) > 0 {
 					activator.SetGroup(audiotrackActivators[i-1])
+					activator.SetActive(false)
+				} else {
+					activator.SetActive(true)
 				}
 				audiotrackActivators = append(audiotrackActivators, activator)
 
 				a := audiotrack
-				activator.SetActive(false)
 				activator.ConnectActivate(func() {
-					log.Info().
-						Int("aid", a.id).
-						Msg("Selecting audio track")
+					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						log.Debug().
+							Int("aid", a.id).
+							Msg("Setting audio ID")
+
+						if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "aid", a.id}}); err != nil {
+							return err
+						}
+
+						var successResponse mpvSuccessResponse
+						return decoder.Decode(&successResponse)
+					}); err != nil {
+						openErrorDialog(ctx, window, err)
+
+						return
+					}
+
+					if len(audiotrackActivators) <= 1 {
+						activator.SetActive(true)
+					}
 				})
 
 				row.SetSubtitle(fmt.Sprintf("Track %v", a.id))
