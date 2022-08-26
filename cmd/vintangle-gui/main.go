@@ -1927,13 +1927,21 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				if len(subtitleActivators) > 0 {
 					activator.SetGroup(subtitleActivators[i-1])
+					activator.SetActive(false)
+				} else {
+					activator.SetActive(true)
 				}
 				subtitleActivators = append(subtitleActivators, activator)
 
 				m := file.name
 				j := i
-				activator.SetActive(false)
 				activator.ConnectActivate(func() {
+					defer func() {
+						if len(subtitleActivators) <= 1 {
+							activator.SetActive(true)
+						}
+					}()
+
 					if j == 0 {
 						log.Info().
 							Msg("Disabling subtitles")
@@ -2044,6 +2052,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 				a := audiotrack
 				activator.ConnectActivate(func() {
+					defer func() {
+						if len(audiotrackActivators) <= 1 {
+							activator.SetActive(true)
+						}
+					}()
+
 					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Debug().
 							Int("aid", a.id).
@@ -2059,10 +2073,6 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						openErrorDialog(ctx, window, err)
 
 						return
-					}
-
-					if len(audiotrackActivators) <= 1 {
-						activator.SetActive(true)
 					}
 				})
 
