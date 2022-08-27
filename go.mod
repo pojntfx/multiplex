@@ -8,7 +8,7 @@ require (
 	github.com/diamondburned/gotk4/pkg v0.0.0-20220725071938-a40a809cc7a4
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/htorrent v0.5.2
+	github.com/pojntfx/htorrent v0.5.3
 	github.com/pojntfx/weron v0.2.3
 	github.com/rs/zerolog v1.27.0
 	github.com/teivah/broadcast v0.1.0
@@ -21,7 +21,7 @@ require (
 	github.com/ajwerner/btree v0.0.0-20211221152037-f427b3e689c0 // indirect
 	github.com/alecthomas/atomic v0.1.0-alpha2 // indirect
 	github.com/anacrolix/chansync v0.3.0 // indirect
-	github.com/anacrolix/dht/v2 v2.18.0 // indirect
+	github.com/anacrolix/dht/v2 v2.18.1 // indirect
 	github.com/anacrolix/envpprof v1.2.1 // indirect
 	github.com/anacrolix/generics v0.0.0-20220618083756-f99e35403a60 // indirect
 	github.com/anacrolix/go-libutp v1.2.0 // indirect
@@ -78,12 +78,12 @@ require (
 	github.com/tidwall/btree v1.4.2 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20220617031537-928513b29760 // indirect
-	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
-	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
-	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
-	golang.org/x/oauth2 v0.0.0-20220808172628-8227340efae7 // indirect
+	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d // indirect
+	golang.org/x/exp v0.0.0-20220827204233-334a2380cb91 // indirect
+	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b // indirect
+	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094 // indirect
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde // indirect
-	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
+	golang.org/x/sys v0.0.0-20220825204002-c680a09ffe64 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
