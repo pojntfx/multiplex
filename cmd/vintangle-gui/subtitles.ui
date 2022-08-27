@@ -17,12 +17,28 @@
         </child>
 
         <child type="action">
-            <object class="GtkButton" id="button-ok">
-                <style>
-                    <class name="suggested-action"></class>
-                </style>
+            <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">12</property>
+                <property name="valign">start</property>
 
-                <property name="label">OK</property>
+                <child>
+                    <object class="GtkSpinner" id="headerbar-spinner">
+                        <property name="tooltip-text">Getting metadata ...</property>
+                        <property name="visible">false</property>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="GtkButton" id="button-ok">
+                        <style>
+                            <class name="suggested-action"></class>
+                        </style>
+
+                        <property name="label">OK</property>
+                        <property name="hexpand">true</property>
+                    </object>
+                </child>
             </object>
         </child>
 
