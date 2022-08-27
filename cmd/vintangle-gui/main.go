@@ -53,9 +53,10 @@ type media struct {
 	size int
 }
 
-type mediaWithPriority struct {
+type mediaWithPriorityAndID struct {
 	media
 	priority int
+	id       int
 }
 
 type audioTrack struct {
@@ -80,6 +81,7 @@ type mpvTrackDescription struct {
 	Type             string `json:"type"`
 	ExternalFilename string `json:"external-filename"`
 	Lang             string `json:"lang"`
+	Title            string `json:"title"`
 }
 
 type mpvSuccessResponse struct {
@@ -462,7 +464,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	activators := []*gtk.CheckButton{}
 	mediaRows := []*adw.ActionRow{}
 
-	subtitles := []mediaWithPriority{}
+	subtitles := []mediaWithPriorityAndID{}
 
 	community := ""
 	password := ""
@@ -899,18 +901,18 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	})
 
 	refreshSubtitles := func() {
-		subtitles = []mediaWithPriority{}
+		subtitles = []mediaWithPriorityAndID{}
 		for _, media := range torrentMedia {
 			if media.name != selectedTorrentMedia {
 				if strings.HasSuffix(media.name, ".srt") || strings.HasSuffix(media.name, ".vtt") || strings.HasSuffix(media.name, ".ass") {
-					subtitles = append(subtitles, mediaWithPriority{
-						media:    media,
-						priority: 0,
-					})
-				} else {
-					subtitles = append(subtitles, mediaWithPriority{
+					subtitles = append(subtitles, mediaWithPriorityAndID{
 						media:    media,
 						priority: 1,
+					})
+				} else {
+					subtitles = append(subtitles, mediaWithPriorityAndID{
+						media:    media,
+						priority: 2,
 					})
 				}
 			}
@@ -1103,7 +1105,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 	return nil
 }
 
-func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriority, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string, bufferedMessages []interface{}, bufferedPeer *wrtcconn.Peer, bufferedDecoder *json.Decoder) error {
+func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle string, subtitles []mediaWithPriorityAndID, selectedTorrentMedia, torrentReadme string, manager *client.Manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL string, settings *gio.Settings, gateway *server.Gateway, cancel func(), tmpDir string, ready chan struct{}, cancelDownload func(), adapter *wrtcconn.Adapter, ids chan string, adapterCtx context.Context, cancelAdapterCtx func(), community, password, key string, bufferedMessages []interface{}, bufferedPeer *wrtcconn.Peer, bufferedDecoder *json.Decoder) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
 	builder := gtk.NewBuilderFromString(controlsUI, len(controlsUI))
@@ -1585,6 +1587,20 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				}
 			}
 
+			subtracks := []mediaWithPriorityAndID{}
+			for _, track := range trackListResponse.Data {
+				if track.Type == mpvTypeSub {
+					subtracks = append(subtracks, mediaWithPriorityAndID{
+						media: media{
+							name: track.Title,
+							size: 0,
+						},
+						id:       track.ID,
+						priority: 0,
+					})
+				}
+			}
+
 			seekerIsSeeking := false
 			seekerIsUnderPointer := false
 			total := time.Duration(0)
@@ -1912,7 +1928,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 			subtitleActivators := []*gtk.CheckButton{}
 
 			for i, file := range append(
-				[]mediaWithPriority{
+				append([]mediaWithPriorityAndID{
 					{media: media{
 						name: "None",
 						size: 0,
@@ -1920,7 +1936,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						priority: -1,
 					},
 				},
-				subtitles...) {
+					subtracks...,
+				), subtitles...) {
 				row := adw.NewActionRow()
 
 				activator := gtk.NewCheckButton()
@@ -1934,6 +1951,8 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				subtitleActivators = append(subtitleActivators, activator)
 
 				m := file.name
+				p := file.priority
+				sid := file.id
 				j := i
 				activator.ConnectActivate(func() {
 					defer func() {
@@ -1961,6 +1980,39 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sub-visibility", "no"}}); err != nil {
+								return err
+							}
+
+							var successResponse mpvSuccessResponse
+							return decoder.Decode(&successResponse)
+						}); err != nil {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+
+						return
+					}
+
+					if p == 0 {
+						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+							log.Debug().
+								Msg("Setting subtitle ID")
+
+							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sid", sid}}); err != nil {
+								return err
+							}
+
+							var successResponse mpvSuccessResponse
+							return decoder.Decode(&successResponse)
+						}); err != nil {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+
+						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
 								return err
 							}
 
@@ -2022,9 +2074,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				} else if file.priority == 0 {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
 					row.SetSubtitle("Integrated subtitle")
+				} else if file.priority == 1 {
+					row.SetTitle(getDisplayPathWithoutRoot(file.name))
+					row.SetSubtitle("Subtitle from torrent")
 				} else {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
-					row.SetSubtitle("Extra file from media")
+					row.SetSubtitle("Extra file from torrent")
 				}
 
 				row.SetActivatable(true)
