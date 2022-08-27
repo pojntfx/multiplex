@@ -1140,6 +1140,7 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 	subtitlesBuilder := gtk.NewBuilderFromString(subtitlesUI, len(subtitlesUI))
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
+	subtitlesSpinner := subtitlesBuilder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 	subtitlesOKButton := subtitlesBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	subtitlesSelectionGroup := subtitlesBuilder.GetObject("subtitle-tracks").Cast().(*adw.PreferencesGroup)
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
@@ -2027,43 +2028,55 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						return
 					}
 
-					streamURL, err := getStreamURL(apiAddr, magnetLink, m)
-					if err != nil {
-						openErrorDialog(ctx, window, err)
+					go func() {
+						defer func() {
+							subtitlesSpinner.SetSpinning(false)
+							subtitlesSpinner.SetVisible(false)
+							subtitlesOKButton.SetSensitive(true)
+						}()
 
-						return
-					}
+						subtitlesOKButton.SetSensitive(false)
+						subtitlesSpinner.SetVisible(true)
+						subtitlesSpinner.SetSpinning(true)
 
-					log.Info().
-						Str("streamURL", streamURL).
-						Msg("Downloading subtitles")
+						streamURL, err := getStreamURL(apiAddr, magnetLink, m)
+						if err != nil {
+							openErrorDialog(ctx, window, err)
 
-					hc := &http.Client{}
+							return
+						}
 
-					req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
-					if err != nil {
-						openErrorDialog(ctx, window, err)
+						log.Info().
+							Str("streamURL", streamURL).
+							Msg("Downloading subtitles")
 
-						return
-					}
-					req.SetBasicAuth(apiUsername, apiPassword)
+						hc := &http.Client{}
 
-					res, err := hc.Do(req)
-					if err != nil {
-						openErrorDialog(ctx, window, err)
+						req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
+						if err != nil {
+							openErrorDialog(ctx, window, err)
 
-						return
-					}
-					if res.Body != nil {
-						defer res.Body.Close()
-					}
-					if res.StatusCode != http.StatusOK {
-						openErrorDialog(ctx, window, errors.New(res.Status))
+							return
+						}
+						req.SetBasicAuth(apiUsername, apiPassword)
 
-						return
-					}
+						res, err := hc.Do(req)
+						if err != nil {
+							openErrorDialog(ctx, window, err)
 
-					setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
+							return
+						}
+						if res.Body != nil {
+							defer res.Body.Close()
+						}
+						if res.StatusCode != http.StatusOK {
+							openErrorDialog(ctx, window, errors.New(res.Status))
+
+							return
+						}
+
+						setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
+					}()
 				})
 
 				if i == 0 {
