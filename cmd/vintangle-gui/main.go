@@ -308,22 +308,7 @@ func setSubtitles(
 			Str("path", subtitlesFile).
 			Msg("Adding subtitles path")
 
-		if err := encoder.Encode(mpvCommand{[]interface{}{"change-list", "sub-file-paths", "set", subtitlesDir}}); err != nil {
-			return err
-		}
-
-		var successResponse mpvSuccessResponse
-		return decoder.Decode(&successResponse)
-	}); err != nil {
-		openErrorDialog(ctx, window, err)
-
-		return
-	}
-
-	if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-		log.Debug().Msg("Reloading subtitles")
-
-		if err := encoder.Encode(mpvCommand{[]interface{}{"rescan-external-files"}}); err != nil {
+		if err := encoder.Encode(mpvCommand{[]interface{}{"sub-add", subtitlesFile}}); err != nil {
 			return err
 		}
 
@@ -2074,6 +2059,10 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 							return
 						}
+
+						log.Info().
+							Str("streamURL", streamURL).
+							Msg("Finished downloading subtitles")
 
 						setSubtitles(ctx, window, m, res.Body, tmpDir, ipcFile, subtitleActivators[0], subtitlesOverlay)
 					}()
