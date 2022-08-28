@@ -2124,6 +2124,12 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 						}
 					}()
 
+					if len(audiotrackActivators) <= 1 {
+						// Don't disable audio if the "None" track is the only one
+
+						return
+					}
+
 					if j == 0 {
 						log.Info().
 							Msg("Disabling audio track")

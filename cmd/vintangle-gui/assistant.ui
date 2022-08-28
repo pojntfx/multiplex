@@ -57,6 +57,7 @@
                                                 </style>
 
                                                 <property name="visible">false</property>
+                                                <property name="tooltip-text">Open media details</property>
 
                                                 <child>
                                                     <object class="GtkBox">
