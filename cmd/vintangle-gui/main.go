@@ -2094,7 +2094,15 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 
 			audiotrackActivators := []*gtk.CheckButton{}
 
-			for i, audiotrack := range audiotracks {
+			for i, audiotrack := range append(
+				[]audioTrack{
+					{
+						lang: "None",
+						id:   -1,
+					},
+				},
+				audiotracks...,
+			) {
 				row := adw.NewActionRow()
 
 				activator := gtk.NewCheckButton()
@@ -2108,12 +2116,33 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 				audiotrackActivators = append(audiotrackActivators, activator)
 
 				a := audiotrack
+				j := i
 				activator.ConnectActivate(func() {
 					defer func() {
 						if len(audiotrackActivators) <= 1 {
 							activator.SetActive(true)
 						}
 					}()
+
+					if j == 0 {
+						log.Info().
+							Msg("Disabling audio track")
+
+						if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+							if err := encoder.Encode(mpvCommand{[]interface{}{"set_property", "aid", "no"}}); err != nil {
+								return err
+							}
+
+							var successResponse mpvSuccessResponse
+							return decoder.Decode(&successResponse)
+						}); err != nil {
+							openErrorDialog(ctx, window, err)
+
+							return
+						}
+
+						return
+					}
 
 					if err := runMPVCommand(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Debug().
@@ -2133,7 +2162,16 @@ func openControlsWindow(ctx context.Context, app *adw.Application, torrentTitle 
 					}
 				})
 
-				row.SetSubtitle(fmt.Sprintf("Track %v", a.id))
+				if j == 0 {
+					row.SetSubtitle("Disable audio")
+				} else {
+					row.SetSubtitle(fmt.Sprintf("Track %v", a.id))
+				}
+
+				if i == 1 {
+					activator.SetActive(true)
+				}
+
 				if strings.TrimSpace(a.lang) == "" {
 					row.SetTitle("Untitled Track")
 				} else {
