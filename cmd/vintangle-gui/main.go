@@ -20,6 +20,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 	"sync/atomic"
 	"syscall"
@@ -531,11 +532,43 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 						},
 						info.Description,
 					)
-					torrentMedia = []media{}
+
+					knownMedia := []media{}
+					extraFiles := []media{}
 					for _, file := range info.Files {
-						torrentMedia = append(torrentMedia, media{
+						m := media{
 							name: file.Path,
 							size: int(file.Length),
+						}
+
+						if strings.HasSuffix(file.Path, ".mkv") || strings.HasSuffix(file.Path, ".mp4") || strings.HasSuffix(file.Path, ".m4v") || strings.HasSuffix(file.Path, ".mov") || strings.HasSuffix(file.Path, ".avi") || strings.HasSuffix(file.Path, ".webm") {
+							knownMedia = append(knownMedia, m)
+						} else {
+							extraFiles = append(extraFiles, m)
+						}
+					}
+
+					sort.Slice(knownMedia, func(i, j int) bool {
+						return knownMedia[i].size < knownMedia[j].size
+					})
+					sort.Slice(extraFiles, func(i, j int) bool {
+						return extraFiles[i].size < extraFiles[j].size
+					})
+					torrentMedia = append(knownMedia, extraFiles...)
+
+					knownMediaWithPriority := []mediaWithPriorityAndID{}
+					for _, media := range knownMedia {
+						knownMediaWithPriority = append(knownMediaWithPriority, mediaWithPriorityAndID{
+							media:    media,
+							priority: 0,
+						})
+					}
+
+					extraFilesWithPriority := []mediaWithPriorityAndID{}
+					for _, media := range extraFiles {
+						extraFilesWithPriority = append(extraFilesWithPriority, mediaWithPriorityAndID{
+							media:    media,
+							priority: 1,
 						})
 					}
 
@@ -545,7 +578,7 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 					mediaRows = []*adw.ActionRow{}
 
 					activators = []*gtk.CheckButton{}
-					for i, file := range torrentMedia {
+					for i, file := range append(knownMediaWithPriority, extraFilesWithPriority...) {
 						row := adw.NewActionRow()
 
 						activator := gtk.NewCheckButton()
@@ -568,7 +601,11 @@ func openAssistantWindow(ctx context.Context, app *adw.Application, manager *cli
 						})
 
 						row.SetTitle(getDisplayPathWithoutRoot(file.name))
-						row.SetSubtitle(fmt.Sprintf("%v MB", file.size/1000/1000))
+						if file.priority == 0 {
+							row.SetSubtitle(fmt.Sprintf("Media (%v MB)", file.size/1000/1000))
+						} else {
+							row.SetSubtitle(fmt.Sprintf("Extra file (%v MB)", file.size/1000/1000))
+						}
 						row.SetActivatable(true)
 
 						row.AddPrefix(activator)

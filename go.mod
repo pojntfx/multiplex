@@ -10,7 +10,7 @@ require (
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/pojntfx/htorrent v0.5.3
 	github.com/pojntfx/weron v0.2.3
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	github.com/teivah/broadcast v0.1.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
