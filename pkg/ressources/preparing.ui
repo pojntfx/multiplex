@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="AdwWindow" id="preparing-window">
+        <property name="modal">true</property>
+
+        <child type="content">
+            <object class="GtkWindowHandle">
+                <child>
+                    <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="valign">center</property>
+                        <property name="halign">center</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-bottom">12</property>
+
+                        <child>
+                            <object class="GtkLabel">
+                                <style>
+                                    <class name="title"></class>
+                                </style>
+
+                                <property name="label">Preparing stream ...</property>
+                                <property name="margin-bottom">12</property>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="GtkProgressBar" id="preparing-progress-bar">
+                                <style>
+                                    <class name="preparing-progress-bar"></class>
+                                </style>
+
+                                <property name="show-text">true</property>
+                                <property name="margin-bottom">8</property>
+                            </object>
+                        </child>
+
+                        <child type="action">
+                            <object class="GtkButton" id="cancel-preparing-button">
+                                <style>
+                                    <class name="destructive-action"></class>
+                                </style>
+
+                                <property name="margin-top">8</property>
+                                <property name="label">Cancel</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+</interface>
