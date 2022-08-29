@@ -1,5 +1,5 @@
 package v1
 
-type MPVCommand struct {
+type Request struct {
 	Command []interface{} `json:"command"`
 }

@@ -44,5 +44,5 @@ var (
 	StyleCSS string
 
 	//go:embed gschemas.compiled
-	Geschemas []byte
+	GSchemas []byte
 )

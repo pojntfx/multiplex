@@ -1,6 +1,6 @@
 package v1
 
 const (
-	MPVTypeSub   = "sub"
-	MPVTypeAudio = "audio"
+	TypeSub   = "sub"
+	TypeAudio = "audio"
 )

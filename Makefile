@@ -5,7 +5,7 @@ OUTPUT_DIR ?= out
 DST ?=
 
 # Private variables
-obj = vintangle-cli vintangle-gui
+obj = vintangle-gui
 all: $(addprefix build/,$(obj))
 
 # Build
