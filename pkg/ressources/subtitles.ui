@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+    <requires lib="libadwaita" version="1.1" />
+    <requires lib="gtk" version="4.0" />
+
+    <object class="GtkDialog" id="subtitles-dialog">
+        <property name="title">Subtitles</property>
+        <property name="default-width">500</property>
+        <property name="default-height">500</property>
+        <property name="modal">true</property>
+        <property name="use-header-bar">1</property>
+
+        <child type="action">
+            <object class="GtkButton" id="button-cancel">
+                <property name="label">Cancel</property>
+            </object>
+        </child>
+
+        <child type="action">
+            <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">12</property>
+                <property name="valign">start</property>
+
+                <child>
+                    <object class="GtkSpinner" id="headerbar-spinner">
+                        <property name="tooltip-text">Getting metadata ...</property>
+                        <property name="visible">false</property>
+                    </object>
+                </child>
+
+                <child>
+                    <object class="GtkButton" id="button-ok">
+                        <style>
+                            <class name="suggested-action"></class>
+                        </style>
+
+                        <property name="label">OK</property>
+                        <property name="hexpand">true</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="AdwToastOverlay" id="toast-overlay">
+                <child>
+                    <object class="GtkScrolledWindow">
+                        <child>
+                            <object class="AdwClamp">
+                                <property name="maximum-size">600</property>
+                                <property name="vexpand">true</property>
+                                <property name="valign">fill</property>
+                                <property name="margin-top">12</property>
+                                <property name="margin-start">12</property>
+                                <property name="margin-end">12</property>
+                                <property name="margin-bottom">12</property>
+
+                                <child>
+                                    <object class="AdwPreferencesGroup" id="subtitle-tracks">
+                                        <property name="title" translatable="yes">Tracks</property>
+
+                                        <child type="header-suffix">
+                                            <object class="GtkButton" id="add-from-file-button">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                </style>
+
+                                                <property name="valign">center</property>
+
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="spacing">6</property>
+
+                                                        <child>
+                                                            <object class="GtkImage">
+                                                                <property name="icon-name">list-add-symbolic</property>
+                                                            </object>
+                                                        </child>
+
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">Add from file</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <action-widgets>
+            <action-widget response="cancel">button-cancel</action-widget>
+            <action-widget response="ok" default="true">button-ok</action-widget>
+        </action-widgets>
+    </object>
+</interface>
