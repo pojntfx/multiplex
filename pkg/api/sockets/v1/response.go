@@ -1,14 +1,18 @@
 package v1
 
-type MPVFloat64Response struct {
+type ResponseFloat64 struct {
 	Data float64 `json:"data"`
 }
 
-type MPVTrackListResponse struct {
-	Data []MPVTrackDescription `json:"data"`
+type ResponseBool struct {
+	Data bool `json:"data"`
 }
 
-type MPVTrackDescription struct {
+type ResponseTrackList struct {
+	Data []ResponseTrackDescription `json:"data"`
+}
+
+type ResponseTrackDescription struct {
 	ID               int    `json:"id"`
 	Type             string `json:"type"`
 	ExternalFilename string `json:"external-filename"`
@@ -16,10 +20,6 @@ type MPVTrackDescription struct {
 	Title            string `json:"title"`
 }
 
-type MPVSuccessResponse struct {
+type ResponseSuccess struct {
 	Data []any `json:"data"`
-}
-
-type MPVBoolResponse struct {
-	Data bool `json:"data"`
 }
