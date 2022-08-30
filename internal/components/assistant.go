@@ -25,10 +25,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
+	"github.com/pojntfx/vintangle/internal/gschema"
+	"github.com/pojntfx/vintangle/internal/ressources"
 	api "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
-	"github.com/pojntfx/vintangle/pkg/gschema"
-	"github.com/pojntfx/vintangle/pkg/ressources"
+	mpvClient "github.com/pojntfx/vintangle/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 )
@@ -762,7 +762,7 @@ func OpenAssistantWindow(
 
 	window.ConnectShow(func() {
 		if oldMPVCommand := settings.String(gschema.MPVFlag); strings.TrimSpace(oldMPVCommand) == "" {
-			newMPVCommand, err := mpv.DiscoverExecutable()
+			newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
 			if err != nil {
 				warningDialog.Show()
 

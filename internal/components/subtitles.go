@@ -12,6 +12,7 @@ import (
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
+	mpvClient "github.com/pojntfx/vintangle/pkg/client"
 	"github.com/rs/zerolog/log"
 )
 
@@ -48,7 +49,7 @@ func SetSubtitles(
 		return
 	}
 
-	if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().
 			Str("path", subtitlesFile).
 			Msg("Adding subtitles path")
@@ -66,7 +67,7 @@ func SetSubtitles(
 	}
 
 	var trackListResponse mpv.ResponseTrackList
-	if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().Msg("Getting tracklist")
 
 		if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "track-list"}}); err != nil {
@@ -97,7 +98,7 @@ func SetSubtitles(
 			noneActivator.SetActive(true)
 		})
 
-		if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+		if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 				return err
 			}
@@ -117,7 +118,7 @@ func SetSubtitles(
 		return
 	}
 
-	if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		log.Debug().
 			Str("path", subtitlesFile).
 			Int("sid", sid).
@@ -135,7 +136,7 @@ func SetSubtitles(
 		return
 	}
 
-	if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
 			return err
 		}
