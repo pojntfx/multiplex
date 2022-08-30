@@ -29,10 +29,11 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
+	"github.com/pojntfx/vintangle/internal/gschema"
+	"github.com/pojntfx/vintangle/internal/ressources"
 	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
 	api "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
-	"github.com/pojntfx/vintangle/pkg/gschema"
-	"github.com/pojntfx/vintangle/pkg/ressources"
+	mpvClient "github.com/pojntfx/vintangle/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 	"github.com/teivah/broadcast"
@@ -566,7 +567,7 @@ func OpenControlsWindow(
 			startPlayback := func() {
 				playButton.SetIconName(pauseIcon)
 
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Starting playback")
 
 					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "pause", false}}); err != nil {
@@ -585,7 +586,7 @@ func OpenControlsWindow(
 			pausePlayback := func() {
 				playButton.SetIconName(playIcon)
 
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Pausing playback")
 
 					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "pause", true}}); err != nil {
@@ -602,7 +603,7 @@ func OpenControlsWindow(
 			}
 
 			var trackListResponse mpv.ResponseTrackList
-			if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+			if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 				log.Debug().Msg("Getting tracklist")
 
 				if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "track-list"}}); err != nil {
@@ -650,7 +651,7 @@ func OpenControlsWindow(
 
 				elapsed := time.Duration(int64(position))
 
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpv.Request{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
 						return err
 					}
@@ -798,7 +799,7 @@ func OpenControlsWindow(
 				}
 
 				var elapsedResponse mpv.ResponseFloat64
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "time-pos"}}); err != nil {
 						return err
 					}
@@ -951,7 +952,7 @@ func OpenControlsWindow(
 				}
 			}()
 
-			if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+			if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 				if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "volume", 100}}); err != nil {
 					return err
 				}
@@ -1004,7 +1005,7 @@ func OpenControlsWindow(
 						log.Info().
 							Msg("Disabling subtitles")
 
-						if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 								return err
 							}
@@ -1017,7 +1018,7 @@ func OpenControlsWindow(
 							return
 						}
 
-						if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "no"}}); err != nil {
 								return err
 							}
@@ -1034,7 +1035,7 @@ func OpenControlsWindow(
 					}
 
 					if p == 0 {
-						if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							log.Debug().
 								Msg("Setting subtitle ID")
 
@@ -1050,7 +1051,7 @@ func OpenControlsWindow(
 							return
 						}
 
-						if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
 								return err
 							}
@@ -1187,7 +1188,7 @@ func OpenControlsWindow(
 						log.Info().
 							Msg("Disabling audio track")
 
-						if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+						if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 							if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "aid", "no"}}); err != nil {
 								return err
 							}
@@ -1203,7 +1204,7 @@ func OpenControlsWindow(
 						return
 					}
 
-					if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Debug().
 							Int("aid", a.id).
 							Msg("Setting audio ID")
@@ -1270,7 +1271,7 @@ func OpenControlsWindow(
 
 				updateSeeker := func() {
 					var durationResponse mpv.ResponseFloat64
-					if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "duration"}}); err != nil {
 							return err
 						}
@@ -1298,7 +1299,7 @@ func OpenControlsWindow(
 					}
 
 					var elapsedResponse mpv.ResponseFloat64
-					if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "time-pos"}}); err != nil {
 							return err
 						}
@@ -1320,7 +1321,7 @@ func OpenControlsWindow(
 					}
 
 					var pausedResponse mpv.ResponseBool
-					if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "core-idle"}}); err != nil {
 							return err
 						}
@@ -1385,7 +1386,7 @@ func OpenControlsWindow(
 			}()
 
 			volumeButton.ConnectValueChanged(func(value float64) {
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().
 						Float64("value", value).
 						Msg("Setting volume")
@@ -1437,7 +1438,7 @@ func OpenControlsWindow(
 				log.Info().
 					Msg("Disabling subtitles")
 
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", "no"}}); err != nil {
 						return err
 					}
@@ -1530,7 +1531,7 @@ func OpenControlsWindow(
 
 			fullscreenButton.ConnectClicked(func() {
 				if fullscreenButton.Active() {
-					if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Info().Msg("Enabling fullscreen")
 
 						if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
@@ -1548,7 +1549,7 @@ func OpenControlsWindow(
 					return
 				}
 
-				if err := mpv.ExecuteRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().Msg("Disabling fullscreen")
 
 					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "fullscreen", false}}); err != nil {

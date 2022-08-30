@@ -8,7 +8,7 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pojntfx/vintangle/pkg/ressources"
+	"github.com/pojntfx/vintangle/internal/ressources"
 	"github.com/rs/zerolog/log"
 )
 

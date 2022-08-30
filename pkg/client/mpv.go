@@ -1,4 +1,4 @@
-package v1
+package client
 
 import (
 	"encoding/json"
@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	ErrNoWorkingExecutableFound = errors.New("could not find working a working mpv executable")
+	ErrNoWorkingMPVExecutableFound = errors.New("could not find working a working mpv executable")
 )
 
-func DiscoverExecutable() (string, error) {
+func DiscoverMPVExecutable() (string, error) {
 	if _, err := os.Stat("/.flatpak-info"); err == nil {
 		if err := exec.Command("flatpak-spawn", "--host", "mpv", "--version").Run(); err == nil {
 			return "flatpak-spawn --host mpv", nil
@@ -22,7 +22,7 @@ func DiscoverExecutable() (string, error) {
 			return "flatpak-spawn --host flatpak run io.mpv.Mpv", nil
 		}
 
-		return "", ErrNoWorkingExecutableFound
+		return "", ErrNoWorkingMPVExecutableFound
 	}
 
 	if err := exec.Command("mpv", "--version").Run(); err == nil {
@@ -33,10 +33,10 @@ func DiscoverExecutable() (string, error) {
 		return "flatpak run io.mpv.Mpv", nil
 	}
 
-	return "", ErrNoWorkingExecutableFound
+	return "", ErrNoWorkingMPVExecutableFound
 }
 
-func ExecuteRequest(ipcFile string, command func(encoder *json.Encoder, decoder *json.Decoder) error) error {
+func ExecuteMPVRequest(ipcFile string, command func(encoder *json.Encoder, decoder *json.Decoder) error) error {
 	sock, err := net.Dial("unix", ipcFile)
 	if err != nil {
 		return err
