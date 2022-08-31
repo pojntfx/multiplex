@@ -1,0 +1,24 @@
+id: org.freedesktop.Sdk.Extension.ImageMagick
+branch: "21.08"
+runtime: org.freedesktop.Sdk
+runtime-version: "21.08"
+sdk: org.freedesktop.Sdk
+build-extension: true
+modules:
+  - name: imagemagick
+    config-opts:
+      - --with-modules
+      - --prefix=/usr/lib/sdk/ImageMagick
+    sources:
+      - type: archive
+        url: https://imagemagick.org/archive/ImageMagick-7.1.0-47.tar.xz
+        sha256: 9565918fcc6f8857c7907a8a73cf1c1f23fa37b77cf869886d98fcf03f89adf3
+  - name: scripts
+    sources:
+      - type: script
+        commands:
+          - export PATH=$PATH:/usr/lib/sdk/ImageMagick/bin
+        dest-filename: enable.sh
+    buildsystem: simple
+    build-commands:
+      - cp enable.sh /usr/lib/sdk/ImageMagick/

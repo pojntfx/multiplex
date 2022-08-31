@@ -4,4 +4,5 @@ Type=Application
 Name=Vintangle
 Comment=Synchronized torrent streaming for distributed watch parties.
 Exec=vintangle-gui
+Icon=com.pojtinger.felicitas.vintangle
 Categories=AudioVideo;Video;Network
