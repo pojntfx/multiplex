@@ -31,6 +31,7 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/vintangle/internal/gschema"
 	"github.com/pojntfx/vintangle/internal/ressources"
+	"github.com/pojntfx/vintangle/internal/utils"
 	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
 	api "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
 	mpvClient "github.com/pojntfx/vintangle/pkg/client"
@@ -443,7 +444,7 @@ func OpenControlsWindow(
 
 	shell := []string{"sh", "-c"}
 	if runtime.GOOS == "windows" {
-		shell = []string{"cmd", "/c"}
+		shell = []string{"cmd.exe", "/c", "start"}
 	}
 	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(gschema.MPVFlag), ipcFile, usernameAndPassword, streamURL))
 
@@ -451,11 +452,7 @@ func OpenControlsWindow(
 		commandLine[0],
 		commandLine[1:]...,
 	)
-	if runtime.GOOS != "windows" {
-		command.SysProcAttr = &syscall.SysProcAttr{
-			Setsid: true,
-		}
-	}
+	utils.AddSysProcAttr(command)
 
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
@@ -521,18 +518,10 @@ func OpenControlsWindow(
 			progressBarTicker.Stop()
 
 			if command.Process != nil {
-				if runtime.GOOS == "windows" {
-					if err := command.Process.Kill(); err != nil {
-						OpenErrorDialog(ctx, window, err)
+				if err := utils.Kill(command.Process); err != nil {
+					OpenErrorDialog(ctx, window, err)
 
-						return false
-					}
-				} else {
-					if err := syscall.Kill(-command.Process.Pid, syscall.SIGKILL); err != nil {
-						OpenErrorDialog(ctx, window, err)
-
-						return false
-					}
+					return false
 				}
 			}
 
