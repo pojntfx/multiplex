@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"syscall"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -14,6 +13,7 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/vintangle/internal/gschema"
 	"github.com/pojntfx/vintangle/internal/ressources"
+	"github.com/pojntfx/vintangle/internal/utils"
 )
 
 func AddMainMenu(
@@ -131,14 +131,7 @@ func AddMainMenu(
 			return
 		}
 
-		if _, err := syscall.ForkExec(
-			ex,
-			os.Args,
-			&syscall.ProcAttr{
-				Env:   os.Environ(),
-				Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
-			},
-		); err != nil {
+		if err := utils.ForkExec(ex, os.Args); err != nil {
 			OpenErrorDialog(ctx, window, err)
 
 			return

@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 var (
@@ -25,8 +26,18 @@ func DiscoverMPVExecutable() (string, error) {
 		return "", ErrNoWorkingMPVExecutableFound
 	}
 
-	if err := exec.Command("mpv", "--version").Run(); err == nil {
-		return "mpv", nil
+	if runtime.GOOS == "windows" {
+		if err := exec.Command("cmd.exe", "/c", "start", "mpv.exe", "--version").Run(); err == nil {
+			return "mpv.exe", nil
+		}
+
+		if err := exec.Command("cmd.exe", "/c", "start", `bin\mpv.exe`, "--version").Run(); err == nil {
+			return `bin\mpv.exe`, nil
+		}
+	} else {
+		if err := exec.Command("mpv", "--version").Run(); err == nil {
+			return "mpv", nil
+		}
 	}
 
 	if err := exec.Command("flatpak", "run", "io.mpv.Mpv", "--version").Run(); err == nil {
