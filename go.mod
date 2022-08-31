@@ -89,6 +89,3 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )
-
-// The upstream module is currently broken
-replace github.com/anacrolix/torrent => ./hack/torrent
