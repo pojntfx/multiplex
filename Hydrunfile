@@ -26,6 +26,7 @@ EOT
     mkdir -p out/repositories/unstable
     for ARCH in "x86_64"; do
         flatpak install -y --arch="${ARCH}" "org.gnome.Platform//42" "org.gnome.Sdk//42" "org.freedesktop.Sdk.Extension.golang//21.08"
+        flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories/unstable" --force-clean --user --install "build-dir" "org.freedesktop.Sdk.Extension.ImageMagick.yaml"
         flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories/unstable" --force-clean "build-dir" "com.pojtinger.felicitas.vintangle.yaml"
         flatpak --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" build-bundle "out/repositories/unstable" "out/com.pojtinger.felicitas.vintangle.linux-${ARCH}.flatpak" "com.pojtinger.felicitas.vintangle"
     done

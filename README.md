@@ -1,5 +1,7 @@
 # Vintangle
 
+![Logo](./docs/logo-readme.png)
+
 Synchronized torrent streaming for distributed watch parties.
 
 [![hydrun CI](https://github.com/pojntfx/vintangle/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/vintangle/actions/workflows/hydrun.yaml)
