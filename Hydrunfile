@@ -50,3 +50,49 @@ GPGKey=$(base64 -w 0 /tmp/public.asc)
 
     exit 0
 fi
+
+# Windows (see https://gist.github.com/pojntfx/36a1f41ffd34af7d2f3abe43646142e1)
+if [ "$1" = "windows" ]; then
+    # Install native dependencies
+    sudo dnf update -y
+    sudo dnf install -y curl wine
+
+    # Install MSYS2
+    curl -L -o /tmp/msys2.exe 'https://github.com/msys2/msys2-installer/releases/download/2021-11-30/msys2-base-x86_64-20211130.sfx.exe'
+    wine64 /tmp/msys2.exe x -y -oC:/
+
+    # Fix MSYS2
+    sed -i ~/.wine/drive_c/msys64/etc/pacman.conf -e 's/SigLevel    = Required/SigLevel = Never/g'
+    cat /etc/pki/tls/certs/ca-bundle.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.crt
+    cat /etc/pki/tls/certs/ca-bundle.trust.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.trust.crt
+    export WINEPATH="C:\\msys64\\usr\\bin"
+
+    # Install GCC, Go, GTK4 and libadwaita (plus any other packages you want to be included in the image)
+    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
+    wine64 bash.exe -c 'pacman --noconfirm --ignore pacman -Syy'
+    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
+    wine64 bash.exe -c 'pacman --noconfirm --ignore pacman --needed -S git mingw-w64-x86_64-gcc mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gtk4 mingw-w64-x86_64-gobject-introspection mingw-w64-x86_64-gobject-introspection-runtime mingw-w64-x86_64-glib2 mingw-w64-x86_64-libadwaita mingw-w64-x86_64-mpv'
+    sed -i ~/.wine/drive_c/msys64/mingw64/lib/pkgconfig/* -e 's/-Wl,-luuid/-luuid/g' # See https://github.com/gotk3/gotk3/wiki/Installing-on-Windows#chocolatey, fails with invalid flag in pkg-config --libs: -Wl,-luuid otherwise
+    mkdir -p ~/.wine/drive_c/go ~/.wine/drive_c/tmp
+
+    # Copy source code to directory on C drive
+    rm -rf ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
+    mkdir -p ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
+    rm -rf out
+    cp -r . ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
+
+    # Build
+    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go build -buildvcs=false -ldflags='-linkmode=external' -x -v -o out/vintangle-gui.exe ./cmd/vintangle-gui"
+
+    # Copy binaries to staging directory
+    rm -rf out
+    mkdir -p out/dist/bin
+    yes | cp -f ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace/out/* out/dist/bin
+
+    # Package
+    cp -r ~/.wine/drive_c/msys64/mingw64/* out/dist
+    cd out/dist || exit
+    zip -FSr ../vintangle-gui.windows-x86_64.exe.zip .
+    cd ..
+    rm -rf dist
+fi

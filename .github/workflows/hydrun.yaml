@@ -18,6 +18,12 @@ jobs:
             flags: "-e '--privileged'"
             cmd: ./Hydrunfile flatpak
             dst: out/*
+          - id: windows
+            src: .
+            os: fedora:36
+            flags: "-e '--privileged'"
+            cmd: ./Hydrunfile windows
+            dst: out/*
 
     steps:
       - name: Maximize build space
