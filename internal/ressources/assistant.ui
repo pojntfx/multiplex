@@ -158,7 +158,7 @@
                                                                 <property name="icon-name">multimedia-player-symbolic</property>
                                                                 <property name="title">Vintangle</property>
                                                                 <property name="description">
-                                                                    <![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/vintangle/wiki">stream code</a> to start streaming]]>
+                                                                    <![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/vintangle/wiki/Stream-Codes">stream code</a> to start streaming]]>
                                                                 </property>
 
                                                                 <child>
