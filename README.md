@@ -38,6 +38,54 @@ It will update automatically in the background.
 
 🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
 
+## Screenshots
+
+Click on an image to see a larger version.
+
+<a display="inline" href="./docs/initial.png?raw=true">
+<img src="./docs/initial.png" width="45%" alt="Screenshot of the initial screen" title="Screenshot of the initial screen">
+</a>
+
+<a display="inline" href="./docs/media-selection.png?raw=true">
+<img src="./docs/media-selection.png" width="45%" alt="Screenshot of the media selection screen" title="Screenshot of the media selection screen">
+</a>
+
+<a display="inline" href="./docs/confirmation.png?raw=true">
+<img src="./docs/confirmation.png" width="45%" alt="Screenshot of the confirmation screen" title="Screenshot of the confirmation screen">
+</a>
+
+<a display="inline" href="./docs/playback.png?raw=true">
+<img src="./docs/playback.png" width="45%" alt="Screenshot of the playback screen" title="Screenshot of the playback screen">
+</a>
+
+<a display="inline" href="./docs/audiotracks.png?raw=true">
+<img src="./docs/audiotracks.png" width="45%" alt="Screenshot of the audio tracks screen" title="Screenshot of the audio tracks screen">
+</a>
+
+<a display="inline" href="./docs/subtitles.png?raw=true">
+<img src="./docs/subtitles.png" width="45%" alt="Screenshot of the subtitles screen" title="Screenshot of the subtitles screen">
+</a>
+
+<a display="inline" href="./docs/join.png?raw=true">
+<img src="./docs/join.png" width="45%" alt="Screenshot of the join screen" title="Screenshot of the join screen">
+</a>
+
+<a display="inline" href="./docs/sync-playback.png?raw=true">
+<img src="./docs/sync-playback.png" width="45%" alt="Screenshot of two peers synchronizing playback" title="Screenshot of two peers synchronizing playback">
+</a>
+
+<a display="inline" href="./docs/prefs-playback.png?raw=true">
+<img src="./docs/prefs-playback.png" width="45%" alt="Screenshot of the playback preferences" title="Screenshot of the playback preferences">
+</a>
+
+<a display="inline" href="./docs/prefs-remoting.png?raw=true">
+<img src="./docs/prefs-remoting.png" width="45%" alt="Screenshot of the playback remoting preferences" title="Screenshot of the playback remoting preferences">
+</a>
+
+<a display="inline" href="./docs/prefs-sync.png?raw=true">
+<img src="./docs/prefs-sync.png" width="45%" alt="Screenshot of the synchronization preferences" title="Screenshot of the synchronization preferences">
+</a>
+
 ## Acknowledgements
 
 - [mpv](https://mpv.io/) provides the media player.
