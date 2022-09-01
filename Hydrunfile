@@ -82,7 +82,8 @@ if [ "$1" = "windows" ]; then
     cp -r . ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
 
     # Build
-    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go generate ./... && go build -buildvcs=false -ldflags='-linkmode=external' -x -v -o out/vintangle-gui.exe ./cmd/vintangle-gui"
+    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go generate ./..."
+    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go build -buildvcs=false -ldflags='-linkmode=external' -x -v -o out/vintangle-gui.exe ./cmd/vintangle-gui"
 
     # Copy binaries to staging directory
     rm -rf out
