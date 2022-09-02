@@ -12,7 +12,7 @@ Synchronized torrent streaming for distributed watch parties.
 
 ## Overview
 
-Vintangle is an app to watch torrents together, similar to how Netflix and Amazon Prime provide a watch party service.
+Vintangle is an app to watch torrents together, providing an experience similar to Apple's [SharePlay](https://support.apple.com/en-us/HT212823) and Amazon's [Prime Video Watch Party](https://www.amazon.com/adlp/watchparty).
 
 It enables you to ...
 
@@ -22,21 +22,91 @@ It enables you to ...
 
 ## Installation
 
-Vintangle is distributed as a Flatpak. You can install it by running the following:
+For Linux, Windows with [WSLg](https://docs.microsoft.com/en-us/windows/wsl/tutorials/gui-apps), and ChromeOS with [Crostini](https://flatpak.org/setup/Chrome%20OS), Vintangle is distributed as a Flatpak. You can install it by running the following:
 
 ```shell
-# Stable
-$ flatpak remote-add vintangle --from "https://pojntfx.github.io/vintangle/flatpak/stable/vintangle.flatpakrepo"
-# Unstable
-$ flatpak remote-add vintangle --from "https://pojntfx.github.io/vintangle/flatpak/unstable/vintangle.flatpakrepo"
+# Install the stable version
+$ flatpak remote-add vintangle-stable --from "https://pojntfx.github.io/vintangle/flatpak/stable/vintangle.flatpakrepo"
+$ flatpak install -y "com.pojtinger.felicitas.vintangle"
+
+# Alternatively, install the unstable version:
+$ flatpak remote-add vintangle-unstable --from "https://pojntfx.github.io/vintangle/flatpak/unstable/vintangle.flatpakrepo"
 $ flatpak install -y "com.pojtinger.felicitas.vintangle"
 ```
 
 It will update automatically in the background.
 
+For Windows, you can also find a `.exe` to download on [GitHub releases](https://github.com/pojntfx/vintangle/releases), and on other platforms you can [build from source](#contributing).
+
 ## Usage
 
-🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
+### 1. Start Streaming a Torrent
+
+To get started, first find a [magnet link](https://en.wikipedia.org/wiki/Magnet_URI_scheme) that you want to stream. There are many sites on the internet to find them; check out [webtorrent.io/free-torrents](https://webtorrent.io/free-torrents) for some copyright-free torrents to try out. Once you've found one, launch Vintangle and enter the link:
+
+<p align="center">
+  <img alt="Starting the app" src="./docs/launch-app.png" />
+</p>
+
+![Initial start screen with link entered](./docs/link-entered.png)
+
+Note that Vintangle will prompt you to install the [mpv media player](https://mpv.io/) if you don't already have it installed; to continue, please do so:
+
+<p align="center">
+  <img alt="Prompt to install mpv" src="./docs/install-mpv.png" />
+</p>
+
+Next, select the file you want to stream; note that only media files are supported:
+
+![Media selection](./docs/media-selection.png)
+
+Finally, confirm that you have the right to stream the media you've selected. Note that many countries have copyright restrictions - in that case, please [take appropriate measures to protect yourself](https://sec.eff.org/topics/VPN):
+
+![Confirmation screen](./docs/confirmation.png)
+
+Note that you can also choose to stream without downloading! Provided that the underlying media file supports streaming playback (such as `.mkv` files), this allows you to start playing the media immediately, without having to wait for it to download completely:
+
+<p align="center">
+  <img alt="Option to stream without downloading" src="./docs/stream-without-downloading.png" />
+</p>
+
+After you've given your consent, playback will start, and you can enjoy the media you've selected:
+
+![Playback screen](./docs/playback.png)
+
+## 2. Ask Friends to Join
+
+While consuming media on your own can be fun, doing so with friends or your SO is always better. I built Vintangle to enjoy media together with my partner, but due to COVID and the Atlantic ocean we're unable to do so in person all the time - this app intents to bridge that gap. To ask someone to join, click on the people button in the top right, and copy the [stream code](https://github.com/pojntfx/vintangle/wiki/Stream-Codes):
+
+![Join screen](./docs/join.png)
+
+This stream code can now be entered by the person that wants to watch the media with you. There is no technical limit on how many people can join the session, so feel free to invite as many as you want!
+
+![Entering stream codes](./docs/enter-stream-code.png)
+
+After the person that wants to join has entered the stream code, they need to confirm that they too have the right to stream the media; depending on your country, please ask them to [take appropriate measures to protect themselves](https://sec.eff.org/topics/VPN):
+
+![Confirmation screen](./docs/confirmation.png)
+
+Note that is recommended not to choose the option to stream without downloading when streaming with multiple people; while it is supported and buffering is synchronized across peers, it requires a very good internet connection for all peers in order for it to work smoothly. Once all peers have joined, you can start playback and enjoy the media together:
+
+![Two peers synchronizing playback](./docs/sync-playback.png)
+
+All play/pause events, seeking position etc. will be synchronized between all peers using [weron](https://github.com/pojntfx/weron), a peer-to-peer networking library.
+
+## 3. Increase Privacy and Security
+
+As noted above, the legality of consuming media from torrents depends on the country you're in. In most countries, following [these guidelines on VPNs from the Electronic Frontier Foundation](https://sec.eff.org/topics/VPN) will suffice, but Vintangle provides an additional option: **Remoting**.
+
+Vintangle is built on [hTorrent](https://github.com/pojntfx/htorrent), an HTTP to BitTorrent gateway. Using remoting, it is possible to use a trusted server as a proxy to stream torrents from. This makes it possible to not only increase security for all peers without them having to take the appropriate measures themselves, but it can also increase the performance by caching the media on a single server with a good internet connection. To enable remoting, first [host a hTorrent gateway with basic authentication enabled](https://github.com/pojntfx/htorrent#1-start-a-gateway-with-htorrent-gateway) - be sure to set up TLS certificates to enable encryption, for example by using [Caddy](https://caddyserver.com/). Once you have a gateway set up, you can configure Vintangle to use in its preferences:
+
+![Remoting preferences](./docs/prefs-remoting.png)
+
+Be sure to ask the people who want to stream the media with you to also use the gateway.
+
+For more preferences, see the [screenshots](#screenshots).
+
+🚀 **That's it!** We hope you enjoy using Vintangle.
 
 ## Screenshots
 
