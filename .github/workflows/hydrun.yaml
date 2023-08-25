@@ -17,7 +17,7 @@ jobs:
         target:
           - id: flatpak
             src: .
-            os: golang:bullseye
+            os: fedora:38
             flags: ""
             cmd: ./Hydrunfile flatpak
             dst: out/*

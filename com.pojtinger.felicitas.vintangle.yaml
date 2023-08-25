@@ -19,8 +19,7 @@ modules:
     buildsystem: simple
     build-commands:
       - git config --global --add safe.directory '*'
-      - GOPROXY='https://proxy.golang.org,direct' sh -c '. /usr/lib/sdk/golang/enable.sh && go generate ./...'
-      - . /usr/lib/sdk/golang/enable.sh && export GOPROXY='https://proxy.golang.org,direct' && go build -o out/com.pojtinger.felicitas.vintangle .
+      - . /usr/lib/sdk/golang/enable.sh && export GOPROXY='https://proxy.golang.org,direct' && go generate ./... && go build -o out/com.pojtinger.felicitas.vintangle .
       - install -D out/com.pojtinger.felicitas.vintangle /app/bin/com.pojtinger.felicitas.vintangle
       - desktop-file-install --dir=/app/share/applications com.pojtinger.felicitas.vintangle.desktop
       - appstream-util validate-relax com.pojtinger.felicitas.vintangle.metainfo.xml
