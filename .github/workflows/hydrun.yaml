@@ -41,10 +41,11 @@ jobs:
       - name: Build with hydrun
         working-directory: ${{ matrix.target.src }}
         env:
-          PGP_KEY_CONTENT: ${{ secrets.GPG_KEY_CONTENT }} # GPG_KEY_CONTENT must be a unarmored PGP private key which is base64 encoded with -w0
-          PGP_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }} # GPG_KEY_PASSWORD must be base64 encoded with -w0
-          PGP_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-        run: hydrun -o ${{ matrix.target.os }} ${{ matrix.target.flags }} "GPG_KEY_CONTENT=\"${GPG_KEY_CONTENT}\" GPG_KEY_PASSWORD=\"${GPG_KEY_PASSWORD}\" GPG_KEY_ID=\"${GPG_KEY_ID}\" ${{ matrix.target.cmd }}"
+          # See https://github.com/pojntfx/hydrapp#2-optional-generating-and-uploading-your-secrets for the required key format
+          PGP_KEY: ${{ secrets.PGP_KEY }}
+          PGP_PASSWORD: ${{ secrets.PGP_PASSWORD }}
+          PGP_ID: ${{ secrets.PGP_ID }}
+        run: hydrun -o ${{ matrix.target.os }} ${{ matrix.target.flags }} "PGP_KEY=\"${PGP_KEY}\" PGP_PASSWORD=\"${PGP_PASSWORD}\" PGP_ID=\"${PGP_ID}\" ${{ matrix.target.cmd }}"
       - name: Fix permissions for output
         run: sudo chown -R $USER .
       - name: Upload output
