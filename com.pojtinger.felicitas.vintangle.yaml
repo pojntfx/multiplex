@@ -1,11 +1,11 @@
 app-id: com.pojtinger.felicitas.vintangle
 runtime: org.gnome.Platform
-runtime-version: "42"
+runtime-version: "44"
 sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.golang
   - org.freedesktop.Sdk.Extension.ImageMagick
-command: vintangle-gui
+command: com.pojtinger.felicitas.vintangle
 finish-args:
   - --socket=session-bus
   - --share=network
@@ -19,10 +19,11 @@ modules:
   - name: com.pojtinger.felicitas.vintangle
     buildsystem: simple
     build-commands:
-      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make depend
-      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make PREFIX=/app
-      - . /usr/lib/sdk/golang/enable.sh; export GOFLAGS='-x -buildvcs=false'; make install PREFIX=/app
-      - . /usr/lib/sdk/ImageMagick/enable.sh; for icon in 16x16 22x22 24x24 32x32 36x36 48x48 64x64 72x72 96x96 128x128 192x192 256x256 512x512; do convert docs/icon-light.png -resize ${icon} out/icon-${icon}.png; done
+      - git config --global --add safe.directory '*'
+      - GOPROXY='https://proxy.golang.org,direct' sh -c '. /usr/lib/sdk/golang/enable.sh && . /usr/lib/sdk/node16/enable.sh && go generate ./...'
+      - . /usr/lib/sdk/golang/enable.sh && export GOPROXY='https://proxy.golang.org,direct' && go build -o out/com.pojtinger.felicitas.vintangle .
+      - install -D out/com.pojtinger.felicitas.vintangle /app/bin/com.pojtinger.felicitas.vintangle
+      - . /usr/lib/sdk/ImageMagick/enable.sh && for icon in 16x16 22x22 24x24 32x32 36x36 48x48 64x64 72x72 96x96 128x128 192x192 256x256 512x512; do convert icon.png -resize ${icon} out/icon-${icon}.png; done
       - desktop-file-install --dir=/app/share/applications com.pojtinger.felicitas.vintangle.desktop
       - appstream-util validate-relax com.pojtinger.felicitas.vintangle.metainfo.xml
       - install -D -m 0644 com.pojtinger.felicitas.vintangle.metainfo.xml /app/share/metainfo/com.pojtinger.felicitas.vintangle.metainfo.xml

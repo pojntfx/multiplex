@@ -15,13 +15,13 @@
     <url type="homepage">https://github.com/pojntfx/vintangle</url>
 
     <provides>
-        <binary>vintangle-gui</binary>
+        <binary>com.pojtinger.felicitas.vintangle</binary>
     </provides>
 
     <releases>
-        <release version="0.1.0" date="2022-07-19">
+        <release version="0.1.0" date='2023-08-25T20:47:35Z07:00'>
             <description>
-                <p>Initial Release</p>
+                <p>Initial release</p>
             </description>
         </release>
     </releases>

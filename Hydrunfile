@@ -4,96 +4,44 @@ set -e
 
 # Flatpak
 if [ "$1" = "flatpak" ]; then
-    # Install native dependencies
-    dnf install -y flatpak-builder
-
-    # Setup Flatpak
-    flatpak remote-add --if-not-exists "flathub" "https://flathub.org/repo/flathub.flatpakrepo"
-
-    # Setup GPG
-    echo "${GPG_KEY_PASSWORD}" | base64 -d >"/tmp/gpg-pass"
+    # Setup PGP
+    echo "${PGP_KEY_PASSWORD}" | base64 -d >'/tmp/pgp-pass'
     mkdir -p "${HOME}/.gnupg"
     cat >"${HOME}/.gnupg/gpg.conf" <<EOT
 yes
-passphrase-file /tmp/gpg-pass
+passphrase-file /tmp/pgp-pass
 pinentry-mode loopback
 EOT
-    echo "${GPG_KEY_CONTENT}" | base64 -d >"/tmp/private.gpg"
-    gpg --import "/tmp/private.gpg"
-    gpg --output "/tmp/public.asc" --armor --export
 
-    # Generate dependencies and build
-    mkdir -p out/repositories/unstable
-    for ARCH in "x86_64"; do
-        flatpak install -y --arch="${ARCH}" "org.gnome.Platform//42" "org.gnome.Sdk//42" "org.freedesktop.Platform//21.08" "org.freedesktop.Sdk//21.08" "org.freedesktop.Sdk.Extension.golang//21.08"
-        flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories/unstable" --force-clean --user --install "build-dir" "org.freedesktop.Sdk.Extension.ImageMagick.yaml"
-        flatpak-builder -y --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" --repo="out/repositories/unstable" --force-clean "build-dir" "com.pojtinger.felicitas.vintangle.yaml"
-        flatpak --arch="${ARCH}" --gpg-sign="${GPG_KEY_ID}" build-bundle "out/repositories/unstable" "out/com.pojtinger.felicitas.vintangle.linux-${ARCH}.flatpak" "com.pojtinger.felicitas.vintangle"
-    done
+    echo "${PGP_KEY_CONTENT}" | base64 -d >'/tmp/private.pgp'
+    gpg --import /tmp/private.pgp
 
-    # Setup repos repo
+    # Prepare build environment
+    mkdir -p /dst/{repo,bundle}
+    gpg --output /tmp/repo.asc --armor --export
+
+    # Install Flatpak dependencies
+    flatpak remote-add --if-not-exists 'flathub' 'https://flathub.org/repo/flathub.flatpakrepo'
+
+    # Install pre-build SDKs
+    flatpak install -y 'flathub' "org.gnome.Platform//44" "org.gnome.Sdk//44" "org.freedesktop.Sdk.Extension.golang//21.08"
+
+    # Build SDK and export to repo
+    flatpak-builder -y --gpg-sign="${PGP_KEY_ID}" --repo='/dst/repo' --force-clean --user --install "build-dir" "org.freedesktop.Sdk.Extension.ImageMagick.yaml"
+
+    # Build app and export to repo
+    flatpak-builder -y --gpg-sign="${PGP_KEY_ID}" --repo='/dst/repo' --force-clean "build-dir" "com.pojtinger.felicitas.vintangle.yaml"
+
+    # Export `.flatpak` to out dir
+    flatpak --gpg-sign="${PGP_KEY_ID}" build-bundle '/dst/repo' "/dst/bundle/com.pojtinger.felicitas.vintangle.flatpak" "com.pojtinger.felicitas.vintangle"
+
     echo "[Flatpak Repo]
-Title=Unstable Vintangle Flatpak repo
-Url=https://pojntfx.github.io/vintangle/flatpak/unstable/
-Homepage=https://github.com/pojntfx/vintangle/
-Description=Synchronized torrent streaming for distributed watch parties (unstable builds).
-GPGKey=$(base64 -w 0 /tmp/public.asc)
-" >"out/repositories/unstable/vintangle.flatpakrepo"
-    cp -r out/repositories/unstable out/repositories/stable
-    echo "[Flatpak Repo]
-Title=Stable Vintangle Flatpak repo
-Url=https://pojntfx.github.io/vintangle/flatpak/stable/
-Homepage=https://github.com/pojntfx/vintangle/
-Description=Synchronized torrent streaming for distributed watch parties (stable builds).
-GPGKey=$(base64 -w 0 /tmp/public.asc)
-" >"out/repositories/stable/vintangle.flatpakrepo"
+Title=Vintangle Flatpak repo
+Url=https://pojntfx.github.io/vintangle
+Homepage=https://github.com/pojntfx/vintangle
+Description=Flatpaks for Vintangle
+GPGKey=$(base64 -w 0 /tmp/repo.asc)
+" >/dst/repo/vintangle.flatpakrepo
 
     exit 0
-fi
-
-# Windows (see https://gist.github.com/pojntfx/36a1f41ffd34af7d2f3abe43646142e1)
-if [ "$1" = "windows" ]; then
-    # Install native dependencies
-    sudo dnf update -y
-    sudo dnf install -y curl wine
-
-    # Install MSYS2
-    curl -L -o /tmp/msys2.exe 'https://github.com/msys2/msys2-installer/releases/download/2021-11-30/msys2-base-x86_64-20211130.sfx.exe'
-    wine64 /tmp/msys2.exe x -y -oC:/
-
-    # Fix MSYS2
-    sed -i ~/.wine/drive_c/msys64/etc/pacman.conf -e 's/SigLevel    = Required/SigLevel = Never/g'
-    cat /etc/pki/tls/certs/ca-bundle.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.crt
-    cat /etc/pki/tls/certs/ca-bundle.trust.crt >~/.wine/drive_c/msys64/usr/ssl/certs/ca-bundle.trust.crt
-    export WINEPATH="C:\\msys64\\usr\\bin"
-
-    # Install GCC, Go, GTK4 and libadwaita (plus any other packages you want to be included in the image)
-    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
-    wine64 bash.exe -c 'pacman --noconfirm --ignore pacman -Syy'
-    rm -f ~/.wine/drive_c/msys64/var/lib/pacman/db.lck
-    wine64 bash.exe -c 'pacman --noconfirm --ignore pacman --needed -S git mingw-w64-x86_64-gcc mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gtk4 mingw-w64-x86_64-gobject-introspection mingw-w64-x86_64-gobject-introspection-runtime mingw-w64-x86_64-glib2 mingw-w64-x86_64-libadwaita mingw-w64-x86_64-mpv'
-    sed -i ~/.wine/drive_c/msys64/mingw64/lib/pkgconfig/* -e 's/-Wl,-luuid/-luuid/g' # See https://github.com/gotk3/gotk3/wiki/Installing-on-Windows#chocolatey, fails with invalid flag in pkg-config --libs: -Wl,-luuid otherwise
-    mkdir -p ~/.wine/drive_c/go ~/.wine/drive_c/tmp
-
-    # Copy source code to directory on C drive
-    rm -rf ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
-    mkdir -p ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
-    rm -rf out
-    cp -r . ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace
-
-    # Build
-    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go generate ./..."
-    wine64 bash.exe -c "export PATH=$PATH:/mingw64/bin GOPATH=/c/go GOROOT=/mingw64/lib/go TMP=/c/tmp TEMP=/c/tmp GOARCH=amd64 && cd /c/users/$(whoami)/Documents/gotk4-workspace && go build -buildvcs=false -ldflags='-linkmode=external' -x -v -o out/vintangle-gui.exe ./cmd/vintangle-gui"
-
-    # Copy binaries to staging directory
-    rm -rf out
-    mkdir -p out/dist/bin
-    yes | cp -f ~/.wine/drive_c/users/$(whoami)/Documents/gotk4-workspace/out/* out/dist/bin
-
-    # Package
-    cp -r ~/.wine/drive_c/msys64/mingw64/* out/dist
-    cd out/dist || exit
-    zip -FSr ../vintangle-gui.windows-x86_64.exe.zip .
-    cd ..
-    rm -rf dist
 fi

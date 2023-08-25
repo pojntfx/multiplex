@@ -8,7 +8,6 @@ Synchronized torrent streaming for distributed watch parties.
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/vintangle.svg)](https://pkg.go.dev/github.com/pojntfx/vintangle)
 [![Matrix](https://img.shields.io/matrix/vintangle:matrix.org)](https://matrix.to/#/#vintangle:matrix.org?via=matrix.org)
-[![Binary Downloads](https://img.shields.io/github/downloads/pojntfx/vintangle/total?label=binary%20downloads)](https://github.com/pojntfx/vintangle/releases)
 
 ## Overview
 
@@ -22,21 +21,7 @@ It enables you to ...
 
 ## Installation
 
-For Linux, Windows with [WSLg](https://docs.microsoft.com/en-us/windows/wsl/tutorials/gui-apps), and ChromeOS with [Crostini](https://flatpak.org/setup/Chrome%20OS), Vintangle is distributed as a Flatpak. You can install it by running the following:
-
-```shell
-# Install the stable version
-$ flatpak remote-add vintangle-stable --from "https://pojntfx.github.io/vintangle/flatpak/stable/vintangle.flatpakrepo"
-$ flatpak install -y "com.pojtinger.felicitas.vintangle"
-
-# Alternatively, install the unstable version:
-$ flatpak remote-add vintangle-unstable --from "https://pojntfx.github.io/vintangle/flatpak/unstable/vintangle.flatpakrepo"
-$ flatpak install -y "com.pojtinger.felicitas.vintangle"
-```
-
-It will update automatically in the background.
-
-For Windows, you can also find a `.exe` to download on [GitHub releases](https://github.com/pojntfx/vintangle/releases), and on other platforms you can [build from source](#contributing).
+🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
 
 ## Usage
 
@@ -158,32 +143,14 @@ Click on an image to see a larger version.
 
 ## Acknowledgements
 
-- [mpv](https://mpv.io/) provides the media player.
-- [diamondburned/gotk4](https://github.com/diamondburned/gotk4) provides the GTK4 bindings for Go.
-- [diamondburned/gotk4-adwaita](https://github.com/diamondburned/gotk4-adwaita) provides the `libadwaita` bindings for Go.
-- [hTorrent](https://github.com/pojntfx/htorrent) provides the torrent gateway.
-- [weron](https://github.com/pojntfx/weron) provides the WebRTC library for playback synchronization.
-
-To all the rest of the authors who worked on the dependencies used: **Thanks a lot!**
+🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
 
 ## Contributing
 
-To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
-
-To build and start a development version of Vintangle locally, run the following:
-
-```shell
-$ git clone https://github.com/pojntfx/vintangle.git
-$ cd vintangle
-$ make depend
-$ make && sudo make install
-$ vintangle
-```
-
-Have any questions or need help? Chat with us [on Matrix](https://matrix.to/#/#vintangle:matrix.org?via=matrix.org)!
+🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
 
 ## License
 
-Vintangle (c) 2022 Felicitas Pojtinger and contributors
+Vintangle (c) 2023 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0
