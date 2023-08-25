@@ -22,19 +22,10 @@ EOT
 
     # Install Flatpak dependencies
     flatpak remote-add --if-not-exists 'flathub' 'https://flathub.org/repo/flathub.flatpakrepo'
-
-    # Install pre-build SDKs
     flatpak install -y 'flathub' "org.gnome.Platform//44" "org.gnome.Sdk//44" "org.freedesktop.Sdk.Extension.golang//21.08"
 
-    # Build SDK and export to repo
-    flatpak-builder -y --gpg-sign="${PGP_KEY_ID}" --repo='/dst/repo' --force-clean --user --install "build-dir" "org.freedesktop.Sdk.Extension.ImageMagick.yaml"
-
-    # Build app and export to repo
+    # Build repo
     flatpak-builder -y --gpg-sign="${PGP_KEY_ID}" --repo='/dst/repo' --force-clean "build-dir" "com.pojtinger.felicitas.vintangle.yaml"
-
-    # Export `.flatpak` to out dir
-    flatpak --gpg-sign="${PGP_KEY_ID}" build-bundle '/dst/repo' "/dst/bundle/com.pojtinger.felicitas.vintangle.flatpak" "com.pojtinger.felicitas.vintangle"
-
     echo "[Flatpak Repo]
 Title=Vintangle Flatpak repo
 Url=https://pojntfx.github.io/vintangle
@@ -42,6 +33,9 @@ Homepage=https://github.com/pojntfx/vintangle
 Description=Flatpaks for Vintangle
 GPGKey=$(base64 -w 0 /tmp/repo.asc)
 " >/dst/repo/vintangle.flatpakrepo
+
+    # Export bundle
+    flatpak --gpg-sign="${PGP_KEY_ID}" build-bundle '/dst/repo' "/dst/bundle/com.pojtinger.felicitas.vintangle.flatpak" "com.pojtinger.felicitas.vintangle"
 
     exit 0
 fi
