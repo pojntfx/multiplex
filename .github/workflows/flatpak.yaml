@@ -17,3 +17,18 @@ jobs:
           bundle: com.pojtinger.felicitas.vintangle.flatpak
           manifest-path: com.pojtinger.felicitas.vintangle.yaml
           cache-key: flatpak-builder-${{ github.sha }}
+      - name: Publish pre-release bundle to GitHub releases
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: release-${{ steps.extract_branch.outputs.branch }}
+          prerelease: true
+          files: |
+            /flatpak_app/*.flatpak
+      - name: Publish release to GitHub releases
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
