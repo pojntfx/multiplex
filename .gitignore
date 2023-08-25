@@ -1,4 +1,3 @@
-out
-*.compiled
 .flatpak-builder
 build-dir
+*.compiled

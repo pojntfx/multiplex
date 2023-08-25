@@ -4,7 +4,7 @@
 
 Synchronized torrent streaming for distributed watch parties.
 
-[![hydrun CI](https://github.com/pojntfx/vintangle/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/vintangle/actions/workflows/hydrun.yaml)
+[![Flatpak CI](https://github.com/pojntfx/vintangle/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/vintangle/actions/workflows/flatpak.yaml)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/vintangle.svg)](https://pkg.go.dev/github.com/pojntfx/vintangle)
 [![Matrix](https://img.shields.io/matrix/vintangle:matrix.org)](https://matrix.to/#/#vintangle:matrix.org?via=matrix.org)
