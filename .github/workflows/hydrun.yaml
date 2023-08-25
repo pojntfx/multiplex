@@ -18,7 +18,7 @@ jobs:
           - id: flatpak
             src: .
             os: fedora:38
-            flags: ""
+            flags: "-e '--privileged'"
             cmd: ./Hydrunfile flatpak
             dst: out/*
 
