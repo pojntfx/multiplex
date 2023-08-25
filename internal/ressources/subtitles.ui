@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <interface>
-    <requires lib="libadwaita" version="1.1" />
+    <requires lib="libadwaita" version="1.2" />
     <requires lib="gtk" version="4.0" />
 
     <object class="GtkDialog" id="subtitles-dialog">

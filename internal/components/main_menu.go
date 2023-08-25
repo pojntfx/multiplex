@@ -33,7 +33,7 @@ func AddMainMenu(
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
 	aboutBuilder := gtk.NewBuilderFromString(ressources.AboutUI, len(ressources.AboutUI))
-	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*gtk.AboutDialog)
+	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*adw.AboutWindow)
 
 	preferencesBuilder := gtk.NewBuilderFromString(ressources.PreferencesUI, len(ressources.PreferencesUI))
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)

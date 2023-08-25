@@ -1,18 +1,18 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
     <requires lib="gtk" version="4.0" />
+    <requires lib="libadwaita" version="1.2" />
 
-    <object class="GtkAboutDialog" id="about-dialog">
+    <object class="AdwAboutWindow" id="about-dialog">
         <property name="modal">true</property>
-        <property name="authors">Felicitas Pojtinger</property>
-        <property name="comments">Synchronized torrent streaming
-for distributed watch parties.</property>
+        <property name="developer_name">Felicitas Pojtinger</property>
+        <property name="developers">Felicitas Pojtinger</property>
         <property name="copyright">© 2023 Felicitas Pojtinger</property>
         <property name="license-type">GTK_LICENSE_AGPL_3_0</property>
-        <property name="logo-icon-name">multimedia-player-symbolic</property>
-        <property name="program-name">Vintangle</property>
-        <property name="version">unstable</property>
+        <property name="application-icon">com.pojtinger.felicitas.vintangle</property>
+        <property name="application-name">Vintangle</property>
+        <property name="version">0.1.0</property>
+        <property name="issue_url">https://github.com/pojntfx/vintangle/issues/new/choose</property>
         <property name="website">https://github.com/pojntfx/vintangle</property>
-        <property name="website-label">Website</property>
     </object>
 </interface>
