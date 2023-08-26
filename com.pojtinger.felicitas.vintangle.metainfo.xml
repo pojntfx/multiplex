@@ -16,6 +16,42 @@
         </ul>
     </description>
 
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/sync-playback.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/initial.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/media-selection.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/confirmation.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/playback.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/audiotracks.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/subtitles.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/join.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/prefs-playback.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/prefs-remoting.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/prefs-sync.png</image>
+        </screenshot>
+    </screenshots>
+
     <launchable type="desktop-id">com.pojtinger.felicitas.vintangle.desktop</launchable>
 
     <url type="homepage">https://github.com/pojntfx/vintangle</url>
