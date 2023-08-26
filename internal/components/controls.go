@@ -29,12 +29,12 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/vintangle/internal/gschema"
-	"github.com/pojntfx/vintangle/internal/ressources"
-	"github.com/pojntfx/vintangle/internal/utils"
-	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
-	api "github.com/pojntfx/vintangle/pkg/api/webrtc/v1"
-	mpvClient "github.com/pojntfx/vintangle/pkg/client"
+	"github.com/pojntfx/multiplex/internal/gschema"
+	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/utils"
+	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
+	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
+	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 	"github.com/teivah/broadcast"
@@ -252,7 +252,7 @@ func OpenControlsWindow(
 			u.String(),
 			key,
 			strings.Split(settings.String(gschema.WeronICEFlag), ","),
-			[]string{"vintangle/sync"},
+			[]string{"multiplex/sync"},
 			&wrtcconn.AdapterConfig{
 				Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(gschema.WeronTimeoutFlag))),
 				ForceRelay: settings.Boolean(gschema.WeronForceRelayFlag),

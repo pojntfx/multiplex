@@ -1,10 +1,10 @@
-app-id: com.pojtinger.felicitas.Vintangle
+app-id: com.pojtinger.felicitas.Multiplex
 runtime: org.gnome.Platform
 runtime-version: "44"
 sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.golang
-command: vintangle
+command: multiplex
 finish-args:
   - --share=network
   - --socket=fallback-x11

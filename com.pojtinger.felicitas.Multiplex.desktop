@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Vintangle
+Name=Multiplex
 Comment=Synchronized torrent streaming for distributed watch parties.
-Exec=vintangle
-Icon=com.pojtinger.felicitas.Vintangle
+Exec=multiplex
+Icon=com.pojtinger.felicitas.Multiplex
 Categories=AudioVideo;Video

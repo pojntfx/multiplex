@@ -19,7 +19,7 @@
             </item>
 
             <item>
-                <attribute name="label" translatable="yes">About Vintangle</attribute>
+                <attribute name="label" translatable="yes">About Multiplex</attribute>
                 <attribute name="action">win.about</attribute>
             </item>
         </section>

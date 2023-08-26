@@ -1,4 +1,4 @@
-module github.com/pojntfx/vintangle
+module github.com/pojntfx/multiplex
 
 go 1.18
 

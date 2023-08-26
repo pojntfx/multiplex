@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-    <schema id="com.pojtinger.felicitas.Vintangle.state" path="/com/pojtinger/felicitas/Vintangle/state/">
+    <schema id="com.pojtinger.felicitas.Multiplex.state" path="/com/pojtinger/felicitas/Multiplex/state/">
         <key name='verbose' type='x'>
             <default>5</default>
             <summary>Verbosity level</summary>

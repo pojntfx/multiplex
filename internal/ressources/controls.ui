@@ -6,7 +6,7 @@
     <object class="AdwApplicationWindow" id="main-window">
         <property name="default-width">700</property>
         <property name="default-height">0</property>
-        <property name="title">Vintangle</property>
+        <property name="title">Multiplex</property>
         <property name="resizable">false</property>
 
         <property name="content">

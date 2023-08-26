@@ -1,29 +1,29 @@
-# Vintangle
+# Multiplex
 
 ![Logo](./docs/logo-readme.png)
 
 Synchronized torrent streaming for distributed watch parties.
 
-[![Flatpak CI](https://github.com/pojntfx/vintangle/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/vintangle/actions/workflows/flatpak.yaml)
+[![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
-[![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/vintangle.svg)](https://pkg.go.dev/github.com/pojntfx/vintangle)
-[![Matrix](https://img.shields.io/matrix/vintangle:matrix.org)](https://matrix.to/#/#vintangle:matrix.org?via=matrix.org)
+[![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/multiplex.svg)](https://pkg.go.dev/github.com/pojntfx/multiplex)
+[![Matrix](https://img.shields.io/matrix/multiplex:matrix.org)](https://matrix.to/#/#multiplex:matrix.org?via=matrix.org)
 
 ## Overview
 
-Vintangle is an app to watch torrents together, providing an experience similar to Apple's [SharePlay](https://support.apple.com/en-us/HT212823) and Amazon's [Prime Video Watch Party](https://www.amazon.com/adlp/watchparty).
+Multiplex is an app to watch torrents together, providing an experience similar to Apple's [SharePlay](https://support.apple.com/en-us/HT212823) and Amazon's [Prime Video Watch Party](https://www.amazon.com/adlp/watchparty).
 
 It enables you to ...
 
-- **Stream any torrent**: By utilizing the mpv video player, Vintangle has support for a wide range of video and audio formats.
-- **Synchronize playback between remote peers**: Thanks to [weron](https://github.com/pojntfx/weron), Vintangle can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.
-- **Circumvent BitTorrent protocol censorship**: By splitting the core [hTorrent backend](https://github.com/pojntfx/weron) and UI into two separate projects, Vintangle can be used without having to connect a client to the BitTorrent protocol.
+- **Stream any torrent**: By utilizing the mpv video player, Multiplex has support for a wide range of video and audio formats.
+- **Synchronize playback between remote peers**: Thanks to [weron](https://github.com/pojntfx/weron), Multiplex can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.
+- **Circumvent BitTorrent protocol censorship**: By splitting the core [hTorrent backend](https://github.com/pojntfx/weron) and UI into two separate projects, Multiplex can be used without having to connect a client to the BitTorrent protocol.
 
 ## Installation
 
-On Linux, Vintangle is available on Flathub:
+On Linux, Multiplex is available on Flathub:
 
-<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.Vintangle"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Flathub badge" width="200"/></a>
+<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.Multiplex"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Flathub badge" width="200"/></a>
 
 For other platforms, see [contributing](#contributing).
 
@@ -31,7 +31,7 @@ For other platforms, see [contributing](#contributing).
 
 ### 1. Start Streaming a Torrent
 
-To get started, first find a [magnet link](https://en.wikipedia.org/wiki/Magnet_URI_scheme) that you want to stream. There are many sites on the internet to find them; check out [webtorrent.io/free-torrents](https://webtorrent.io/free-torrents) for some copyright-free torrents to try out. Once you've found one, launch Vintangle and enter the link:
+To get started, first find a [magnet link](https://en.wikipedia.org/wiki/Magnet_URI_scheme) that you want to stream. There are many sites on the internet to find them; check out [webtorrent.io/free-torrents](https://webtorrent.io/free-torrents) for some copyright-free torrents to try out. Once you've found one, launch Multiplex and enter the link:
 
 <p align="center">
   <img alt="Starting the app" src="./docs/launch-app.png" />
@@ -39,7 +39,7 @@ To get started, first find a [magnet link](https://en.wikipedia.org/wiki/Magnet_
 
 ![Initial start screen with link entered](./docs/link-entered.png)
 
-Note that Vintangle will prompt you to install the [mpv media player](https://mpv.io/) if you don't already have it installed; to continue, please do so:
+Note that Multiplex will prompt you to install the [mpv media player](https://mpv.io/) if you don't already have it installed; to continue, please do so:
 
 <p align="center">
   <img alt="Prompt to install mpv" src="./docs/install-mpv.png" />
@@ -65,7 +65,7 @@ After you've given your consent, playback will start, and you can enjoy the medi
 
 ## 2. Ask Friends to Join
 
-While consuming media on your own can be fun, doing so with friends or your SO is always better. I built Vintangle to enjoy media together with my partner, but due to COVID and the Atlantic ocean we're unable to do so in person all the time - this app intents to bridge that gap. To ask someone to join, click on the people button in the top right, and copy the [stream code](https://github.com/pojntfx/vintangle/wiki/Stream-Codes):
+While consuming media on your own can be fun, doing so with friends or your SO is always better. I built Multiplex to enjoy media together with my partner, but due to COVID and the Atlantic ocean we're unable to do so in person all the time - this app intents to bridge that gap. To ask someone to join, click on the people button in the top right, and copy the [stream code](https://github.com/pojntfx/multiplex/wiki/Stream-Codes):
 
 ![Join screen](./docs/join.png)
 
@@ -85,9 +85,9 @@ All play/pause events, seeking position etc. will be synchronized between all pe
 
 ## 3. Increase Privacy and Security
 
-As noted above, the legality of consuming media from torrents depends on the country you're in. In most countries, following [these guidelines on VPNs from the Electronic Frontier Foundation](https://sec.eff.org/topics/VPN) will suffice, but Vintangle provides an additional option: **Remoting**.
+As noted above, the legality of consuming media from torrents depends on the country you're in. In most countries, following [these guidelines on VPNs from the Electronic Frontier Foundation](https://sec.eff.org/topics/VPN) will suffice, but Multiplex provides an additional option: **Remoting**.
 
-Vintangle is built on [hTorrent](https://github.com/pojntfx/htorrent), an HTTP to BitTorrent gateway. Using remoting, it is possible to use a trusted server as a proxy to stream torrents from. This makes it possible to not only increase security for all peers without them having to take the appropriate measures themselves, but it can also increase the performance by caching the media on a single server with a good internet connection. To enable remoting, first [host a hTorrent gateway with basic authentication enabled](https://github.com/pojntfx/htorrent#1-start-a-gateway-with-htorrent-gateway) - be sure to set up TLS certificates to enable encryption, for example by using [Caddy](https://caddyserver.com/). Once you have a gateway set up, you can configure Vintangle to use in its preferences:
+Multiplex is built on [hTorrent](https://github.com/pojntfx/htorrent), an HTTP to BitTorrent gateway. Using remoting, it is possible to use a trusted server as a proxy to stream torrents from. This makes it possible to not only increase security for all peers without them having to take the appropriate measures themselves, but it can also increase the performance by caching the media on a single server with a good internet connection. To enable remoting, first [host a hTorrent gateway with basic authentication enabled](https://github.com/pojntfx/htorrent#1-start-a-gateway-with-htorrent-gateway) - be sure to set up TLS certificates to enable encryption, for example by using [Caddy](https://caddyserver.com/). Once you have a gateway set up, you can configure Multiplex to use in its preferences:
 
 ![Remoting preferences](./docs/prefs-remoting.png)
 
@@ -95,7 +95,7 @@ Be sure to ask the people who want to stream the media with you to also use the 
 
 For more preferences, see the [screenshots](#screenshots).
 
-🚀 **That's it!** We hope you enjoy using Vintangle.
+🚀 **That's it!** We hope you enjoy using Multiplex.
 
 ## Screenshots
 
@@ -157,17 +157,17 @@ Click on an image to see a larger version.
 
 To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
-To build and start a development version of Vintangle locally, run the following:
+To build and start a development version of Multiplex locally, run the following:
 
 ```shell
-$ git clone https://github.com/pojntfx/vintangle.git
-$ cd vintangle
+$ git clone https://github.com/pojntfx/multiplex.git
+$ cd multiplex
 $ go generate ./...
 $ go run .
 ```
 
 ## License
 
-Vintangle (c) 2023 Felicitas Pojtinger and contributors
+Multiplex (c) 2023 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0

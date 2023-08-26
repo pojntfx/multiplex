@@ -8,12 +8,12 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pojntfx/vintangle/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/ressources"
 	"github.com/rs/zerolog/log"
 )
 
 const (
-	issuesURL = "https://github.com/pojntfx/vintangle/issues"
+	issuesURL = "https://github.com/pojntfx/multiplex/issues"
 )
 
 func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err error) {
@@ -24,7 +24,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	errorBuilder := gtk.NewBuilderFromString(ressources.ErrorUI, len(ressources.ErrorUI))
 	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
 	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
-	closeVintangleButton := errorBuilder.GetObject("close-vintangle-button").Cast().(*gtk.Button)
+	closeMultiplexButton := errorBuilder.GetObject("close-multiplex-button").Cast().(*gtk.Button)
 
 	errorDialog.Object.SetObjectProperty("secondary-text", err.Error())
 
@@ -45,7 +45,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		})
 	})
 
-	closeVintangleButton.ConnectClicked(func() {
+	closeMultiplexButton.ConnectClicked(func() {
 		errorDialog.Close()
 
 		os.Exit(1)

@@ -11,9 +11,9 @@ import (
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/vintangle/internal/gschema"
-	"github.com/pojntfx/vintangle/internal/ressources"
-	"github.com/pojntfx/vintangle/internal/utils"
+	"github.com/pojntfx/multiplex/internal/gschema"
+	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/utils"
 )
 
 func AddMainMenu(

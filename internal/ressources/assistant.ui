@@ -6,7 +6,7 @@
     <object class="AdwApplicationWindow" id="main-window">
         <property name="default-width">1024</property>
         <property name="default-height">680</property>
-        <property name="title">Vintangle</property>
+        <property name="title">Multiplex</property>
 
         <child type="content">
             <object class="AdwToastOverlay" id="toast-overlay">
@@ -155,9 +155,9 @@
                                                             <object class="AdwStatusPage">
                                                                 <property name="margin-start">12</property>
                                                                 <property name="margin-end">12</property>
-                                                                <property name="icon-name">com.pojtinger.felicitas.Vintangle</property>
-                                                                <property name="title">Vintangle</property>
-                                                                <property name="description"><![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/vintangle/wiki/Stream-Codes">stream code</a> to start streaming]]></property>
+                                                                <property name="icon-name">com.pojtinger.felicitas.Multiplex</property>
+                                                                <property name="title">Multiplex</property>
+                                                                <property name="description"><![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/multiplex/wiki/Stream-Codes">stream code</a> to start streaming]]></property>
 
                                                                 <child>
                                                                     <object class="GtkEntry" id="magnet-link-entry">

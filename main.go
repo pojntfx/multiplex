@@ -17,23 +17,23 @@ import (
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/vintangle/internal/components"
-	"github.com/pojntfx/vintangle/internal/crypto"
-	"github.com/pojntfx/vintangle/internal/gschema"
-	"github.com/pojntfx/vintangle/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/components"
+	"github.com/pojntfx/multiplex/internal/crypto"
+	"github.com/pojntfx/multiplex/internal/gschema"
+	"github.com/pojntfx/multiplex/internal/ressources"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 const (
-	appID   = "com.pojtinger.felicitas.Vintangle"
+	appID   = "com.pojtinger.felicitas.Multiplex"
 	stateID = appID + ".state"
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
 )
 
 func main() {
-	tmpDir, err := os.MkdirTemp(os.TempDir(), "vintangle-gschemas")
+	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
 	if err != nil {
 		panic(err)
 	}
@@ -55,7 +55,7 @@ func main() {
 			panic(err)
 		}
 
-		downloadPath := filepath.Join(home, "Downloads", "Vintangle")
+		downloadPath := filepath.Join(home, "Downloads", "Multiplex")
 
 		settings.SetString(gschema.StorageFlag, downloadPath)
 

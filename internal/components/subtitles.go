@@ -11,8 +11,8 @@ import (
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	mpv "github.com/pojntfx/vintangle/pkg/api/sockets/v1"
-	mpvClient "github.com/pojntfx/vintangle/pkg/client"
+	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
+	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/rs/zerolog/log"
 )
 
