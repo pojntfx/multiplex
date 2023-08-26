@@ -28,7 +28,7 @@ jobs:
           automatic_release_tag: release-${{ steps.extract_branch.outputs.branch }}
           prerelease: true
           files: |
-            /flatpak_app/*.flatpak
+            *.flatpak
       - name: Publish release to GitHub releases
         if: startsWith(github.ref, 'refs/tags/v')
         uses: marvinpinto/action-automatic-releases@latest
