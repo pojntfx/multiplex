@@ -21,7 +21,11 @@ It enables you to ...
 
 ## Installation
 
-🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
+On Linux, Vintangle is available on Flathub:
+
+<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.vintangle"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" width="200"/></a>
+
+For other platforms, see [contributing](#contributing).
 
 ## Usage
 
@@ -143,7 +147,11 @@ Click on an image to see a larger version.
 
 ## Acknowledgements
 
-🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
+- [mpv](https://mpv.io/) provides the media player.
+- [diamondburned/gotk4](https://github.com/diamondburned/gotk4) provides the GTK4 bindings for Go.
+- [diamondburned/gotk4-adwaita](https://github.com/diamondburned/gotk4-adwaita) provides the `libadwaita` bindings for Go.
+- [hTorrent](https://github.com/pojntfx/htorrent) provides the torrent gateway.
+- [weron](https://github.com/pojntfx/weron) provides the WebRTC library for playback synchronization.
 
 ## Contributing
 
