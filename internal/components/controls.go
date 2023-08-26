@@ -1282,7 +1282,7 @@ func OpenControlsWindow(
 					}
 
 					if total != 0 && !preparingClosed {
-						preparingWindow.Close()
+						preparingWindow.Hide()
 
 						preparingClosed = true
 					}
