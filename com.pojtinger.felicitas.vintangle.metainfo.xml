@@ -4,15 +4,15 @@
     <metadata_license>MIT</metadata_license>
     <project_license>AGPL-3.0-or-later</project_license>
     <name>Vintangle</name>
-    <summary>Synchronized torrent streaming for distributed watch parties.</summary>
+    <summary>Synchronized torrent streaming for distributed watch parties</summary>
 
     <description>
-        <p>Vintangle is an app to watch torrents together, providing an experience similar to Apple&#39;s <a href="https://support.apple.com/en-us/HT212823">SharePlay</a> and Amazon&#39;s <a href="https://www.amazon.com/adlp/watchparty">Prime Video Watch Party</a>.</p>
+        <p>Vintangle is an app to watch torrents together, providing an experience similar to Apple&#39;s SharePlay and Amazon&#39;s Prime Video Watch Party.</p>
         <p>It enables you to ...</p>
         <ul>
-            <li><strong>Stream any torrent</strong>: By utilizing the mpv video player, Vintangle has support for a wide range of video and audio formats.</li>
-            <li><strong>Synchronize playback between remote peers</strong>: Thanks to <a href="https://github.com/pojntfx/weron">weron</a>, Vintangle can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.</li>
-            <li><strong>Circumvent BitTorrent protocol censorship</strong>: By splitting the core <a href="https://github.com/pojntfx/weron">hTorrent backend</a> and UI into two separate projects, Vintangle can be used without having to connect a client to the BitTorrent protocol.</li>
+            <li>Stream any torrent: By utilizing the mpv video player, Vintangle has support for a wide range of video and audio formats.</li>
+            <li>Synchronize playback between remote peers: Thanks to weron, Vintangle can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.</li>
+            <li>Circumvent BitTorrent protocol censorship: By splitting the core hTorrent backend and UI into two separate projects, Vintangle can be used without having to connect a client to the BitTorrent protocol.</li>
         </ul>
     </description>
 
@@ -55,6 +55,7 @@
     <launchable type="desktop-id">com.pojtinger.felicitas.vintangle.desktop</launchable>
 
     <url type="homepage">https://github.com/pojntfx/vintangle</url>
+    <url type="bugtracker">https://github.com/pojntfx/vintangle/issues</url>
 
     <provides>
         <binary>com.pojtinger.felicitas.vintangle</binary>
