@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	appID   = "com.pojtinger.felicitas.vintangle"
+	appID   = "com.pojtinger.felicitas.Vintangle"
 	stateID = appID + ".state"
 
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"

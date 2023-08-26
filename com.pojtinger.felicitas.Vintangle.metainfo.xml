@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>com.pojtinger.felicitas.vintangle</id>
+    <id>com.pojtinger.felicitas.Vintangle</id>
     <metadata_license>MIT</metadata_license>
     <project_license>AGPL-3.0-or-later</project_license>
     <name>Vintangle</name>
@@ -52,13 +52,14 @@
         </screenshot>
     </screenshots>
 
-    <launchable type="desktop-id">com.pojtinger.felicitas.vintangle.desktop</launchable>
+    <launchable type="desktop-id">com.pojtinger.felicitas.Vintangle.desktop</launchable>
 
     <url type="homepage">https://github.com/pojntfx/vintangle</url>
     <url type="bugtracker">https://github.com/pojntfx/vintangle/issues</url>
+    <url type="help">https://matrix.to/#/#vintangle:matrix.org?via=matrix.org</url>
 
     <provides>
-        <binary>com.pojtinger.felicitas.vintangle</binary>
+        <binary>vintangle</binary>
     </provides>
 
     <releases>

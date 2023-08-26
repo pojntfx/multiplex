@@ -155,7 +155,7 @@
                                                             <object class="AdwStatusPage">
                                                                 <property name="margin-start">12</property>
                                                                 <property name="margin-end">12</property>
-                                                                <property name="icon-name">com.pojtinger.felicitas.vintangle</property>
+                                                                <property name="icon-name">com.pojtinger.felicitas.Vintangle</property>
                                                                 <property name="title">Vintangle</property>
                                                                 <property name="description"><![CDATA[Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/vintangle/wiki/Stream-Codes">stream code</a> to start streaming]]></property>
 

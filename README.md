@@ -23,7 +23,7 @@ It enables you to ...
 
 On Linux, Vintangle is available on Flathub:
 
-<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.vintangle"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" width="200"/></a>
+<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.Vintangle"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Flathub badge" width="200"/></a>
 
 For other platforms, see [contributing](#contributing).
 
@@ -155,7 +155,16 @@ Click on an image to see a larger version.
 
 ## Contributing
 
-🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
+To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+To build and start a development version of Vintangle locally, run the following:
+
+```shell
+$ git clone https://github.com/pojntfx/vintangle.git
+$ cd vintangle
+$ go generate ./...
+$ go run .
+```
 
 ## License
 
