@@ -5,4 +5,4 @@ Name=Vintangle
 Comment=Synchronized torrent streaming for distributed watch parties.
 Exec=vintangle
 Icon=com.pojtinger.felicitas.Vintangle
-Categories=AudioVideo;Video;Network
+Categories=AudioVideo;Video
