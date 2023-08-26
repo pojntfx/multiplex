@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
     <id>com.pojtinger.felicitas.Vintangle</id>
-    <metadata_license>MIT</metadata_license>
-    <project_license>AGPL-3.0-or-later</project_license>
     <name>Vintangle</name>
     <summary>Synchronized torrent streaming for distributed watch parties</summary>
+
+    <metadata_license>MIT</metadata_license>
+    <project_license>AGPL-3.0-or-later</project_license>
+
+    <content_rating type="oars-1.1">
+        <content_attribute id="social-chat">mild</content_attribute>
+    </content_rating>
+
+    <url type="homepage">https://github.com/pojntfx/vintangle</url>
+    <url type="bugtracker">https://github.com/pojntfx/vintangle/issues</url>
+    <url type="help">https://matrix.to/#/#vintangle:matrix.org?via=matrix.org</url>
+
+    <launchable type="desktop-id">com.pojtinger.felicitas.Vintangle.desktop</launchable>
+
+    <provides>
+        <binary>vintangle</binary>
+    </provides>
 
     <description>
         <p>Vintangle is an app to watch torrents together, providing an experience similar to Apple&#39;s SharePlay and Amazon&#39;s Prime Video Watch Party.</p>
@@ -51,16 +66,6 @@
             <image>https://raw.githubusercontent.com/pojntfx/vintangle/main/docs/prefs-sync.png</image>
         </screenshot>
     </screenshots>
-
-    <launchable type="desktop-id">com.pojtinger.felicitas.Vintangle.desktop</launchable>
-
-    <url type="homepage">https://github.com/pojntfx/vintangle</url>
-    <url type="bugtracker">https://github.com/pojntfx/vintangle/issues</url>
-    <url type="help">https://matrix.to/#/#vintangle:matrix.org?via=matrix.org</url>
-
-    <provides>
-        <binary>vintangle</binary>
-    </provides>
 
     <releases>
         <release version="0.1.0" date='2023-08-25T20:47:35Z07:00'>
