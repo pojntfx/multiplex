@@ -63,32 +63,27 @@
                                                     <object class="GtkBox">
                                                         <child>
                                                             <object class="GtkBox">
-                                                                <property name="orientation">
-                                                                    vertical</property>
+                                                                <property name="orientation">vertical</property>
                                                                 <property name="halign">center</property>
                                                                 <property name="valign">center</property>
 
                                                                 <child>
-                                                                    <object class="GtkLabel"
-                                                                        id="button-headerbar-title">
+                                                                    <object class="GtkLabel" id="button-headerbar-title">
                                                                         <style>
                                                                             <class name="title"></class>
                                                                         </style>
 
-                                                                        <property name="label">
-                                                                            Welcome</property>
+                                                                        <property name="label">Welcome</property>
                                                                     </object>
                                                                 </child>
 
                                                                 <child>
-                                                                    <object class="GtkLabel"
-                                                                        id="button-headerbar-subtitle">
+                                                                    <object class="GtkLabel" id="button-headerbar-subtitle">
                                                                         <style>
                                                                             <class name="subtitle"></class>
                                                                         </style>
 
-                                                                        <property name="visible">
-                                                                            false</property>
+                                                                        <property name="visible">false</property>
                                                                     </object>
                                                                 </child>
                                                             </object>
@@ -167,11 +162,8 @@
                                                                 </property>
 
                                                                 <child>
-                                                                    <object class="GtkEntry"
-                                                                        id="magnet-link-entry">
-                                                                        <property
-                                                                            name="placeholder-text">Magnet
-                                                                            link or stream code</property>
+                                                                    <object class="GtkEntry" id="magnet-link-entry">
+                                                                        <property name="placeholder-text">Magnet link or stream code</property>
                                                                     </object>
                                                                 </child>
                                                             </object>
@@ -195,16 +187,12 @@
                                                             <object class="AdwStatusPage">
                                                                 <property name="margin-start">12</property>
                                                                 <property name="margin-end">12</property>
-                                                                <property name="icon-name">
-                                                                    applications-multimedia-symbolic</property>
+                                                                <property name="icon-name">applications-multimedia-symbolic</property>
                                                                 <property name="title">Media</property>
-                                                                <property name="description">Select
-                                                                    the file you want to play</property>
+                                                                <property name="description">Select the file you want to play</property>
 
                                                                 <child>
-                                                                    <object
-                                                                        class="AdwPreferencesGroup"
-                                                                        id="media-selection-group"></object>
+                                                                    <object class="AdwPreferencesGroup" id="media-selection-group"></object>
                                                                 </child>
                                                             </object>
                                                         </child>
@@ -227,54 +215,32 @@
                                                             <object class="AdwStatusPage">
                                                                 <property name="margin-start">12</property>
                                                                 <property name="margin-end">12</property>
-                                                                <property name="icon-name">
-                                                                    emblem-ok-symbolic</property>
-                                                                <property name="title">You're all
-                                                                    set!</property>
+                                                                <property name="icon-name">emblem-ok-symbolic</property>
+                                                                <property name="title">You're all set!</property>
 
                                                                 <child>
                                                                     <object class="GtkBox">
-                                                                        <property name="orientation">
-                                                                            vertical</property>
+                                                                        <property name="orientation">vertical</property>
                                                                         <property name="spacing">36</property>
-                                                                        <property name="halign">
-                                                                            center</property>
-                                                                        <property name="valign">
-                                                                            center</property>
+                                                                        <property name="halign">center</property>
+                                                                        <property name="valign">center</property>
 
                                                                         <child>
-                                                                            <object
-                                                                                class="GtkCheckButton"
-                                                                                id="rights-confirmation-button">
-                                                                                <property
-                                                                                    name="label"> I
-                                                                                    have the right
-                                                                                    to stream the
-                                                                                    selected media</property>
+                                                                            <object class="GtkCheckButton" id="rights-confirmation-button">
+                                                                                <property name="label">I have the right to stream the selected media</property>
                                                                             </object>
                                                                         </child>
 
                                                                         <child>
-                                                                            <object
-                                                                                class="AdwSplitButton"
-                                                                                id="download-and-play-button">
+                                                                            <object class="AdwSplitButton" id="download-and-play-button">
                                                                                 <style>
-                                                                                    <class
-                                                                                        name="pill"></class>
+                                                                                    <class name="pill"></class>
                                                                                 </style>
 
-                                                                                <property
-                                                                                    name="label">Download
-                                                                                    and Play</property>
-                                                                                <property
-                                                                                    name="sensitive">
-                                                                                    false</property>
-                                                                                <property
-                                                                                    name="halign">
-                                                                                    center</property>
-                                                                                <property
-                                                                                    name="popover">
-                                                                                    stream-popover</property>
+                                                                                <property name="label">Download and Play</property>
+                                                                                <property name="sensitive">false</property>
+                                                                                <property name="halign">center</property>
+                                                                                <property name="popover">stream-popover</property>
                                                                             </object>
                                                                         </child>
                                                                     </object>

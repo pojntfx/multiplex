@@ -44,7 +44,7 @@
         </key>
 
         <key name='weronurl' type='s'>
-            <default>"wss://weron.herokuapp.com/"</default>
+            <default>"wss://weron.up.railway.app/"</default>
             <summary>weron URL</summary>
             <description>URL for the weron signaling server</description>
         </key>
