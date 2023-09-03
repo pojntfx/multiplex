@@ -20,6 +20,7 @@
       "name": "app",
       "buildsystem": "simple",
       "build-commands": [
+        "mkdir -p vendor && cp modules.txt vendor/modules.txt",
         ". /usr/lib/sdk/golang/enable.sh && export GOBIN=\"/app/bin\" && go generate ./... && go install -v -mod=vendor .",
         "desktop-file-install --dir=/app/share/applications $FLATPAK_ID.desktop",
         "install -D -m 0644 $FLATPAK_ID.metainfo.xml /app/share/metainfo/$FLATPAK_ID.metainfo.xml",
@@ -27,7 +28,6 @@
       ],
       "sources": [
         { "type": "dir", "path": "." },
-        { "type": "file", "path": "modules.txt", "dest": "vendor" },
         {
           "type": "archive",
           "url": "https://proxy.golang.org/github.com/anacrolix/torrent/@v/v1.52.5.zip",
