@@ -25,7 +25,7 @@ On Linux, Multiplex is available on Flathub:
 
 <a href="https://flathub.org/apps/details/com.pojtinger.felicitas.Multiplex"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Flathub badge" width="200"/></a>
 
-For other platforms, see [contributing](#contributing).
+For other platforms, see [contributing](#contributing); development builds are also available on [GitHub releases](https://github.com/pojntfx/multiplex/releases/tag/release-main).
 
 ## Usage
 
@@ -147,6 +147,7 @@ Click on an image to see a larger version.
 
 ## Acknowledgements
 
+- [Brage Fuglseth](https://bragefuglseth.dev/) contributed the icon.
 - [mpv](https://mpv.io/) provides the media player.
 - [diamondburned/gotk4](https://github.com/diamondburned/gotk4) provides the GTK4 bindings for Go.
 - [diamondburned/gotk4-adwaita](https://github.com/diamondburned/gotk4-adwaita) provides the `libadwaita` bindings for Go.
@@ -165,6 +166,8 @@ $ cd multiplex
 $ go generate ./... # Also see https://github.com/dennwc/flatpak-go-mod for updating the Flatpak manifest with Go dependencies
 $ go run .
 ```
+
+You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gnome.Builder) and run it by clicking the play button in the header bar.
 
 ## License
 
