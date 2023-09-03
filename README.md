@@ -162,7 +162,7 @@ To build and start a development version of Multiplex locally, run the following
 ```shell
 $ git clone https://github.com/pojntfx/multiplex.git
 $ cd multiplex
-$ go generate ./...
+$ go generate ./... # Also see https://github.com/dennwc/flatpak-go-mod for updating the Flatpak manifest with Go dependencies
 $ go run .
 ```
 

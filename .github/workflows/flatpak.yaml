@@ -15,7 +15,7 @@ jobs:
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.1
         with:
           bundle: com.pojtinger.felicitas.Multiplex.flatpak
-          manifest-path: com.pojtinger.felicitas.Multiplex.yaml
+          manifest-path: com.pojtinger.felicitas.Multiplex.json
           cache-key: flatpak-builder-${{ github.sha }}
       - name: Extract branch name
         id: extract_branch
