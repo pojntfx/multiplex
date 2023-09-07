@@ -2,7 +2,7 @@
 <component type="desktop-application">
     <id>com.pojtinger.felicitas.Multiplex</id>
     <name>Multiplex</name>
-    <summary>Synchronized torrent streaming for distributed watch parties</summary>
+    <summary>Watch torrents with your friends</summary>
 
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>AGPL-3.0-or-later</project_license>

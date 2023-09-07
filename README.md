@@ -2,7 +2,7 @@
 
 ![Logo](./docs/logo-readme.png)
 
-Synchronized torrent streaming for distributed watch parties.
+Watch torrents with your friends.
 
 [![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
