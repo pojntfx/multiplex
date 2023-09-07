@@ -17,7 +17,7 @@ It enables you to ...
 
 - **Stream any torrent**: By utilizing the mpv video player, Multiplex has support for a wide range of video and audio formats.
 - **Synchronize playback between remote peers**: Thanks to [weron](https://github.com/pojntfx/weron), Multiplex can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.
-- **Circumvent BitTorrent protocol censorship**: By splitting the core [hTorrent backend](https://github.com/pojntfx/weron) and UI into two separate projects, Multiplex can be used without having to connect a client to the BitTorrent protocol.
+- **Circumvent BitTorrent protocol censorship**: By splitting the core [hTorrent HTTP to BitTorrent gateway](https://github.com/pojntfx/htorrent) and UI into two separate projects, Multiplex can be used without having to connect a client to the BitTorrent protocol.
 
 ## Installation
 
