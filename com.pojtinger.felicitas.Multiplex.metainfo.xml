@@ -68,6 +68,12 @@
     </screenshots>
 
     <releases>
+        <release version="0.1.2" date='2023-09-22T19:08:00Z07:00'>
+            <description>
+                <p>Visual refinements to match the state of the art of GNOME apps</p>
+            </description>
+        </release>
+
         <release version="0.1.1" date='2023-09-07T14:16:00Z07:00'>
             <description>
                 <p>Simplify summary and improve build system conventions</p>
