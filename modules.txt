@@ -323,7 +323,7 @@ github.com/pojntfx/go-auth-utils/pkg/authn/oidc
 github.com/pojntfx/htorrent/pkg/api/http/v1
 github.com/pojntfx/htorrent/pkg/client
 github.com/pojntfx/htorrent/pkg/server
-# github.com/pojntfx/weron v0.2.5
+# github.com/pojntfx/weron v0.2.6
 ## explicit; go 1.18
 github.com/pojntfx/weron/internal/api/websocket
 github.com/pojntfx/weron/internal/encryption

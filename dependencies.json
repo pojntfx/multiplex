@@ -43,10 +43,10 @@
   },
   {
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/pojntfx/weron/@v/v0.2.5.zip",
+    "url": "https://proxy.golang.org/github.com/pojntfx/weron/@v/v0.2.6.zip",
     "strip-components": 3,
     "dest": "vendor/github.com/pojntfx/weron",
-    "sha256": "56a71835f7e7af0cc3d0887126935568a5eab69cbdf4b4f68d243adc2a12761f"
+    "sha256": "bd128e4979e6c2e6ed8d5f61e47d68e9aea31f8c647443e985b28bb438f6e028"
   },
   {
     "type": "archive",

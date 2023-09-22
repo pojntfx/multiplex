@@ -303,8 +303,8 @@ github.com/pojntfx/go-auth-utils v0.1.0 h1:nM19hBX3zIs/tTv1ZAJN+m5occkUPQUKJtWG6
 github.com/pojntfx/go-auth-utils v0.1.0/go.mod h1:0GYzRzRxJ+sbMl1sJ3Ko0M4GAHJF2sWkL/MAqQmf5yc=
 github.com/pojntfx/htorrent v0.5.3 h1:blZGJWmdOlTuJKx7wc/PZVDwAwtqPgymG0A0jrlIBDM=
 github.com/pojntfx/htorrent v0.5.3/go.mod h1:JBa9y1Jh8iqz8S14fPDhR0e4ujk6PDiUERssNvpRSbE=
-github.com/pojntfx/weron v0.2.5 h1:KaUdJl1RY4HyQ42whwOGj6Uaf1uJ19xvcjuCB73oOX4=
-github.com/pojntfx/weron v0.2.5/go.mod h1:dnxOXCpQ0bgITpa7Uax/UYdpBJ+I32LzBhmHu+RT6gA=
+github.com/pojntfx/weron v0.2.6 h1:WdxChtSlGk/04pRlBerWc5d1D5020bHpaZvzV0MOimw=
+github.com/pojntfx/weron v0.2.6/go.mod h1:dnxOXCpQ0bgITpa7Uax/UYdpBJ+I32LzBhmHu+RT6gA=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829/go.mod h1:p2iRAGwDERtqlqzRXnrOVns+ignqQo//hLXqYxZYVNs=
 github.com/prometheus/client_golang v1.0.0/go.mod h1:db9x61etRT2tGnBNRi70OPL5FsnadC4Ky3P0J6CfImo=
