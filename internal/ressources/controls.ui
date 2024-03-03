@@ -31,7 +31,7 @@
                                                     <class name="flat"></class>
                                                 </style>
 
-                                                <property name="tooltip-text">Open media details</property>
+                                                <property name="tooltip-text">Media Details</property>
 
                                                 <child>
                                                     <object class="GtkBox">
@@ -71,7 +71,7 @@
 
                                                 <child>
                                                     <object class="GtkSpinner" id="headerbar-spinner">
-                                                        <property name="tooltip-text">Preparing stream ...</property>
+                                                        <property name="tooltip-text">Preparing Stream</property>
                                                     </object>
                                                 </child>
 
@@ -83,7 +83,7 @@
 
                                                         <property name="icon-name">system-users-symbolic</property>
                                                         <property name="popover">users-popover</property>
-                                                        <property name="tooltip-text">Show peers</property>
+                                                        <property name="tooltip-text">Peers</property>
                                                     </object>
                                                 </child>
 
@@ -91,7 +91,7 @@
                                                     <object class="GtkMenuButton" id="menu-button">
                                                         <property name="icon-name">open-menu-symbolic</property>
                                                         <property name="primary">true</property>
-                                                        <property name="tooltip-text">Open primary menu</property>
+                                                        <property name="tooltip-text">Main Menu</property>
                                                     </object>
                                                 </child>
 
@@ -123,7 +123,7 @@
                                                 </style>
 
                                                 <property name="icon-name">media-playback-start-symbolic</property>
-                                                <property name="tooltip-text">Toggle playback</property>
+                                                <property name="tooltip-text">Toggle Playback</property>
                                             </object>
                                         </child>
 
@@ -134,7 +134,7 @@
                                                 </style>
 
                                                 <property name="icon-name">media-playback-stop-symbolic</property>
-                                                <property name="tooltip-text">Stop playback</property>
+                                                <property name="tooltip-text">Stop Playback</property>
                                             </object>
                                         </child>
 
@@ -153,14 +153,14 @@
                                                 </style>
 
                                                 <property name="label">00:00:00</property>
-                                                <property name="tooltip-text">Elapsed time</property>
+                                                <property name="tooltip-text">Elapsed Time</property>
                                             </object>
                                         </child>
 
                                         <child>
                                             <object class="GtkScale" id="seeker">
                                                 <property name="hexpand">true</property>
-                                                <property name="tooltip-text">Playback progress</property>
+                                                <property name="tooltip-text">Playback Progress</property>
                                             </object>
                                         </child>
 
@@ -171,7 +171,7 @@
                                                 </style>
 
                                                 <property name="label">-00:00:00</property>
-                                                <property name="tooltip-text">Remaining playback time</property>
+                                                <property name="tooltip-text">Remaining Playback Time</property>
                                             </object>
                                         </child>
 
@@ -196,7 +196,7 @@
                                                 </style>
 
                                                 <property name="icon-name">media-optical-cd-audio-symbolic</property>
-                                                <property name="tooltip-text">Change audio track</property>
+                                                <property name="tooltip-text">Audio Track</property>
                                             </object>
                                         </child>
 
@@ -207,7 +207,7 @@
                                                 </style>
 
                                                 <property name="icon-name">media-view-subtitles-symbolic</property>
-                                                <property name="tooltip-text">Change subtitles</property>
+                                                <property name="tooltip-text">Subtitles</property>
                                             </object>
                                         </child>
 
@@ -218,7 +218,7 @@
                                                 </style>
 
                                                 <property name="icon-name">view-fullscreen-symbolic</property>
-                                                <property name="tooltip-text">Toggle fullscreen</property>
+                                                <property name="tooltip-text">Toggle Fullscreen</property>
                                             </object>
                                         </child>
                                     </object>
@@ -250,7 +250,7 @@
                             <class name="title"></class>
                         </style>
 
-                        <property name="label">You're currently watching alone.</property>
+                        <property name="label">Watching Alone</property>
                     </object>
                 </child>
 
@@ -277,7 +277,7 @@
                         <child>
                             <object class="GtkButton" id="copy-stream-code-button">
                                 <property name="icon-name">edit-copy-symbolic</property>
-                                <property name="tooltip-text">Copy stream code to clipboard</property>
+                                <property name="tooltip-text">Copy Stream Code</property>
                             </object>
                         </child>
                     </object>

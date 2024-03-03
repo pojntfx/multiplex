@@ -24,7 +24,7 @@
                                     <class name="title"></class>
                                 </style>
 
-                                <property name="label">Preparing stream ...</property>
+                                <property name="label">Preparing Stream</property>
                                 <property name="margin-bottom">12</property>
                             </object>
                         </child>
