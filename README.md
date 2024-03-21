@@ -1,8 +1,10 @@
+<img alt="Project icon" style="vertical-align: middle;" src="./docs/icon.svg" width="128" height="128" align="left">
+
 # Multiplex
 
-![Logo](./docs/logo-readme.png)
-
 Watch torrents with your friends.
+
+<br/>
 
 [![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
@@ -27,7 +29,7 @@ On Linux, Multiplex is available on Flathub:
 
 For other platforms, see [contributing](#contributing); development builds are also available on [GitHub releases](https://github.com/pojntfx/multiplex/releases/tag/release-main).
 
-## Usage
+## Tutorial
 
 ### 1. Start Streaming a Torrent
 
@@ -171,6 +173,6 @@ You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gn
 
 ## License
 
-Multiplex (c) 2023 Felicitas Pojtinger and contributors
+Multiplex (c) 2024 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0
