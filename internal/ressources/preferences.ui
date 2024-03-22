@@ -17,7 +17,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Storage location</property>
+                                <property name="title" translatable="yes">Storage Location</property>
                                 <property name="subtitle" translatable="yes">Path to store downloaded torrents in</property>
                                 <property name="activatable-widget">storage-location-input</property>
 
@@ -36,7 +36,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Player command</property>
+                                <property name="title" translatable="yes">Player Command</property>
                                 <property name="subtitle" translatable="yes">Command to launch mpv with</property>
                                 <property name="activatable-widget">mpv-command-input</property>
 
@@ -56,8 +56,8 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Verbosity level</property>
-                                <property name="subtitle" translatable="yes">Verbosity level (0 is disabled, default is info, 7 is trace)</property>
+                                <property name="title" translatable="yes">Verbosity Level</property>
+                                <property name="subtitle" translatable="yes">0 is disabled, default is info, 7 is trace</property>
                                 <property name="activatable-widget">verbosity-level-input</property>
 
                                 <child>
@@ -74,7 +74,7 @@
 
                                 <child>
                                     <object class="AdwActionRow">
-                                        <property name="title" translatable="yes">Use remote gateway</property>
+                                        <property name="title" translatable="yes">Remote Gateway</property>
                                         <property name="subtitle" translatable="yes">Use a remote hTorrent gateway instead of the local one</property>
                                         <property name="activatable-widget">htorrent-remote-gateway-switch</property>
 
@@ -149,8 +149,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Signaling server URL</property>
-                                <property name="subtitle" translatable="yes">URL for the weron signaling server</property>
+                                <property name="title" translatable="yes">Weron Signaling Server URL</property>
                                 <property name="activatable-widget">weron-url-input</property>
 
                                 <child>
@@ -163,7 +162,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">STUN/TURN servers</property>
+                                <property name="title" translatable="yes">STUN/TURN Servers</property>
                                 <property name="subtitle" translatable="yes">Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)</property>
                                 <property name="activatable-widget">weron-ice-input</property>
 
@@ -183,7 +182,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Connection timeout</property>
+                                <property name="title" translatable="yes">Connection Timeout</property>
                                 <property name="subtitle" translatable="yes">Time to wait to connect to the weron signaling server</property>
                                 <property name="activatable-widget">weron-timeout-input</property>
 
@@ -197,7 +196,7 @@
 
                         <child>
                             <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Relay mode</property>
+                                <property name="title" translatable="yes">Relay Mode</property>
                                 <property name="subtitle" translatable="yes">Force usage of TURN servers for weron</property>
                                 <property name="activatable-widget">weron-force-relay-input</property>
 

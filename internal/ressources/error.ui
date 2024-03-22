@@ -5,7 +5,7 @@
 
     <object class="GtkMessageDialog" id="error-dialog">
         <property name="modal">true</property>
-        <property name="text">A Fatal Error Occured</property>
+        <property name="text">Fatal Error</property>
         <property name="secondary-text"></property>
         <property name="message-type">error</property>
 

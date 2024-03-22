@@ -5,25 +5,25 @@
 
     <object class="GtkMessageDialog" id="warning-dialog">
         <property name="modal">true</property>
-        <property name="text">No Media Player Could Be Found</property>
-        <property name="secondary-text">Please install mpv or configure the exisiting installation to able to play media.</property>
+        <property name="text">No Media Player Found</property>
+        <property name="secondary-text">Please install mpv or configure the existing installation to play media</property>
 
         <child type="action">
             <object class="GtkButton" id="mpv-download-flathub-button">
-                <property name="label">Get from Flathub</property>
+                <property name="label">Get From Flathub</property>
                 <property name="visible">false</property>
             </object>
         </child>
 
         <child type="action">
             <object class="GtkButton" id="mpv-download-website-button">
-                <property name="label">Get from mpv.io</property>
+                <property name="label">Get From mpv.io</property>
             </object>
         </child>
 
         <child type="action">
             <object class="GtkButton" id="mpv-manual-configuration-button">
-                <property name="label">Manual configuration</property>
+                <property name="label">Manual Configuration</property>
             </object>
         </child>
     </object>
