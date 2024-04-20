@@ -19,11 +19,11 @@ Watch torrents with your friends.
 
 Multiplex is an app to watch torrents together, providing an experience similar to Apple's [SharePlay](https://support.apple.com/en-us/HT212823) and Amazon's [Prime Video Watch Party](https://www.amazon.com/adlp/watchparty).
 
-It enables you to ...
+It enables you to:
 
-- **Stream any torrent**: By utilizing the mpv video player, Multiplex has support for a wide range of video and audio formats.
-- **Synchronize playback between remote peers**: Thanks to [weron](https://github.com/pojntfx/weron), Multiplex can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.
-- **Circumvent BitTorrent protocol censorship**: By splitting the core [hTorrent HTTP to BitTorrent gateway](https://github.com/pojntfx/htorrent) and UI into two separate projects, Multiplex can be used without having to connect a client to the BitTorrent protocol.
+- **Stream any file directly** using a wide range of video and audio formats with the mpv video player
+- **Host online watch parties while preserving your privacy** by synchronizing video playback with friends without a central server using [weron](https://github.com/pojntfx/weron)
+- **Bypass internet restrictions** by optionally separating the [hTorrent HTTP to BitTorrent gateway](https://github.com/pojntfx/htorrent) and user interface into two separate components
 
 ## Installation
 
@@ -108,47 +108,47 @@ For more preferences, see the [screenshots](#screenshots).
 Click on an image to see a larger version.
 
 <a display="inline" href="./docs/screenshot-initial.png?raw=true">
-<img src="./docs/screenshot-initial.png" width="45%" alt="Screenshot of the initial screen" title="Screenshot of the initial screen">
+<img src="./docs/screenshot-initial.png" width="45%" alt="Entering a magnet link or stream code" title="Entering a magnet link or stream code">
 </a>
 
 <a display="inline" href="./docs/screenshot-media-selection.png?raw=true">
-<img src="./docs/screenshot-media-selection.png" width="45%" alt="Screenshot of the media selection screen" title="Screenshot of the media selection screen">
+<img src="./docs/screenshot-media-selection.png" width="45%" alt="Media selection" title="Media selection">
 </a>
 
 <a display="inline" href="./docs/screenshot-confirmation.png?raw=true">
-<img src="./docs/screenshot-confirmation.png" width="45%" alt="Screenshot of the confirmation screen" title="Screenshot of the confirmation screen">
+<img src="./docs/screenshot-confirmation.png" width="45%" alt="Confirming playback" title="Confirming playback">
 </a>
 
 <a display="inline" href="./docs/screenshot-playback.png?raw=true">
-<img src="./docs/screenshot-playback.png" width="45%" alt="Screenshot of the playback screen" title="Screenshot of the playback screen">
+<img src="./docs/screenshot-playback.png" width="45%" alt="Playing media" title="Playing media">
 </a>
 
 <a display="inline" href="./docs/screenshot-audiotracks.png?raw=true">
-<img src="./docs/screenshot-audiotracks.png" width="45%" alt="Screenshot of the audio tracks screen" title="Screenshot of the audio tracks screen">
+<img src="./docs/screenshot-audiotracks.png" width="45%" alt="Selecting audio tracks" title="Selecting audio tracks">
 </a>
 
 <a display="inline" href="./docs/screenshot-subtitles.png?raw=true">
-<img src="./docs/screenshot-subtitles.png" width="45%" alt="Screenshot of the subtitles screen" title="Screenshot of the subtitles screen">
+<img src="./docs/screenshot-subtitles.png" width="45%" alt="Selecting subtitles" title="Selecting subtitles">
 </a>
 
 <a display="inline" href="./docs/screenshot-join.png?raw=true">
-<img src="./docs/screenshot-join.png" width="45%" alt="Screenshot of the join screen" title="Screenshot of the join screen">
+<img src="./docs/screenshot-join.png" width="45%" alt="Getting a stream code to join playback" title="Getting a stream code to join playback">
 </a>
 
 <a display="inline" href="./docs/screenshot-sync-playback.png?raw=true">
-<img src="./docs/screenshot-sync-playback.png" width="45%" alt="Screenshot of two peers synchronizing playback" title="Screenshot of two peers synchronizing playback">
+<img src="./docs/screenshot-sync-playback.png" width="45%" alt="Two peers synchronizing media playback" title="Two peers synchronizing media playback">
 </a>
 
 <a display="inline" href="./docs/screenshot-prefs-playback.png?raw=true">
-<img src="./docs/screenshot-prefs-playback.png" width="45%" alt="Screenshot of the playback preferences" title="Screenshot of the playback preferences">
+<img src="./docs/screenshot-prefs-playback.png" width="45%" alt="Playback preferences" title="Playback preferences">
 </a>
 
 <a display="inline" href="./docs/screenshot-prefs-remoting.png?raw=true">
-<img src="./docs/screenshot-prefs-remoting.png" width="45%" alt="Screenshot of the playback remoting preferences" title="Screenshot of the playback remoting preferences">
+<img src="./docs/screenshot-prefs-remoting.png" width="45%" alt="Remoting preferences" title="Remoting preferences">
 </a>
 
 <a display="inline" href="./docs/screenshot-prefs-sync.png?raw=true">
-<img src="./docs/screenshot-prefs-sync.png" width="45%" alt="Screenshot of the synchronization preferences" title="Screenshot of the synchronization preferences">
+<img src="./docs/screenshot-prefs-sync.png" width="45%" alt="Synchronization preferences" title="Synchronization preferences">
 </a>
 
 ## Acknowledgements

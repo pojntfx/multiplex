@@ -29,56 +29,81 @@
     <description>
         <p>Multiplex is an app to watch torrents together, providing an experience similar to
             Apple&#39;s SharePlay and Amazon&#39;s Prime Video Watch Party.</p>
-        <p>It enables you to ...</p>
+        <p>It enables you to:</p>
         <ul>
-            <li>Stream any torrent: By utilizing the mpv video player, Multiplex has support for a
-                wide range of video and audio formats.</li>
-            <li>Synchronize playback between remote peers: Thanks to weron, Multiplex can be used to
-                host online watch parties by synchronizing playback position, magnet links and other
-                data between peers.</li>
-            <li>Circumvent BitTorrent protocol censorship: By splitting the core hTorrent backend
-                and UI into two separate projects, Multiplex can be used without having to connect a
-                client to the BitTorrent protocol.</li>
+            <li>Stream any file directly using a wide range of video and audio formats with the mpv
+                video player</li>
+            <li>Host online watch parties while preserving your privacy by synchronizing video
+                playback with friends without a central server</li>
+            <li>Bypass internet restrictions by optionally separating the backend and user interface
+                into two separate components</li>
         </ul>
     </description>
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-sync-playback.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-sync-playback.png</image>
+            <caption>Two peers synchronizing media playback</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-initial.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-initial.png</image>
+            <caption>Entering a magnet link or stream code</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-media-selection.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-media-selection.png</image>
+            <caption>Media selection</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-confirmation.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-confirmation.png</image>
+            <caption>Confirming playback</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback.png</image>
+            <caption>Playing media</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-audiotracks.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-audiotracks.png</image>
+            <caption>Selecting audio tracks</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-subtitles.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-subtitles.png</image>
+            <caption>Selecting subtitles</caption>
         </screenshot>
         <screenshot>
             <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-join.png</image>
+            <caption>Getting a stream code to join playback</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-playback.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-playback.png</image>
+            <caption>Playback preferences</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-remoting.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-remoting.png</image>
+            <caption>Remoting preferences</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-sync.png</image>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-sync.png</image>
+            <caption>Synchronization preferences</caption>
         </screenshot>
     </screenshots>
 
     <releases>
+        <release version="0.1.3" date='2024-04-20T19:08:00Z07:00'>
+            <description>
+                <p>Refinements to the screenshots and app metadata</p>
+            </description>
+        </release>
+
         <release version="0.1.2" date='2023-09-22T19:08:00Z07:00'>
             <description>
                 <p>Visual refinements to match the state of the art of GNOME apps</p>
