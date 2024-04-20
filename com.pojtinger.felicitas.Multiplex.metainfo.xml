@@ -21,49 +21,60 @@
         <binary>multiplex</binary>
     </provides>
 
+    <branding>
+        <color type="primary" scheme_preference="light">#6fb0ff</color>
+        <color type="primary" scheme_preference="dark">#0087ff</color>
+    </branding>
+
     <description>
-        <p>Multiplex is an app to watch torrents together, providing an experience similar to Apple&#39;s SharePlay and Amazon&#39;s Prime Video Watch Party.</p>
+        <p>Multiplex is an app to watch torrents together, providing an experience similar to
+            Apple&#39;s SharePlay and Amazon&#39;s Prime Video Watch Party.</p>
         <p>It enables you to ...</p>
         <ul>
-            <li>Stream any torrent: By utilizing the mpv video player, Multiplex has support for a wide range of video and audio formats.</li>
-            <li>Synchronize playback between remote peers: Thanks to weron, Multiplex can be used to host online watch parties by synchronizing playback position, magnet links and other data between peers.</li>
-            <li>Circumvent BitTorrent protocol censorship: By splitting the core hTorrent backend and UI into two separate projects, Multiplex can be used without having to connect a client to the BitTorrent protocol.</li>
+            <li>Stream any torrent: By utilizing the mpv video player, Multiplex has support for a
+                wide range of video and audio formats.</li>
+            <li>Synchronize playback between remote peers: Thanks to weron, Multiplex can be used to
+                host online watch parties by synchronizing playback position, magnet links and other
+                data between peers.</li>
+            <li>Circumvent BitTorrent protocol censorship: By splitting the core hTorrent backend
+                and UI into two separate projects, Multiplex can be used without having to connect a
+                client to the BitTorrent protocol.</li>
         </ul>
     </description>
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/sync-playback.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-sync-playback.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/initial.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-initial.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/media-selection.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-media-selection.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/confirmation.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-confirmation.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/playback.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/audiotracks.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-audiotracks.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/subtitles.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-subtitles.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/join.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-join.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/prefs-playback.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-playback.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/prefs-remoting.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-remoting.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/prefs-sync.png</image>
+            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-sync.png</image>
         </screenshot>
     </screenshots>
 
