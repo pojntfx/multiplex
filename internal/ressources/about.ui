@@ -14,6 +14,7 @@
         <property name="application-name">Multiplex</property>
         <property name="version">0.1.2</property>
         <property name="issue_url">https://github.com/pojntfx/multiplex/issues/new/choose</property>
+        <property name="support_url">https://matrix.to/#/#multiplex:matrix.org?via=matrix.org</property>
         <property name="website">https://github.com/pojntfx/multiplex</property>
     </object>
 </interface>
