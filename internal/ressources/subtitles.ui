@@ -24,7 +24,7 @@
 
                 <child>
                     <object class="GtkSpinner" id="headerbar-spinner">
-                        <property name="tooltip-text">Getting metadata ...</property>
+                        <property name="tooltip-text">Getting Metadata</property>
                         <property name="visible">false</property>
                     </object>
                 </child>
@@ -80,7 +80,7 @@
 
                                                         <child>
                                                             <object class="GtkLabel">
-                                                                <property name="label">Add from file</property>
+                                                                <property name="label">Add From File</property>
                                                             </object>
                                                         </child>
                                                     </object>
