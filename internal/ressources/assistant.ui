@@ -4,8 +4,8 @@
     <requires lib="gtk" version="4.0" />
 
     <object class="AdwApplicationWindow" id="main-window">
-        <property name="default-width">1024</property>
-        <property name="default-height">680</property>
+        <property name="default-width">960</property>
+        <property name="default-height">540</property>
         <property name="title">Multiplex</property>
 
         <child type="content">

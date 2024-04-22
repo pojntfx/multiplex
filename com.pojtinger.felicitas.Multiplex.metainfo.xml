@@ -51,11 +51,6 @@
     <screenshots>
         <screenshot type="default">
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-sync-playback.png</image>
-            <caption>Two peers synchronizing media playback</caption>
-        </screenshot>
-        <screenshot>
-            <image>
                 https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-initial.png</image>
             <caption>Entering a magnet link or stream code</caption>
         </screenshot>
@@ -71,8 +66,13 @@
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback.png</image>
-            <caption>Playing media</caption>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback-controls.png</image>
+            <caption>Media controls</caption>
+        </screenshot>
+        <screenshot>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback-player.png</image>
+            <caption>Playing media with MPV</caption>
         </screenshot>
         <screenshot>
             <image>
@@ -85,17 +85,31 @@
             <caption>Selecting subtitles</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-join.png</image>
-            <caption>Getting a stream code to join playback</caption>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-playback.png</image>
+            <caption>Playback preferences</caption>
         </screenshot>
         <screenshot>
             <image>
                 https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-remoting.png</image>
             <caption>Remoting preferences</caption>
         </screenshot>
+        <screenshot>
+            <image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-sync.png</image>
+            <caption>Synchronization preferences</caption>
+        </screenshot>
     </screenshots>
 
     <releases>
+        <release version="0.1.4" date='2024-04-22T10:09:00Z07:00'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.4</url>
+
+            <description>
+                <p>Refinements to the screenshots and descriptions</p>
+            </description>
+        </release>
+
         <release version="0.1.3" date='2024-04-20T19:08:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.3</url>
 
