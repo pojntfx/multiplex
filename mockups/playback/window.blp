@@ -1,0 +1,158 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MultiplexWindow: Adw.Window {
+    default-width: 1000;
+    default-height: 700;
+    title: _("Multiplex");
+
+    Overlay {
+        Picture video_player {}
+
+        [overlay]
+        Revealer video_metadata {
+            transition-duration: 250;
+            transition-type: crossfade;
+            valign: start;
+            reveal-child: true;
+
+            Adw.HeaderBar {
+                show-back-button: true;
+
+                styles [
+                    "osd",
+                    "video-player-headerbar"
+                ]
+            }
+        }
+
+        [overlay]
+        Revealer video_controls {
+            transition-duration: 250;
+            transition-type: crossfade;
+            valign: end;
+            reveal-child: true;
+
+            Box {
+                orientation: vertical;
+                margin-start: 24;
+                margin-end: 24;
+                margin-bottom: 24;
+
+                Box {
+                    spacing: 16;
+                    margin-start: 16;
+                    margin-end: 16;
+
+                    Label {
+                        label: '00:00:00';
+                        tooltip-text: 'Elapsed time';
+
+                        styles [
+                            "tabular-nums",
+                        ]
+                    }
+
+                    Scale {
+                        hexpand: true;
+                        orientation: horizontal;
+                        show-fill-level: true;
+
+                        adjustment: Adjustment {
+                            lower: 0;
+                            upper: 100;
+                        };
+                    }
+
+                    Label {
+                        label: '01:32:00';
+                        tooltip-text: 'Remaining time';
+
+                        styles [
+                            "tabular-nums",
+                        ]
+                    }
+                }
+
+                Box {
+                    spacing: 8;
+
+                    Box {
+                        spacing: 8;
+
+                        Button {
+                            icon-name: "media-seek-backward-symbolic";
+                            sensitive: false;
+                        }
+
+                        Button {
+                            icon-name: "media-playback-start-symbolic";
+                        }
+
+                        Button {
+                            icon-name: "media-seek-forward-symbolic";
+                            sensitive: false;
+                        }
+                    }
+
+                    Box {
+                        hexpand: true;
+                    }
+
+                    Box {
+                        spacing: 16;
+
+                        Box {
+                            spacing: 8;
+                        
+                            Button {
+                                icon-name: "applications-engineering-symbolic";
+                            }
+                        
+                            Button {
+                                icon-name: "media-optical-symbolic";
+                            }
+
+                            Button {
+                                icon-name: "media-view-subtitles-symbolic";
+                            }
+                        }
+
+                        Box {
+                            spacing: 8;
+
+                            Button {
+                                icon-name: "audio-volume-medium-symbolic";
+                            }
+
+                            Scale {
+                                orientation: horizontal;
+                                show-fill-level: true;
+                                width-request: 125;
+
+                                adjustment: Adjustment {
+                                    lower: 0;
+                                    upper: 100;
+                                };
+                            }
+                        }
+                        
+
+                        Button {
+                            icon-name: "view-fullscreen-symbolic";
+                        }
+                    }
+                }
+
+                styles [
+                    "toolbar",
+                    "osd"
+                ]
+            }
+        }
+    }
+
+    styles [
+        "video-player-window"
+    ]
+}

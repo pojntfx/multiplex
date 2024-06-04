@@ -1,0 +1,12 @@
+.video-player-headerbar {
+  background: rgba(
+    0,
+    0,
+    0,
+    0.7
+  ); // To match even when not in focus https://gitlab.gnome.org/GNOME/libadwaita/-/blob/c174e07254aa423c704c3cdb62516249f8df5559/src/stylesheet/_colors.scss#L98
+}
+
+.video-player-window {
+  background: black;
+}
