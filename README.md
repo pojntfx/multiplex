@@ -29,7 +29,9 @@ It enables you to:
 
 On Linux, Multiplex is available on Flathub:
 
-<a href="https://flathub.org/apps/details/com.pojtinger.felicitas.Multiplex"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" alt="Flathub badge" width="200"/></a>
+<a href='https://flathub.org/apps/com.pojtinger.felicitas.Multiplex'>
+<img width='240' alt='Download on Flathub' src='https://flathub.org/api/badge?locale=en'/>
+</a>
 
 For other platforms, see [contributing](#contributing); development builds are also available on [GitHub releases](https://github.com/pojntfx/multiplex/releases/tag/release-main).
 
