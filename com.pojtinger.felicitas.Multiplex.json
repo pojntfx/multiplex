@@ -1,5 +1,5 @@
 {
-  "app-id": "com.pojtinger.felicitas.Multiplex",
+  "id": "com.pojtinger.felicitas.Multiplex",
   "runtime": "org.gnome.Platform",
   "runtime-version": "46",
   "sdk": "org.gnome.Sdk",
