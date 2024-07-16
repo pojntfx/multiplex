@@ -148,7 +148,7 @@ func OpenControlsWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
-	builder := gtk.NewBuilderFromString(ressources.ControlsUI, len(ressources.ControlsUI))
+	builder := gtk.NewBuilderFromString(ressources.ControlsUI)
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -170,14 +170,14 @@ func OpenControlsWindow(
 	streamCodeInput := builder.GetObject("stream-code-input").Cast().(*gtk.Entry)
 	copyStreamCodeButton := builder.GetObject("copy-stream-code-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI, len(ressources.DescriptionUI))
+	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI)
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 	descriptionProgressBar := descriptionBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 
-	subtitlesBuilder := gtk.NewBuilderFromString(ressources.SubtitlesUI, len(ressources.SubtitlesUI))
+	subtitlesBuilder := gtk.NewBuilderFromString(ressources.SubtitlesUI)
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	subtitlesSpinner := subtitlesBuilder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -186,13 +186,13 @@ func OpenControlsWindow(
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
-	audiotracksBuilder := gtk.NewBuilderFromString(ressources.AudiotracksUI, len(ressources.AudiotracksUI))
+	audiotracksBuilder := gtk.NewBuilderFromString(ressources.AudiotracksUI)
 	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
 	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
 
-	preparingBuilder := gtk.NewBuilderFromString(ressources.PreparingUI, len(ressources.PreparingUI))
+	preparingBuilder := gtk.NewBuilderFromString(ressources.PreparingUI)
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
 	preparingProgressBar := preparingBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)
@@ -322,7 +322,7 @@ func OpenControlsWindow(
 	})
 
 	mediaInfoButton.ConnectClicked(func() {
-		descriptionWindow.Show()
+		descriptionWindow.SetVisible(true)
 	})
 
 	ctrl := gtk.NewEventControllerKey()
@@ -495,7 +495,7 @@ func OpenControlsWindow(
 	}()
 
 	window.ConnectShow(func() {
-		preparingWindow.Show()
+		preparingWindow.SetVisible(true)
 
 		go func() {
 			<-ready
@@ -1282,7 +1282,7 @@ func OpenControlsWindow(
 					}
 
 					if total != 0 && !preparingClosed {
-						preparingWindow.Hide()
+						preparingWindow.SetVisible(false)
 
 						preparingClosed = true
 					}
@@ -1394,11 +1394,11 @@ func OpenControlsWindow(
 			})
 
 			subtitleButton.ConnectClicked(func() {
-				subtitlesDialog.Show()
+				subtitlesDialog.SetVisible(true)
 			})
 
 			audiotracksButton.ConnectClicked(func() {
-				audiotracksDialog.Show()
+				audiotracksDialog.SetVisible(true)
 			})
 
 			for _, d := range []*gtk.Dialog{subtitlesDialog, audiotracksDialog} {
@@ -1586,7 +1586,7 @@ func OpenControlsWindow(
 		}()
 	})
 
-	window.Show()
+	window.SetVisible(true)
 
 	return nil
 }

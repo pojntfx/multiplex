@@ -62,7 +62,7 @@ func OpenAssistantWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
-	builder := gtk.NewBuilderFromString(ressources.AssistantUI, len(ressources.AssistantUI))
+	builder := gtk.NewBuilderFromString(ressources.AssistantUI)
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -82,13 +82,13 @@ func OpenAssistantWindow(
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI, len(ressources.DescriptionUI))
+	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI)
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 
-	warningBuilder := gtk.NewBuilderFromString(ressources.WarningUI, len(ressources.WarningUI))
+	warningBuilder := gtk.NewBuilderFromString(ressources.WarningUI)
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
@@ -543,7 +543,7 @@ func OpenAssistantWindow(
 	preferencesWindow, mpvCommandInput := AddMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, nil, cancel)
 
 	mediaInfoButton.ConnectClicked(func() {
-		descriptionWindow.Show()
+		descriptionWindow.SetVisible(true)
 	})
 
 	ctrl := gtk.NewEventControllerKey()
@@ -698,7 +698,7 @@ func OpenAssistantWindow(
 	})
 
 	streamWithoutDownloadingButton.ConnectClicked(func() {
-		streamPopover.Hide()
+		streamPopover.SetVisible(false)
 
 		window.Close()
 		refreshSubtitles()
@@ -728,25 +728,27 @@ func OpenAssistantWindow(
 	}
 
 	mpvFlathubDownloadButton.ConnectClicked(func() {
-		gtk.ShowURIFull(ctx, &window.Window, mpvFlathubURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
-			warningDialog.Close()
+		// We can't use gtk.NewURILauncher(mpvFlathubURL).Launch() since it's not implemented in gotk4 yet
+		gtk.ShowURI(&window.Window, mpvFlathubURL, gdk.CURRENT_TIME)
 
-			os.Exit(0)
-		})
+		warningDialog.Close()
+
+		os.Exit(0)
 	})
 
 	mpvWebsiteDownloadButton.ConnectClicked(func() {
-		gtk.ShowURIFull(ctx, &window.Window, mpvWebsiteURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
-			warningDialog.Close()
+		// We can't use gtk.NewURILauncher(mpvWebsiteURL).Launch() since it's not implemented in gotk4 yet
+		gtk.ShowURI(&window.Window, mpvWebsiteURL, gdk.CURRENT_TIME)
 
-			os.Exit(0)
-		})
+		warningDialog.Close()
+
+		os.Exit(0)
 	})
 
 	mpvManualConfigurationButton.ConnectClicked(func() {
 		warningDialog.Close()
 
-		preferencesWindow.Show()
+		preferencesWindow.SetVisible(true)
 		mpvCommandInput.GrabFocus()
 	})
 
@@ -764,7 +766,7 @@ func OpenAssistantWindow(
 		if oldMPVCommand := settings.String(gschema.MPVFlag); strings.TrimSpace(oldMPVCommand) == "" {
 			newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
 			if err != nil {
-				warningDialog.Show()
+				warningDialog.SetVisible(true)
 
 				return
 			}
@@ -776,7 +778,7 @@ func OpenAssistantWindow(
 		magnetLinkEntry.GrabFocus()
 	})
 
-	window.Show()
+	window.SetVisible(true)
 
 	return nil
 }

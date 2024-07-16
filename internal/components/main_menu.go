@@ -29,13 +29,13 @@ func AddMainMenu(
 	getMagnetLink func() string,
 	cancel func(),
 ) (*adw.PreferencesWindow, *gtk.Entry) {
-	menuBuilder := gtk.NewBuilderFromString(ressources.MenuUI, len(ressources.MenuUI))
+	menuBuilder := gtk.NewBuilderFromString(ressources.MenuUI)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
-	aboutBuilder := gtk.NewBuilderFromString(ressources.AboutUI, len(ressources.AboutUI))
+	aboutBuilder := gtk.NewBuilderFromString(ressources.AboutUI)
 	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*adw.AboutWindow)
 
-	preferencesBuilder := gtk.NewBuilderFromString(ressources.PreferencesUI, len(ressources.PreferencesUI))
+	preferencesBuilder := gtk.NewBuilderFromString(ressources.PreferencesUI)
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
@@ -56,7 +56,7 @@ func AddMainMenu(
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		preferencesWindow.Show()
+		preferencesWindow.SetVisible(true)
 	})
 	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
@@ -227,7 +227,7 @@ func AddMainMenu(
 
 	aboutAction := gio.NewSimpleAction("about", nil)
 	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
-		aboutDialog.Show()
+		aboutDialog.SetVisible(true)
 	})
 	window.AddAction(aboutAction)
 

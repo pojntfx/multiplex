@@ -11,7 +11,7 @@ Watch torrents with your friends.
 </p>
 
 [![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.22-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/multiplex.svg)](https://pkg.go.dev/github.com/pojntfx/multiplex)
 [![Matrix](https://img.shields.io/matrix/multiplex:matrix.org)](https://matrix.to/#/#multiplex:matrix.org?via=matrix.org)
 

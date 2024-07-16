@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <interface>
-    <requires lib="libadwaita" version="1.2" />
+    <requires lib="libadwaita" version="1.5" />
     <requires lib="gtk" version="4.0" />
 
     <object class="AdwPreferencesWindow" id="preferences-window">

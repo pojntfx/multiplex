@@ -6,7 +6,6 @@ import (
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
-	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pojntfx/multiplex/internal/ressources"
 	"github.com/rs/zerolog/log"
@@ -21,7 +20,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Err(err).
 		Msg("Could not continue due to a fatal error")
 
-	errorBuilder := gtk.NewBuilderFromString(ressources.ErrorUI, len(ressources.ErrorUI))
+	errorBuilder := gtk.NewBuilderFromString(ressources.ErrorUI)
 	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
 	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
 	closeMultiplexButton := errorBuilder.GetObject("close-multiplex-button").Cast().(*gtk.Button)
@@ -38,11 +37,12 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	})
 
 	reportErrorButton.ConnectClicked(func() {
-		gtk.ShowURIFull(ctx, &window.Window, issuesURL, gdk.CURRENT_TIME, func(res gio.AsyncResulter) {
-			errorDialog.Close()
+		// We can't use gtk.NewURILauncher(issuesURL).Launch() since it's not implemented in gotk4 yet
+		gtk.ShowURI(&window.Window, issuesURL, gdk.CURRENT_TIME)
 
-			os.Exit(1)
-		})
+		errorDialog.Close()
+
+		os.Exit(1)
 	})
 
 	closeMultiplexButton.ConnectClicked(func() {
@@ -51,5 +51,5 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		os.Exit(1)
 	})
 
-	errorDialog.Show()
+	errorDialog.SetVisible(true)
 }
