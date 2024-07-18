@@ -3,9 +3,7 @@
     <requires lib="libadwaita" version="1.5" />
     <requires lib="gtk" version="4.0" />
 
-    <object class="AdwPreferencesWindow" id="preferences-window">
-        <property name="modal">true</property>
-
+    <object class="AdwPreferencesDialog" id="preferences-dialog">
         <child>
             <object class="AdwPreferencesPage">
                 <property name="title" translatable="yes">Playback</property>

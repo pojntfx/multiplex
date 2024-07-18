@@ -27,7 +27,7 @@ func AddMainMenu(
 	gateway *server.Gateway,
 	getMagnetLink func() string,
 	cancel func(),
-) (*adw.PreferencesWindow, *gtk.Entry) {
+) (*adw.PreferencesDialog, *gtk.Entry) {
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -37,7 +37,7 @@ func AddMainMenu(
 	aboutDialog.SetCopyright("© 2024 Felicitas Pojtinger")
 
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
-	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
+	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesDialog)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
 	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
@@ -57,7 +57,7 @@ func AddMainMenu(
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		preferencesWindow.SetVisible(true)
+		preferencesDialog.Present(&window.Window)
 	})
 	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
@@ -80,11 +80,7 @@ func AddMainMenu(
 		window.AddAction(copyMagnetLinkAction)
 	}
 
-	preferencesWindow.SetTransientFor(&window.Window)
-	preferencesWindow.ConnectCloseRequest(func() (ok bool) {
-		preferencesWindow.Close()
-		preferencesWindow.SetVisible(false)
-
+	preferencesDialog.ConnectHide(func() {
 		if preferencesHaveChanged {
 			settings.Apply()
 
@@ -96,8 +92,6 @@ func AddMainMenu(
 		}
 
 		preferencesHaveChanged = false
-
-		return ok
 	})
 
 	syncSensitivityState := func() {
@@ -111,7 +105,7 @@ func AddMainMenu(
 			remoteGatewayPasswordRow.SetSensitive(false)
 		}
 	}
-	preferencesWindow.ConnectShow(syncSensitivityState)
+	preferencesDialog.ConnectShow(syncSensitivityState)
 
 	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
 	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
@@ -145,7 +139,7 @@ func AddMainMenu(
 	storageLocationInput.ConnectClicked(func() {
 		filePicker := gtk.NewFileChooserNative(
 			"Select storage location",
-			&preferencesWindow.Window.Window,
+			&window.Window,
 			gtk.FileChooserActionSelectFolder,
 			"",
 			"")
@@ -234,5 +228,5 @@ func AddMainMenu(
 
 	menuButton.SetMenuModel(menu)
 
-	return preferencesWindow, mpvCommandInput
+	return preferencesDialog, mpvCommandInput
 }

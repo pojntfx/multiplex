@@ -539,7 +539,7 @@ func OpenAssistantWindow(
 	nextButton.ConnectClicked(onNext)
 	previousButton.ConnectClicked(onPrevious)
 
-	preferencesWindow, mpvCommandInput := AddMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, nil, cancel)
+	preferencesDialog, mpvCommandInput := AddMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, nil, cancel)
 
 	mediaInfoButton.ConnectClicked(func() {
 		descriptionWindow.SetVisible(true)
@@ -747,7 +747,7 @@ func OpenAssistantWindow(
 	mpvManualConfigurationButton.ConnectClicked(func() {
 		warningDialog.Close()
 
-		preferencesWindow.SetVisible(true)
+		preferencesDialog.Present(&window.Window)
 		mpvCommandInput.GrabFocus()
 	})
 
