@@ -13,6 +13,5 @@
         <file>audiotracks.ui</file>
         <file>preparing.ui</file>
         <file>style.css</file>
-        <file>gschemas.compiled</file>
     </gresource>
 </gresources>

@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"net"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -31,16 +30,11 @@ const (
 )
 
 func main() {
-	gresources, err := gio.NewResourceFromData(glib.NewBytesWithGo(resources.Resources))
+	gresources, err := gio.NewResourceFromData(glib.NewBytesWithGo(resources.GResource))
 	if err != nil {
 		panic(err)
 	}
 	gio.ResourcesRegister(gresources)
-
-	gschema, err := gio.ResourcesLookupData(path.Join(resources.AppPath, "gschemas.compiled"), gio.ResourceLookupFlagsNone)
-	if err != nil {
-		panic(err)
-	}
 
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
 	if err != nil {
@@ -48,7 +42,7 @@ func main() {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), gschema.Data(), os.ModePerm); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), resources.GSchema, os.ModePerm); err != nil {
 		panic(err)
 	}
 
@@ -56,7 +50,7 @@ func main() {
 		panic(err)
 	}
 
-	settings := gio.NewSettings(resources.AppID)
+	settings := gio.NewSettings(resources.GAppID)
 
 	if storage := settings.String(resources.GSchemaStorageKey); strings.TrimSpace(storage) == "" {
 		home, err := os.UserHomeDir()
@@ -103,10 +97,10 @@ func main() {
 		}
 	})
 
-	app := adw.NewApplication(resources.AppID, gio.ApplicationNonUnique)
+	app := adw.NewApplication(resources.GAppID, gio.ApplicationNonUnique)
 
 	prov := gtk.NewCSSProvider()
-	prov.LoadFromResource(path.Join(resources.AppPath, "style.css"))
+	prov.LoadFromResource(resources.GResourceStyleCSSPath)
 
 	var gateway *server.Gateway
 	ctx, cancel := context.WithCancel(context.Background())

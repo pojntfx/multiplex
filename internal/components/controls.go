@@ -13,7 +13,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -148,7 +147,7 @@ func OpenControlsWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
-	builder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "controls.ui"))
+	builder := gtk.NewBuilderFromResource(resources.GResourceControlsPath)
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -170,14 +169,14 @@ func OpenControlsWindow(
 	streamCodeInput := builder.GetObject("stream-code-input").Cast().(*gtk.Entry)
 	copyStreamCodeButton := builder.GetObject("copy-stream-code-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "description.ui"))
+	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 	descriptionProgressBar := descriptionBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 
-	subtitlesBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "subtitles.ui"))
+	subtitlesBuilder := gtk.NewBuilderFromResource(resources.GResourceSubtitlesPath)
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	subtitlesSpinner := subtitlesBuilder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -186,13 +185,13 @@ func OpenControlsWindow(
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
-	audiotracksBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "audiotracks.ui"))
+	audiotracksBuilder := gtk.NewBuilderFromResource(resources.GResourceAudiotracksPath)
 	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
 	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
 
-	preparingBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "preparing.ui"))
+	preparingBuilder := gtk.NewBuilderFromResource(resources.GResourcePreparingPath)
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
 	preparingProgressBar := preparingBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)

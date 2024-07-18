@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"path"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
@@ -29,13 +28,13 @@ func AddMainMenu(
 	getMagnetLink func() string,
 	cancel func(),
 ) (*adw.PreferencesWindow, *gtk.Entry) {
-	menuBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "menu.ui"))
+	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
-	aboutBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "about.ui"))
+	aboutBuilder := gtk.NewBuilderFromResource(resources.GResourceAboutPath)
 	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*adw.AboutWindow)
 
-	preferencesBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "preferences.ui"))
+	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)

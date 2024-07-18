@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -62,7 +61,7 @@ func OpenAssistantWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
-	builder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "assistant.ui"))
+	builder := gtk.NewBuilderFromResource(resources.GResourceAssistantPath)
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -82,13 +81,13 @@ func OpenAssistantWindow(
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "description.ui"))
+	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 
-	warningBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "warning.ui"))
+	warningBuilder := gtk.NewBuilderFromResource(resources.GResourceWarningPath)
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
