@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gresources>
+    <gresource prefix="/com/pojtinger/felicitas/Multiplex">
+        <file>assistant.ui</file>
+        <file>controls.ui</file>
+        <file>description.ui</file>
+        <file>warning.ui</file>
+        <file>error.ui</file>
+        <file>menu.ui</file>
+        <file>about.ui</file>
+        <file>preferences.ui</file>
+        <file>subtitles.ui</file>
+        <file>audiotracks.ui</file>
+        <file>preparing.ui</file>
+        <file>style.css</file>
+        <file>gschemas.compiled</file>
+    </gresource>
+</gresources>

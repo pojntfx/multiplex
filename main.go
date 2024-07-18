@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
+	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/phayes/freeport"
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
@@ -19,27 +21,34 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/internal/components"
 	"github.com/pojntfx/multiplex/internal/crypto"
-	"github.com/pojntfx/multiplex/internal/gschema"
-	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 const (
-	appID   = "com.pojtinger.felicitas.Multiplex"
-	stateID = appID + ".state"
-
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
 )
 
 func main() {
+	gresources, err := gio.NewResourceFromData(glib.NewBytesWithGo(resources.Resources))
+	if err != nil {
+		panic(err)
+	}
+	gio.ResourcesRegister(gresources)
+
+	gschema, err := gio.ResourcesLookupData(path.Join(resources.AppPath, "gschemas.compiled"), gio.ResourceLookupFlagsNone)
+	if err != nil {
+		panic(err)
+	}
+
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
 	if err != nil {
 		panic(err)
 	}
 	defer os.RemoveAll(tmpDir)
 
-	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), ressources.GSchemas, os.ModePerm); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), gschema.Data(), os.ModePerm); err != nil {
 		panic(err)
 	}
 
@@ -47,9 +56,9 @@ func main() {
 		panic(err)
 	}
 
-	settings := gio.NewSettings(stateID)
+	settings := gio.NewSettings(resources.AppID)
 
-	if storage := settings.String(gschema.StorageFlag); strings.TrimSpace(storage) == "" {
+	if storage := settings.String(resources.GSchemaStorageKey); strings.TrimSpace(storage) == "" {
 		home, err := os.UserHomeDir()
 		if err != nil {
 			panic(err)
@@ -57,7 +66,7 @@ func main() {
 
 		downloadPath := filepath.Join(home, "Downloads", "Multiplex")
 
-		settings.SetString(gschema.StorageFlag, downloadPath)
+		settings.SetString(resources.GSchemaStorageKey, downloadPath)
 
 		if err := os.MkdirAll(downloadPath, os.ModePerm); err != nil {
 			panic(err)
@@ -87,17 +96,17 @@ func main() {
 		}
 	}
 
-	configureZerolog(settings.Int64(gschema.VerboseFlag))
+	configureZerolog(settings.Int64(resources.GSchemaVerboseKey))
 	settings.ConnectChanged(func(key string) {
-		if key == gschema.VerboseFlag {
-			configureZerolog(settings.Int64(gschema.VerboseFlag))
+		if key == resources.GSchemaVerboseKey {
+			configureZerolog(settings.Int64(resources.GSchemaVerboseKey))
 		}
 	})
 
-	app := adw.NewApplication(appID, gio.ApplicationNonUnique)
+	app := adw.NewApplication(resources.AppID, gio.ApplicationNonUnique)
 
 	prov := gtk.NewCSSProvider()
-	prov.LoadFromData(ressources.StyleCSS)
+	prov.LoadFromResource(path.Join(resources.AppPath, "style.css"))
 
 	var gateway *server.Gateway
 	ctx, cancel := context.WithCancel(context.Background())
@@ -122,25 +131,25 @@ func main() {
 
 		rand.Seed(time.Now().UnixNano())
 
-		if err := os.MkdirAll(settings.String(gschema.StorageFlag), os.ModePerm); err != nil {
+		if err := os.MkdirAll(settings.String(resources.GSchemaStorageKey), os.ModePerm); err != nil {
 			panic(err)
 		}
 
-		apiAddr := settings.String(gschema.GatewayURLFlag)
-		apiUsername := settings.String(gschema.GatewayUsernameFlag)
-		apiPassword := settings.String(gschema.GatewayPasswordFlag)
-		if !settings.Boolean(gschema.GatewayRemoteFlag) {
+		apiAddr := settings.String(resources.GSchemaGatewayURLKey)
+		apiUsername := settings.String(resources.GSchemaGatewayUsernameKey)
+		apiPassword := settings.String(resources.GSchemaGatewayPasswordKey)
+		if !settings.Boolean(resources.GSchemaGatewayRemoteKey) {
 			apiUsername = crypto.RandomString(20)
 			apiPassword = crypto.RandomString(20)
 
 			gateway = server.NewGateway(
 				addr.String(),
-				settings.String(gschema.StorageFlag),
+				settings.String(resources.GSchemaStorageKey),
 				apiUsername,
 				apiPassword,
 				"",
 				"",
-				settings.Int64(gschema.VerboseFlag) > 5,
+				settings.Int64(resources.GSchemaVerboseKey) > 5,
 				func(torrentMetrics v1.TorrentMetrics, fileMetrics v1.FileMetrics) {
 					log.Info().
 						Str("magnet", torrentMetrics.Magnet).

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-    <schema id="com.pojtinger.felicitas.Multiplex.state" path="/com/pojtinger/felicitas/Multiplex/state/">
+    <schema id="com.pojtinger.felicitas.Multiplex" path="/com/pojtinger/felicitas/Multiplex/">
         <key name='verbose' type='x'>
             <default>5</default>
             <summary>Verbosity level</summary>
@@ -58,7 +58,9 @@
         <key name='weronice' type='s'>
             <default>"stun:stun.l.google.com:19302"</default>
             <summary>weron STUN/TURN servers</summary>
-            <description>Comma-separated list of STUN servers (in format stun:host:port) and TURN servers to use (in format username:credential@turn:host:port) (i.e. username:credential@turn:global.turn.twilio.com:3478?transport=tcp)</description>
+            <description>Comma-separated list of STUN servers (in format stun:host:port) and TURN
+                servers to use (in format username:credential@turn:host:port) (i.e.
+                username:credential@turn:global.turn.twilio.com:3478?transport=tcp)</description>
         </key>
 
         <key name='weronforcerelay' type='b'>

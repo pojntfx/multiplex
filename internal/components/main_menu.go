@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gio/v2"
 	"github.com/diamondburned/gotk4/pkg/glib/v2"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/multiplex/internal/gschema"
-	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
 )
 
@@ -29,13 +29,13 @@ func AddMainMenu(
 	getMagnetLink func() string,
 	cancel func(),
 ) (*adw.PreferencesWindow, *gtk.Entry) {
-	menuBuilder := gtk.NewBuilderFromString(ressources.MenuUI)
+	menuBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "menu.ui"))
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
-	aboutBuilder := gtk.NewBuilderFromString(ressources.AboutUI)
+	aboutBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "about.ui"))
 	aboutDialog := aboutBuilder.GetObject("about-dialog").Cast().(*adw.AboutWindow)
 
-	preferencesBuilder := gtk.NewBuilderFromString(ressources.PreferencesUI)
+	preferencesBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "preferences.ui"))
 	preferencesWindow := preferencesBuilder.GetObject("preferences-window").Cast().(*adw.PreferencesWindow)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
@@ -63,7 +63,7 @@ func AddMainMenu(
 
 	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
 	openDownloadsAction.ConnectActivate(func(parameter *glib.Variant) {
-		if err := gio.AppInfoLaunchDefaultForURI(fmt.Sprintf("file://%v", settings.String(gschema.StorageFlag)), nil); err != nil {
+		if err := gio.AppInfoLaunchDefaultForURI(fmt.Sprintf("file://%v", settings.String(resources.GSchemaStorageKey)), nil); err != nil {
 			OpenErrorDialog(ctx, window, err)
 
 			return
@@ -151,7 +151,7 @@ func AddMainMenu(
 		filePicker.SetModal(true)
 		filePicker.ConnectResponse(func(responseId int) {
 			if responseId == int(gtk.ResponseAccept) {
-				settings.SetString(gschema.StorageFlag, filePicker.File().Path())
+				settings.SetString(resources.GSchemaStorageKey, filePicker.File().Path())
 
 				preferencesHaveChanged = true
 			}
@@ -162,23 +162,23 @@ func AddMainMenu(
 		filePicker.Show()
 	})
 
-	settings.Bind(gschema.MPVFlag, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaMPVKey, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
 
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
-	settings.Bind(gschema.VerboseFlag, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaVerboseKey, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
 
-	settings.Bind(gschema.GatewayRemoteFlag, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
-	settings.Bind(gschema.GatewayURLFlag, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(gschema.GatewayUsernameFlag, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(gschema.GatewayPasswordFlag, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaGatewayRemoteKey, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaGatewayURLKey, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaGatewayUsernameKey, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaGatewayPasswordKey, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
 
-	settings.Bind(gschema.WeronURLFlag, weronURLInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronURLKey, weronURLInput.Object, "text", gio.SettingsBindDefault)
 
 	weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
-	settings.Bind(gschema.WeronTimeoutFlag, weronTimeoutInput.Object, "value", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronTimeoutKey, weronTimeoutInput.Object, "value", gio.SettingsBindDefault)
 
-	settings.Bind(gschema.WeronICEFlag, weronICEInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(gschema.WeronForceRelayFlag, weronForceRelayInput.Object, "active", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronICEKey, weronICEInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronForceRelayKey, weronForceRelayInput.Object, "active", gio.SettingsBindDefault)
 
 	mpvCommandInput.ConnectChanged(func() {
 		preferencesHaveChanged = true

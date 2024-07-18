@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -25,8 +26,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/multiplex/internal/gschema"
-	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/resources"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
 	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
@@ -62,7 +62,7 @@ func OpenAssistantWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
 
-	builder := gtk.NewBuilderFromString(ressources.AssistantUI)
+	builder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "assistant.ui"))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -82,13 +82,13 @@ func OpenAssistantWindow(
 	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
 	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI)
+	descriptionBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "description.ui"))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 
-	warningBuilder := gtk.NewBuilderFromString(ressources.WarningUI)
+	warningBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "warning.ui"))
 	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
 	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
 	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
@@ -310,7 +310,7 @@ func OpenAssistantWindow(
 					}
 					community, password, key = streamCodeParts[0], streamCodeParts[1], streamCodeParts[2]
 
-					wu, err := url.Parse(settings.String(gschema.WeronURLFlag))
+					wu, err := url.Parse(settings.String(resources.GSchemaWeronURLKey))
 					if err != nil {
 						OpenErrorDialog(ctx, window, err)
 
@@ -330,14 +330,14 @@ func OpenAssistantWindow(
 					adapter = wrtcconn.NewAdapter(
 						wu.String(),
 						streamCodeParts[2],
-						strings.Split(settings.String(gschema.WeronICEFlag), ","),
+						strings.Split(settings.String(resources.GSchemaWeronICEKey), ","),
 						[]string{"multiplex/sync"},
 						&wrtcconn.AdapterConfig{
-							Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(gschema.WeronTimeoutFlag))),
-							ForceRelay: settings.Boolean(gschema.WeronForceRelayFlag),
+							Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(resources.GSchemaWeronTimeoutKey))),
+							ForceRelay: settings.Boolean(resources.GSchemaWeronForceRelayKey),
 							OnSignalerReconnect: func() {
 								log.Info().
-									Str("raddr", settings.String(gschema.WeronURLFlag)).
+									Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
 									Msg("Reconnecting to signaler")
 							},
 						},
@@ -373,7 +373,7 @@ func OpenAssistantWindow(
 							return
 						case rid := <-ids:
 							log.Info().
-								Str("raddr", settings.String(gschema.WeronURLFlag)).
+								Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
 								Str("id", rid).
 								Msg("Reconnecting to signaler")
 						case peer := <-adapter.Accept():
@@ -613,7 +613,7 @@ func OpenAssistantWindow(
 			return
 		}
 
-		dstFile := filepath.Join(settings.String(gschema.StorageFlag), "Manual Downloads", selectedTorrent.InfoHash.HexString(), selectedTorrentMedia)
+		dstFile := filepath.Join(settings.String(resources.GSchemaStorageKey), "Manual Downloads", selectedTorrent.InfoHash.HexString(), selectedTorrentMedia)
 
 		if err := os.MkdirAll(filepath.Dir(dstFile), os.ModePerm); err != nil {
 			OpenErrorDialog(ctx, window, err)
@@ -763,7 +763,7 @@ func OpenAssistantWindow(
 	app.AddWindow(&window.Window)
 
 	window.ConnectShow(func() {
-		if oldMPVCommand := settings.String(gschema.MPVFlag); strings.TrimSpace(oldMPVCommand) == "" {
+		if oldMPVCommand := settings.String(resources.GSchemaMPVKey); strings.TrimSpace(oldMPVCommand) == "" {
 			newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
 			if err != nil {
 				warningDialog.SetVisible(true)
@@ -771,7 +771,7 @@ func OpenAssistantWindow(
 				return
 			}
 
-			settings.SetString(gschema.MPVFlag, newMPVCommand)
+			settings.SetString(resources.GSchemaMPVKey, newMPVCommand)
 			settings.Apply()
 		}
 

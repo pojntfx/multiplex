@@ -3,11 +3,12 @@ package components
 import (
 	"context"
 	"os"
+	"path"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
-	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/rs/zerolog/log"
 )
 
@@ -20,7 +21,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Err(err).
 		Msg("Could not continue due to a fatal error")
 
-	errorBuilder := gtk.NewBuilderFromString(ressources.ErrorUI)
+	errorBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "error.ui"))
 	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
 	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
 	closeMultiplexButton := errorBuilder.GetObject("close-multiplex-button").Cast().(*gtk.Button)

@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -29,8 +30,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/multiplex/internal/gschema"
-	"github.com/pojntfx/multiplex/internal/ressources"
+	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
 	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
@@ -148,7 +148,7 @@ func OpenControlsWindow(
 ) error {
 	app.StyleManager().SetColorScheme(adw.ColorSchemePreferDark)
 
-	builder := gtk.NewBuilderFromString(ressources.ControlsUI)
+	builder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "controls.ui"))
 
 	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
 	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
@@ -170,14 +170,14 @@ func OpenControlsWindow(
 	streamCodeInput := builder.GetObject("stream-code-input").Cast().(*gtk.Entry)
 	copyStreamCodeButton := builder.GetObject("copy-stream-code-button").Cast().(*gtk.Button)
 
-	descriptionBuilder := gtk.NewBuilderFromString(ressources.DescriptionUI)
+	descriptionBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "description.ui"))
 	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
 	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
 	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 	descriptionProgressBar := descriptionBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 
-	subtitlesBuilder := gtk.NewBuilderFromString(ressources.SubtitlesUI)
+	subtitlesBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "subtitles.ui"))
 	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	subtitlesSpinner := subtitlesBuilder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
@@ -186,13 +186,13 @@ func OpenControlsWindow(
 	addSubtitlesFromFileButton := subtitlesBuilder.GetObject("add-from-file-button").Cast().(*gtk.Button)
 	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
-	audiotracksBuilder := gtk.NewBuilderFromString(ressources.AudiotracksUI)
+	audiotracksBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "audiotracks.ui"))
 	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
 	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
 
-	preparingBuilder := gtk.NewBuilderFromString(ressources.PreparingUI)
+	preparingBuilder := gtk.NewBuilderFromResource(path.Join(resources.AppPath, "preparing.ui"))
 	preparingWindow := preparingBuilder.GetObject("preparing-window").Cast().(*adw.Window)
 	preparingProgressBar := preparingBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 	preparingCancelButton := preparingBuilder.GetObject("cancel-preparing-button").Cast().(*gtk.Button)
@@ -231,7 +231,7 @@ func OpenControlsWindow(
 		adapterCtx, cancelAdapterCtx = context.WithCancel(context.Background())
 	}
 
-	u, err := url.Parse(settings.String(gschema.WeronURLFlag))
+	u, err := url.Parse(settings.String(resources.GSchemaWeronURLKey))
 	if err != nil {
 		cancelAdapterCtx()
 
@@ -251,14 +251,14 @@ func OpenControlsWindow(
 		adapter = wrtcconn.NewAdapter(
 			u.String(),
 			key,
-			strings.Split(settings.String(gschema.WeronICEFlag), ","),
+			strings.Split(settings.String(resources.GSchemaWeronICEKey), ","),
 			[]string{"multiplex/sync"},
 			&wrtcconn.AdapterConfig{
-				Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(gschema.WeronTimeoutFlag))),
-				ForceRelay: settings.Boolean(gschema.WeronForceRelayFlag),
+				Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(resources.GSchemaWeronTimeoutKey))),
+				ForceRelay: settings.Boolean(resources.GSchemaWeronForceRelayKey),
 				OnSignalerReconnect: func() {
 					log.Info().
-						Str("raddr", settings.String(gschema.WeronURLFlag)).
+						Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
 						Msg("Reconnecting to signaler")
 				},
 			},
@@ -446,7 +446,7 @@ func OpenControlsWindow(
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd.exe", "/c", "start"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(gschema.MPVFlag), ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.String(resources.GSchemaMPVKey), ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -932,7 +932,7 @@ func OpenControlsWindow(
 						return
 					case rid := <-ids:
 						log.Info().
-							Str("raddr", settings.String(gschema.WeronURLFlag)).
+							Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
 							Str("id", rid).
 							Msg("Reconnecting to signaler")
 					case peer := <-adapter.Accept():
