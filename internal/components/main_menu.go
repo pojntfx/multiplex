@@ -40,7 +40,7 @@ func AddMainMenu(
 	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesDialog)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
-	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*gtk.SpinButton)
+	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*adw.SpinRow)
 	remoteGatewaySwitchInput := preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast().(*gtk.Switch)
 	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*gtk.Entry)
 	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*gtk.Entry)
@@ -50,7 +50,7 @@ func AddMainMenu(
 	remoteGatewayPasswordRow := preferencesBuilder.GetObject("htorrent-password-row").Cast().(*adw.ActionRow)
 	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*gtk.Entry)
 	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*gtk.Entry)
-	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*gtk.SpinButton)
+	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*adw.SpinRow)
 	weronForceRelayInput := preferencesBuilder.GetObject("weron-force-relay-input").Cast().(*gtk.Switch)
 
 	preferencesHaveChanged := false
@@ -80,7 +80,7 @@ func AddMainMenu(
 		window.AddAction(copyMagnetLinkAction)
 	}
 
-	preferencesDialog.ConnectHide(func() {
+	preferencesDialog.ConnectClosed(func() {
 		if preferencesHaveChanged {
 			settings.Apply()
 

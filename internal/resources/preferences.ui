@@ -53,16 +53,13 @@
                         <property name="title" translatable="yes">Advanced</property>
 
                         <child>
-                            <object class="AdwActionRow">
+                            <object class="AdwSpinRow" id="verbosity-level-input">
                                 <property name="title" translatable="yes">Verbosity level</property>
                                 <property name="subtitle" translatable="yes">Verbosity level (0 is disabled, default is info, 7 is trace)</property>
-                                <property name="activatable-widget">verbosity-level-input</property>
-
-                                <child>
-                                    <object class="GtkSpinButton" id="verbosity-level-input">
-                                        <property name="valign">center</property>
+                                <property name="adjustment">
+                                    <object class="GtkAdjustment">
                                     </object>
-                                </child>
+                                </property>
                             </object>
                         </child>
 
@@ -180,16 +177,13 @@
                         <property name="title" translatable="yes">Advanced</property>
 
                         <child>
-                            <object class="AdwActionRow">
+                            <object class="AdwSpinRow" id="weron-timeout-input">
                                 <property name="title" translatable="yes">Connection timeout</property>
                                 <property name="subtitle" translatable="yes">Time to wait to connect to the weron signaling server</property>
-                                <property name="activatable-widget">weron-timeout-input</property>
-
-                                <child>
-                                    <object class="GtkSpinButton" id="weron-timeout-input">
-                                        <property name="valign">center</property>
+                                <property name="adjustment">
+                                    <object class="GtkAdjustment">
                                     </object>
-                                </child>
+                                </property>
                             </object>
                         </child>
 
