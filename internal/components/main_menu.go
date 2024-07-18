@@ -27,7 +27,7 @@ func AddMainMenu(
 	gateway *server.Gateway,
 	getMagnetLink func() string,
 	cancel func(),
-) (*adw.PreferencesDialog, *gtk.Entry) {
+) (*adw.PreferencesDialog, *adw.EntryRow) {
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -39,7 +39,7 @@ func AddMainMenu(
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
 	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesDialog)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
-	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*gtk.Entry)
+	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*adw.EntryRow)
 	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*adw.SpinRow)
 	remoteGatewaySwitchInput := preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast().(*gtk.Switch)
 	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*gtk.Entry)
