@@ -59,7 +59,7 @@ func AddMainMenu(
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
 		preferencesWindow.SetVisible(true)
 	})
-	app.SetAccelsForAction(preferencesActionName, []string{`<Primary>comma`})
+	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
 
 	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
