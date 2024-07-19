@@ -42,12 +42,9 @@ func AddMainMenu(
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*adw.EntryRow)
 	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*adw.SpinRow)
 	remoteGatewaySwitchInput := preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast().(*gtk.Switch)
-	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*gtk.Entry)
-	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*gtk.Entry)
-	remoteGatewayPasswordInput := preferencesBuilder.GetObject("htorrent-password-input").Cast().(*gtk.Entry)
-	remoteGatewayURLRow := preferencesBuilder.GetObject("htorrent-url-row").Cast().(*adw.ActionRow)
-	remoteGatewayUsernameRow := preferencesBuilder.GetObject("htorrent-username-row").Cast().(*adw.ActionRow)
-	remoteGatewayPasswordRow := preferencesBuilder.GetObject("htorrent-password-row").Cast().(*adw.ActionRow)
+	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*adw.EntryRow)
+	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*adw.EntryRow)
+	remoteGatewayPasswordInput := preferencesBuilder.GetObject("htorrent-password-input").Cast().(*adw.PasswordEntryRow)
 	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*gtk.Entry)
 	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*gtk.Entry)
 	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*adw.SpinRow)
@@ -96,13 +93,13 @@ func AddMainMenu(
 
 	syncSensitivityState := func() {
 		if remoteGatewaySwitchInput.State() {
-			remoteGatewayURLRow.SetSensitive(true)
-			remoteGatewayUsernameRow.SetSensitive(true)
-			remoteGatewayPasswordRow.SetSensitive(true)
+			remoteGatewayURLInput.SetEditable(true)
+			remoteGatewayUsernameInput.SetEditable(true)
+			remoteGatewayPasswordInput.SetEditable(true)
 		} else {
-			remoteGatewayURLRow.SetSensitive(false)
-			remoteGatewayUsernameRow.SetSensitive(false)
-			remoteGatewayPasswordRow.SetSensitive(false)
+			remoteGatewayURLInput.SetEditable(false)
+			remoteGatewayUsernameInput.SetEditable(false)
+			remoteGatewayPasswordInput.SetEditable(false)
 		}
 	}
 	preferencesDialog.ConnectShow(syncSensitivityState)

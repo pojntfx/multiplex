@@ -88,46 +88,63 @@
                                 </child>
 
                                 <child>
-                                    <object class="AdwActionRow" id="htorrent-url-row">
+                                    <object class="AdwEntryRow" id="htorrent-url-input">
                                         <property name="title" translatable="yes">URL</property>
-                                        <property name="subtitle" translatable="yes">API address of the remote gateway</property>
-                                        <property name="activatable-widget">htorrent-url-input</property>
-                                        <property name="sensitive">false</property>
+                                        <property name="editable">false</property>
 
                                         <child>
-                                            <object class="GtkEntry" id="htorrent-url-input">
+                                            <object class="GtkMenuButton">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                    <class name="circular"></class>
+                                                </style>
+
+                                                <property name="icon-name">help-about</property>
+                                                <property name="tooltip-text">Show help</property>
                                                 <property name="valign">center</property>
+                                                <property name="popover">htorrent-url-input-popover</property>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="AdwActionRow" id="htorrent-username-row">
+                                    <object class="AdwEntryRow" id="htorrent-username-input">
                                         <property name="title" translatable="yes">Username</property>
-                                        <property name="subtitle" translatable="yes">The remote gateway's username</property>
-                                        <property name="activatable-widget">htorrent-username-input</property>
-                                        <property name="sensitive">false</property>
+                                        <property name="editable">false</property>
 
                                         <child>
-                                            <object class="GtkEntry" id="htorrent-username-input">
+                                            <object class="GtkMenuButton">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                    <class name="circular"></class>
+                                                </style>
+
+                                                <property name="icon-name">help-about</property>
+                                                <property name="tooltip-text">Show help</property>
                                                 <property name="valign">center</property>
+                                                <property name="popover">htorrent-username-input-popover</property>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="AdwActionRow" id="htorrent-password-row">
+                                    <object class="AdwPasswordEntryRow" id="htorrent-password-input">
                                         <property name="title" translatable="yes">Password</property>
-                                        <property name="subtitle" translatable="yes">The remote gateway's password</property>
-                                        <property name="activatable-widget">htorrent-password-input</property>
-                                        <property name="sensitive">false</property>
+                                        <property name="editable">false</property>
 
                                         <child>
-                                            <object class="GtkEntry" id="htorrent-password-input">
+                                            <object class="GtkMenuButton">
+                                                <style>
+                                                    <class name="flat"></class>
+                                                    <class name="circular"></class>
+                                                </style>
+
+                                                <property name="icon-name">help-about</property>
+                                                <property name="tooltip-text">Show help</property>
                                                 <property name="valign">center</property>
-                                                <property name="visibility">false</property>
+                                                <property name="popover">htorrent-password-input-popover</property>
                                             </object>
                                         </child>
                                     </object>
@@ -217,6 +234,30 @@
         <child>
             <object class="GtkLabel">
                 <property name="label">Command to launch mpv with</property>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="htorrent-url-input-popover">
+        <child>
+            <object class="GtkLabel">
+                <property name="label">API address of the remote gateway</property>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="htorrent-username-input-popover">
+        <child>
+            <object class="GtkLabel">
+                <property name="label">The remote gateway's username</property>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="htorrent-password-input-popover">
+        <child>
+            <object class="GtkLabel">
+                <property name="label">The remote gateway's password</property>
             </object>
         </child>
     </object>
