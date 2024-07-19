@@ -166,28 +166,40 @@
                         <property name="title" translatable="yes">General</property>
 
                         <child>
-                            <object class="AdwActionRow">
+                            <object class="AdwEntryRow" id="weron-url-input">
                                 <property name="title" translatable="yes">Signaling server URL</property>
-                                <property name="subtitle" translatable="yes">URL for the weron signaling server</property>
-                                <property name="activatable-widget">weron-url-input</property>
 
                                 <child>
-                                    <object class="GtkEntry" id="weron-url-input">
+                                    <object class="GtkMenuButton">
+                                        <style>
+                                            <class name="flat"></class>
+                                            <class name="circular"></class>
+                                        </style>
+
+                                        <property name="icon-name">help-about</property>
+                                        <property name="tooltip-text">Show help</property>
                                         <property name="valign">center</property>
+                                        <property name="popover">weron-url-input-popover</property>
                                     </object>
                                 </child>
                             </object>
                         </child>
 
                         <child>
-                            <object class="AdwActionRow">
+                            <object class="AdwEntryRow" id="weron-ice-input">
                                 <property name="title" translatable="yes">STUN/TURN servers</property>
-                                <property name="subtitle" translatable="yes">Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)</property>
-                                <property name="activatable-widget">weron-ice-input</property>
 
                                 <child>
-                                    <object class="GtkEntry" id="weron-ice-input">
+                                    <object class="GtkMenuButton">
+                                        <style>
+                                            <class name="flat"></class>
+                                            <class name="circular"></class>
+                                        </style>
+
+                                        <property name="icon-name">help-about</property>
+                                        <property name="tooltip-text">Show help</property>
                                         <property name="valign">center</property>
+                                        <property name="popover">weron-ice-input-popover</property>
                                     </object>
                                 </child>
                             </object>
@@ -258,6 +270,22 @@
         <child>
             <object class="GtkLabel">
                 <property name="label">The remote gateway's password</property>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="weron-url-input-popover">
+        <child>
+            <object class="GtkLabel">
+                <property name="label">URL for the weron signaling server</property>
+            </object>
+        </child>
+    </object>
+
+    <object class="GtkPopover" id="weron-ice-input-popover">
+        <child>
+            <object class="GtkLabel">
+                <property name="label">Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)</property>
             </object>
         </child>
     </object>

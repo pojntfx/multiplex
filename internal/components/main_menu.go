@@ -45,8 +45,8 @@ func AddMainMenu(
 	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*adw.EntryRow)
 	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*adw.EntryRow)
 	remoteGatewayPasswordInput := preferencesBuilder.GetObject("htorrent-password-input").Cast().(*adw.PasswordEntryRow)
-	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*gtk.Entry)
-	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*gtk.Entry)
+	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*adw.EntryRow)
+	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*adw.EntryRow)
 	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*adw.SpinRow)
 	weronForceRelayInput := preferencesBuilder.GetObject("weron-force-relay-input").Cast().(*gtk.Switch)
 
