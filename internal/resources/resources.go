@@ -5,6 +5,10 @@ import (
 	"path"
 )
 
+//go:generate glib-compile-schemas .
+//go:embed gschemas.compiled
+var GSchema []byte
+
 const GAppID = "com.pojtinger.felicitas.Multiplex"
 
 const (
@@ -23,41 +27,34 @@ const (
 	GSchemaWeronForceRelayKey = "weronforcerelay"
 )
 
-//go:generate glib-compile-schemas .
-//go:embed gschemas.compiled
-var GSchema []byte
-
 const gResourceAppPath = "/com/pojtinger/felicitas/Multiplex/"
 
 //go:generate blueprint-compiler compile --output assistant.ui assistant.blp
 var GResourceAssistantPath = path.Join(gResourceAppPath, "assistant.ui")
 
-//go:generate blueprint-compiler compile --output assistant.ui assistant.blp
+//go:generate blueprint-compiler compile --output controls.ui controls.blp
 var GResourceControlsPath = path.Join(gResourceAppPath, "controls.ui")
 
-//go:generate blueprint-compiler compile --output assistant.ui assistant.blp
+//go:generate blueprint-compiler compile --output description.ui description.blp
 var GResourceDescriptionPath = path.Join(gResourceAppPath, "description.ui")
 
-//go:generate blueprint-compiler compile --output assistant.ui assistant.blp
+//go:generate blueprint-compiler compile --output warning.ui warning.blp
 var GResourceWarningPath = path.Join(gResourceAppPath, "warning.ui")
 
 //go:generate blueprint-compiler compile --output error.ui error.blp
 var GResourceErrorPath = path.Join(gResourceAppPath, "error.ui")
 
-//go:generate blueprint-compiler compile --output menu.ui menu..blp
+//go:generate blueprint-compiler compile --output menu.ui menu.blp
 var GResourceMenuPath = path.Join(gResourceAppPath, "menu.ui")
 
 //go:generate blueprint-compiler compile --output preferences.ui preferences.blp
 var GResourcePreferencesPath = path.Join(gResourceAppPath, "preferences.ui")
 
-//go:generate blueprint-compiler compile --output subtitles.ui subtitles.blp
-var GResourceSubtitlesPath = path.Join(gResourceAppPath, "subtitles.ui")
-
-//go:generate blueprint-compiler compile --output audiotracks.ui audiotracks.blp
-var GResourceAudiotracksPath = path.Join(gResourceAppPath, "audiotracks.ui")
-
 //go:generate blueprint-compiler compile --output preparing.ui preparing.blp
 var GResourcePreparingPath = path.Join(gResourceAppPath, "preparing.ui")
+
+var GResourceSubtitlesPath = path.Join(gResourceAppPath, "subtitles.ui")
+var GResourceAudiotracksPath = path.Join(gResourceAppPath, "audiotracks.ui")
 
 var GResourceStyleCSSPath = path.Join(gResourceAppPath, "style.css")
 var GResourceMetainfoPath = path.Join(gResourceAppPath, "com.pojtinger.felicitas.Multiplex.metainfo.xml")

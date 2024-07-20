@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <menu id="main-menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="true">Open Downloads</attribute>
+        <attribute name="action">win.opendownloads</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="true">Copy Magnet Link</attribute>
+        <attribute name="action">win.copymagnetlink</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="true">Preferences</attribute>
+        <attribute name="action">win.preferences</attribute>
+        <attribute name="accel">&lt;Primary&gt;comma</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="true">About Multiplex</attribute>
+        <attribute name="action">win.about</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
