@@ -2,3 +2,6 @@
 build-dir
 *.compiled
 *.gresource
+*.ui
+!audiotracks.ui
+!subtitles.ui
