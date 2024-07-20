@@ -1,0 +1,71 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Window description-window {
+  default-width: 450;
+  default-height: 250;
+  modal: true;
+
+  [content]
+  Box {
+    orientation: vertical;
+
+    Adw.HeaderBar {
+      styles [
+        "flat",
+      ]
+
+      [title]
+      Box {
+        orientation: vertical;
+        halign: center;
+        valign: center;
+
+        Label headerbar-title {
+          styles [
+            "title",
+          ]
+        }
+
+        Label headerbar-subtitle {
+          styles [
+            "subtitle",
+          ]
+
+          visible: false;
+        }
+      }
+    }
+
+    ScrolledWindow {
+      margin-start: 12;
+      margin-end: 12;
+      margin-bottom: 12;
+
+      Box {
+        orientation: vertical;
+
+        ProgressBar preparing-progress-bar {
+          styles [
+            "preparing-progress-bar",
+          ]
+
+          show-text: true;
+          margin-bottom: 12;
+          visible: false;
+        }
+
+        TextView description-text {
+          styles [
+            "rounded-corners",
+          ]
+
+          editable: false;
+          cursor-visible: false;
+          vexpand: true;
+          hexpand: true;
+        }
+      }
+    }
+  }
+}

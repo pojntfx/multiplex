@@ -1,0 +1,23 @@
+using Gtk 4.0;
+
+MessageDialog warning-dialog {
+  modal: true;
+  text: 'No Media Player Could Be Found';
+  secondary-text: 'Please install mpv or configure the exisiting installation to able to play media.';
+
+  [action]
+  Button mpv-download-flathub-button {
+    label: 'Get from Flathub';
+    visible: false;
+  }
+
+  [action]
+  Button mpv-download-website-button {
+    label: 'Get from mpv.io';
+  }
+
+  [action]
+  Button mpv-manual-configuration-button {
+    label: 'Manual configuration';
+  }
+}

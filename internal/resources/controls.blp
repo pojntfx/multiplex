@@ -1,0 +1,222 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow main-window {
+  default-width: 700;
+  default-height: 0;
+  title: 'Multiplex';
+  resizable: false;
+
+  content: Adw.ToastOverlay toast-overlay {
+    WindowHandle {
+      Box {
+        orientation: vertical;
+
+        Adw.HeaderBar {
+          styles [
+            "flat",
+          ]
+
+          show-end-title-buttons: false;
+
+          [title]
+          Button media-info-button {
+            styles [
+              "flat",
+            ]
+
+            tooltip-text: 'Open media details';
+
+            Box {
+              Box {
+                orientation: vertical;
+                halign: center;
+                valign: center;
+
+                Label button-headerbar-title {
+                  styles [
+                    "title",
+                  ]
+                }
+
+                Label button-headerbar-subtitle {
+                  styles [
+                    "subtitle",
+                  ]
+                }
+              }
+            }
+          }
+
+          [end]
+          Box {
+            orientation: horizontal;
+            spacing: 12;
+            valign: start;
+
+            Spinner headerbar-spinner {
+              tooltip-text: 'Preparing stream ...';
+            }
+
+            MenuButton {
+              styles [
+                "flat",
+              ]
+
+              icon-name: 'system-users-symbolic';
+              popover: users-popover;
+              tooltip-text: 'Show peers';
+            }
+
+            MenuButton menu-button {
+              icon-name: 'open-menu-symbolic';
+              primary: true;
+              tooltip-text: 'Open primary menu';
+            }
+
+            WindowControls {
+              side: end;
+            }
+          }
+        }
+
+        Box {
+          spacing: 6;
+          halign: fill;
+          valign: center;
+          vexpand: true;
+          margin-top: 6;
+          margin-start: 18;
+          margin-end: 18;
+          margin-bottom: 24;
+
+          Button play-button {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'media-playback-start-symbolic';
+            tooltip-text: 'Toggle playback';
+          }
+
+          Button stop-button {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'media-playback-stop-symbolic';
+            tooltip-text: 'Stop playback';
+          }
+
+          Separator {
+            styles [
+              "spacer",
+            ]
+          }
+
+          Label elapsed-track-label {
+            styles [
+              "tabular-nums",
+            ]
+
+            label: '00:00:00';
+            tooltip-text: 'Elapsed time';
+          }
+
+          Scale seeker {
+            hexpand: true;
+            tooltip-text: 'Playback progress';
+          }
+
+          Label remaining-track-label {
+            styles [
+              "tabular-nums",
+            ]
+
+            label: '-00:00:00';
+            tooltip-text: 'Remaining playback time';
+          }
+
+          Separator {
+            styles [
+              "spacer",
+            ]
+          }
+
+          VolumeButton volume-button {
+            value: 1;
+          }
+
+          Button audiotracks-button {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'media-optical-cd-audio-symbolic';
+            tooltip-text: 'Change audio track';
+          }
+
+          Button subtitle-button {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'media-view-subtitles-symbolic';
+            tooltip-text: 'Change subtitles';
+          }
+
+          ToggleButton fullscreen-button {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'view-fullscreen-symbolic';
+            tooltip-text: 'Toggle fullscreen';
+          }
+        }
+      }
+    }
+  };
+}
+
+Popover users-popover {
+  Box {
+    orientation: vertical;
+    halign: center;
+    valign: center;
+    spacing: 12;
+    margin-top: 8;
+    margin-start: 8;
+    margin-end: 8;
+    margin-bottom: 8;
+
+    Label watching-with-title-label {
+      styles [
+        "title",
+      ]
+
+      label: 'You\'re currently watching alone.';
+    }
+
+    Label {
+      justify: center;
+      label: 'Ask the people you want to watch with to enter the following stream code:';
+    }
+
+    Box {
+      styles [
+        "linked",
+      ]
+
+      Entry stream-code-input {
+        editable: false;
+        hexpand: true;
+      }
+
+      Button copy-stream-code-button {
+        icon-name: 'edit-copy-symbolic';
+        tooltip-text: 'Copy stream code to clipboard';
+      }
+    }
+  }
+}

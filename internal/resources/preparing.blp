@@ -1,0 +1,47 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Window preparing-window {
+  modal: true;
+
+  [content]
+  WindowHandle {
+    Box {
+      orientation: vertical;
+      valign: center;
+      halign: center;
+      margin-top: 12;
+      margin-start: 12;
+      margin-end: 12;
+      margin-bottom: 12;
+
+      Label {
+        styles [
+          "title",
+        ]
+
+        label: 'Preparing stream ...';
+        margin-bottom: 12;
+      }
+
+      ProgressBar preparing-progress-bar {
+        styles [
+          "preparing-progress-bar",
+        ]
+
+        show-text: true;
+        margin-bottom: 8;
+      }
+
+      [action]
+      Button cancel-preparing-button {
+        styles [
+          "destructive-action",
+        ]
+
+        margin-top: 8;
+        label: 'Cancel';
+      }
+    }
+  }
+}

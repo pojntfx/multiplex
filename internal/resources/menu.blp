@@ -1,0 +1,26 @@
+using Gtk 4.0;
+
+menu main-menu {
+  section {
+    item {
+      label: _('Open Downloads');
+      action: 'win.opendownloads';
+    }
+
+    item {
+      label: _('Copy Magnet Link');
+      action: 'win.copymagnetlink';
+    }
+
+    item {
+      label: _('Preferences');
+      action: 'win.preferences';
+      accel: '<Primary>comma';
+    }
+
+    item {
+      label: _('About Multiplex');
+      action: 'win.about';
+    }
+  }
+}

@@ -1,0 +1,213 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow main-window {
+  default-width: 960;
+  default-height: 540;
+  title: 'Multiplex';
+
+  [content]
+  Adw.ToastOverlay toast-overlay {
+    Box {
+      orientation: vertical;
+
+      Adw.HeaderBar {
+        styles [
+          "flat",
+        ]
+
+        show-end-title-buttons: false;
+
+        [start]
+        Button previous-button {
+          label: 'Previous';
+          visible: false;
+          valign: start;
+        }
+
+        [title]
+        Box {
+          Box media-info-display {
+            orientation: vertical;
+            halign: center;
+            valign: center;
+
+            Label {
+              styles [
+                "title",
+              ]
+
+              label: 'Welcome';
+            }
+          }
+
+          Button media-info-button {
+            styles [
+              "flat",
+            ]
+
+            visible: false;
+            tooltip-text: 'Open media details';
+
+            Box {
+              Box {
+                orientation: vertical;
+                halign: center;
+                valign: center;
+
+                Label button-headerbar-title {
+                  styles [
+                    "title",
+                  ]
+
+                  label: 'Welcome';
+                }
+
+                Label button-headerbar-subtitle {
+                  styles [
+                    "subtitle",
+                  ]
+
+                  visible: false;
+                }
+              }
+            }
+          }
+        }
+
+        [end]
+        Box {
+          orientation: horizontal;
+          spacing: 12;
+          valign: start;
+
+          Spinner headerbar-spinner {
+            tooltip-text: 'Getting metadata ...';
+          }
+
+          Button next-button {
+            styles [
+              "suggested-action",
+            ]
+
+            label: 'Next';
+            sensitive: false;
+          }
+
+          MenuButton menu-button {
+            icon-name: 'open-menu-symbolic';
+            primary: true;
+          }
+
+          WindowControls {
+            side: end;
+          }
+        }
+      }
+
+      Adw.ToastOverlay {
+        Stack stack {
+          transition-type: slide_left_right;
+
+          StackPage {
+            name: 'welcome-page';
+
+            child: Adw.Clamp {
+              maximum-size: 295;
+              vexpand: true;
+              valign: fill;
+
+              Adw.StatusPage {
+                margin-start: 12;
+                margin-end: 12;
+                icon-name: 'com.pojtinger.felicitas.Multiplex';
+                title: 'Multiplex';
+                description: 'Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/multiplex/wiki/Stream-Codes">stream code</a> to start streaming';
+
+                Entry magnet-link-entry {
+                  placeholder-text: 'Magnet link or stream code';
+                }
+              }
+            };
+          }
+
+          StackPage {
+            name: 'media-page';
+
+            child: Adw.Clamp {
+              maximum-size: 600;
+              vexpand: true;
+              valign: fill;
+
+              Adw.StatusPage {
+                margin-start: 12;
+                margin-end: 12;
+                icon-name: 'applications-multimedia-symbolic';
+                title: 'Media';
+                description: 'Select the file you want to play';
+
+                Adw.PreferencesGroup media-selection-group {}
+              }
+            };
+          }
+
+          StackPage {
+            name: 'ready-page';
+
+            child: Adw.Clamp {
+              maximum-size: 295;
+              vexpand: true;
+              valign: fill;
+
+              Adw.StatusPage {
+                margin-start: 12;
+                margin-end: 12;
+                icon-name: 'emblem-ok-symbolic';
+                title: 'You\'re all set!';
+
+                Box {
+                  orientation: vertical;
+                  spacing: 36;
+                  halign: center;
+                  valign: center;
+
+                  CheckButton rights-confirmation-button {
+                    label: 'I have the right to stream the selected media';
+                  }
+
+                  Adw.SplitButton download-and-play-button {
+                    styles [
+                      "pill",
+                    ]
+
+                    label: 'Download and Play';
+                    sensitive: false;
+                    halign: center;
+                    popover: stream-popover;
+                  }
+                }
+              }
+            };
+          }
+        }
+      }
+    }
+  }
+}
+
+Popover stream-popover {
+  Box {
+    orientation: vertical;
+    halign: center;
+    valign: center;
+    spacing: 12;
+
+    Button stream-without-downloading-button {
+      styles [
+        "flat",
+      ]
+
+      label: 'Stream without Downloading';
+    }
+  }
+}
