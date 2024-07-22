@@ -189,6 +189,9 @@ github.com/go-logr/logr/funcr
 # github.com/go-logr/stdr v1.2.2
 ## explicit; go 1.16
 github.com/go-logr/stdr
+# github.com/godbus/dbus/v5 v5.1.0
+## explicit; go 1.12
+github.com/godbus/dbus/v5
 # github.com/google/btree v1.1.2
 ## explicit; go 1.18
 github.com/google/btree
@@ -382,6 +385,12 @@ github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/log
+# github.com/rymdport/portal v0.2.3
+## explicit; go 1.19
+github.com/rymdport/portal
+github.com/rymdport/portal/internal/apis
+github.com/rymdport/portal/internal/convert
+github.com/rymdport/portal/openuri
 # github.com/spaolacci/murmur3 v1.1.0
 ## explicit
 github.com/spaolacci/murmur3
