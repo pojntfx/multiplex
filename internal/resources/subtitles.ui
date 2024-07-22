@@ -21,6 +21,7 @@
                 <property name="orientation">horizontal</property>
                 <property name="spacing">12</property>
                 <property name="valign">start</property>
+                <property name="halign">end</property>
 
                 <child>
                     <object class="GtkSpinner" id="headerbar-spinner">
