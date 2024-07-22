@@ -41,9 +41,6 @@ var GResourceDescriptionPath = path.Join(gResourceAppPath, "description.ui")
 //go:generate blueprint-compiler compile --output warning.ui warning.blp
 var GResourceWarningPath = path.Join(gResourceAppPath, "warning.ui")
 
-//go:generate blueprint-compiler compile --output error.ui error.blp
-var GResourceErrorPath = path.Join(gResourceAppPath, "error.ui")
-
 //go:generate blueprint-compiler compile --output menu.ui menu.blp
 var GResourceMenuPath = path.Join(gResourceAppPath, "menu.ui")
 
@@ -53,6 +50,7 @@ var GResourcePreferencesPath = path.Join(gResourceAppPath, "preferences.ui")
 //go:generate blueprint-compiler compile --output preparing.ui preparing.blp
 var GResourcePreparingPath = path.Join(gResourceAppPath, "preparing.ui")
 
+var GResourceErrorPath = path.Join(gResourceAppPath, "error.ui")
 var GResourceSubtitlesPath = path.Join(gResourceAppPath, "subtitles.ui")
 var GResourceAudiotracksPath = path.Join(gResourceAppPath, "audiotracks.ui")
 

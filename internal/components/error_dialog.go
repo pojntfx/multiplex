@@ -21,35 +21,26 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Msg("Could not continue due to a fatal error")
 
 	errorBuilder := gtk.NewBuilderFromResource(resources.GResourceErrorPath)
-	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*gtk.MessageDialog)
-	reportErrorButton := errorBuilder.GetObject("report-error-button").Cast().(*gtk.Button)
-	closeMultiplexButton := errorBuilder.GetObject("close-multiplex-button").Cast().(*gtk.Button)
+	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*adw.AlertDialog)
 
-	errorDialog.Object.SetObjectProperty("secondary-text", err.Error())
+	errorDialog.SetBody(err.Error())
 
-	errorDialog.SetDefaultWidget(reportErrorButton)
-	errorDialog.SetTransientFor(&window.Window)
-	errorDialog.ConnectCloseRequest(func() (ok bool) {
-		errorDialog.Close()
-		errorDialog.SetVisible(false)
+	errorDialog.ConnectResponse(func(response string) {
+		switch response {
+		case "report":
+			// We can't use gtk.NewURILauncher(issuesURL).Launch() since it's not implemented in gotk4 yet
+			gtk.ShowURI(&window.Window, issuesURL, gdk.CURRENT_TIME)
 
-		return ok
+			errorDialog.Close()
+
+			os.Exit(1)
+
+		default:
+			errorDialog.Close()
+
+			os.Exit(1)
+		}
 	})
 
-	reportErrorButton.ConnectClicked(func() {
-		// We can't use gtk.NewURILauncher(issuesURL).Launch() since it's not implemented in gotk4 yet
-		gtk.ShowURI(&window.Window, issuesURL, gdk.CURRENT_TIME)
-
-		errorDialog.Close()
-
-		os.Exit(1)
-	})
-
-	closeMultiplexButton.ConnectClicked(func() {
-		errorDialog.Close()
-
-		os.Exit(1)
-	})
-
-	errorDialog.SetVisible(true)
+	errorDialog.Present(window)
 }
