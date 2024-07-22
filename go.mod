@@ -13,6 +13,7 @@ require (
 	github.com/pojntfx/htorrent v0.5.4
 	github.com/pojntfx/weron v0.2.6
 	github.com/rs/zerolog v1.33.0
+	github.com/rymdport/portal v0.2.3
 	github.com/teivah/broadcast v0.1.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
@@ -51,6 +52,7 @@ require (
 	github.com/go-llsqlite/crawshaw v0.5.3 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/btree v1.1.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect

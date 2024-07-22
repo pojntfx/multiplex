@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/gdk/v4"
 	"github.com/diamondburned/gotk4/pkg/gtk/v4"
 	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/rs/zerolog/log"
+	"github.com/rymdport/portal/openuri"
 )
 
 const (
@@ -28,8 +28,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	errorDialog.ConnectResponse(func(response string) {
 		switch response {
 		case "report":
-			// We can't use gtk.NewURILauncher(issuesURL).Launch() since it's not implemented in gotk4 yet
-			gtk.ShowURI(&window.Window, issuesURL, gdk.CURRENT_TIME)
+			_ = openuri.OpenURI("", issuesURL, nil)
 
 			errorDialog.Close()
 

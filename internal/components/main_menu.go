@@ -2,7 +2,6 @@ package components
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -104,8 +103,6 @@ func AddMainMenu(
 		}
 	}
 	preferencesDialog.ConnectShow(syncSensitivityState)
-
-	OpenErrorDialog(ctx, window, errors.New("Test"))
 
 	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
 	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {

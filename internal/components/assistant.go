@@ -30,6 +30,7 @@ import (
 	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
+	"github.com/rymdport/portal/openuri"
 )
 
 const (
@@ -727,8 +728,7 @@ func OpenAssistantWindow(
 	}
 
 	mpvFlathubDownloadButton.ConnectClicked(func() {
-		// We can't use gtk.NewURILauncher(mpvFlathubURL).Launch() since it's not implemented in gotk4 yet
-		gtk.ShowURI(&window.Window, mpvFlathubURL, gdk.CURRENT_TIME)
+		_ = openuri.OpenURI("", mpvFlathubURL, nil)
 
 		warningDialog.Close()
 
@@ -736,8 +736,7 @@ func OpenAssistantWindow(
 	})
 
 	mpvWebsiteDownloadButton.ConnectClicked(func() {
-		// We can't use gtk.NewURILauncher(mpvWebsiteURL).Launch() since it's not implemented in gotk4 yet
-		gtk.ShowURI(&window.Window, mpvWebsiteURL, gdk.CURRENT_TIME)
+		_ = openuri.OpenURI("", mpvWebsiteURL, nil)
 
 		warningDialog.Close()
 
