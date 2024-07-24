@@ -34,7 +34,7 @@
       "buildsystem": "simple",
       "build-commands": [
         "mkdir -p vendor && cp modules.txt vendor/modules.txt",
-        ". /usr/lib/sdk/golang/enable.sh && export GOBIN=\"/app/bin\" && go mod vendor && go generate ./... && go install -v -mod=vendor .",
+        ". /usr/lib/sdk/golang/enable.sh && export GOBIN=\"/app/bin\" && go generate ./... && go install -v -mod=vendor .",
         "desktop-file-install --dir=/app/share/applications $FLATPAK_ID.desktop",
         "install -D -m 0644 internal/resources/$FLATPAK_ID.metainfo.xml /app/share/metainfo/$FLATPAK_ID.metainfo.xml",
         "for icon in 16x16 22x22 24x24 32x32 36x36 48x48 64x64 72x72 96x96 128x128 192x192 256x256 512x512; do install -D -m 0644 docs/icon-${icon}.png /app/share/icons/hicolor/${icon}/apps/$FLATPAK_ID.png; done"
