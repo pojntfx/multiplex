@@ -1,5 +1,6 @@
 .flatpak-builder
 build-dir
+vendor
 *.compiled
 *.gresource
 *.ui
