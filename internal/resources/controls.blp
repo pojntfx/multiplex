@@ -143,8 +143,14 @@ Adw.ApplicationWindow main-window {
             ]
           }
 
-          VolumeButton volume-button {
-            value: 1;
+          MenuButton {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'audio-volume-medium';
+            tooltip-text: 'Change audio volume';
+            popover: audiovolume-button-popover;
           }
 
           Button audiotracks-button {
@@ -217,6 +223,28 @@ Popover users-popover {
         icon-name: 'edit-copy-symbolic';
         tooltip-text: 'Copy stream code to clipboard';
       }
+    }
+  }
+}
+
+Popover audiovolume-button-popover {
+  width-request: 250;
+
+  Box {
+    margin-top: 6;
+    margin-bottom: 6;
+    margin-start: 6;
+    margin-end: 6;
+
+    Scale volume-scale {
+      hexpand: true;
+
+      adjustment: Adjustment {
+        step-increment: 0.2;
+        lower: 0;
+        upper: 1;
+        value: 1;
+      };
     }
   }
 }

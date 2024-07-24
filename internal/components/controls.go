@@ -155,7 +155,7 @@ func OpenControlsWindow(
 	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
-	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.VolumeButton)
+	volumeScale := builder.GetObject("volume-scale").Cast().(*gtk.Scale)
 	subtitleButton := builder.GetObject("subtitle-button").Cast().(*gtk.Button)
 	audiotracksButton := builder.GetObject("audiotracks-button").Cast().(*gtk.Button)
 	fullscreenButton := builder.GetObject("fullscreen-button").Cast().(*gtk.ToggleButton)
@@ -1373,7 +1373,7 @@ func OpenControlsWindow(
 				}
 			}()
 
-			volumeButton.ConnectValueChanged(func(value float64) {
+			volumeScale.ConnectChangeValue(func(scroll gtk.ScrollType, value float64) (ok bool) {
 				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 					log.Info().
 						Float64("value", value).
@@ -1388,8 +1388,10 @@ func OpenControlsWindow(
 				}); err != nil {
 					OpenErrorDialog(ctx, window, err)
 
-					return
+					return false
 				}
+
+				return false
 			})
 
 			subtitleButton.ConnectClicked(func() {
