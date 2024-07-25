@@ -156,6 +156,7 @@ func OpenControlsWindow(
 	playButton := builder.GetObject("play-button").Cast().(*gtk.Button)
 	stopButton := builder.GetObject("stop-button").Cast().(*gtk.Button)
 	volumeScale := builder.GetObject("volume-scale").Cast().(*gtk.Scale)
+	volumeButton := builder.GetObject("volume-button").Cast().(*gtk.MenuButton)
 	volumeMuteButton := builder.GetObject("audiovolume-button-mute-button").Cast().(*gtk.Button)
 	subtitleButton := builder.GetObject("subtitle-button").Cast().(*gtk.Button)
 	audiotracksButton := builder.GetObject("audiotracks-button").Cast().(*gtk.Button)
@@ -1383,8 +1384,23 @@ func OpenControlsWindow(
 			})
 
 			volumeScale.ConnectValueChanged(func() {
+				value := volumeScale.Value()
+
+				if value <= 0 {
+					volumeButton.SetIconName("audio-volume-muted-symbolic")
+					volumeMuteButton.SetIconName("audio-volume-muted-symbolic")
+				} else if value <= 0.3 {
+					volumeButton.SetIconName("audio-volume-low-symbolic")
+					volumeMuteButton.SetIconName("audio-volume-high-symbolic")
+				} else if value <= 0.6 {
+					volumeButton.SetIconName("audio-volume-medium-symbolic")
+					volumeMuteButton.SetIconName("audio-volume-high-symbolic")
+				} else {
+					volumeButton.SetIconName("audio-volume-high-symbolic")
+					volumeMuteButton.SetIconName("audio-volume-high-symbolic")
+				}
+
 				if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					value := volumeScale.Value()
 
 					log.Info().
 						Float64("value", value).

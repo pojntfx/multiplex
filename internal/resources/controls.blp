@@ -143,12 +143,12 @@ Adw.ApplicationWindow main-window {
             ]
           }
 
-          MenuButton {
+          MenuButton volume-button {
             styles [
               "flat",
             ]
 
-            icon-name: 'audio-volume-medium';
+            icon-name: 'audio-volume-high-symbolic';
             tooltip-text: 'Change audio volume';
             popover: audiovolume-button-popover;
           }
@@ -237,11 +237,8 @@ Popover audiovolume-button-popover {
     margin-end: 6;
 
     Button audiovolume-button-mute-button {
-      icon-name: "multimedia-volume-control-symbolic";
-
-      accessibility {
-        label: 'Mute/Unmute';
-      }
+      icon-name: "audio-volume-high-symbolic";
+      tooltip-text: 'Mute/unmute';
 
       styles [
         "circular"
