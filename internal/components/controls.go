@@ -485,7 +485,7 @@ func OpenControlsWindow(
 
 	app.AddWindow(&window.Window)
 
-	s := make(chan os.Signal)
+	s := make(chan os.Signal, 1)
 	signal.Notify(s, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-s

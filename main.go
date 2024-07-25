@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"math/rand"
 	"net"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	"github.com/diamondburned/gotk4/pkg/gdk/v4"
@@ -122,8 +120,6 @@ func main() {
 			panic(err)
 		}
 		addr.Port = port
-
-		rand.Seed(time.Now().UnixNano())
 
 		if err := os.MkdirAll(settings.String(resources.GSchemaStorageKey), os.ModePerm); err != nil {
 			panic(err)
