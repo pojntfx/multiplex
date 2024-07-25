@@ -45,6 +45,10 @@ const (
 	applyPreferencesActionName = "applypreferences"
 	openDownloadsActionName    = "opendownloads"
 	copyMagnetLinkActionName   = "copymagnetlink"
+
+	responseDownloadFlathub     = "download-flathub"
+	responseDownloadWebsite     = "download-website"
+	responseManualConfiguration = "manual-configuration"
 )
 
 func OpenAssistantWindow(
@@ -89,10 +93,7 @@ func OpenAssistantWindow(
 	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
 
 	warningBuilder := gtk.NewBuilderFromResource(resources.GResourceWarningPath)
-	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*gtk.MessageDialog)
-	mpvFlathubDownloadButton := warningBuilder.GetObject("mpv-download-flathub-button").Cast().(*gtk.Button)
-	mpvWebsiteDownloadButton := warningBuilder.GetObject("mpv-download-website-button").Cast().(*gtk.Button)
-	mpvManualConfigurationButton := warningBuilder.GetObject("mpv-manual-configuration-button").Cast().(*gtk.Button)
+	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*adw.AlertDialog)
 
 	magnetLink := ""
 	torrentTitle := ""
@@ -721,41 +722,32 @@ func OpenAssistantWindow(
 	})
 
 	if runtime.GOOS == "linux" {
-		mpvFlathubDownloadButton.SetVisible(true)
-		warningDialog.SetDefaultWidget(mpvFlathubDownloadButton)
-	} else {
-		warningDialog.SetDefaultWidget(mpvWebsiteDownloadButton)
+		warningDialog.SetResponseEnabled(responseDownloadFlathub, true)
+		warningDialog.SetDefaultResponse(responseDownloadFlathub)
 	}
 
-	mpvFlathubDownloadButton.ConnectClicked(func() {
-		_ = openuri.OpenURI("", mpvFlathubURL, nil)
+	warningDialog.ConnectResponse(func(response string) {
+		switch response {
+		case responseDownloadFlathub:
+			_ = openuri.OpenURI("", mpvFlathubURL, nil)
 
-		warningDialog.Close()
+			warningDialog.Close()
 
-		os.Exit(0)
-	})
+			os.Exit(0)
 
-	mpvWebsiteDownloadButton.ConnectClicked(func() {
-		_ = openuri.OpenURI("", mpvWebsiteURL, nil)
+		case responseDownloadWebsite:
+			_ = openuri.OpenURI("", mpvWebsiteURL, nil)
 
-		warningDialog.Close()
+			warningDialog.Close()
 
-		os.Exit(0)
-	})
+			os.Exit(0)
 
-	mpvManualConfigurationButton.ConnectClicked(func() {
-		warningDialog.Close()
+		default:
+			warningDialog.Close()
 
-		preferencesDialog.Present(&window.Window)
-		mpvCommandInput.GrabFocus()
-	})
-
-	warningDialog.SetTransientFor(&window.Window)
-	warningDialog.ConnectCloseRequest(func() (ok bool) {
-		warningDialog.Close()
-		warningDialog.SetVisible(false)
-
-		return ok
+			preferencesDialog.Present(&window.Window)
+			mpvCommandInput.GrabFocus()
+		}
 	})
 
 	app.AddWindow(&window.Window)
@@ -764,7 +756,7 @@ func OpenAssistantWindow(
 		if oldMPVCommand := settings.String(resources.GSchemaMPVKey); strings.TrimSpace(oldMPVCommand) == "" {
 			newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
 			if err != nil {
-				warningDialog.SetVisible(true)
+				warningDialog.Present(&window.Window)
 
 				return
 			}
