@@ -1,0 +1,92 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Window subtitles-dialog {
+  modal: true;
+  title: 'Subtitles';
+  default-width: 500;
+  default-height: 500;
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      show-end-title-buttons: false;
+      show-start-title-buttons: false;
+
+      [start]
+      Button button-cancel {
+        label: 'Cancel';
+      }
+
+      [title]
+      Box {
+        orientation: horizontal;
+        spacing: 12;
+        valign: center;
+        halign: center;
+
+        Spinner headerbar-spinner {
+          tooltip-text: 'Getting metadata ...';
+          visible: false;
+        }
+
+        Label {
+          label: 'Subtitles';
+
+          styles [
+            "title",
+          ]
+        }
+      }
+
+      [end]
+      Button button-ok {
+        label: 'OK';
+
+        styles [
+          "suggested-action",
+        ]
+      }
+    }
+
+    Adw.ToastOverlay toast-overlay {
+      ScrolledWindow {
+        Adw.Clamp {
+          maximum-size: 600;
+          vexpand: true;
+          valign: fill;
+          margin-top: 12;
+          margin-start: 12;
+          margin-end: 12;
+          margin-bottom: 12;
+
+          Adw.PreferencesGroup subtitle-tracks {
+            title: _('Tracks');
+
+            [header-suffix]
+            Button add-from-file-button {
+              styles [
+                "flat",
+              ]
+
+              valign: center;
+
+              Box {
+                spacing: 6;
+
+                Image {
+                  icon-name: 'list-add-symbolic';
+                }
+
+                Label {
+                  label: 'Add from file';
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

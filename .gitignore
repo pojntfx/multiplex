@@ -4,7 +4,5 @@ vendor
 *.compiled
 *.gresource
 *.ui
-!audiotracks.ui
-!subtitles.ui
 !error.ui
 !warning.ui

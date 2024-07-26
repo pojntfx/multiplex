@@ -179,7 +179,7 @@ func OpenControlsWindow(
 	descriptionProgressBar := descriptionBuilder.GetObject("preparing-progress-bar").Cast().(*gtk.ProgressBar)
 
 	subtitlesBuilder := gtk.NewBuilderFromResource(resources.GResourceSubtitlesPath)
-	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*gtk.Dialog)
+	subtitlesDialog := subtitlesBuilder.GetObject("subtitles-dialog").Cast().(*adw.Window)
 	subtitlesCancelButton := subtitlesBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	subtitlesSpinner := subtitlesBuilder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
 	subtitlesOKButton := subtitlesBuilder.GetObject("button-ok").Cast().(*gtk.Button)
@@ -188,7 +188,7 @@ func OpenControlsWindow(
 	subtitlesOverlay := subtitlesBuilder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
 
 	audiotracksBuilder := gtk.NewBuilderFromResource(resources.GResourceAudiotracksPath)
-	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*gtk.Dialog)
+	audiotracksDialog := audiotracksBuilder.GetObject("audiotracks-dialog").Cast().(*adw.Window)
 	audiotracksCancelButton := audiotracksBuilder.GetObject("button-cancel").Cast().(*gtk.Button)
 	audiotracksOKButton := audiotracksBuilder.GetObject("button-ok").Cast().(*gtk.Button)
 	audiotracksSelectionGroup := audiotracksBuilder.GetObject("audiotracks").Cast().(*adw.PreferencesGroup)
@@ -1418,26 +1418,19 @@ func OpenControlsWindow(
 			})
 
 			subtitleButton.ConnectClicked(func() {
-				subtitlesDialog.SetVisible(true)
+				subtitlesDialog.Present()
 			})
 
 			audiotracksButton.ConnectClicked(func() {
-				audiotracksDialog.SetVisible(true)
+				audiotracksDialog.Present()
 			})
 
-			for _, d := range []*gtk.Dialog{subtitlesDialog, audiotracksDialog} {
+			for _, d := range []*adw.Window{subtitlesDialog, audiotracksDialog} {
 				dialog := d
 
 				escCtrl := gtk.NewEventControllerKey()
 				dialog.AddController(escCtrl)
 				dialog.SetTransientFor(&window.Window)
-
-				dialog.ConnectCloseRequest(func() (ok bool) {
-					dialog.Close()
-					dialog.SetVisible(false)
-
-					return ok
-				})
 
 				escCtrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
 					if keycode == keycodeEscape {
@@ -1469,14 +1462,22 @@ func OpenControlsWindow(
 
 			subtitlesOKButton.ConnectClicked(func() {
 				subtitlesDialog.Close()
+				subtitlesDialog.SetVisible(false)
 			})
 
 			audiotracksCancelButton.ConnectClicked(func() {
 				audiotracksDialog.Close()
+				subtitlesDialog.SetVisible(false)
+			})
+
+			audiotracksCancelButton.ConnectClicked(func() {
+				audiotracksDialog.Close()
+				subtitlesDialog.SetVisible(false)
 			})
 
 			audiotracksOKButton.ConnectClicked(func() {
 				audiotracksDialog.Close()
+				subtitlesDialog.SetVisible(false)
 			})
 
 			addSubtitlesFromFileButton.ConnectClicked(func() {

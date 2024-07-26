@@ -47,10 +47,14 @@ var GResourcePreferencesPath = path.Join(gResourceAppPath, "preferences.ui")
 //go:generate blueprint-compiler compile --output preparing.ui preparing.blp
 var GResourcePreparingPath = path.Join(gResourceAppPath, "preparing.ui")
 
+//go:generate blueprint-compiler compile --output subtitles.ui subtitles.blp
+var GResourceSubtitlesPath = path.Join(gResourceAppPath, "subtitles.ui")
+
+//go:generate blueprint-compiler compile --output audiotracks.ui audiotracks.blp
+var GResourceAudiotracksPath = path.Join(gResourceAppPath, "audiotracks.ui")
+
 var GResourceErrorPath = path.Join(gResourceAppPath, "error.ui")
 var GResourceWarningPath = path.Join(gResourceAppPath, "warning.ui")
-var GResourceSubtitlesPath = path.Join(gResourceAppPath, "subtitles.ui")
-var GResourceAudiotracksPath = path.Join(gResourceAppPath, "audiotracks.ui")
 
 var GResourceStyleCSSPath = path.Join(gResourceAppPath, "style.css")
 var GResourceMetainfoPath = path.Join(gResourceAppPath, "com.pojtinger.felicitas.Multiplex.metainfo.xml")
