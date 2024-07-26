@@ -27,7 +27,7 @@ func AddMainMenu(
 	gateway *server.Gateway,
 	getMagnetLink func() string,
 	cancel func(),
-) (*adw.PreferencesDialog, *adw.EntryRow) {
+) (*adw.PreferencesWindow, *adw.EntryRow) {
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
@@ -37,7 +37,7 @@ func AddMainMenu(
 	aboutDialog.SetCopyright("© 2024 Felicitas Pojtinger")
 
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
-	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesDialog)
+	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesWindow)
 	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
 	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*adw.EntryRow)
 	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*adw.SpinRow)
@@ -54,7 +54,7 @@ func AddMainMenu(
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
-		preferencesDialog.Present(&window.Window)
+		preferencesDialog.Present()
 	})
 	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
@@ -77,7 +77,11 @@ func AddMainMenu(
 		window.AddAction(copyMagnetLinkAction)
 	}
 
-	preferencesDialog.ConnectClosed(func() {
+	preferencesDialog.SetTransientFor(&window.Window)
+	preferencesDialog.ConnectCloseRequest(func() (ok bool) {
+		preferencesDialog.Close()
+		preferencesDialog.SetVisible(false)
+
 		if preferencesHaveChanged {
 			settings.Apply()
 
@@ -89,6 +93,8 @@ func AddMainMenu(
 		}
 
 		preferencesHaveChanged = false
+
+		return ok
 	})
 
 	syncSensitivityState := func() {

@@ -1,7 +1,9 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.PreferencesDialog preferences-dialog {
+Adw.PreferencesWindow preferences-dialog {
+  modal: true;
+
   Adw.PreferencesPage {
     title: _('Playback');
     icon-name: 'multimedia-player-symbolic';

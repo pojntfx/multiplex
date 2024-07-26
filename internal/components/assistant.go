@@ -745,7 +745,8 @@ func OpenAssistantWindow(
 		default:
 			warningDialog.Close()
 
-			preferencesDialog.Present(&window.Window)
+			preferencesDialog.SetTransientFor(&window.Window)
+			preferencesDialog.Present()
 			mpvCommandInput.GrabFocus()
 		}
 	})
