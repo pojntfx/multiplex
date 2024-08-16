@@ -31,7 +31,7 @@ func AddMainMenu(
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
-	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.4")
+	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.5")
 	aboutDialog.SetDevelopers([]string{"Felicitas Pojtinger"})
 	aboutDialog.SetArtists([]string{"Brage Fuglseth"})
 	aboutDialog.SetCopyright("© 2024 Felicitas Pojtinger")
