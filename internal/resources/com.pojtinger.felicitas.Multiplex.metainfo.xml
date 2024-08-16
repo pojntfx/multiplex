@@ -102,6 +102,14 @@
     </screenshots>
 
     <releases>
+        <release version="0.1.5" date='2024-08-15T18:58:38Z-0700'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.5</url>
+
+            <description>
+                <p>Visual refinements to match the state of the art of GNOME apps</p>
+            </description>
+        </release>
+
         <release version="0.1.4" date='2024-04-22T10:09:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.4</url>
 
