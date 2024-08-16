@@ -20,10 +20,10 @@
   },
   {
     "dest": "vendor/github.com/diamondburned/gotk4/pkg",
-    "sha256": "2315cb543ab81e086bd15f908db66276a3d812cc33e24760952c4c5c12bdd86d",
+    "sha256": "c9723192c5123d33d85cfbc39631f8246a76f767b44b36fb27f4366e7d8acdcd",
     "strip-components": 4,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/diamondburned/gotk4/pkg/@v/v0.3.0.zip"
+    "url": "https://proxy.golang.org/github.com/diamondburned/gotk4/pkg/@v/v0.3.1.zip"
   },
   {
     "dest": "vendor/github.com/mitchellh/mapstructure",
@@ -62,10 +62,10 @@
   },
   {
     "dest": "vendor/github.com/rymdport/portal",
-    "sha256": "4db002d8d736ebc9e62cff459f3a81f215c175e40637b456597b7d4feb682d1c",
+    "sha256": "13c28431a1dc621c177c38355abc76a55de1ad8145bac8d584d255b6f972aeae",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/rymdport/portal/@v/v0.2.3.zip"
+    "url": "https://proxy.golang.org/github.com/rymdport/portal/@v/v0.2.6.zip"
   },
   {
     "dest": "vendor/github.com/teivah/broadcast",

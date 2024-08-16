@@ -141,7 +141,7 @@ github.com/davecgh/go-spew/spew
 # github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20240712143708-824c3ce8a5f4
 ## explicit; go 1.18
 github.com/diamondburned/gotk4-adwaita/pkg/adw
-# github.com/diamondburned/gotk4/pkg v0.3.0
+# github.com/diamondburned/gotk4/pkg v0.3.1
 ## explicit; go 1.21.0
 github.com/diamondburned/gotk4/pkg/cairo
 github.com/diamondburned/gotk4/pkg/cairo/swizzle
@@ -385,7 +385,7 @@ github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
 github.com/rs/zerolog/log
-# github.com/rymdport/portal v0.2.3
+# github.com/rymdport/portal v0.2.6
 ## explicit; go 1.19
 github.com/rymdport/portal
 github.com/rymdport/portal/internal/apis

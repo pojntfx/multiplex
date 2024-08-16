@@ -7,13 +7,13 @@ toolchain go1.22.5
 require (
 	github.com/anacrolix/torrent v1.56.1
 	github.com/diamondburned/gotk4-adwaita/pkg v0.0.0-20240712143708-824c3ce8a5f4
-	github.com/diamondburned/gotk4/pkg v0.3.0
+	github.com/diamondburned/gotk4/pkg v0.3.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/pojntfx/htorrent v0.5.4
 	github.com/pojntfx/weron v0.2.6
 	github.com/rs/zerolog v1.33.0
-	github.com/rymdport/portal v0.2.3
+	github.com/rymdport/portal v0.2.6
 	github.com/teivah/broadcast v0.1.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
