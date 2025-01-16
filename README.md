@@ -179,6 +179,6 @@ You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gn
 
 ## License
 
-Multiplex (c) 2024 Felicitas Pojtinger and contributors
+Multiplex (c) 2025 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0
