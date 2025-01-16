@@ -31,10 +31,10 @@ func AddMainMenu(
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
 	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
 
-	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.5")
+	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.6")
 	aboutDialog.SetDevelopers([]string{"Felicitas Pojtinger"})
 	aboutDialog.SetArtists([]string{"Brage Fuglseth"})
-	aboutDialog.SetCopyright("© 2024 Felicitas Pojtinger")
+	aboutDialog.SetCopyright("© 2025 Felicitas Pojtinger")
 
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
 	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesWindow)
