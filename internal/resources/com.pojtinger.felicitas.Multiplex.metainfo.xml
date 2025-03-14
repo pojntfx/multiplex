@@ -102,6 +102,14 @@
     </screenshots>
 
     <releases>
+        <release version="0.1.7" date='2025-03-13T17:30:00Z-0700'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.7</url>
+
+            <description>
+                <p>Better support for systems with languages other than English</p>
+            </description>
+        </release>
+
         <release version="0.1.6" date='2025-01-16T18:00:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.6</url>
 
