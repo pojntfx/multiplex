@@ -51,12 +51,7 @@ func main() {
 	settings := gio.NewSettings(resources.GAppID)
 
 	if storage := settings.String(resources.GSchemaStorageKey); strings.TrimSpace(storage) == "" {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-
-		downloadPath := filepath.Join(home, "Downloads", "Multiplex")
+		downloadPath := glib.GetUserSpecialDir(glib.UserDirectoryDownload)
 
 		settings.SetString(resources.GSchemaStorageKey, downloadPath)
 
