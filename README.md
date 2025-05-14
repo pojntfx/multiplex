@@ -1,10 +1,10 @@
-<img alt="Project icon" style="vertical-align: middle;" src="./docs/icon.svg" width="128" height="128" align="left">
-
-# Multiplex
-
-Watch torrents with your friends.
-
-<br/>
+<div style="background-color: #0f111a; color: white; padding: 20px 0; display: flex; align-items: center; margin-bottom: 30px;">
+  <img alt="Project icon" src="./docs/icon.svg" width="88" height="88" style="margin: 0 20px;">
+  <div>
+    <h1 style="margin: 0; padding: 0; font-size: 2.5rem;">Multiplex</h1>
+    <p style="margin: 5px 0 0 0; font-size: 1.2rem;">Watch torrents with your friends.</p>
+  </div>
+</div>
 
 <p align="center">
   <img alt="Screenshot of two peers synchronizing playback" width="90%" src="./docs/screenshot-sync-playback.png" />
@@ -19,7 +19,7 @@ Watch torrents with your friends.
 
 Multiplex is an app to watch torrents together, providing an experience similar to Apple's [SharePlay](https://support.apple.com/en-us/HT212823) and Amazon's [Prime Video Watch Party](https://www.amazon.com/adlp/watchparty).
 
-It enables you to:
+### Key Features
 
 - **Stream any file directly** using a wide range of video and audio formats with the mpv video player
 - **Host online watch parties while preserving your privacy** by synchronizing video playback with friends without a central server using [weron](https://github.com/pojntfx/weron)
@@ -45,9 +45,11 @@ To get started, first find a [magnet link](https://en.wikipedia.org/wiki/Magnet_
   <img alt="Starting the app" src="./docs/screenshot-launch-app.png" />
 </p>
 
-![Initial start screen with link entered](./docs/screenshot-link-entered.png)
+<p align="center">
+  <img alt="Initial start screen with link entered" src="./docs/screenshot-link-entered.png" />
+</p>
 
-Note that Multiplex will prompt you to install the [mpv media player](https://mpv.io/) if you don't already have it installed; to continue, please do so:
+> **Note:** Multiplex will prompt you to install the [mpv media player](https://mpv.io/) if you don't already have it installed; to continue, please do so:
 
 <p align="center">
   <img alt="Prompt to install mpv" src="./docs/screenshot-install-mpv.png" />
@@ -55,13 +57,17 @@ Note that Multiplex will prompt you to install the [mpv media player](https://mp
 
 Next, select the file you want to stream; note that only media files are supported:
 
-![Media selection](./docs/screenshot-media-selection.png)
+<p align="center">
+  <img alt="Media selection" src="./docs/screenshot-media-selection.png" />
+</p>
 
 Finally, confirm that you have the right to stream the media you've selected. Note that many countries have copyright restrictions - in that case, please [take appropriate measures to protect yourself](https://sec.eff.org/topics/VPN):
 
-![Confirmation screen](./docs/screenshot-confirmation.png)
+<p align="center">
+  <img alt="Confirmation screen" src="./docs/screenshot-confirmation.png" />
+</p>
 
-Note that you can also choose to stream without downloading! Provided that the underlying media file supports streaming playback (such as `.mkv` files), this allows you to start playing the media immediately, without having to wait for it to download completely:
+> **Tip:** You can also choose to stream without downloading! Provided that the underlying media file supports streaming playback (such as `.mkv` files), this allows you to start playing the media immediately, without having to wait for it to download completely:
 
 <p align="center">
   <img alt="Option to stream without downloading" src="./docs/screenshot-stream-without-downloading.png" />
@@ -69,35 +75,54 @@ Note that you can also choose to stream without downloading! Provided that the u
 
 After you've given your consent, playback will start, and you can enjoy the media you've selected:
 
-![Playback screen](./docs/screenshot-playback.png)
+<p align="center">
+  <img alt="Playback screen" src="./docs/screenshot-playback.png" />
+</p>
 
-## 2. Ask Friends to Join
+### 2. Ask Friends to Join
 
 While consuming media on your own can be fun, doing so with friends or your SO is always better. I built Multiplex to enjoy media together with my partner, but due to COVID and the Atlantic ocean we're unable to do so in person all the time - this app intents to bridge that gap. To ask someone to join, click on the people button in the top right, and copy the [stream code](https://github.com/pojntfx/multiplex/wiki/Stream-Codes):
 
-![Join screen](./docs/screenshot-join.png)
+<p align="center">
+  <img alt="Join screen" src="./docs/screenshot-join.png" />
+</p>
 
 This stream code can now be entered by the person that wants to watch the media with you. There is no technical limit on how many people can join the session, so feel free to invite as many as you want!
 
-![Entering stream codes](./docs/screenshot-enter-stream-code.png)
+<p align="center">
+  <img alt="Entering stream codes" src="./docs/screenshot-enter-stream-code.png" />
+</p>
 
 After the person that wants to join has entered the stream code, they need to confirm that they too have the right to stream the media; depending on your country, please ask them to [take appropriate measures to protect themselves](https://sec.eff.org/topics/VPN):
 
-![Confirmation screen](./docs/screenshot-confirmation.png)
+<p align="center">
+  <img alt="Confirmation screen" src="./docs/screenshot-confirmation.png" />
+</p>
 
-Note that is recommended not to choose the option to stream without downloading when streaming with multiple people; while it is supported and buffering is synchronized across peers, it requires a very good internet connection for all peers in order for it to work smoothly. Once all peers have joined, you can start playback and enjoy the media together:
+> **Important:** It is recommended not to choose the option to stream without downloading when streaming with multiple people; while it is supported and buffering is synchronized across peers, it requires a very good internet connection for all peers in order for it to work smoothly.
 
-![Two peers synchronizing playback](./docs/screenshot-sync-playback.png)
+Once all peers have joined, you can start playback and enjoy the media together:
+
+<p align="center">
+  <img alt="Two peers synchronizing playback" src="./docs/screenshot-sync-playback.png" />
+</p>
 
 All play/pause events, seeking position etc. will be synchronized between all peers using [weron](https://github.com/pojntfx/weron), a peer-to-peer networking library.
 
-## 3. Increase Privacy and Security
+### 3. Increase Privacy and Security
 
 As noted above, the legality of consuming media from torrents depends on the country you're in. In most countries, following [these guidelines on VPNs from the Electronic Frontier Foundation](https://sec.eff.org/topics/VPN) will suffice, but Multiplex provides an additional option: **Remoting**.
 
-Multiplex is built on [hTorrent](https://github.com/pojntfx/htorrent), an HTTP to BitTorrent gateway. Using remoting, it is possible to use a trusted server as a proxy to stream torrents from. This makes it possible to not only increase security for all peers without them having to take the appropriate measures themselves, but it can also increase the performance by caching the media on a single server with a good internet connection. To enable remoting, first [host a hTorrent gateway with basic authentication enabled](https://github.com/pojntfx/htorrent#1-start-a-gateway-with-htorrent-gateway) - be sure to set up TLS certificates to enable encryption, for example by using [Caddy](https://caddyserver.com/). Once you have a gateway set up, you can configure Multiplex to use in its preferences:
+Multiplex is built on [hTorrent](https://github.com/pojntfx/htorrent), an HTTP to BitTorrent gateway. Using remoting, it is possible to use a trusted server as a proxy to stream torrents from. This makes it possible to not only increase security for all peers without them having to take the appropriate measures themselves, but it can also increase the performance by caching the media on a single server with a good internet connection.
 
-![Remoting preferences](./docs/screenshot-prefs-remoting.png)
+To enable remoting:
+1. First [host a hTorrent gateway with basic authentication enabled](https://github.com/pojntfx/htorrent#1-start-a-gateway-with-htorrent-gateway)
+2. Be sure to set up TLS certificates to enable encryption, for example by using [Caddy](https://caddyserver.com/)
+3. Once you have a gateway set up, you can configure Multiplex to use in its preferences:
+
+<p align="center">
+  <img alt="Remoting preferences" src="./docs/screenshot-prefs-remoting.png" />
+</p>
 
 Be sure to ask the people who want to stream the media with you to also use the gateway.
 
@@ -107,51 +132,56 @@ For more preferences, see the [screenshots](#screenshots).
 
 ## Screenshots
 
-Click on an image to see a larger version.
+<div align="center">
+  <a href="./docs/screenshot-initial.png?raw=true">
+    <img src="./docs/screenshot-initial.png" width="45%" alt="Entering a magnet link or stream code" title="Entering a magnet link or stream code">
+  </a>
+  <a href="./docs/screenshot-media-selection.png?raw=true">
+    <img src="./docs/screenshot-media-selection.png" width="45%" alt="Media selection" title="Media selection">
+  </a>
+</div>
 
-<a display="inline" href="./docs/screenshot-initial.png?raw=true">
-<img src="./docs/screenshot-initial.png" width="45%" alt="Entering a magnet link or stream code" title="Entering a magnet link or stream code">
-</a>
+<div align="center">
+  <a href="./docs/screenshot-confirmation.png?raw=true">
+    <img src="./docs/screenshot-confirmation.png" width="45%" alt="Confirming playback" title="Confirming playback">
+  </a>
+  <a href="./docs/screenshot-playback.png?raw=true">
+    <img src="./docs/screenshot-playback.png" width="45%" alt="Playing media" title="Playing media">
+  </a>
+</div>
 
-<a display="inline" href="./docs/screenshot-media-selection.png?raw=true">
-<img src="./docs/screenshot-media-selection.png" width="45%" alt="Media selection" title="Media selection">
-</a>
+<div align="center">
+  <a href="./docs/screenshot-audiotracks.png?raw=true">
+    <img src="./docs/screenshot-audiotracks.png" width="45%" alt="Selecting audio tracks" title="Selecting audio tracks">
+  </a>
+  <a href="./docs/screenshot-subtitles.png?raw=true">
+    <img src="./docs/screenshot-subtitles.png" width="45%" alt="Selecting subtitles" title="Selecting subtitles">
+  </a>
+</div>
 
-<a display="inline" href="./docs/screenshot-confirmation.png?raw=true">
-<img src="./docs/screenshot-confirmation.png" width="45%" alt="Confirming playback" title="Confirming playback">
-</a>
+<div align="center">
+  <a href="./docs/screenshot-join.png?raw=true">
+    <img src="./docs/screenshot-join.png" width="45%" alt="Getting a stream code to join playback" title="Getting a stream code to join playback">
+  </a>
+  <a href="./docs/screenshot-sync-playback.png?raw=true">
+    <img src="./docs/screenshot-sync-playback.png" width="45%" alt="Two peers synchronizing media playback" title="Two peers synchronizing media playback">
+  </a>
+</div>
 
-<a display="inline" href="./docs/screenshot-playback.png?raw=true">
-<img src="./docs/screenshot-playback.png" width="45%" alt="Playing media" title="Playing media">
-</a>
+<div align="center">
+  <a href="./docs/screenshot-prefs-playback.png?raw=true">
+    <img src="./docs/screenshot-prefs-playback.png" width="45%" alt="Playback preferences" title="Playback preferences">
+  </a>
+  <a href="./docs/screenshot-prefs-remoting.png?raw=true">
+    <img src="./docs/screenshot-prefs-remoting.png" width="45%" alt="Remoting preferences" title="Remoting preferences">
+  </a>
+</div>
 
-<a display="inline" href="./docs/screenshot-audiotracks.png?raw=true">
-<img src="./docs/screenshot-audiotracks.png" width="45%" alt="Selecting audio tracks" title="Selecting audio tracks">
-</a>
-
-<a display="inline" href="./docs/screenshot-subtitles.png?raw=true">
-<img src="./docs/screenshot-subtitles.png" width="45%" alt="Selecting subtitles" title="Selecting subtitles">
-</a>
-
-<a display="inline" href="./docs/screenshot-join.png?raw=true">
-<img src="./docs/screenshot-join.png" width="45%" alt="Getting a stream code to join playback" title="Getting a stream code to join playback">
-</a>
-
-<a display="inline" href="./docs/screenshot-sync-playback.png?raw=true">
-<img src="./docs/screenshot-sync-playback.png" width="45%" alt="Two peers synchronizing media playback" title="Two peers synchronizing media playback">
-</a>
-
-<a display="inline" href="./docs/screenshot-prefs-playback.png?raw=true">
-<img src="./docs/screenshot-prefs-playback.png" width="45%" alt="Playback preferences" title="Playback preferences">
-</a>
-
-<a display="inline" href="./docs/screenshot-prefs-remoting.png?raw=true">
-<img src="./docs/screenshot-prefs-remoting.png" width="45%" alt="Remoting preferences" title="Remoting preferences">
-</a>
-
-<a display="inline" href="./docs/screenshot-prefs-sync.png?raw=true">
-<img src="./docs/screenshot-prefs-sync.png" width="45%" alt="Synchronization preferences" title="Synchronization preferences">
-</a>
+<div align="center">
+  <a href="./docs/screenshot-prefs-sync.png?raw=true">
+    <img src="./docs/screenshot-prefs-sync.png" width="45%" alt="Synchronization preferences" title="Synchronization preferences">
+  </a>
+</div>
 
 ## Acknowledgements
 
