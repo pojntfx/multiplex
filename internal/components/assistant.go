@@ -67,55 +67,84 @@ func OpenAssistantWindow(
 	app.GetStyleManager().SetColorScheme(adw.ColorSchemeDefaultValue)
 
 	builder := gtk.NewBuilderFromResource(resources.GResourceAssistantPath)
+	defer builder.Unref()
 
-	var window adw.ApplicationWindow
+	var (
+		window                         adw.ApplicationWindow
+		overlay                        adw.ToastOverlay
+		buttonHeaderbarTitle           gtk.Label
+		buttonHeaderbarSubtitle        gtk.Label
+		previousButton                 gtk.Button
+		nextButton                     gtk.Button
+		menuButton                     gtk.MenuButton
+		headerbarSpinner               gtk.Spinner
+		stack                          gtk.Stack
+		magnetLinkEntry                gtk.Entry
+		mediaSelectionGroup            adw.PreferencesGroup
+		rightsConfirmationButton       gtk.CheckButton
+		downloadAndPlayButton          adw.SplitButton
+		streamWithoutDownloadingButton gtk.Button
+		streamPopover                  gtk.Popover
+		mediaInfoDisplay               gtk.Box
+		mediaInfoButton                gtk.Button
+	)
 	builder.GetObject("main-window").Cast(&window)
-	var overlay adw.ToastOverlay
+	defer window.Unref()
 	builder.GetObject("toast-overlay").Cast(&overlay)
-	var buttonHeaderbarTitle gtk.Label
+	defer overlay.Unref()
 	builder.GetObject("button-headerbar-title").Cast(&buttonHeaderbarTitle)
-	var buttonHeaderbarSubtitle gtk.Label
+	defer buttonHeaderbarTitle.Unref()
 	builder.GetObject("button-headerbar-subtitle").Cast(&buttonHeaderbarSubtitle)
-	var previousButton gtk.Button
+	defer buttonHeaderbarSubtitle.Unref()
 	builder.GetObject("previous-button").Cast(&previousButton)
-	var nextButton gtk.Button
+	defer previousButton.Unref()
 	builder.GetObject("next-button").Cast(&nextButton)
-	var menuButton gtk.MenuButton
+	defer nextButton.Unref()
 	builder.GetObject("menu-button").Cast(&menuButton)
-	var headerbarSpinner gtk.Spinner
+	defer menuButton.Unref()
 	builder.GetObject("headerbar-spinner").Cast(&headerbarSpinner)
-	var stack gtk.Stack
+	defer headerbarSpinner.Unref()
 	builder.GetObject("stack").Cast(&stack)
-	var magnetLinkEntry gtk.Entry
+	defer stack.Unref()
 	builder.GetObject("magnet-link-entry").Cast(&magnetLinkEntry)
-	var mediaSelectionGroup adw.PreferencesGroup
+	defer magnetLinkEntry.Unref()
 	builder.GetObject("media-selection-group").Cast(&mediaSelectionGroup)
-	var rightsConfirmationButton gtk.CheckButton
+	defer mediaSelectionGroup.Unref()
 	builder.GetObject("rights-confirmation-button").Cast(&rightsConfirmationButton)
-	var downloadAndPlayButton adw.SplitButton
+	defer rightsConfirmationButton.Unref()
 	builder.GetObject("download-and-play-button").Cast(&downloadAndPlayButton)
-	var streamWithoutDownloadingButton gtk.Button
+	defer downloadAndPlayButton.Unref()
 	builder.GetObject("stream-without-downloading-button").Cast(&streamWithoutDownloadingButton)
-	var streamPopover gtk.Popover
+	defer streamWithoutDownloadingButton.Unref()
 	builder.GetObject("stream-popover").Cast(&streamPopover)
-	var mediaInfoDisplay gtk.Box
+	defer streamPopover.Unref()
 	builder.GetObject("media-info-display").Cast(&mediaInfoDisplay)
-	var mediaInfoButton gtk.Button
+	defer mediaInfoDisplay.Unref()
 	builder.GetObject("media-info-button").Cast(&mediaInfoButton)
+	defer mediaInfoButton.Unref()
 
 	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
-	var descriptionWindow adw.Window
+	defer descriptionBuilder.Unref()
+	var (
+		descriptionWindow            adw.Window
+		descriptionText              gtk.TextView
+		descriptionHeaderbarTitle    gtk.Label
+		descriptionHeaderbarSubtitle gtk.Label
+	)
 	descriptionBuilder.GetObject("description-window").Cast(&descriptionWindow)
-	var descriptionText gtk.TextView
+	defer descriptionWindow.Unref()
 	descriptionBuilder.GetObject("description-text").Cast(&descriptionText)
-	var descriptionHeaderbarTitle gtk.Label
+	defer descriptionText.Unref()
 	descriptionBuilder.GetObject("headerbar-title").Cast(&descriptionHeaderbarTitle)
-	var descriptionHeaderbarSubtitle gtk.Label
+	defer descriptionHeaderbarTitle.Unref()
 	descriptionBuilder.GetObject("headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
+	defer descriptionHeaderbarSubtitle.Unref()
 
 	warningBuilder := gtk.NewBuilderFromResource(resources.GResourceWarningPath)
+	defer warningBuilder.Unref()
 	var warningDialog adw.AlertDialog
 	warningBuilder.GetObject("warning-dialog").Cast(&warningDialog)
+	defer warningDialog.Unref()
 
 	magnetLink := ""
 	torrentTitle := ""

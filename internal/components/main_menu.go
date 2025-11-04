@@ -28,8 +28,10 @@ func AddMainMenu(
 	cancel func(),
 ) (*adw.PreferencesWindow, *adw.EntryRow) {
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
+	defer menuBuilder.Unref()
 	var menu gio.Menu
 	menuBuilder.GetObject("main-menu").Cast(&menu)
+	defer menu.Unref()
 
 	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.7")
 	aboutDialog.SetDevelopers([]string{"Felicitas Pojtinger"})
@@ -37,30 +39,45 @@ func AddMainMenu(
 	aboutDialog.SetCopyright("© 2025 Felicitas Pojtinger")
 
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
-	var preferencesDialog adw.PreferencesWindow
+	defer preferencesBuilder.Unref()
+	var (
+		preferencesDialog          adw.PreferencesWindow
+		storageLocationInput       gtk.Button
+		mpvCommandInput            adw.EntryRow
+		verbosityLevelInput        adw.SpinRow
+		remoteGatewaySwitchInput   gtk.Switch
+		remoteGatewayURLInput      adw.EntryRow
+		remoteGatewayUsernameInput adw.EntryRow
+		remoteGatewayPasswordInput adw.PasswordEntryRow
+		weronURLInput              adw.EntryRow
+		weronICEInput              adw.EntryRow
+		weronTimeoutInput          adw.SpinRow
+		weronForceRelayInput       gtk.Switch
+	)
 	preferencesBuilder.GetObject("preferences-dialog").Cast(&preferencesDialog)
-	var storageLocationInput gtk.Button
+	defer preferencesDialog.Unref()
 	preferencesBuilder.GetObject("storage-location-input").Cast(&storageLocationInput)
-	var mpvCommandInput adw.EntryRow
+	defer storageLocationInput.Unref()
 	preferencesBuilder.GetObject("mpv-command-input").Cast(&mpvCommandInput)
-	var verbosityLevelInput adw.SpinRow
+	defer mpvCommandInput.Unref()
 	preferencesBuilder.GetObject("verbosity-level-input").Cast(&verbosityLevelInput)
-	var remoteGatewaySwitchInput gtk.Switch
+	defer verbosityLevelInput.Unref()
 	preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast(&remoteGatewaySwitchInput)
-	var remoteGatewayURLInput adw.EntryRow
+	defer remoteGatewaySwitchInput.Unref()
 	preferencesBuilder.GetObject("htorrent-url-input").Cast(&remoteGatewayURLInput)
-	var remoteGatewayUsernameInput adw.EntryRow
+	defer remoteGatewayURLInput.Unref()
 	preferencesBuilder.GetObject("htorrent-username-input").Cast(&remoteGatewayUsernameInput)
-	var remoteGatewayPasswordInput adw.PasswordEntryRow
+	defer remoteGatewayUsernameInput.Unref()
 	preferencesBuilder.GetObject("htorrent-password-input").Cast(&remoteGatewayPasswordInput)
-	var weronURLInput adw.EntryRow
+	defer remoteGatewayPasswordInput.Unref()
 	preferencesBuilder.GetObject("weron-url-input").Cast(&weronURLInput)
-	var weronICEInput adw.EntryRow
+	defer weronURLInput.Unref()
 	preferencesBuilder.GetObject("weron-ice-input").Cast(&weronICEInput)
-	var weronTimeoutInput adw.SpinRow
+	defer weronICEInput.Unref()
 	preferencesBuilder.GetObject("weron-timeout-input").Cast(&weronTimeoutInput)
-	var weronForceRelayInput gtk.Switch
+	defer weronTimeoutInput.Unref()
 	preferencesBuilder.GetObject("weron-force-relay-input").Cast(&weronForceRelayInput)
+	defer weronForceRelayInput.Unref()
 
 	preferencesHaveChanged := false
 

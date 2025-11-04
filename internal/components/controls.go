@@ -148,95 +148,150 @@ func OpenControlsWindow(
 	app.GetStyleManager().SetColorScheme(adw.ColorSchemePreferDarkValue)
 
 	builder := gtk.NewBuilderFromResource(resources.GResourceControlsPath)
+	defer builder.Unref()
 
-	var window adw.ApplicationWindow
+	var (
+		window                  adw.ApplicationWindow
+		overlay                 adw.ToastOverlay
+		buttonHeaderbarTitle    gtk.Label
+		buttonHeaderbarSubtitle gtk.Label
+		playButton              gtk.Button
+		stopButton              gtk.Button
+		volumeScale             gtk.Scale
+		volumeButton            gtk.MenuButton
+		volumeMuteButton        gtk.Button
+		subtitleButton          gtk.Button
+		audiotracksButton       gtk.Button
+		fullscreenButton        gtk.ToggleButton
+		mediaInfoButton         gtk.Button
+		headerbarSpinner        gtk.Spinner
+		menuButton              gtk.MenuButton
+		elapsedTrackLabel       gtk.Label
+		remainingTrackLabel     gtk.Label
+		seeker                  gtk.Scale
+		watchingWithTitleLabel  gtk.Label
+		streamCodeInput         gtk.Entry
+		copyStreamCodeButton    gtk.Button
+	)
 	builder.GetObject("main-window").Cast(&window)
-	var overlay adw.ToastOverlay
+	defer window.Unref()
 	builder.GetObject("toast-overlay").Cast(&overlay)
-	var buttonHeaderbarTitle gtk.Label
+	defer overlay.Unref()
 	builder.GetObject("button-headerbar-title").Cast(&buttonHeaderbarTitle)
-	var buttonHeaderbarSubtitle gtk.Label
+	defer buttonHeaderbarTitle.Unref()
 	builder.GetObject("button-headerbar-subtitle").Cast(&buttonHeaderbarSubtitle)
-	var playButton gtk.Button
+	defer buttonHeaderbarSubtitle.Unref()
 	builder.GetObject("play-button").Cast(&playButton)
-	var stopButton gtk.Button
+	defer playButton.Unref()
 	builder.GetObject("stop-button").Cast(&stopButton)
-	var volumeScale gtk.Scale
+	defer stopButton.Unref()
 	builder.GetObject("volume-scale").Cast(&volumeScale)
-	var volumeButton gtk.MenuButton
+	defer volumeScale.Unref()
 	builder.GetObject("volume-button").Cast(&volumeButton)
-	var volumeMuteButton gtk.Button
+	defer volumeButton.Unref()
 	builder.GetObject("audiovolume-button-mute-button").Cast(&volumeMuteButton)
-	var subtitleButton gtk.Button
+	defer volumeMuteButton.Unref()
 	builder.GetObject("subtitle-button").Cast(&subtitleButton)
-	var audiotracksButton gtk.Button
+	defer subtitleButton.Unref()
 	builder.GetObject("audiotracks-button").Cast(&audiotracksButton)
-	var fullscreenButton gtk.ToggleButton
+	defer audiotracksButton.Unref()
 	builder.GetObject("fullscreen-button").Cast(&fullscreenButton)
-	var mediaInfoButton gtk.Button
+	defer fullscreenButton.Unref()
 	builder.GetObject("media-info-button").Cast(&mediaInfoButton)
-	var headerbarSpinner gtk.Spinner
+	defer mediaInfoButton.Unref()
 	builder.GetObject("headerbar-spinner").Cast(&headerbarSpinner)
-	var menuButton gtk.MenuButton
+	defer headerbarSpinner.Unref()
 	builder.GetObject("menu-button").Cast(&menuButton)
-	var elapsedTrackLabel gtk.Label
+	defer menuButton.Unref()
 	builder.GetObject("elapsed-track-label").Cast(&elapsedTrackLabel)
-	var remainingTrackLabel gtk.Label
+	defer elapsedTrackLabel.Unref()
 	builder.GetObject("remaining-track-label").Cast(&remainingTrackLabel)
-	var seeker gtk.Scale
+	defer remainingTrackLabel.Unref()
 	builder.GetObject("seeker").Cast(&seeker)
-	var watchingWithTitleLabel gtk.Label
+	defer seeker.Unref()
 	builder.GetObject("watching-with-title-label").Cast(&watchingWithTitleLabel)
-	var streamCodeInput gtk.Entry
+	defer watchingWithTitleLabel.Unref()
 	builder.GetObject("stream-code-input").Cast(&streamCodeInput)
-	var copyStreamCodeButton gtk.Button
+	defer streamCodeInput.Unref()
 	builder.GetObject("copy-stream-code-button").Cast(&copyStreamCodeButton)
+	defer copyStreamCodeButton.Unref()
 
 	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
-	var descriptionWindow adw.Window
+	defer descriptionBuilder.Unref()
+	var (
+		descriptionWindow            adw.Window
+		descriptionText              gtk.TextView
+		descriptionHeaderbarTitle    gtk.Label
+		descriptionHeaderbarSubtitle gtk.Label
+		descriptionProgressBar       gtk.ProgressBar
+	)
 	descriptionBuilder.GetObject("description-window").Cast(&descriptionWindow)
-	var descriptionText gtk.TextView
+	defer descriptionWindow.Unref()
 	descriptionBuilder.GetObject("description-text").Cast(&descriptionText)
-	var descriptionHeaderbarTitle gtk.Label
+	defer descriptionText.Unref()
 	descriptionBuilder.GetObject("headerbar-title").Cast(&descriptionHeaderbarTitle)
-	var descriptionHeaderbarSubtitle gtk.Label
+	defer descriptionHeaderbarTitle.Unref()
 	descriptionBuilder.GetObject("headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
-	var descriptionProgressBar gtk.ProgressBar
+	defer descriptionHeaderbarSubtitle.Unref()
 	descriptionBuilder.GetObject("preparing-progress-bar").Cast(&descriptionProgressBar)
+	defer descriptionProgressBar.Unref()
 
 	subtitlesBuilder := gtk.NewBuilderFromResource(resources.GResourceSubtitlesPath)
-	var subtitlesDialog adw.Window
+	defer subtitlesBuilder.Unref()
+	var (
+		subtitlesDialog             adw.Window
+		subtitlesCancelButton       gtk.Button
+		subtitlesSpinner            gtk.Spinner
+		subtitlesOKButton           gtk.Button
+		subtitlesSelectionGroup     adw.PreferencesGroup
+		addSubtitlesFromFileButton  gtk.Button
+		subtitlesOverlay            adw.ToastOverlay
+	)
 	subtitlesBuilder.GetObject("subtitles-dialog").Cast(&subtitlesDialog)
-	var subtitlesCancelButton gtk.Button
+	defer subtitlesDialog.Unref()
 	subtitlesBuilder.GetObject("button-cancel").Cast(&subtitlesCancelButton)
-	var subtitlesSpinner gtk.Spinner
+	defer subtitlesCancelButton.Unref()
 	subtitlesBuilder.GetObject("headerbar-spinner").Cast(&subtitlesSpinner)
-	var subtitlesOKButton gtk.Button
+	defer subtitlesSpinner.Unref()
 	subtitlesBuilder.GetObject("button-ok").Cast(&subtitlesOKButton)
-	var subtitlesSelectionGroup adw.PreferencesGroup
+	defer subtitlesOKButton.Unref()
 	subtitlesBuilder.GetObject("subtitle-tracks").Cast(&subtitlesSelectionGroup)
-	var addSubtitlesFromFileButton gtk.Button
+	defer subtitlesSelectionGroup.Unref()
 	subtitlesBuilder.GetObject("add-from-file-button").Cast(&addSubtitlesFromFileButton)
-	var subtitlesOverlay adw.ToastOverlay
+	defer addSubtitlesFromFileButton.Unref()
 	subtitlesBuilder.GetObject("toast-overlay").Cast(&subtitlesOverlay)
+	defer subtitlesOverlay.Unref()
 
 	audiotracksBuilder := gtk.NewBuilderFromResource(resources.GResourceAudiotracksPath)
-	var audiotracksDialog adw.Window
+	defer audiotracksBuilder.Unref()
+	var (
+		audiotracksDialog          adw.Window
+		audiotracksCancelButton    gtk.Button
+		audiotracksOKButton        gtk.Button
+		audiotracksSelectionGroup  adw.PreferencesGroup
+	)
 	audiotracksBuilder.GetObject("audiotracks-dialog").Cast(&audiotracksDialog)
-	var audiotracksCancelButton gtk.Button
+	defer audiotracksDialog.Unref()
 	audiotracksBuilder.GetObject("button-cancel").Cast(&audiotracksCancelButton)
-	var audiotracksOKButton gtk.Button
+	defer audiotracksCancelButton.Unref()
 	audiotracksBuilder.GetObject("button-ok").Cast(&audiotracksOKButton)
-	var audiotracksSelectionGroup adw.PreferencesGroup
+	defer audiotracksOKButton.Unref()
 	audiotracksBuilder.GetObject("audiotracks").Cast(&audiotracksSelectionGroup)
+	defer audiotracksSelectionGroup.Unref()
 
 	preparingBuilder := gtk.NewBuilderFromResource(resources.GResourcePreparingPath)
-	var preparingWindow adw.Window
+	defer preparingBuilder.Unref()
+	var (
+		preparingWindow       adw.Window
+		preparingProgressBar  gtk.ProgressBar
+		preparingCancelButton gtk.Button
+	)
 	preparingBuilder.GetObject("preparing-window").Cast(&preparingWindow)
-	var preparingProgressBar gtk.ProgressBar
+	defer preparingWindow.Unref()
 	preparingBuilder.GetObject("preparing-progress-bar").Cast(&preparingProgressBar)
-	var preparingCancelButton gtk.Button
+	defer preparingProgressBar.Unref()
 	preparingBuilder.GetObject("cancel-preparing-button").Cast(&preparingCancelButton)
+	defer preparingCancelButton.Unref()
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	descriptionHeaderbarTitle.SetLabel(torrentTitle)

@@ -21,8 +21,10 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Msg("Could not continue due to a fatal error")
 
 	errorBuilder := gtk.NewBuilderFromResource(resources.GResourceErrorPath)
+	defer errorBuilder.Unref()
 	var errorDialog adw.AlertDialog
 	errorBuilder.GetObject("error-dialog").Cast(&errorDialog)
+	defer errorDialog.Unref()
 
 	errorDialog.SetBody(err.Error())
 
