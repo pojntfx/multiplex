@@ -11,7 +11,7 @@ Watch torrents with your friends.
 </p>
 
 [![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.22-61CFDD.svg)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.25-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/multiplex.svg)](https://pkg.go.dev/github.com/pojntfx/multiplex)
 [![Matrix](https://img.shields.io/matrix/multiplex:matrix.org)](https://matrix.to/#/#multiplex:matrix.org?via=matrix.org)
 
@@ -157,8 +157,7 @@ Click on an image to see a larger version.
 
 - [Brage Fuglseth](https://bragefuglseth.dev/) contributed the icon.
 - [mpv](https://mpv.io/) provides the media player.
-- [diamondburned/gotk4](https://github.com/diamondburned/gotk4) provides the GTK4 bindings for Go.
-- [diamondburned/gotk4-adwaita](https://github.com/diamondburned/gotk4-adwaita) provides the `libadwaita` bindings for Go.
+- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) provides the GTK4 and `libadwaita` bindings for Go.
 - [hTorrent](https://github.com/pojntfx/htorrent) provides the torrent gateway.
 - [weron](https://github.com/pojntfx/weron) provides the WebRTC library for playback synchronization.
 
@@ -171,7 +170,7 @@ To build and start a development version of Multiplex locally, run the following
 ```shell
 $ git clone https://github.com/pojntfx/multiplex.git
 $ cd multiplex
-$ go generate ./... # Also see https://github.com/dennwc/flatpak-go-mod for updating the Flatpak manifest with Go dependencies and https://gist.github.com/pojntfx/6733a6aaff22d3dd0d91eefde399da42 for updating the icons
+$ go generate ./... # Also see https://gist.github.com/pojntfx/6733a6aaff22d3dd0d91eefde399da42 for updating the icons
 $ go run .
 ```
 

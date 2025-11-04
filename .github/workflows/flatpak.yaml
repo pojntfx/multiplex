@@ -6,34 +6,63 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.target.runner }}
+    permissions:
+      contents: read
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-47
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
       options: --privileged
+    strategy:
+      matrix:
+        target:
+          - id: flatpak-x86_64
+            arch: x86_64
+            runner: ubuntu-24.04
+          - id: flatpak-aarch64
+            arch: aarch64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build Flatpak
+      - name: Build Flatpak and upload output
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: com.pojtinger.felicitas.Multiplex.flatpak
+          bundle: com.pojtinger.felicitas.Multiplex.${{ matrix.target.arch }}.flatpak
           manifest-path: com.pojtinger.felicitas.Multiplex.json
           cache-key: flatpak-builder-${{ github.sha }}
+          arch: ${{ matrix.target.arch }}
+
+  publish-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: build-linux
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download output
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/out
       - name: Extract branch name
         id: extract_branch
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
       - name: Publish pre-release to GitHub releases
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: softprops/action-gh-release@v2
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@605f567f95cfaf9465d68c7dbf509f374691fb12
         with:
           tag_name: release-${{ steps.extract_branch.outputs.branch }}
           prerelease: true
+          overwrite_files: true
           files: |
-            *.flatpak
+            /tmp/out/*/*
       - name: Publish release to GitHub releases
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@605f567f95cfaf9465d68c7dbf509f374691fb12
         with:
           prerelease: false
+          overwrite_files: true
           files: |
-            *.flatpak
+            /tmp/out/*/*
