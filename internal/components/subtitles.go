@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
 	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
 	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/rs/zerolog/log"

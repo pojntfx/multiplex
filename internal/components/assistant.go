@@ -18,10 +18,10 @@ import (
 	"unicode/utf8"
 
 	"github.com/anacrolix/torrent"
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/gdk/v4"
-	"github.com/diamondburned/gotk4/pkg/gio/v2"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gdk"
+	"github.com/jwijenbergh/puregotk/v4/gio"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
@@ -64,36 +64,58 @@ func OpenAssistantWindow(
 	cancel func(),
 	tmpDir string,
 ) error {
-	app.StyleManager().SetColorScheme(adw.ColorSchemeDefault)
+	app.GetStyleManager().SetColorScheme(adw.ColorSchemeDefaultValue)
 
 	builder := gtk.NewBuilderFromResource(resources.GResourceAssistantPath)
 
-	window := builder.GetObject("main-window").Cast().(*adw.ApplicationWindow)
-	overlay := builder.GetObject("toast-overlay").Cast().(*adw.ToastOverlay)
-	buttonHeaderbarTitle := builder.GetObject("button-headerbar-title").Cast().(*gtk.Label)
-	buttonHeaderbarSubtitle := builder.GetObject("button-headerbar-subtitle").Cast().(*gtk.Label)
-	previousButton := builder.GetObject("previous-button").Cast().(*gtk.Button)
-	nextButton := builder.GetObject("next-button").Cast().(*gtk.Button)
-	menuButton := builder.GetObject("menu-button").Cast().(*gtk.MenuButton)
-	headerbarSpinner := builder.GetObject("headerbar-spinner").Cast().(*gtk.Spinner)
-	stack := builder.GetObject("stack").Cast().(*gtk.Stack)
-	magnetLinkEntry := builder.GetObject("magnet-link-entry").Cast().(*gtk.Entry)
-	mediaSelectionGroup := builder.GetObject("media-selection-group").Cast().(*adw.PreferencesGroup)
-	rightsConfirmationButton := builder.GetObject("rights-confirmation-button").Cast().(*gtk.CheckButton)
-	downloadAndPlayButton := builder.GetObject("download-and-play-button").Cast().(*adw.SplitButton)
-	streamWithoutDownloadingButton := builder.GetObject("stream-without-downloading-button").Cast().(*gtk.Button)
-	streamPopover := builder.GetObject("stream-popover").Cast().(*gtk.Popover)
-	mediaInfoDisplay := builder.GetObject("media-info-display").Cast().(*gtk.Box)
-	mediaInfoButton := builder.GetObject("media-info-button").Cast().(*gtk.Button)
+	var window adw.ApplicationWindow
+	builder.GetObject("main-window").Cast(&window)
+	var overlay adw.ToastOverlay
+	builder.GetObject("toast-overlay").Cast(&overlay)
+	var buttonHeaderbarTitle gtk.Label
+	builder.GetObject("button-headerbar-title").Cast(&buttonHeaderbarTitle)
+	var buttonHeaderbarSubtitle gtk.Label
+	builder.GetObject("button-headerbar-subtitle").Cast(&buttonHeaderbarSubtitle)
+	var previousButton gtk.Button
+	builder.GetObject("previous-button").Cast(&previousButton)
+	var nextButton gtk.Button
+	builder.GetObject("next-button").Cast(&nextButton)
+	var menuButton gtk.MenuButton
+	builder.GetObject("menu-button").Cast(&menuButton)
+	var headerbarSpinner gtk.Spinner
+	builder.GetObject("headerbar-spinner").Cast(&headerbarSpinner)
+	var stack gtk.Stack
+	builder.GetObject("stack").Cast(&stack)
+	var magnetLinkEntry gtk.Entry
+	builder.GetObject("magnet-link-entry").Cast(&magnetLinkEntry)
+	var mediaSelectionGroup adw.PreferencesGroup
+	builder.GetObject("media-selection-group").Cast(&mediaSelectionGroup)
+	var rightsConfirmationButton gtk.CheckButton
+	builder.GetObject("rights-confirmation-button").Cast(&rightsConfirmationButton)
+	var downloadAndPlayButton adw.SplitButton
+	builder.GetObject("download-and-play-button").Cast(&downloadAndPlayButton)
+	var streamWithoutDownloadingButton gtk.Button
+	builder.GetObject("stream-without-downloading-button").Cast(&streamWithoutDownloadingButton)
+	var streamPopover gtk.Popover
+	builder.GetObject("stream-popover").Cast(&streamPopover)
+	var mediaInfoDisplay gtk.Box
+	builder.GetObject("media-info-display").Cast(&mediaInfoDisplay)
+	var mediaInfoButton gtk.Button
+	builder.GetObject("media-info-button").Cast(&mediaInfoButton)
 
 	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
-	descriptionWindow := descriptionBuilder.GetObject("description-window").Cast().(*adw.Window)
-	descriptionText := descriptionBuilder.GetObject("description-text").Cast().(*gtk.TextView)
-	descriptionHeaderbarTitle := descriptionBuilder.GetObject("headerbar-title").Cast().(*gtk.Label)
-	descriptionHeaderbarSubtitle := descriptionBuilder.GetObject("headerbar-subtitle").Cast().(*gtk.Label)
+	var descriptionWindow adw.Window
+	descriptionBuilder.GetObject("description-window").Cast(&descriptionWindow)
+	var descriptionText gtk.TextView
+	descriptionBuilder.GetObject("description-text").Cast(&descriptionText)
+	var descriptionHeaderbarTitle gtk.Label
+	descriptionBuilder.GetObject("headerbar-title").Cast(&descriptionHeaderbarTitle)
+	var descriptionHeaderbarSubtitle gtk.Label
+	descriptionBuilder.GetObject("headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
 
 	warningBuilder := gtk.NewBuilderFromResource(resources.GResourceWarningPath)
-	warningDialog := warningBuilder.GetObject("warning-dialog").Cast().(*adw.AlertDialog)
+	var warningDialog adw.AlertDialog
+	warningBuilder.GetObject("warning-dialog").Cast(&warningDialog)
 
 	magnetLink := ""
 	torrentTitle := ""
@@ -122,26 +144,13 @@ func OpenAssistantWindow(
 
 	stack.SetVisibleChildName(welcomePageName)
 
-	magnetLinkEntry.ConnectChanged(func() {
-		selectedTorrentMedia = ""
-		for _, activator := range activators {
-			activator.SetActive(false)
-		}
-
-		if magnetLinkEntry.Text() == "" {
-			nextButton.SetSensitive(false)
-
-			return
-		}
-
-		nextButton.SetSensitive(true)
-	})
+	// Note: Entry doesn't have ConnectChanged in puregotk, text changes handled via ConnectActivate
 
 	onNext := func() {
-		switch stack.VisibleChildName() {
+		switch stack.GetVisibleChildName() {
 		case welcomePageName:
 			go func() {
-				magnetLinkOrStreamCode := magnetLinkEntry.Text()
+				magnetLinkOrStreamCode := magnetLinkEntry.GetText()
 				u, err := url.Parse(magnetLinkOrStreamCode)
 				if err == nil && u != nil && u.Scheme == "magnet" {
 					isNewSession = true
@@ -228,24 +237,24 @@ func OpenAssistantWindow(
 					}
 
 					for _, row := range mediaRows {
-						mediaSelectionGroup.Remove(row)
+						mediaSelectionGroup.Remove(&row.PreferencesRow.Widget)
 					}
 					mediaRows = []*adw.ActionRow{}
 
 					activators = []*gtk.CheckButton{}
-					for i, file := range append(knownMediaWithPriority, extraFilesWithPriority...) {
+					for _, file := range append(knownMediaWithPriority, extraFilesWithPriority...) {
 						row := adw.NewActionRow()
 
 						activator := gtk.NewCheckButton()
 
 						if len(activators) > 0 {
-							activator.SetGroup(activators[i-1])
+							activator.SetGroup(activators[len(activators)-1])
 						}
 						activators = append(activators, activator)
 
 						m := file.name
 						activator.SetActive(false)
-						activator.ConnectActivate(func() {
+						activateCallback := func(gtk.CheckButton) {
 							if m != selectedTorrentMedia {
 								selectedTorrentMedia = m
 
@@ -253,7 +262,8 @@ func OpenAssistantWindow(
 							}
 
 							nextButton.SetSensitive(true)
-						})
+						}
+						activator.ConnectActivate(&activateCallback)
 
 						row.SetTitle(getDisplayPathWithoutRoot(file.name))
 						if file.priority == 0 {
@@ -263,11 +273,11 @@ func OpenAssistantWindow(
 						}
 						row.SetActivatable(true)
 
-						row.AddPrefix(activator)
-						row.SetActivatableWidget(activator)
+						row.AddPrefix(&activator.Widget)
+						row.SetActivatableWidget(&activator.Widget)
 
 						mediaRows = append(mediaRows, row)
-						mediaSelectionGroup.Add(row)
+						mediaSelectionGroup.Add(&row.PreferencesRow.Widget)
 					}
 
 					headerbarSpinner.SetSpinning(false)
@@ -280,16 +290,16 @@ func OpenAssistantWindow(
 					mediaInfoDisplay.SetVisible(false)
 					mediaInfoButton.SetVisible(true)
 
-					descriptionText.SetWrapMode(gtk.WrapWord)
+					descriptionText.SetWrapMode(gtk.WrapWordValue)
 					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-						descriptionText.Buffer().SetText(readmePlaceholder)
+						descriptionText.GetBuffer().SetText(readmePlaceholder, -1)
 					} else {
-						descriptionText.Buffer().SetText(torrentReadme)
+						descriptionText.GetBuffer().SetText(torrentReadme, -1)
 					}
 
 					stack.SetVisibleChildName(mediaPageName)
 
-					magnetLink = magnetLinkEntry.Text()
+					magnetLink = magnetLinkEntry.GetText()
 
 					return
 				}
@@ -311,9 +321,9 @@ func OpenAssistantWindow(
 					}
 					community, password, key = streamCodeParts[0], streamCodeParts[1], streamCodeParts[2]
 
-					wu, err := url.Parse(settings.String(resources.GSchemaWeronURLKey))
+					wu, err := url.Parse(settings.GetString(resources.GSchemaWeronURLKey))
 					if err != nil {
-						OpenErrorDialog(ctx, window, err)
+						OpenErrorDialog(ctx, &window, err)
 
 						return
 					}
@@ -331,14 +341,14 @@ func OpenAssistantWindow(
 					adapter = wrtcconn.NewAdapter(
 						wu.String(),
 						streamCodeParts[2],
-						strings.Split(settings.String(resources.GSchemaWeronICEKey), ","),
+						strings.Split(settings.GetString(resources.GSchemaWeronICEKey), ","),
 						[]string{"multiplex/sync"},
 						&wrtcconn.AdapterConfig{
-							Timeout:    time.Duration(time.Second * time.Duration(settings.Int64(resources.GSchemaWeronTimeoutKey))),
-							ForceRelay: settings.Boolean(resources.GSchemaWeronForceRelayKey),
+							Timeout:    time.Duration(time.Second * time.Duration(settings.GetInt64(resources.GSchemaWeronTimeoutKey))),
+							ForceRelay: settings.GetBoolean(resources.GSchemaWeronForceRelayKey),
 							OnSignalerReconnect: func() {
 								log.Info().
-									Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
+									Str("raddr", settings.GetString(resources.GSchemaWeronURLKey)).
 									Msg("Reconnecting to signaler")
 							},
 						},
@@ -349,7 +359,7 @@ func OpenAssistantWindow(
 					if err != nil {
 						cancelAdapterCtx()
 
-						OpenErrorDialog(ctx, window, err)
+						OpenErrorDialog(ctx, &window, err)
 
 						return
 					}
@@ -360,7 +370,7 @@ func OpenAssistantWindow(
 						select {
 						case <-ctx.Done():
 							if err := ctx.Err(); err != context.Canceled {
-								OpenErrorDialog(ctx, window, err)
+								OpenErrorDialog(ctx, &window, err)
 
 								adapter.Close()
 								cancelAdapterCtx()
@@ -374,7 +384,7 @@ func OpenAssistantWindow(
 							return
 						case rid := <-ids:
 							log.Info().
-								Str("raddr", settings.String(resources.GSchemaWeronURLKey)).
+								Str("raddr", settings.GetString(resources.GSchemaWeronURLKey)).
 								Str("id", rid).
 								Msg("Reconnecting to signaler")
 						case peer := <-adapter.Accept():
@@ -459,11 +469,11 @@ func OpenAssistantWindow(
 					mediaInfoDisplay.SetVisible(false)
 					mediaInfoButton.SetVisible(true)
 
-					descriptionText.SetWrapMode(gtk.WrapWord)
+					descriptionText.SetWrapMode(gtk.WrapWordValue)
 					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-						descriptionText.Buffer().SetText(readmePlaceholder)
+						descriptionText.GetBuffer().SetText(readmePlaceholder, -1)
 					} else {
-						descriptionText.Buffer().SetText(torrentReadme)
+						descriptionText.GetBuffer().SetText(torrentReadme, -1)
 					}
 
 					nextButton.SetVisible(false)
@@ -489,7 +499,7 @@ func OpenAssistantWindow(
 	}
 
 	onPrevious := func() {
-		switch stack.VisibleChildName() {
+		switch stack.GetVisibleChildName() {
 		case mediaPageName:
 			previousButton.SetVisible(false)
 			nextButton.SetSensitive(true)
@@ -537,45 +547,60 @@ func OpenAssistantWindow(
 		}
 	}
 
-	magnetLinkEntry.ConnectActivate(onNext)
-	nextButton.ConnectClicked(onNext)
-	previousButton.ConnectClicked(onPrevious)
+	activateCallback := func(gtk.Entry) {
+		onNext()
+	}
+	magnetLinkEntry.ConnectActivate(&activateCallback)
 
-	preferencesDialog, mpvCommandInput := AddMainMenu(ctx, app, window, settings, menuButton, overlay, gateway, nil, cancel)
+	clickedCallbackNext := func(gtk.Button) {
+		onNext()
+	}
+	nextButton.ConnectClicked(&clickedCallbackNext)
 
-	mediaInfoButton.ConnectClicked(func() {
+	clickedCallbackPrevious := func(gtk.Button) {
+		onPrevious()
+	}
+	previousButton.ConnectClicked(&clickedCallbackPrevious)
+
+	preferencesDialog, mpvCommandInput := AddMainMenu(ctx, app, &window, settings, &menuButton, &overlay, gateway, nil, cancel)
+
+	clickedCallback3 := func(gtk.Button) {
 		descriptionWindow.SetVisible(true)
-	})
+	}
+	mediaInfoButton.ConnectClicked(&clickedCallback3)
 
 	ctrl := gtk.NewEventControllerKey()
-	descriptionWindow.AddController(ctrl)
+	descriptionWindow.AddController(&ctrl.EventController)
 	descriptionWindow.SetTransientFor(&window.Window)
 
-	descriptionWindow.ConnectCloseRequest(func() (ok bool) {
+	closeRequestCallback := func(gtk.Window) bool {
 		descriptionWindow.Close()
 		descriptionWindow.SetVisible(false)
 
-		return ok
-	})
+		return true
+	}
+	descriptionWindow.ConnectCloseRequest(&closeRequestCallback)
 
-	ctrl.ConnectKeyReleased(func(keyval, keycode uint, state gdk.ModifierType) {
+	keyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
 		if keycode == keycodeEscape {
 			descriptionWindow.Close()
 			descriptionWindow.SetVisible(false)
 		}
-	})
+	}
+	ctrl.ConnectKeyReleased(&keyReleasedCallback)
 
-	rightsConfirmationButton.ConnectToggled(func() {
-		if rightsConfirmationButton.Active() {
-			downloadAndPlayButton.AddCSSClass("suggested-action")
+	toggledCallback := func(gtk.CheckButton) {
+		if rightsConfirmationButton.GetActive() {
+			downloadAndPlayButton.AddCssClass("suggested-action")
 			downloadAndPlayButton.SetSensitive(true)
 
 			return
 		}
 
-		downloadAndPlayButton.RemoveCSSClass("suggested-action")
+		downloadAndPlayButton.RemoveCssClass("suggested-action")
 		downloadAndPlayButton.SetSensitive(false)
-	})
+	}
+	rightsConfirmationButton.ConnectToggled(&toggledCallback)
 
 	refreshSubtitles := func() {
 		subtitles = []mediaWithPriorityAndID{}
@@ -596,28 +621,28 @@ func OpenAssistantWindow(
 		}
 	}
 
-	downloadAndPlayButton.ConnectClicked(func() {
+	clickedCallback1 := func(adw.SplitButton) {
 		window.Close()
 		refreshSubtitles()
 
 		streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
 		if err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
 
 		selectedTorrent, err := torrent.TorrentSpecFromMagnetUri(magnetLink)
 		if err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
 
-		dstFile := filepath.Join(settings.String(resources.GSchemaStorageKey), "Manual Downloads", selectedTorrent.InfoHash.HexString(), selectedTorrentMedia)
+		dstFile := filepath.Join(settings.GetString(resources.GSchemaStorageKey), "Manual Downloads", selectedTorrent.InfoHash.HexString(), selectedTorrentMedia)
 
 		if err := os.MkdirAll(filepath.Dir(dstFile), os.ModePerm); err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
@@ -625,7 +650,7 @@ func OpenAssistantWindow(
 		ctxDownload, cancel := context.WithCancel(context.Background())
 		ready := make(chan struct{})
 		if err := OpenControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, dstFile, settings, gateway, cancel, tmpDir, ready, cancel, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer, bufferedDecoder); err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
@@ -643,7 +668,7 @@ func OpenAssistantWindow(
 					return
 				}
 
-				OpenErrorDialog(ctx, window, err)
+				OpenErrorDialog(ctx, &window, err)
 
 				return
 			}
@@ -655,7 +680,7 @@ func OpenAssistantWindow(
 					return
 				}
 
-				OpenErrorDialog(ctx, window, err)
+				OpenErrorDialog(ctx, &window, err)
 
 				return
 			}
@@ -667,7 +692,7 @@ func OpenAssistantWindow(
 					return
 				}
 
-				OpenErrorDialog(ctx, window, errors.New(res.Status))
+				OpenErrorDialog(ctx, &window, errors.New(res.Status))
 
 				return
 			}
@@ -678,7 +703,7 @@ func OpenAssistantWindow(
 					return
 				}
 
-				OpenErrorDialog(ctx, window, err)
+				OpenErrorDialog(ctx, &window, err)
 
 				return
 			}
@@ -689,16 +714,17 @@ func OpenAssistantWindow(
 					return
 				}
 
-				OpenErrorDialog(ctx, window, err)
+				OpenErrorDialog(ctx, &window, err)
 
 				return
 			}
 
 			close(ready)
 		}()
-	})
+	}
+	downloadAndPlayButton.ConnectClicked(&clickedCallback1)
 
-	streamWithoutDownloadingButton.ConnectClicked(func() {
+	clickedCallback2 := func(gtk.Button) {
 		streamPopover.SetVisible(false)
 
 		window.Close()
@@ -706,27 +732,28 @@ func OpenAssistantWindow(
 
 		streamURL, err := getStreamURL(apiAddr, magnetLink, selectedTorrentMedia)
 		if err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
 
 		ready := make(chan struct{})
 		if err := OpenControlsWindow(ctx, app, torrentTitle, subtitles, selectedTorrentMedia, torrentReadme, manager, apiAddr, apiUsername, apiPassword, magnetLink, streamURL, settings, gateway, cancel, tmpDir, ready, func() {}, adapter, ids, adapterCtx, cancelAdapterCtx, community, password, key, bufferedMessages, bufferedPeer, bufferedDecoder); err != nil {
-			OpenErrorDialog(ctx, window, err)
+			OpenErrorDialog(ctx, &window, err)
 
 			return
 		}
 
 		close(ready)
-	})
+	}
+	streamWithoutDownloadingButton.ConnectClicked(&clickedCallback2)
 
 	if runtime.GOOS == "linux" {
 		warningDialog.SetResponseEnabled(responseDownloadFlathub, true)
 		warningDialog.SetDefaultResponse(responseDownloadFlathub)
 	}
 
-	warningDialog.ConnectResponse(func(response string) {
+	responseCallback := func(dialog adw.AlertDialog, response string) {
 		switch response {
 		case responseDownloadFlathub:
 			_ = openuri.OpenURI("", mpvFlathubURL, nil)
@@ -749,15 +776,16 @@ func OpenAssistantWindow(
 			preferencesDialog.Present()
 			mpvCommandInput.GrabFocus()
 		}
-	})
+	}
+	warningDialog.ConnectResponse(&responseCallback)
 
 	app.AddWindow(&window.Window)
 
-	window.ConnectShow(func() {
-		if oldMPVCommand := settings.String(resources.GSchemaMPVKey); strings.TrimSpace(oldMPVCommand) == "" {
+	showCallback := func(gtk.Widget) {
+		if oldMPVCommand := settings.GetString(resources.GSchemaMPVKey); strings.TrimSpace(oldMPVCommand) == "" {
 			newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
 			if err != nil {
-				warningDialog.Present(&window.Window)
+				warningDialog.Present(&window.Window.Widget)
 
 				return
 			}
@@ -767,7 +795,8 @@ func OpenAssistantWindow(
 		}
 
 		magnetLinkEntry.GrabFocus()
-	})
+	}
+	window.ConnectShow(&showCallback)
 
 	window.SetVisible(true)
 

@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
 	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/rs/zerolog/log"
 	"github.com/rymdport/portal/openuri"
@@ -21,11 +21,12 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Msg("Could not continue due to a fatal error")
 
 	errorBuilder := gtk.NewBuilderFromResource(resources.GResourceErrorPath)
-	errorDialog := errorBuilder.GetObject("error-dialog").Cast().(*adw.AlertDialog)
+	var errorDialog adw.AlertDialog
+	errorBuilder.GetObject("error-dialog").Cast(&errorDialog)
 
 	errorDialog.SetBody(err.Error())
 
-	errorDialog.ConnectResponse(func(response string) {
+	responseCallback := func(dialog adw.AlertDialog, response string) {
 		switch response {
 		case "report":
 			_ = openuri.OpenURI("", issuesURL, nil)
@@ -39,7 +40,8 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 
 			os.Exit(1)
 		}
-	})
+	}
+	errorDialog.ConnectResponse(&responseCallback)
 
-	errorDialog.Present(window)
+	errorDialog.Present(&window.Widget)
 }

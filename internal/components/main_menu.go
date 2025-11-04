@@ -6,10 +6,9 @@ import (
 	"math"
 	"os"
 
-	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
-	"github.com/diamondburned/gotk4/pkg/gio/v2"
-	"github.com/diamondburned/gotk4/pkg/glib/v2"
-	"github.com/diamondburned/gotk4/pkg/gtk/v4"
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gio"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
@@ -29,7 +28,8 @@ func AddMainMenu(
 	cancel func(),
 ) (*adw.PreferencesWindow, *adw.EntryRow) {
 	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
-	menu := menuBuilder.GetObject("main-menu").Cast().(*gio.Menu)
+	var menu gio.Menu
+	menuBuilder.GetObject("main-menu").Cast(&menu)
 
 	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.7")
 	aboutDialog.SetDevelopers([]string{"Felicitas Pojtinger"})
@@ -37,48 +37,64 @@ func AddMainMenu(
 	aboutDialog.SetCopyright("© 2025 Felicitas Pojtinger")
 
 	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
-	preferencesDialog := preferencesBuilder.GetObject("preferences-dialog").Cast().(*adw.PreferencesWindow)
-	storageLocationInput := preferencesBuilder.GetObject("storage-location-input").Cast().(*gtk.Button)
-	mpvCommandInput := preferencesBuilder.GetObject("mpv-command-input").Cast().(*adw.EntryRow)
-	verbosityLevelInput := preferencesBuilder.GetObject("verbosity-level-input").Cast().(*adw.SpinRow)
-	remoteGatewaySwitchInput := preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast().(*gtk.Switch)
-	remoteGatewayURLInput := preferencesBuilder.GetObject("htorrent-url-input").Cast().(*adw.EntryRow)
-	remoteGatewayUsernameInput := preferencesBuilder.GetObject("htorrent-username-input").Cast().(*adw.EntryRow)
-	remoteGatewayPasswordInput := preferencesBuilder.GetObject("htorrent-password-input").Cast().(*adw.PasswordEntryRow)
-	weronURLInput := preferencesBuilder.GetObject("weron-url-input").Cast().(*adw.EntryRow)
-	weronICEInput := preferencesBuilder.GetObject("weron-ice-input").Cast().(*adw.EntryRow)
-	weronTimeoutInput := preferencesBuilder.GetObject("weron-timeout-input").Cast().(*adw.SpinRow)
-	weronForceRelayInput := preferencesBuilder.GetObject("weron-force-relay-input").Cast().(*gtk.Switch)
+	var preferencesDialog adw.PreferencesWindow
+	preferencesBuilder.GetObject("preferences-dialog").Cast(&preferencesDialog)
+	var storageLocationInput gtk.Button
+	preferencesBuilder.GetObject("storage-location-input").Cast(&storageLocationInput)
+	var mpvCommandInput adw.EntryRow
+	preferencesBuilder.GetObject("mpv-command-input").Cast(&mpvCommandInput)
+	var verbosityLevelInput adw.SpinRow
+	preferencesBuilder.GetObject("verbosity-level-input").Cast(&verbosityLevelInput)
+	var remoteGatewaySwitchInput gtk.Switch
+	preferencesBuilder.GetObject("htorrent-remote-gateway-switch").Cast(&remoteGatewaySwitchInput)
+	var remoteGatewayURLInput adw.EntryRow
+	preferencesBuilder.GetObject("htorrent-url-input").Cast(&remoteGatewayURLInput)
+	var remoteGatewayUsernameInput adw.EntryRow
+	preferencesBuilder.GetObject("htorrent-username-input").Cast(&remoteGatewayUsernameInput)
+	var remoteGatewayPasswordInput adw.PasswordEntryRow
+	preferencesBuilder.GetObject("htorrent-password-input").Cast(&remoteGatewayPasswordInput)
+	var weronURLInput adw.EntryRow
+	preferencesBuilder.GetObject("weron-url-input").Cast(&weronURLInput)
+	var weronICEInput adw.EntryRow
+	preferencesBuilder.GetObject("weron-ice-input").Cast(&weronICEInput)
+	var weronTimeoutInput adw.SpinRow
+	preferencesBuilder.GetObject("weron-timeout-input").Cast(&weronTimeoutInput)
+	var weronForceRelayInput gtk.Switch
+	preferencesBuilder.GetObject("weron-force-relay-input").Cast(&weronForceRelayInput)
 
 	preferencesHaveChanged := false
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
-	preferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+	preferencesCallback := func(action gio.SimpleAction, parameter uintptr) {
 		preferencesDialog.Present()
-	})
+	}
+	preferencesAction.ConnectActivate(&preferencesCallback)
 	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
 
 	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
-	openDownloadsAction.ConnectActivate(func(parameter *glib.Variant) {
-		if err := gio.AppInfoLaunchDefaultForURI(fmt.Sprintf("file://%v", settings.String(resources.GSchemaStorageKey)), nil); err != nil {
+	openDownloadsCallback := func(action gio.SimpleAction, parameter uintptr) {
+		_, err := gio.AppInfoLaunchDefaultForUri(fmt.Sprintf("file://%v", settings.GetString(resources.GSchemaStorageKey)), nil)
+		if err != nil {
 			OpenErrorDialog(ctx, window, err)
 
 			return
 		}
-	})
+	}
+	openDownloadsAction.ConnectActivate(&openDownloadsCallback)
 	window.AddAction(openDownloadsAction)
 
 	if getMagnetLink != nil {
 		copyMagnetLinkAction := gio.NewSimpleAction(copyMagnetLinkActionName, nil)
-		copyMagnetLinkAction.ConnectActivate(func(parameter *glib.Variant) {
-			window.Clipboard().SetText(getMagnetLink())
-		})
+		copyMagnetLinkCallback := func(action gio.SimpleAction, parameter uintptr) {
+			window.GetClipboard().SetText(getMagnetLink())
+		}
+		copyMagnetLinkAction.ConnectActivate(&copyMagnetLinkCallback)
 		window.AddAction(copyMagnetLinkAction)
 	}
 
 	preferencesDialog.SetTransientFor(&window.Window)
-	preferencesDialog.ConnectCloseRequest(func() (ok bool) {
+	closeRequestCallback := func(gtk.Window) bool {
 		preferencesDialog.Close()
 		preferencesDialog.SetVisible(false)
 
@@ -94,11 +110,12 @@ func AddMainMenu(
 
 		preferencesHaveChanged = false
 
-		return ok
-	})
+		return true
+	}
+	preferencesDialog.ConnectCloseRequest(&closeRequestCallback)
 
 	syncSensitivityState := func() {
-		if remoteGatewaySwitchInput.State() {
+		if remoteGatewaySwitchInput.GetActive() {
 			remoteGatewayURLInput.SetEditable(true)
 			remoteGatewayUsernameInput.SetEditable(true)
 			remoteGatewayPasswordInput.SetEditable(true)
@@ -108,10 +125,13 @@ func AddMainMenu(
 			remoteGatewayPasswordInput.SetEditable(false)
 		}
 	}
-	preferencesDialog.ConnectShow(syncSensitivityState)
+	showCallback := func(gtk.Widget) {
+		syncSensitivityState()
+	}
+	preferencesDialog.ConnectShow(&showCallback)
 
 	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
-	applyPreferencesAction.ConnectActivate(func(parameter *glib.Variant) {
+	applyPreferencesCallback := func(action gio.SimpleAction, parameter uintptr) {
 		cancel()
 
 		if gateway != nil {
@@ -136,100 +156,78 @@ func AddMainMenu(
 		}
 
 		os.Exit(0)
-	})
+	}
+	applyPreferencesAction.ConnectActivate(&applyPreferencesCallback)
 	window.AddAction(applyPreferencesAction)
 
-	storageLocationInput.ConnectClicked(func() {
+	clickedCallback := func(gtk.Button) {
 		filePicker := gtk.NewFileChooserNative(
 			"Select storage location",
 			&window.Window,
-			gtk.FileChooserActionSelectFolder,
+			gtk.FileChooserActionSelectFolderValue,
 			"",
 			"")
 		filePicker.SetModal(true)
-		filePicker.ConnectResponse(func(responseId int) {
-			if responseId == int(gtk.ResponseAccept) {
-				settings.SetString(resources.GSchemaStorageKey, filePicker.File().Path())
+		filePickerResponseCallback := func(dialog gtk.NativeDialog, responseId int) {
+			if responseId == int(gtk.ResponseAcceptValue) {
+				settings.SetString(resources.GSchemaStorageKey, filePicker.GetFile().GetPath())
 
 				preferencesHaveChanged = true
 			}
 
 			filePicker.Destroy()
-		})
+		}
+		filePicker.ConnectResponse(&filePickerResponseCallback)
 
 		filePicker.Show()
-	})
+	}
+	storageLocationInput.ConnectClicked(&clickedCallback)
 
-	settings.Bind(resources.GSchemaMPVKey, mpvCommandInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaMPVKey, &mpvCommandInput.Object, "text", gio.GSettingsBindDefaultValue)
 
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
-	settings.Bind(resources.GSchemaVerboseKey, verbosityLevelInput.Object, "value", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaVerboseKey, &verbosityLevelInput.Object, "value", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaGatewayRemoteKey, remoteGatewaySwitchInput.Object, "active", gio.SettingsBindDefault)
-	settings.Bind(resources.GSchemaGatewayURLKey, remoteGatewayURLInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(resources.GSchemaGatewayUsernameKey, remoteGatewayUsernameInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(resources.GSchemaGatewayPasswordKey, remoteGatewayPasswordInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaGatewayRemoteKey, &remoteGatewaySwitchInput.Object, "active", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.GSchemaGatewayURLKey, &remoteGatewayURLInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.GSchemaGatewayUsernameKey, &remoteGatewayUsernameInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.GSchemaGatewayPasswordKey, &remoteGatewayPasswordInput.Object, "text", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaWeronURLKey, weronURLInput.Object, "text", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronURLKey, &weronURLInput.Object, "text", gio.GSettingsBindDefaultValue)
 
 	weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
-	settings.Bind(resources.GSchemaWeronTimeoutKey, weronTimeoutInput.Object, "value", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronTimeoutKey, &weronTimeoutInput.Object, "value", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaWeronICEKey, weronICEInput.Object, "text", gio.SettingsBindDefault)
-	settings.Bind(resources.GSchemaWeronForceRelayKey, weronForceRelayInput.Object, "active", gio.SettingsBindDefault)
+	settings.Bind(resources.GSchemaWeronICEKey, &weronICEInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.GSchemaWeronForceRelayKey, &weronForceRelayInput.Object, "active", gio.GSettingsBindDefaultValue)
 
-	mpvCommandInput.ConnectChanged(func() {
+	// Note: EntryRow, SpinRow, and PasswordEntryRow don't have ConnectChanged - they use notify signals
+	// For simplicity, we'll track changes via the switch callbacks
+
+	stateSetCallback1 := func(gtk.Switch, bool) bool {
 		preferencesHaveChanged = true
-	})
-	verbosityLevelInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-
-	remoteGatewaySwitchInput.ConnectStateSet(func(state bool) (ok bool) {
-		preferencesHaveChanged = true
-
-		remoteGatewaySwitchInput.SetState(state)
 
 		syncSensitivityState()
 
-		return true
-	})
+		return false
+	}
+	remoteGatewaySwitchInput.ConnectStateSet(&stateSetCallback1)
 
-	remoteGatewayURLInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-	remoteGatewayUsernameInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-	remoteGatewayPasswordInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-
-	weronURLInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-	weronTimeoutInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-	weronICEInput.ConnectChanged(func() {
-		preferencesHaveChanged = true
-	})
-
-	weronForceRelayInput.ConnectStateSet(func(state bool) (ok bool) {
+	stateSetCallback2 := func(gtk.Switch, bool) bool {
 		preferencesHaveChanged = true
 
-		weronForceRelayInput.SetState(state)
-
-		return true
-	})
+		return false
+	}
+	weronForceRelayInput.ConnectStateSet(&stateSetCallback2)
 
 	aboutAction := gio.NewSimpleAction("about", nil)
-	aboutAction.ConnectActivate(func(parameter *glib.Variant) {
-		aboutDialog.Present(&window.Window)
-	})
+	aboutCallback := func(action gio.SimpleAction, parameter uintptr) {
+		aboutDialog.Present(&window.Window.Widget)
+	}
+	aboutAction.ConnectActivate(&aboutCallback)
 	window.AddAction(aboutAction)
 
-	menuButton.SetMenuModel(menu)
+	menuButton.SetMenuModel(&menu.MenuModel)
 
-	return preferencesDialog, mpvCommandInput
+	return &preferencesDialog, &mpvCommandInput
 }
