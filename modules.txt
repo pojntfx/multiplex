@@ -445,7 +445,7 @@ github.com/pmezard/go-difflib/difflib
 github.com/pojntfx/go-auth-utils/pkg/authn
 github.com/pojntfx/go-auth-utils/pkg/authn/basic
 github.com/pojntfx/go-auth-utils/pkg/authn/oidc
-# github.com/pojntfx/go-gettext v0.1.1
+# github.com/pojntfx/go-gettext v0.1.2
 ## explicit; go 1.25.0
 github.com/pojntfx/go-gettext/pkg/i18n
 # github.com/pojntfx/htorrent v0.5.4
