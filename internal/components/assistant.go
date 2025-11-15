@@ -173,7 +173,14 @@ func OpenAssistantWindow(
 
 	stack.SetVisibleChildName(welcomePageName)
 
-	// Note: Entry doesn't have ConnectChanged in puregotk, text changes handled via ConnectActivate
+	onMagnetLinkEntryChanged := func() {
+		if magnetLinkEntry.GetTextLength() > 0 {
+			nextButton.SetSensitive(true)
+		} else {
+			nextButton.SetSensitive(false)
+		}
+	}
+	magnetLinkEntry.ConnectSignal("changed", &onMagnetLinkEntryChanged)
 
 	onNext := func() {
 		switch stack.GetVisibleChildName() {
