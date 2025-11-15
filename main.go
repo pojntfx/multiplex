@@ -13,6 +13,7 @@ import (
 	"github.com/jwijenbergh/puregotk/v4/glib"
 	"github.com/jwijenbergh/puregotk/v4/gtk"
 	"github.com/phayes/freeport"
+	"github.com/pojntfx/go-gettext/pkg/i18n"
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
@@ -24,6 +25,17 @@ import (
 )
 
 //go:generate sh -c "if [ -z \"$FLATPAK_ID\" ]; then go tool github.com/dennwc/flatpak-go-mod --json .; fi"
+
+const (
+	gettextPackage = "sessions"
+	localeDir      = "/usr/share/locale"
+)
+
+func init() {
+	if err := i18n.InitI18n(gettextPackage, localeDir); err != nil {
+		panic(err)
+	}
+}
 
 const (
 	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"

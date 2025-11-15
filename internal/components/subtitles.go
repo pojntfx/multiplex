@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
 	"context"
 	"encoding/json"
 	"io"
@@ -111,7 +113,7 @@ func SetSubtitles(
 			return
 		}
 
-		toast := adw.NewToast("This file does not contain subtitles.")
+		toast := adw.NewToast(L("This file does not contain subtitles."))
 
 		subtitlesOverlay.AddToast(toast)
 

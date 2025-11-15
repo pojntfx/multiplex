@@ -33,6 +33,13 @@
     "url": "https://proxy.golang.org/github.com/phayes/freeport/@v/v0.0.0-20220201140144-74d24b5ae9f5.zip"
   },
   {
+    "dest": "vendor/github.com/pojntfx/go-gettext",
+    "sha256": "e86b2e6ba8d468a9578875d421c1752b172446191ce59e640c7c3fe165b6b228",
+    "strip-components": 3,
+    "type": "archive",
+    "url": "https://proxy.golang.org/github.com/pojntfx/go-gettext/@v/v0.1.1.zip"
+  },
+  {
     "dest": "vendor/github.com/pojntfx/htorrent",
     "sha256": "414aa10c4a26423526618576f6773ad9182cd75a342d2e7d57fe3b1b5af291eb",
     "strip-components": 3,

@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
 	"context"
 	"encoding/json"
 	"errors"
@@ -209,7 +211,7 @@ func OpenAssistantWindow(
 							Err(err).
 							Msg("Could not get info for magnet link")
 
-						toast := adw.NewToast("Could not get info for this magnet link.")
+						toast := adw.NewToast(L("Could not get info for this magnet link."))
 
 						overlay.AddToast(toast)
 
@@ -303,9 +305,9 @@ func OpenAssistantWindow(
 
 						row.SetTitle(getDisplayPathWithoutRoot(file.name))
 						if file.priority == 0 {
-							row.SetSubtitle(fmt.Sprintf("Media (%v MB)", file.size/1000/1000))
+							row.SetSubtitle(fmt.Sprintf(L("Media (%v MB)"), file.size/1000/1000))
 						} else {
-							row.SetSubtitle(fmt.Sprintf("Extra file (%v MB)", file.size/1000/1000))
+							row.SetSubtitle(fmt.Sprintf(L("Extra file (%v MB)"), file.size/1000/1000))
 						}
 						row.SetActivatable(true)
 
@@ -328,7 +330,7 @@ func OpenAssistantWindow(
 
 					descriptionText.SetWrapMode(gtk.WrapWordValue)
 					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-						descriptionText.GetBuffer().SetText(readmePlaceholder, -1)
+						descriptionText.GetBuffer().SetText(L(readmePlaceholder), -1)
 					} else {
 						descriptionText.GetBuffer().SetText(torrentReadme, -1)
 					}
@@ -349,7 +351,7 @@ func OpenAssistantWindow(
 
 					streamCodeParts := strings.Split(magnetLinkOrStreamCode, ":")
 					if len(streamCodeParts) < 3 {
-						toast := adw.NewToast("This stream code is invalid.")
+						toast := adw.NewToast(L("This stream code is invalid."))
 
 						overlay.AddToast(toast)
 
@@ -507,7 +509,7 @@ func OpenAssistantWindow(
 
 					descriptionText.SetWrapMode(gtk.WrapWordValue)
 					if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-						descriptionText.GetBuffer().SetText(readmePlaceholder, -1)
+						descriptionText.GetBuffer().SetText(L("No README found."), -1)
 					} else {
 						descriptionText.GetBuffer().SetText(torrentReadme, -1)
 					}

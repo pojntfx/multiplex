@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
 	"context"
 	"fmt"
 	"math"
@@ -118,8 +120,8 @@ func AddMainMenu(
 		if preferencesHaveChanged {
 			settings.Apply()
 
-			toast := adw.NewToast("Reopen to apply the changes.")
-			toast.SetButtonLabel("Reopen")
+			toast := adw.NewToast(L("Reopen to apply the changes."))
+			toast.SetButtonLabel(L("Reopen"))
 			toast.SetActionName("win." + applyPreferencesActionName)
 
 			overlay.AddToast(toast)
@@ -179,7 +181,7 @@ func AddMainMenu(
 
 	clickedCallback := func(gtk.Button) {
 		filePicker := gtk.NewFileChooserNative(
-			"Select storage location",
+			L("Select storage location"),
 			&window.Window,
 			gtk.FileChooserActionSelectFolderValue,
 			"",

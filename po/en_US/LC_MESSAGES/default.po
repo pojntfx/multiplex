@@ -1,3 +1,103 @@
+#: ../internal/components/assistant.go:214
+msgid "Could not get info for this magnet link."
+msgstr ""
+
+#: ../internal/components/assistant.go:308
+msgid "Media (%v MB)"
+msgstr ""
+
+#: ../internal/components/assistant.go:310
+msgid "Extra file (%v MB)"
+msgstr ""
+
+#: ../internal/components/assistant.go:354
+msgid "This stream code is invalid."
+msgstr ""
+
+#: ../internal/components/assistant.go:512
+msgid "No README found."
+msgstr ""
+
+#: ../internal/components/controls.go:384
+msgid "Someone joined the session."
+msgstr ""
+
+#: ../internal/components/controls.go:390
+msgid "Someone left the session."
+msgstr ""
+
+#: ../internal/components/controls.go:396
+msgid "You're currently watching alone."
+msgstr ""
+
+#: ../internal/components/controls.go:402
+msgid "You're currently watching with %v other person."
+msgstr ""
+
+#: ../internal/components/controls.go:407
+msgid "You're currently watching with %v other people."
+msgstr ""
+
+#: ../internal/components/controls.go:501
+msgid "%v MB/%v MB (%v peers)"
+msgstr ""
+
+#: ../internal/components/controls.go:506
+msgid "Searching for peers"
+msgstr ""
+
+#: ../internal/components/controls.go:1225
+msgid "Disable subtitles"
+msgstr ""
+
+#: ../internal/components/controls.go:1230
+msgid "Integrated subtitle"
+msgstr ""
+
+#: ../internal/components/controls.go:1233
+msgid "Subtitle from torrent"
+msgstr ""
+
+#: ../internal/components/controls.go:1236
+msgid "Extra file from torrent"
+msgstr ""
+
+#: ../internal/components/controls.go:1325
+msgid "Disable audio"
+msgstr ""
+
+#: ../internal/components/controls.go:1327
+msgid "Track %v"
+msgstr ""
+
+#: ../internal/components/controls.go:1335
+msgid "Untitled Track"
+msgstr ""
+
+#: ../internal/components/controls.go:1647
+msgid "Manually added"
+msgstr ""
+
+#: ../internal/components/error_dialog.go:23
+msgid "Could not continue due to a fatal error"
+msgstr ""
+
+#: ../internal/components/main_menu.go:123
+msgid "Reopen to apply the changes."
+msgstr ""
+
+#: ../internal/components/main_menu.go:124
+msgid "Reopen"
+msgstr ""
+
+#: ../internal/components/main_menu.go:184
+msgid "Select storage location"
+msgstr ""
+
+#: ../internal/components/subtitles.go:116
+msgid "This file does not contain subtitles."
+msgstr ""
+
 #: ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4

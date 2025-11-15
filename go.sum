@@ -346,6 +346,8 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRI
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pojntfx/go-auth-utils v0.1.0 h1:nM19hBX3zIs/tTv1ZAJN+m5occkUPQUKJtWG6sk66WY=
 github.com/pojntfx/go-auth-utils v0.1.0/go.mod h1:0GYzRzRxJ+sbMl1sJ3Ko0M4GAHJF2sWkL/MAqQmf5yc=
+github.com/pojntfx/go-gettext v0.1.1 h1:zL54iPqslZWIYfkvsOILgkYNA0gY0e83WkktB8Wjjm4=
+github.com/pojntfx/go-gettext v0.1.1/go.mod h1:eGt2r0JKvlPZjiz+GqEDtg92//F30LEV/IB0h42bk40=
 github.com/pojntfx/htorrent v0.5.4 h1:l1Wa0lQ5ZOZNP0CoTtf6f+7WKV3l0gdUx1zY37+10pE=
 github.com/pojntfx/htorrent v0.5.4/go.mod h1:0EKyQMkX/sP3HaMgcrT9ZP2YPB8vmG1YuT7dVm7b4nA=
 github.com/pojntfx/puregotk v0.0.0-20251025231904-c77cab625c00 h1:QcUtU02mMNMHLe/BvMZ069G6fNsEnBEFe+pL0uI4kAw=

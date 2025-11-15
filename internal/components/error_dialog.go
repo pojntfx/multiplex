@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
 	"context"
 	"os"
 
@@ -18,7 +20,7 @@ const (
 func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err error) {
 	log.Error().
 		Err(err).
-		Msg("Could not continue due to a fatal error")
+		Msg(L("Could not continue due to a fatal error"))
 
 	errorBuilder := gtk.NewBuilderFromResource(resources.ResourceErrorPath)
 	defer errorBuilder.Unref()

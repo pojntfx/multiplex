@@ -11,6 +11,7 @@ require (
 	github.com/jwijenbergh/puregotk v0.0.0-20251022075221-eae1610c7d83
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
+	github.com/pojntfx/go-gettext v0.1.1
 	github.com/pojntfx/htorrent v0.5.4
 	github.com/pojntfx/weron v0.3.0
 	github.com/rs/zerolog v1.34.0

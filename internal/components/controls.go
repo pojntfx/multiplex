@@ -1,6 +1,8 @@
 package components
 
 import (
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -41,12 +43,14 @@ import (
 )
 
 const (
-	readmePlaceholder = "No README found."
-
 	playIcon  = "media-playback-start-symbolic"
 	pauseIcon = "media-playback-pause-symbolic"
 
 	keycodeEscape = 66
+)
+
+var (
+	readmePlaceholder = "No README found."
 )
 
 var (
@@ -239,13 +243,13 @@ func OpenControlsWindow(
 	subtitlesBuilder := gtk.NewBuilderFromResource(resources.ResourceSubtitlesPath)
 	defer subtitlesBuilder.Unref()
 	var (
-		subtitlesDialog             adw.Window
-		subtitlesCancelButton       gtk.Button
-		subtitlesSpinner            gtk.Spinner
-		subtitlesOKButton           gtk.Button
-		subtitlesSelectionGroup     adw.PreferencesGroup
-		addSubtitlesFromFileButton  gtk.Button
-		subtitlesOverlay            adw.ToastOverlay
+		subtitlesDialog            adw.Window
+		subtitlesCancelButton      gtk.Button
+		subtitlesSpinner           gtk.Spinner
+		subtitlesOKButton          gtk.Button
+		subtitlesSelectionGroup    adw.PreferencesGroup
+		addSubtitlesFromFileButton gtk.Button
+		subtitlesOverlay           adw.ToastOverlay
 	)
 	subtitlesBuilder.GetObject("subtitles-dialog").Cast(&subtitlesDialog)
 	defer subtitlesDialog.Unref()
@@ -265,10 +269,10 @@ func OpenControlsWindow(
 	audiotracksBuilder := gtk.NewBuilderFromResource(resources.ResourceAudiotracksPath)
 	defer audiotracksBuilder.Unref()
 	var (
-		audiotracksDialog          adw.Window
-		audiotracksCancelButton    gtk.Button
-		audiotracksOKButton        gtk.Button
-		audiotracksSelectionGroup  adw.PreferencesGroup
+		audiotracksDialog         adw.Window
+		audiotracksCancelButton   gtk.Button
+		audiotracksOKButton       gtk.Button
+		audiotracksSelectionGroup adw.PreferencesGroup
 	)
 	audiotracksBuilder.GetObject("audiotracks-dialog").Cast(&audiotracksDialog)
 	defer audiotracksDialog.Unref()
@@ -377,30 +381,30 @@ func OpenControlsWindow(
 		if connected {
 			atomic.AddInt32(connectedPeers, 1)
 
-			toast := adw.NewToast("Someone joined the session.")
+			toast := adw.NewToast(L("Someone joined the session."))
 
 			overlay.AddToast(toast)
 		} else {
 			atomic.AddInt32(connectedPeers, -1)
 
-			toast := adw.NewToast("Someone left the session.")
+			toast := adw.NewToast(L("Someone left the session."))
 
 			overlay.AddToast(toast)
 		}
 
 		if *connectedPeers <= 0 {
-			watchingWithTitleLabel.SetText("You're currently watching alone.")
+			watchingWithTitleLabel.SetText(L("You're currently watching alone."))
 
 			return
 		}
 
 		if *connectedPeers == 1 {
-			watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other person.", *connectedPeers))
+			watchingWithTitleLabel.SetText(fmt.Sprintf(L("You're currently watching with %v other person."), *connectedPeers))
 
 			return
 		}
 
-		watchingWithTitleLabel.SetText(fmt.Sprintf("You're currently watching with %v other people.", *connectedPeers))
+		watchingWithTitleLabel.SetText(fmt.Sprintf(L("You're currently watching with %v other people."), *connectedPeers))
 	}
 
 	copyStreamCodeCallback := func(gtk.Button) {
@@ -446,7 +450,7 @@ func OpenControlsWindow(
 
 	descriptionText.SetWrapMode(gtk.WrapWordValue)
 	if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-		descriptionText.GetBuffer().SetText(readmePlaceholder, -1)
+		descriptionText.GetBuffer().SetText(L(readmePlaceholder), -1)
 	} else {
 		descriptionText.GetBuffer().SetText(torrentReadme, -1)
 	}
@@ -494,12 +498,12 @@ func OpenControlsWindow(
 			for _, progressBar := range []*gtk.ProgressBar{&preparingProgressBar, &descriptionProgressBar} {
 				if length > 0 {
 					progressBar.SetFraction(completed / length)
-					progressBar.SetText(fmt.Sprintf("%v MB/%v MB (%v peers)", int(completed/1000/1000), int(length/1000/1000), peers))
+					progressBar.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"), int(completed/1000/1000), int(length/1000/1000), peers))
 
 					continue n
 				}
 
-				progressBar.SetText("Searching for peers")
+				progressBar.SetText(L("Searching for peers"))
 			}
 		}
 	}()
@@ -1218,18 +1222,18 @@ func OpenControlsWindow(
 
 				if i == 0 {
 					row.SetTitle(file.name)
-					row.SetSubtitle("Disable subtitles")
+					row.SetSubtitle(L("Disable subtitles"))
 
 					activator.SetActive(true)
 				} else if file.priority == 0 {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
-					row.SetSubtitle("Integrated subtitle")
+					row.SetSubtitle(L("Integrated subtitle"))
 				} else if file.priority == 1 {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
-					row.SetSubtitle("Subtitle from torrent")
+					row.SetSubtitle(L("Subtitle from torrent"))
 				} else {
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
-					row.SetSubtitle("Extra file from torrent")
+					row.SetSubtitle(L("Extra file from torrent"))
 				}
 
 				row.SetActivatable(true)
@@ -1318,9 +1322,9 @@ func OpenControlsWindow(
 				activator.ConnectActivate(&audiotrackActivateCallback)
 
 				if j == 0 {
-					row.SetSubtitle("Disable audio")
+					row.SetSubtitle(L("Disable audio"))
 				} else {
-					row.SetSubtitle(fmt.Sprintf("Track %v", a.id))
+					row.SetSubtitle(fmt.Sprintf(L("Track %v"), a.id))
 				}
 
 				if i == 1 {
@@ -1328,7 +1332,7 @@ func OpenControlsWindow(
 				}
 
 				if strings.TrimSpace(a.lang) == "" {
-					row.SetTitle("Untitled Track")
+					row.SetTitle(L("Untitled Track"))
 				} else {
 					row.SetTitle(a.lang)
 				}
@@ -1640,7 +1644,7 @@ func OpenControlsWindow(
 						activator.ConnectActivate(&fileSubtitleActivateCallback)
 
 						row.SetTitle(filePicker.GetFile().GetBasename())
-						row.SetSubtitle("Manually added")
+						row.SetSubtitle(L("Manually added"))
 
 						row.SetActivatable(true)
 
