@@ -4,7 +4,7 @@ using Adw 1;
 Adw.ApplicationWindow main-window {
   default-width: 960;
   default-height: 540;
-  title: 'Multiplex';
+  title: _("Multiplex");
 
   [content]
   Adw.ToastOverlay toast-overlay {
@@ -20,7 +20,7 @@ Adw.ApplicationWindow main-window {
 
         [start]
         Button previous-button {
-          label: 'Previous';
+          label: _("Previous");
           visible: false;
           valign: start;
         }
@@ -37,7 +37,7 @@ Adw.ApplicationWindow main-window {
                 "title",
               ]
 
-              label: 'Welcome';
+              label: _("Welcome");
             }
           }
 
@@ -47,7 +47,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             visible: false;
-            tooltip-text: 'Open media details';
+            tooltip-text: _("Open media details");
 
             Box {
               Box {
@@ -60,7 +60,7 @@ Adw.ApplicationWindow main-window {
                     "title",
                   ]
 
-                  label: 'Welcome';
+                  label: _("Welcome");
                 }
 
                 Label button-headerbar-subtitle {
@@ -82,7 +82,7 @@ Adw.ApplicationWindow main-window {
           valign: start;
 
           Spinner headerbar-spinner {
-            tooltip-text: 'Getting metadata ...';
+            tooltip-text: _("Getting metadata ...");
           }
 
           Button next-button {
@@ -90,7 +90,7 @@ Adw.ApplicationWindow main-window {
               "suggested-action",
             ]
 
-            label: 'Next';
+            label: _("Next");
             sensitive: false;
           }
 
@@ -121,11 +121,11 @@ Adw.ApplicationWindow main-window {
                 margin-start: 12;
                 margin-end: 12;
                 icon-name: 'com.pojtinger.felicitas.Multiplex';
-                title: 'Multiplex';
-                description: 'Enter a <a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme">magnet link</a> or <a href="https://github.com/pojntfx/multiplex/wiki/Stream-Codes">stream code</a> to start streaming';
+                title: _("Multiplex");
+                description: _("Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-Codes\">stream code</a> to start streaming");
 
                 Entry magnet-link-entry {
-                  placeholder-text: 'Magnet link or stream code';
+                  placeholder-text: _("Magnet link or stream code");
                 }
               }
             };
@@ -143,8 +143,8 @@ Adw.ApplicationWindow main-window {
                 margin-start: 12;
                 margin-end: 12;
                 icon-name: 'applications-multimedia-symbolic';
-                title: 'Media';
-                description: 'Select the file you want to play';
+                title: _("Media");
+                description: _("Select the file you want to play");
 
                 Adw.PreferencesGroup media-selection-group {}
               }
@@ -163,7 +163,7 @@ Adw.ApplicationWindow main-window {
                 margin-start: 12;
                 margin-end: 12;
                 icon-name: 'emblem-ok-symbolic';
-                title: 'You\'re all set!';
+                title: _("You're all set!");
 
                 Box {
                   orientation: vertical;
@@ -172,7 +172,7 @@ Adw.ApplicationWindow main-window {
                   valign: center;
 
                   CheckButton rights-confirmation-button {
-                    label: 'I have the right to stream the selected media';
+                    label: _("I have the right to stream the selected media");
                   }
 
                   Adw.SplitButton download-and-play-button {
@@ -180,7 +180,7 @@ Adw.ApplicationWindow main-window {
                       "pill",
                     ]
 
-                    label: 'Download and Play';
+                    label: _("Download and Play");
                     sensitive: false;
                     halign: center;
                     popover: stream-popover;
@@ -207,7 +207,7 @@ Popover stream-popover {
         "flat",
       ]
 
-      label: 'Stream without Downloading';
+      label: _("Stream without Downloading");
     }
   }
 }

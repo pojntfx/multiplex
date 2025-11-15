@@ -5,15 +5,15 @@ Adw.PreferencesWindow preferences-dialog {
   modal: true;
 
   Adw.PreferencesPage {
-    title: _('Playback');
+    title: _("Playback");
     icon-name: 'multimedia-player-symbolic';
 
     Adw.PreferencesGroup {
-      title: _('General');
+      title: _("General");
 
       Adw.ActionRow {
-        title: _('Storage location');
-        subtitle: _('Path to store downloaded torrents in');
+        title: _("Storage location");
+        subtitle: _("Path to store downloaded torrents in");
         activatable-widget: storage-location-input;
 
         Button storage-location-input {
@@ -27,7 +27,7 @@ Adw.PreferencesWindow preferences-dialog {
       }
 
       Adw.EntryRow mpv-command-input {
-        title: _('Player command');
+        title: _("Player command");
 
         MenuButton {
           styles [
@@ -36,7 +36,7 @@ Adw.PreferencesWindow preferences-dialog {
           ]
 
           icon-name: 'help-about';
-          tooltip-text: 'Show help';
+          tooltip-text: _("Show help");
           valign: center;
           popover: mpv-command-input-help-popover;
         }
@@ -44,21 +44,21 @@ Adw.PreferencesWindow preferences-dialog {
     }
 
     Adw.PreferencesGroup {
-      title: _('Advanced');
+      title: _("Advanced");
 
       Adw.SpinRow verbosity-level-input {
-        title: _('Verbosity level');
-        subtitle: _('Verbosity level (0 is disabled, default is info, 7 is trace)');
+        title: _("Verbosity level");
+        subtitle: _("Verbosity level (0 is disabled, default is info, 7 is trace)");
 
         adjustment: Adjustment {};
       }
 
       Adw.ExpanderRow {
-        title: _('Remoting');
+        title: _("Remoting");
 
         Adw.ActionRow {
-          title: _('Use remote gateway');
-          subtitle: _('Use a remote hTorrent gateway instead of the local one');
+          title: _("Use remote gateway");
+          subtitle: _("Use a remote hTorrent gateway instead of the local one");
           activatable-widget: htorrent-remote-gateway-switch;
 
           Switch htorrent-remote-gateway-switch {
@@ -67,7 +67,7 @@ Adw.PreferencesWindow preferences-dialog {
         }
 
         Adw.EntryRow htorrent-url-input {
-          title: _('URL');
+          title: _("URL");
           editable: false;
 
           MenuButton {
@@ -77,14 +77,14 @@ Adw.PreferencesWindow preferences-dialog {
             ]
 
             icon-name: 'help-about';
-            tooltip-text: 'Show help';
+            tooltip-text: _("Show help");
             valign: center;
             popover: htorrent-url-input-popover;
           }
         }
 
         Adw.EntryRow htorrent-username-input {
-          title: _('Username');
+          title: _("Username");
           editable: false;
 
           MenuButton {
@@ -94,14 +94,14 @@ Adw.PreferencesWindow preferences-dialog {
             ]
 
             icon-name: 'help-about';
-            tooltip-text: 'Show help';
+            tooltip-text: _("Show help");
             valign: center;
             popover: htorrent-username-input-popover;
           }
         }
 
         Adw.PasswordEntryRow htorrent-password-input {
-          title: _('Password');
+          title: _("Password");
           editable: false;
 
           MenuButton {
@@ -111,7 +111,7 @@ Adw.PreferencesWindow preferences-dialog {
             ]
 
             icon-name: 'help-about';
-            tooltip-text: 'Show help';
+            tooltip-text: _("Show help");
             valign: center;
             popover: htorrent-password-input-popover;
           }
@@ -121,14 +121,14 @@ Adw.PreferencesWindow preferences-dialog {
   }
 
   Adw.PreferencesPage {
-    title: _('Synchronization');
+    title: _("Synchronization");
     icon-name: 'video-joined-displays-symbolic';
 
     Adw.PreferencesGroup {
-      title: _('General');
+      title: _("General");
 
       Adw.EntryRow weron-url-input {
-        title: _('Signaling server URL');
+        title: _("Signaling server URL");
 
         MenuButton {
           styles [
@@ -137,14 +137,14 @@ Adw.PreferencesWindow preferences-dialog {
           ]
 
           icon-name: 'help-about';
-          tooltip-text: 'Show help';
+          tooltip-text: _("Show help");
           valign: center;
           popover: weron-url-input-popover;
         }
       }
 
       Adw.EntryRow weron-ice-input {
-        title: _('STUN/TURN servers');
+        title: _("STUN/TURN servers");
 
         MenuButton {
           styles [
@@ -153,7 +153,7 @@ Adw.PreferencesWindow preferences-dialog {
           ]
 
           icon-name: 'help-about';
-          tooltip-text: 'Show help';
+          tooltip-text: _("Show help");
           valign: center;
           popover: weron-ice-input-popover;
         }
@@ -161,18 +161,18 @@ Adw.PreferencesWindow preferences-dialog {
     }
 
     Adw.PreferencesGroup {
-      title: _('Advanced');
+      title: _("Advanced");
 
       Adw.SpinRow weron-timeout-input {
-        title: _('Connection timeout');
-        subtitle: _('Time to wait to connect to the weron signaling server');
+        title: _("Connection timeout");
+        subtitle: _("Time to wait to connect to the weron signaling server");
 
         adjustment: Adjustment {};
       }
 
       Adw.ActionRow {
-        title: _('Relay mode');
-        subtitle: _('Force usage of TURN servers for weron');
+        title: _("Relay mode");
+        subtitle: _("Force usage of TURN servers for weron");
         activatable-widget: weron-force-relay-input;
 
         Switch weron-force-relay-input {
@@ -185,36 +185,36 @@ Adw.PreferencesWindow preferences-dialog {
 
 Popover mpv-command-input-help-popover {
   Label {
-    label: 'Command to launch mpv with';
+    label: _("Command to launch mpv with");
   }
 }
 
 Popover htorrent-url-input-popover {
   Label {
-    label: 'API address of the remote gateway';
+    label: _("API address of the remote gateway");
   }
 }
 
 Popover htorrent-username-input-popover {
   Label {
-    label: 'The remote gateway\'s username';
+    label: _("The remote gateway's username");
   }
 }
 
 Popover htorrent-password-input-popover {
   Label {
-    label: 'The remote gateway\'s password';
+    label: _("The remote gateway's password");
   }
 }
 
 Popover weron-url-input-popover {
   Label {
-    label: 'URL for the weron signaling server';
+    label: _("URL for the weron signaling server");
   }
 }
 
 Popover weron-ice-input-popover {
   Label {
-    label: 'Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)';
+    label: _("Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)");
   }
 }

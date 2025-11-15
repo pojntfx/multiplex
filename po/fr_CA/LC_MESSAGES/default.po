@@ -1,3 +1,9 @@
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 00:00-0700\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
 #: ../internal/components/assistant.go:214
 msgid "Could not get info for this magnet link."
 msgstr ""
@@ -26,7 +32,8 @@ msgstr ""
 msgid "Someone left the session."
 msgstr ""
 
-#: ../internal/components/controls.go:396
+#: ../internal/components/controls.go:396 ../assets/resources/controls.blp:205
+#: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr ""
 
@@ -98,10 +105,341 @@ msgstr ""
 msgid "This file does not contain subtitles."
 msgstr ""
 
-#: ../mockups/playback/window.blp:7
+#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
+#: ../assets/resources/assistant.blp:124 ../assets/resources/controls.blp:8
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
-#: ../assets/resources/metainfo.xml.in:4
+#: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
+#: ../assets/resources/assistant.ui:138 ../assets/resources/controls.ui:13
 msgid "Multiplex"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
+msgid "Previous"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
+#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
+msgid "Welcome"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr ""
+
+#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
+msgid "Next"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
+msgid ""
+"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> to start streaming"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
+msgid "Magnet link or stream code"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
+msgid "Media"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
+msgid "Select the file you want to play"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
+msgid "You're all set!"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
+msgid "I have the right to stream the selected media"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
+msgid "Download and Play"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
+msgid "Stream without Downloading"
+msgstr ""
+
+#: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
+msgid "Audio Tracks"
+msgstr ""
+
+#: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
+#: ../assets/resources/subtitles.blp:18 ../assets/resources/preparing.ui:46
+#: ../assets/resources/subtitles.ui:22 ../assets/resources/audiotracks.ui:22
+msgid "Cancel"
+msgstr ""
+
+#: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:44
+#: ../assets/resources/subtitles.ui:49 ../assets/resources/audiotracks.ui:27
+msgid "OK"
+msgstr ""
+
+#: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
+#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
+msgid "Preparing stream ..."
+msgstr ""
+
+#: ../assets/resources/controls.blp:69 ../assets/resources/controls.ui:78
+msgid "Show peers"
+msgstr ""
+
+#: ../assets/resources/controls.blp:75 ../assets/resources/controls.ui:85
+msgid "Open primary menu"
+msgstr ""
+
+#: ../assets/resources/controls.blp:100 ../assets/resources/controls.ui:113
+msgid "Toggle playback"
+msgstr ""
+
+#: ../assets/resources/controls.blp:109 ../assets/resources/controls.ui:122
+msgid "Stop playback"
+msgstr ""
+
+#: ../assets/resources/controls.blp:124 ../assets/resources/controls.ui:138
+msgid "Elapsed time"
+msgstr ""
+
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:144
+msgid "Playback progress"
+msgstr ""
+
+#: ../assets/resources/controls.blp:138 ../assets/resources/controls.ui:153
+msgid "Remaining playback time"
+msgstr ""
+
+#: ../assets/resources/controls.blp:153 ../assets/resources/controls.ui:169
+msgid "Change audio volume"
+msgstr ""
+
+#: ../assets/resources/controls.blp:163 ../assets/resources/controls.ui:179
+msgid "Change audio track"
+msgstr ""
+
+#: ../assets/resources/controls.blp:172 ../assets/resources/controls.ui:188
+msgid "Change subtitles"
+msgstr ""
+
+#: ../assets/resources/controls.blp:181 ../assets/resources/controls.ui:197
+msgid "Toggle fullscreen"
+msgstr ""
+
+#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:231
+msgid ""
+"Ask the people you want to watch with to enter the following stream code:"
+msgstr ""
+
+#: ../assets/resources/controls.blp:225 ../assets/resources/controls.ui:248
+msgid "Copy stream code to clipboard"
+msgstr ""
+
+#: ../assets/resources/controls.blp:242 ../assets/resources/controls.ui:267
+msgid "Mute/unmute"
+msgstr ""
+
+#: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
+msgid "Open Downloads"
+msgstr ""
+
+#: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
+msgid "Copy Magnet Link"
+msgstr ""
+
+#: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
+msgid "Preferences"
+msgstr ""
+
+#: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+msgid "About Multiplex"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:8 ../assets/resources/preferences.ui:13
+msgid "Playback"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:12
+#: ../assets/resources/preferences.blp:128
+#: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
+msgid "General"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
+msgid "Storage location"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:16 ../assets/resources/preferences.ui:21
+msgid "Path to store downloaded torrents in"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:36
+msgid "Player command"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:39
+#: ../assets/resources/preferences.blp:80
+#: ../assets/resources/preferences.blp:97
+#: ../assets/resources/preferences.blp:114
+#: ../assets/resources/preferences.blp:140
+#: ../assets/resources/preferences.blp:156
+#: ../assets/resources/preferences.ui:44 ../assets/resources/preferences.ui:91
+#: ../assets/resources/preferences.ui:109
+#: ../assets/resources/preferences.ui:127
+#: ../assets/resources/preferences.ui:157
+#: ../assets/resources/preferences.ui:174
+msgid "Show help"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:47
+#: ../assets/resources/preferences.blp:164
+#: ../assets/resources/preferences.ui:55 ../assets/resources/preferences.ui:185
+msgid "Advanced"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
+msgid "Verbosity level"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
+msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:57 ../assets/resources/preferences.ui:67
+msgid "Remoting"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
+msgid "Use remote gateway"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
+msgid "Use a remote hTorrent gateway instead of the local one"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:70 ../assets/resources/preferences.ui:82
+msgid "URL"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:87
+#: ../assets/resources/preferences.ui:100
+msgid "Username"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:104
+#: ../assets/resources/preferences.ui:118
+msgid "Password"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:124
+#: ../assets/resources/preferences.ui:142
+msgid "Synchronization"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:131
+#: ../assets/resources/preferences.ui:149
+msgid "Signaling server URL"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:147
+#: ../assets/resources/preferences.ui:166
+msgid "STUN/TURN servers"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:167
+#: ../assets/resources/preferences.ui:188
+msgid "Connection timeout"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:168
+#: ../assets/resources/preferences.ui:189
+msgid "Time to wait to connect to the weron signaling server"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:174
+#: ../assets/resources/preferences.ui:197
+msgid "Relay mode"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:175
+#: ../assets/resources/preferences.ui:198
+msgid "Force usage of TURN servers for weron"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:188
+#: ../assets/resources/preferences.ui:215
+msgid "Command to launch mpv with"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:194
+#: ../assets/resources/preferences.ui:222
+msgid "API address of the remote gateway"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:200
+#: ../assets/resources/preferences.ui:229
+msgid "The remote gateway's username"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:206
+#: ../assets/resources/preferences.ui:236
+msgid "The remote gateway's password"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:212
+#: ../assets/resources/preferences.ui:243
+msgid "URL for the weron signaling server"
+msgstr ""
+
+#: ../assets/resources/preferences.blp:218
+#: ../assets/resources/preferences.ui:250
+msgid ""
+"Comma-separated list of weron STUN (in format stun:host:port) and TURN "
+"servers (in format username:credential@turn:host:port)"
+msgstr ""
+
+#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:34
+#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:39
+msgid "Subtitles"
+msgstr ""
+
+#: ../assets/resources/subtitles.blp:64 ../assets/resources/subtitles.ui:72
+msgid "Tracks"
+msgstr ""
+
+#: ../assets/resources/subtitles.blp:82 ../assets/resources/subtitles.ui:89
+msgid "Add from file"
+msgstr ""
+
+#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:11
+msgid "No Media Player Could Be Found"
+msgstr ""
+
+#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:12
+msgid ""
+"Please install mpv or configure the exisiting installation to able to play "
+"media."
+msgstr ""
+
+#: ../assets/resources/warning.blp:10 ../assets/resources/warning.ui:15
+msgid "Get from Flathub"
+msgstr ""
+
+#: ../assets/resources/warning.blp:16 ../assets/resources/warning.ui:21
+msgid "Get from mpv.io"
+msgstr ""
+
+#: ../assets/resources/warning.blp:21 ../assets/resources/warning.ui:26
+msgid "Manual configuration"
 msgstr ""
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
@@ -203,106 +541,14 @@ msgstr ""
 msgid "Initial release"
 msgstr ""
 
-#: ../assets/resources/menu.ui:12
-msgid "Open Downloads"
+#: ../assets/resources/error.ui:5
+msgid "A Fatal Error Occured"
 msgstr ""
 
-#: ../assets/resources/menu.ui:16
-msgid "Copy Magnet Link"
+#: ../assets/resources/error.ui:10
+msgid "Report Error"
 msgstr ""
 
-#: ../assets/resources/menu.ui:20
-msgid "Preferences"
-msgstr ""
-
-#: ../assets/resources/menu.ui:25
-msgid "About Multiplex"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:13
-msgid "Playback"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
-msgid "General"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:20
-msgid "Storage location"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:21
-msgid "Path to store downloaded torrents in"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:36
-msgid "Player command"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:55 ../assets/resources/preferences.ui:185
-msgid "Advanced"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:58
-msgid "Verbosity level"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:59
-msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:67
-msgid "Remoting"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:70
-msgid "Use remote gateway"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:71
-msgid "Use a remote hTorrent gateway instead of the local one"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:82
-msgid "URL"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:100
-msgid "Username"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:118
-msgid "Password"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:142
-msgid "Synchronization"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:149
-msgid "Signaling server URL"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:166
-msgid "STUN/TURN servers"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:188
-msgid "Connection timeout"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:189
-msgid "Time to wait to connect to the weron signaling server"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:197
-msgid "Relay mode"
-msgstr ""
-
-#: ../assets/resources/preferences.ui:198
-msgid "Force usage of TURN servers for weron"
-msgstr ""
-
-#: ../assets/resources/subtitles.ui:72
-msgid "Tracks"
+#: ../assets/resources/error.ui:11
+msgid "Close Multiplex"
 msgstr ""

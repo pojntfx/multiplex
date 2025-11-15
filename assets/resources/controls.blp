@@ -5,7 +5,7 @@ Adw.ApplicationWindow main-window {
   default-width: 700;
   default-height: 0;
   height-request: 0;
-  title: 'Multiplex';
+  title: _("Multiplex");
   resizable: false;
 
   content: Adw.ToastOverlay toast-overlay {
@@ -26,7 +26,7 @@ Adw.ApplicationWindow main-window {
               "flat",
             ]
 
-            tooltip-text: 'Open media details';
+            tooltip-text: _("Open media details");
 
             Box {
               Box {
@@ -56,7 +56,7 @@ Adw.ApplicationWindow main-window {
             valign: start;
 
             Spinner headerbar-spinner {
-              tooltip-text: 'Preparing stream ...';
+              tooltip-text: _("Preparing stream ...");
             }
 
             MenuButton {
@@ -66,13 +66,13 @@ Adw.ApplicationWindow main-window {
 
               icon-name: 'system-users-symbolic';
               popover: users-popover;
-              tooltip-text: 'Show peers';
+              tooltip-text: _("Show peers");
             }
 
             MenuButton menu-button {
               icon-name: 'open-menu-symbolic';
               primary: true;
-              tooltip-text: 'Open primary menu';
+              tooltip-text: _("Open primary menu");
             }
 
             WindowControls {
@@ -97,7 +97,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'media-playback-start-symbolic';
-            tooltip-text: 'Toggle playback';
+            tooltip-text: _("Toggle playback");
           }
 
           Button stop-button {
@@ -106,7 +106,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'media-playback-stop-symbolic';
-            tooltip-text: 'Stop playback';
+            tooltip-text: _("Stop playback");
           }
 
           Separator {
@@ -121,12 +121,12 @@ Adw.ApplicationWindow main-window {
             ]
 
             label: '00:00:00';
-            tooltip-text: 'Elapsed time';
+            tooltip-text: _("Elapsed time");
           }
 
           Scale seeker {
             hexpand: true;
-            tooltip-text: 'Playback progress';
+            tooltip-text: _("Playback progress");
           }
 
           Label remaining-track-label {
@@ -135,7 +135,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             label: '-00:00:00';
-            tooltip-text: 'Remaining playback time';
+            tooltip-text: _("Remaining playback time");
           }
 
           Separator {
@@ -150,7 +150,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'audio-volume-high-symbolic';
-            tooltip-text: 'Change audio volume';
+            tooltip-text: _("Change audio volume");
             popover: audiovolume-button-popover;
           }
 
@@ -160,7 +160,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'media-optical-cd-audio-symbolic';
-            tooltip-text: 'Change audio track';
+            tooltip-text: _("Change audio track");
           }
 
           Button subtitle-button {
@@ -169,7 +169,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'media-view-subtitles-symbolic';
-            tooltip-text: 'Change subtitles';
+            tooltip-text: _("Change subtitles");
           }
 
           ToggleButton fullscreen-button {
@@ -178,7 +178,7 @@ Adw.ApplicationWindow main-window {
             ]
 
             icon-name: 'view-fullscreen-symbolic';
-            tooltip-text: 'Toggle fullscreen';
+            tooltip-text: _("Toggle fullscreen");
           }
         }
       }
@@ -202,12 +202,12 @@ Popover users-popover {
         "title",
       ]
 
-      label: 'You\'re currently watching alone.';
+      label: _("You're currently watching alone.");
     }
 
     Label {
       justify: center;
-      label: 'Ask the people you want to watch with to enter the following stream code:';
+      label: _("Ask the people you want to watch with to enter the following stream code:");
     }
 
     Box {
@@ -222,7 +222,7 @@ Popover users-popover {
 
       Button copy-stream-code-button {
         icon-name: 'edit-copy-symbolic';
-        tooltip-text: 'Copy stream code to clipboard';
+        tooltip-text: _("Copy stream code to clipboard");
       }
     }
   }
@@ -239,7 +239,7 @@ Popover audiovolume-button-popover {
 
     Button audiovolume-button-mute-button {
       icon-name: "audio-volume-high-symbolic";
-      tooltip-text: 'Mute/unmute';
+      tooltip-text: _("Mute/unmute");
 
       styles [
         "circular"
