@@ -10,7 +10,7 @@ import (
 	"github.com/jwijenbergh/puregotk/v4/gio"
 	"github.com/jwijenbergh/puregotk/v4/gtk"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/multiplex/internal/resources"
+	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
 )
 
@@ -27,18 +27,18 @@ func AddMainMenu(
 	getMagnetLink func() string,
 	cancel func(),
 ) (*adw.PreferencesWindow, *adw.EntryRow) {
-	menuBuilder := gtk.NewBuilderFromResource(resources.GResourceMenuPath)
+	menuBuilder := gtk.NewBuilderFromResource(resources.ResourceMenuPath)
 	defer menuBuilder.Unref()
 	var menu gio.Menu
 	menuBuilder.GetObject("main-menu").Cast(&menu)
 	defer menu.Unref()
 
-	aboutDialog := adw.NewAboutDialogFromAppdata(resources.GResourceMetainfoPath, "0.1.7")
-	aboutDialog.SetDevelopers([]string{"Felicitas Pojtinger"})
-	aboutDialog.SetArtists([]string{"Brage Fuglseth"})
-	aboutDialog.SetCopyright("© 2025 Felicitas Pojtinger")
+	aboutDialog := adw.NewAboutDialogFromAppdata(resources.ResourceMetainfoPath, resources.AppVersion)
+	aboutDialog.SetDevelopers(resources.AppDevelopers)
+	aboutDialog.SetArtists(resources.AppArtists)
+	aboutDialog.SetCopyright(resources.AppCopyright)
 
-	preferencesBuilder := gtk.NewBuilderFromResource(resources.GResourcePreferencesPath)
+	preferencesBuilder := gtk.NewBuilderFromResource(resources.ResourcePreferencesPath)
 	defer preferencesBuilder.Unref()
 	var (
 		preferencesDialog          adw.PreferencesWindow
@@ -91,7 +91,7 @@ func AddMainMenu(
 
 	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
 	openDownloadsCallback := func(action gio.SimpleAction, parameter uintptr) {
-		_, err := gio.AppInfoLaunchDefaultForUri(fmt.Sprintf("file://%v", settings.GetString(resources.GSchemaStorageKey)), nil)
+		_, err := gio.AppInfoLaunchDefaultForUri(fmt.Sprintf("file://%v", settings.GetString(resources.SchemaStorageKey)), nil)
 		if err != nil {
 			OpenErrorDialog(ctx, window, err)
 
@@ -187,7 +187,7 @@ func AddMainMenu(
 		filePicker.SetModal(true)
 		filePickerResponseCallback := func(dialog gtk.NativeDialog, responseId int) {
 			if responseId == int(gtk.ResponseAcceptValue) {
-				settings.SetString(resources.GSchemaStorageKey, filePicker.GetFile().GetPath())
+				settings.SetString(resources.SchemaStorageKey, filePicker.GetFile().GetPath())
 
 				preferencesHaveChanged = true
 			}
@@ -200,23 +200,23 @@ func AddMainMenu(
 	}
 	storageLocationInput.ConnectClicked(&clickedCallback)
 
-	settings.Bind(resources.GSchemaMPVKey, &mpvCommandInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaMPVKey, &mpvCommandInput.Object, "text", gio.GSettingsBindDefaultValue)
 
 	verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
-	settings.Bind(resources.GSchemaVerboseKey, &verbosityLevelInput.Object, "value", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaVerboseKey, &verbosityLevelInput.Object, "value", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaGatewayRemoteKey, &remoteGatewaySwitchInput.Object, "active", gio.GSettingsBindDefaultValue)
-	settings.Bind(resources.GSchemaGatewayURLKey, &remoteGatewayURLInput.Object, "text", gio.GSettingsBindDefaultValue)
-	settings.Bind(resources.GSchemaGatewayUsernameKey, &remoteGatewayUsernameInput.Object, "text", gio.GSettingsBindDefaultValue)
-	settings.Bind(resources.GSchemaGatewayPasswordKey, &remoteGatewayPasswordInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaGatewayRemoteKey, &remoteGatewaySwitchInput.Object, "active", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaGatewayURLKey, &remoteGatewayURLInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaGatewayUsernameKey, &remoteGatewayUsernameInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaGatewayPasswordKey, &remoteGatewayPasswordInput.Object, "text", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaWeronURLKey, &weronURLInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaWeronURLKey, &weronURLInput.Object, "text", gio.GSettingsBindDefaultValue)
 
 	weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
-	settings.Bind(resources.GSchemaWeronTimeoutKey, &weronTimeoutInput.Object, "value", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaWeronTimeoutKey, &weronTimeoutInput.Object, "value", gio.GSettingsBindDefaultValue)
 
-	settings.Bind(resources.GSchemaWeronICEKey, &weronICEInput.Object, "text", gio.GSettingsBindDefaultValue)
-	settings.Bind(resources.GSchemaWeronForceRelayKey, &weronForceRelayInput.Object, "active", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaWeronICEKey, &weronICEInput.Object, "text", gio.GSettingsBindDefaultValue)
+	settings.Bind(resources.SchemaWeronForceRelayKey, &weronForceRelayInput.Object, "active", gio.GSettingsBindDefaultValue)
 
 	// Note: EntryRow, SpinRow, and PasswordEntryRow don't have ConnectChanged - they use notify signals
 	// For simplicity, we'll track changes via the switch callbacks

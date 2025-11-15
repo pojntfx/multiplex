@@ -6,7 +6,7 @@ import (
 
 	"github.com/jwijenbergh/puregotk/v4/adw"
 	"github.com/jwijenbergh/puregotk/v4/gtk"
-	"github.com/pojntfx/multiplex/internal/resources"
+	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/rs/zerolog/log"
 	"github.com/rymdport/portal/openuri"
 )
@@ -20,7 +20,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Err(err).
 		Msg("Could not continue due to a fatal error")
 
-	errorBuilder := gtk.NewBuilderFromResource(resources.GResourceErrorPath)
+	errorBuilder := gtk.NewBuilderFromResource(resources.ResourceErrorPath)
 	defer errorBuilder.Unref()
 	var errorDialog adw.AlertDialog
 	errorBuilder.GetObject("error-dialog").Cast(&errorDialog)

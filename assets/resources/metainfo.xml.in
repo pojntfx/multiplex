@@ -8,7 +8,7 @@
     <project_license>AGPL-3.0-or-later</project_license>
 
     <developer id="com.pojtinger.felicitas">
-        <name translatable="no">Felicitas Pojtinger</name>
+        <name translate="no">Felicitas Pojtinger</name>
     </developer>
 
     <content_rating type="oars-1.1">
@@ -22,12 +22,25 @@
     <url type="contact">https://felicitas.pojtinger.com/imprint</url>
     <url type="faq">https://github.com/pojntfx/multiplex?tab=readme-ov-file#tutorial</url>
     <url type="vcs-browser">https://github.com/pojntfx/multiplex/</url>
+    <url type="translate">https://hosted.weblate.org/projects/multiplex/</url>
 
     <launchable type="desktop-id">com.pojtinger.felicitas.Multiplex.desktop</launchable>
 
     <provides>
         <binary>multiplex</binary>
     </provides>
+
+    <translation type="gettext">default</translation>
+
+    <supports>
+        <control>pointing</control>
+        <control>keyboard</control>
+        <control>touch</control>
+    </supports>
+
+    <recommends>
+        <display_length compare="ge">700</display_length>
+    </recommends>
 
     <branding>
         <color type="primary" scheme_preference="light">#6fb0ff</color>

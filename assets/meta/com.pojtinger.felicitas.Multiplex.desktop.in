@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Multiplex
-Comment=Watch torrents with your friends.
+Comment=Watch torrents with your friends
 Exec=multiplex
 Icon=com.pojtinger.felicitas.Multiplex
 Categories=AudioVideo;Video

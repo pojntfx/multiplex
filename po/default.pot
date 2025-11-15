@@ -1,0 +1,208 @@
+#: ../mockups/playback/window.blp:7
+#: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
+#: ../assets/resources/metainfo.xml.in:4
+msgid "Multiplex"
+msgstr ""
+
+#: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
+#: ../assets/resources/metainfo.xml.in:5
+msgid "Watch torrents with your friends"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:51
+msgid ""
+"Multiplex is an app to watch torrents together, providing an experience "
+"similar to Apple's SharePlay and Amazon's Prime Video Watch Party."
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:53
+msgid "It enables you to:"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:55
+msgid ""
+"Stream any file directly using a wide range of video and audio formats with "
+"the mpv video player"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:57
+msgid ""
+"Host online watch parties while preserving your privacy by synchronizing "
+"video playback with friends without a central server"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:59
+msgid ""
+"Bypass internet restrictions by optionally separating the backend and user "
+"interface into two separate components"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:68
+msgid "Entering a magnet link or stream code"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:73
+msgid "Media selection"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:78
+msgid "Confirming playback"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:83
+msgid "Media controls"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:88
+msgid "Playing media with MPV"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:93
+msgid "Selecting audio tracks"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:98
+msgid "Selecting subtitles"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:103
+msgid "Playback preferences"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:108
+msgid "Remoting preferences"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:113
+msgid "Synchronization preferences"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:122
+msgid "Better support for systems with languages other than English"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:130
+#: ../assets/resources/metainfo.xml.in:138
+#: ../assets/resources/metainfo.xml.in:162
+msgid "Visual refinements to match the state of the art of GNOME apps"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:146
+msgid "Refinements to the screenshots and descriptions"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:154
+msgid "Refinements to the screenshots and app metadata"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:170
+msgid "Simplify summary and improve build system conventions"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:178
+msgid "Initial release"
+msgstr ""
+
+#: ../assets/resources/menu.ui:12
+msgid "Open Downloads"
+msgstr ""
+
+#: ../assets/resources/menu.ui:16
+msgid "Copy Magnet Link"
+msgstr ""
+
+#: ../assets/resources/menu.ui:20
+msgid "Preferences"
+msgstr ""
+
+#: ../assets/resources/menu.ui:25
+msgid "About Multiplex"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:13
+msgid "Playback"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
+msgid "General"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:20
+msgid "Storage location"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:21
+msgid "Path to store downloaded torrents in"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:36
+msgid "Player command"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:55 ../assets/resources/preferences.ui:185
+msgid "Advanced"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:58
+msgid "Verbosity level"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:59
+msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:67
+msgid "Remoting"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:70
+msgid "Use remote gateway"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:71
+msgid "Use a remote hTorrent gateway instead of the local one"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:82
+msgid "URL"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:100
+msgid "Username"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:118
+msgid "Password"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:142
+msgid "Synchronization"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:149
+msgid "Signaling server URL"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:166
+msgid "STUN/TURN servers"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:188
+msgid "Connection timeout"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:189
+msgid "Time to wait to connect to the weron signaling server"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:197
+msgid "Relay mode"
+msgstr ""
+
+#: ../assets/resources/preferences.ui:198
+msgid "Force usage of TURN servers for weron"
+msgstr ""
+
+#: ../assets/resources/subtitles.ui:72
+msgid "Tracks"
+msgstr ""

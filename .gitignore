@@ -1,8 +1,7 @@
-.flatpak-builder
-build-dir
-vendor
-*.compiled
 *.gresource
 *.ui
+*.mo
+LINGUAS
+metainfo.xml
+*.desktop
 !error.ui
-!warning.ui

@@ -29,7 +29,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
-	"github.com/pojntfx/multiplex/internal/resources"
+	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
 	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
@@ -147,7 +147,7 @@ func OpenControlsWindow(
 ) error {
 	app.GetStyleManager().SetColorScheme(adw.ColorSchemePreferDarkValue)
 
-	builder := gtk.NewBuilderFromResource(resources.GResourceControlsPath)
+	builder := gtk.NewBuilderFromResource(resources.ResourceControlsPath)
 	defer builder.Unref()
 
 	var (
@@ -216,7 +216,7 @@ func OpenControlsWindow(
 	builder.GetObject("copy-stream-code-button").Cast(&copyStreamCodeButton)
 	defer copyStreamCodeButton.Unref()
 
-	descriptionBuilder := gtk.NewBuilderFromResource(resources.GResourceDescriptionPath)
+	descriptionBuilder := gtk.NewBuilderFromResource(resources.ResourceDescriptionPath)
 	defer descriptionBuilder.Unref()
 	var (
 		descriptionWindow            adw.Window
@@ -236,7 +236,7 @@ func OpenControlsWindow(
 	descriptionBuilder.GetObject("preparing-progress-bar").Cast(&descriptionProgressBar)
 	defer descriptionProgressBar.Unref()
 
-	subtitlesBuilder := gtk.NewBuilderFromResource(resources.GResourceSubtitlesPath)
+	subtitlesBuilder := gtk.NewBuilderFromResource(resources.ResourceSubtitlesPath)
 	defer subtitlesBuilder.Unref()
 	var (
 		subtitlesDialog             adw.Window
@@ -262,7 +262,7 @@ func OpenControlsWindow(
 	subtitlesBuilder.GetObject("toast-overlay").Cast(&subtitlesOverlay)
 	defer subtitlesOverlay.Unref()
 
-	audiotracksBuilder := gtk.NewBuilderFromResource(resources.GResourceAudiotracksPath)
+	audiotracksBuilder := gtk.NewBuilderFromResource(resources.ResourceAudiotracksPath)
 	defer audiotracksBuilder.Unref()
 	var (
 		audiotracksDialog          adw.Window
@@ -279,7 +279,7 @@ func OpenControlsWindow(
 	audiotracksBuilder.GetObject("audiotracks").Cast(&audiotracksSelectionGroup)
 	defer audiotracksSelectionGroup.Unref()
 
-	preparingBuilder := gtk.NewBuilderFromResource(resources.GResourcePreparingPath)
+	preparingBuilder := gtk.NewBuilderFromResource(resources.ResourcePreparingPath)
 	defer preparingBuilder.Unref()
 	var (
 		preparingWindow       adw.Window
@@ -327,7 +327,7 @@ func OpenControlsWindow(
 		adapterCtx, cancelAdapterCtx = context.WithCancel(context.Background())
 	}
 
-	u, err := url.Parse(settings.GetString(resources.GSchemaWeronURLKey))
+	u, err := url.Parse(settings.GetString(resources.SchemaWeronURLKey))
 	if err != nil {
 		cancelAdapterCtx()
 
@@ -347,14 +347,14 @@ func OpenControlsWindow(
 		adapter = wrtcconn.NewAdapter(
 			u.String(),
 			key,
-			strings.Split(settings.GetString(resources.GSchemaWeronICEKey), ","),
+			strings.Split(settings.GetString(resources.SchemaWeronICEKey), ","),
 			[]string{"multiplex/sync"},
 			&wrtcconn.AdapterConfig{
-				Timeout:    time.Duration(time.Second * time.Duration(settings.GetInt64(resources.GSchemaWeronTimeoutKey))),
-				ForceRelay: settings.GetBoolean(resources.GSchemaWeronForceRelayKey),
+				Timeout:    time.Duration(time.Second * time.Duration(settings.GetInt64(resources.SchemaWeronTimeoutKey))),
+				ForceRelay: settings.GetBoolean(resources.SchemaWeronForceRelayKey),
 				OnSignalerReconnect: func() {
 					log.Info().
-						Str("raddr", settings.GetString(resources.GSchemaWeronURLKey)).
+						Str("raddr", settings.GetString(resources.SchemaWeronURLKey)).
 						Msg("Reconnecting to signaler")
 				},
 			},
@@ -549,7 +549,7 @@ func OpenControlsWindow(
 	if runtime.GOOS == "windows" {
 		shell = []string{"cmd.exe", "/c", "start"}
 	}
-	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.GetString(resources.GSchemaMPVKey), ipcFile, usernameAndPassword, streamURL))
+	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", settings.GetString(resources.SchemaMPVKey), ipcFile, usernameAndPassword, streamURL))
 
 	command := exec.Command(
 		commandLine[0],
@@ -1036,7 +1036,7 @@ func OpenControlsWindow(
 						return
 					case rid := <-ids:
 						log.Info().
-							Str("raddr", settings.GetString(resources.GSchemaWeronURLKey)).
+							Str("raddr", settings.GetString(resources.SchemaWeronURLKey)).
 							Str("id", rid).
 							Msg("Reconnecting to signaler")
 					case peer := <-adapter.Accept():

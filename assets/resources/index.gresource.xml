@@ -12,6 +12,6 @@
         <file>audiotracks.ui</file>
         <file>preparing.ui</file>
         <file>style.css</file>
-        <file>com.pojtinger.felicitas.Multiplex.metainfo.xml</file>
+        <file>metainfo.xml</file>
     </gresource>
 </gresources>

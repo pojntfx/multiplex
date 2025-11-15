@@ -16,9 +16,9 @@ import (
 	v1 "github.com/pojntfx/htorrent/pkg/api/http/v1"
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
+	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/components"
 	"github.com/pojntfx/multiplex/internal/crypto"
-	"github.com/pojntfx/multiplex/internal/resources"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -30,7 +30,7 @@ const (
 )
 
 func main() {
-	gresources, err := gio.NewResourceFromData(glib.NewBytes(resources.GResource, uint(len(resources.GResource))))
+	gresources, err := gio.NewResourceFromData(glib.NewBytes(resources.ResourceContents, uint(len(resources.ResourceContents))))
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +42,7 @@ func main() {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), resources.GSchema, os.ModePerm); err != nil {
+	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), resources.Schema, os.ModePerm); err != nil {
 		panic(err)
 	}
 
@@ -50,9 +50,9 @@ func main() {
 		panic(err)
 	}
 
-	settings := gio.NewSettings(resources.GAppID)
+	settings := gio.NewSettings(resources.AppID)
 
-	if storage := settings.GetString(resources.GSchemaStorageKey); strings.TrimSpace(storage) == "" {
+	if storage := settings.GetString(resources.SchemaStorageKey); strings.TrimSpace(storage) == "" {
 		downloadPath := glib.GetUserSpecialDir(glib.GUserDirectoryDownloadValue)
 		if downloadPath == "" {
 			home, err := os.UserHomeDir()
@@ -63,7 +63,7 @@ func main() {
 			downloadPath = filepath.Join(home, "Downloads")
 		}
 
-		settings.SetString(resources.GSchemaStorageKey, downloadPath)
+		settings.SetString(resources.SchemaStorageKey, downloadPath)
 
 		if err := os.MkdirAll(downloadPath, os.ModePerm); err != nil {
 			panic(err)
@@ -93,18 +93,18 @@ func main() {
 		}
 	}
 
-	configureZerolog(settings.GetInt64(resources.GSchemaVerboseKey))
+	configureZerolog(settings.GetInt64(resources.SchemaVerboseKey))
 	changedCallback := func(s gio.Settings, key string) {
-		if key == resources.GSchemaVerboseKey {
-			configureZerolog(settings.GetInt64(resources.GSchemaVerboseKey))
+		if key == resources.SchemaVerboseKey {
+			configureZerolog(settings.GetInt64(resources.SchemaVerboseKey))
 		}
 	}
 	settings.ConnectChanged(&changedCallback)
 
-	app := adw.NewApplication(resources.GAppID, gio.GApplicationNonUniqueValue)
+	app := adw.NewApplication(resources.AppID, gio.GApplicationNonUniqueValue)
 
 	prov := gtk.NewCssProvider()
-	prov.LoadFromResource(resources.GResourceStyleCSSPath)
+	prov.LoadFromResource(resources.ResourceStyleCSSPath)
 
 	var gateway *server.Gateway
 	ctx, cancel := context.WithCancel(context.Background())
@@ -127,25 +127,25 @@ func main() {
 		}
 		addr.Port = port
 
-		if err := os.MkdirAll(settings.GetString(resources.GSchemaStorageKey), os.ModePerm); err != nil {
+		if err := os.MkdirAll(settings.GetString(resources.SchemaStorageKey), os.ModePerm); err != nil {
 			panic(err)
 		}
 
-		apiAddr := settings.GetString(resources.GSchemaGatewayURLKey)
-		apiUsername := settings.GetString(resources.GSchemaGatewayUsernameKey)
-		apiPassword := settings.GetString(resources.GSchemaGatewayPasswordKey)
-		if !settings.GetBoolean(resources.GSchemaGatewayRemoteKey) {
+		apiAddr := settings.GetString(resources.SchemaGatewayURLKey)
+		apiUsername := settings.GetString(resources.SchemaGatewayUsernameKey)
+		apiPassword := settings.GetString(resources.SchemaGatewayPasswordKey)
+		if !settings.GetBoolean(resources.SchemaGatewayRemoteKey) {
 			apiUsername = crypto.RandomString(20)
 			apiPassword = crypto.RandomString(20)
 
 			gateway = server.NewGateway(
 				addr.String(),
-				settings.GetString(resources.GSchemaStorageKey),
+				settings.GetString(resources.SchemaStorageKey),
 				apiUsername,
 				apiPassword,
 				"",
 				"",
-				settings.GetInt64(resources.GSchemaVerboseKey) > 5,
+				settings.GetInt64(resources.SchemaVerboseKey) > 5,
 				func(torrentMetrics v1.TorrentMetrics, fileMetrics v1.FileMetrics) {
 					log.Info().
 						Str("magnet", torrentMetrics.Magnet).
