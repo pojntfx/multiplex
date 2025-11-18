@@ -1,0 +1,15 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.AlertDialog warning-dialog {
+  heading: _("No Media Player Could Be Found");
+  body: _("Please install mpv or configure the existing installation to be able to play media.");
+  default-response: "download-website";
+  close-response: "manual-configuration";
+
+  responses [
+    download-flathub: _("Get from Flathub") suggested disabled,
+    download-website: _("Get from mpv.io"),
+    manual-configuration: _("Manual configuration")
+  ]
+}

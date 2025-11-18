@@ -430,6 +430,42 @@ msgstr "Herunterladen und abspielen"
 msgid "Stream without Downloading"
 msgstr "Streamen ohne herunterzuladen"
 
+#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
+msgid "No Media Player Could Be Found"
+msgstr "Kein Mediaplayer konnte gefunden werden"
+
+#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:11
+msgid ""
+"Please install mpv or configure the existing installation to be able to play "
+"media."
+msgstr ""
+"Bitte installieren Sie mpv oder konfigurieren Sie die bestehende "
+"Installation, um Medien abspielen zu können."
+
+#: ../assets/resources/warning.blp:11 ../assets/resources/warning.ui:15
+msgid "Get from Flathub"
+msgstr "Von Flathub herunterladen"
+
+#: ../assets/resources/warning.blp:12 ../assets/resources/warning.ui:16
+msgid "Get from mpv.io"
+msgstr "Von mpv.io herunterladen"
+
+#: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
+msgid "Manual configuration"
+msgstr "Manuelle Konfiguration"
+
+#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
+msgid "A Fatal Error Occured"
+msgstr "Ein schwerwiegender Fehler ist aufgetreten"
+
+#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
+msgid "Report Error"
+msgstr "Fehler melden"
+
+#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
+msgid "Close Multiplex"
+msgstr "Multiplex schließen"
+
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
 msgid "Watch torrents with your friends"
@@ -537,39 +573,3 @@ msgstr "Zusammenfassung vereinfacht und Build-System-Konventionen verbessert"
 #: ../assets/resources/metainfo.xml.in:178
 msgid "Initial release"
 msgstr "Erste Veröffentlichung"
-
-#: ../assets/resources/error.ui:5
-msgid "A Fatal Error Occured"
-msgstr "Ein schwerwiegender Fehler ist aufgetreten"
-
-#: ../assets/resources/error.ui:10
-msgid "Report Error"
-msgstr "Fehler melden"
-
-#: ../assets/resources/error.ui:11
-msgid "Close Multiplex"
-msgstr "Multiplex schließen"
-
-#: ../assets/resources/warning.ui:6
-msgid "No Media Player Could Be Found"
-msgstr "Kein Mediaplayer konnte gefunden werden"
-
-#: ../assets/resources/warning.ui:7
-msgid ""
-"Please install mpv or configure the existing installation to be able to\n"
-"      play media."
-msgstr ""
-"Bitte installieren Sie mpv oder konfigurieren Sie die bestehende "
-"Installation, um Medien abspielen zu können."
-
-#: ../assets/resources/warning.ui:13
-msgid "Get from Flathub"
-msgstr "Von Flathub herunterladen"
-
-#: ../assets/resources/warning.ui:14
-msgid "Get from mpv.io"
-msgstr "Von mpv.io herunterladen"
-
-#: ../assets/resources/warning.ui:15
-msgid "Manual configuration"
-msgstr "Manuelle Konfiguration"
