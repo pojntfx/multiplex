@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0" />
+  <requires lib="adwaita" version="1.0" />
+  <object class="AdwAlertDialog" id="warning-dialog">
+    <property name="heading" translatable="yes">No Media Player Could Be Found</property>
+    <property name="body" translatable="yes">Please install mpv or configure the existing installation to be able to
+      play media.</property>
+    <property name="default-response">download-website</property>
+    <property name="close-response">manual-configuration</property>
+
+    <responses>
+      <response id="download-flathub" appearance="suggested" enabled="false" translatable="yes">Get from Flathub</response>
+      <response id="download-website" translatable="yes">Get from mpv.io</response>
+      <response id="manual-configuration" translatable="yes">Manual configuration</response>
+    </responses>
+  </object>
+</interface>

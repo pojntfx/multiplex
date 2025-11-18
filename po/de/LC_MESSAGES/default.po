@@ -87,7 +87,8 @@ msgstr "Manuell hinzugefügt"
 
 #: ../internal/components/error_dialog.go:23
 msgid "Could not continue due to a fatal error"
-msgstr "Aufgrund eines schwerwiegenden Fehlers konnte nicht fortgefahren werden"
+msgstr ""
+"Aufgrund eines schwerwiegenden Fehlers konnte nicht fortgefahren werden"
 
 #: ../internal/components/main_menu.go:123
 msgid "Reopen to apply the changes."
@@ -105,74 +106,13 @@ msgstr "Speicherort auswählen"
 msgid "This file does not contain subtitles."
 msgstr "Diese Datei enthält keine Untertitel."
 
-#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
-#: ../assets/resources/assistant.blp:124 ../assets/resources/controls.blp:8
+#: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8
+#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:124
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:138 ../assets/resources/controls.ui:13
 msgid "Multiplex"
 msgstr "Multiplex"
-
-#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
-msgid "Previous"
-msgstr "Zurück"
-
-#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
-#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
-msgid "Welcome"
-msgstr "Willkommen"
-
-#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr "Mediendetails öffnen"
-
-#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
-#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
-msgstr "Metadaten werden abgerufen ..."
-
-#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
-msgid "Next"
-msgstr "Weiter"
-
-#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
-msgid ""
-"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
-"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">stream code</a> to start streaming"
-msgstr ""
-"Geben Sie einen <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme"
-"\">Magnet-Link</a> oder <a href=\"https://github.com/pojntfx/multiplex/wiki/"
-"Stream-Codes\">Stream-Code</a> ein, um das Streaming zu starten"
-
-#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
-msgid "Magnet link or stream code"
-msgstr "Magnet-Link oder Stream-Code"
-
-#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
-msgid "Media"
-msgstr "Medien"
-
-#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
-msgid "Select the file you want to play"
-msgstr "Wählen Sie die Datei aus, die Sie abspielen möchten"
-
-#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
-msgid "You're all set!"
-msgstr "Alles bereit!"
-
-#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
-msgid "I have the right to stream the selected media"
-msgstr "Ich habe das Recht, die ausgewählten Medien zu streamen"
-
-#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
-msgid "Download and Play"
-msgstr "Herunterladen und abspielen"
-
-#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
-msgid "Stream without Downloading"
-msgstr "Streamen ohne herunterzuladen"
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
@@ -188,6 +128,11 @@ msgstr "Abbrechen"
 #: ../assets/resources/subtitles.ui:49 ../assets/resources/audiotracks.ui:27
 msgid "OK"
 msgstr "OK"
+
+#: ../assets/resources/controls.blp:29 ../assets/resources/assistant.blp:50
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr "Mediendetails öffnen"
 
 #: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
 #: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
@@ -329,7 +274,8 @@ msgstr "Remote-Gateway verwenden"
 
 #: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
 msgid "Use a remote hTorrent gateway instead of the local one"
-msgstr "Verwenden Sie ein woanders gehostetes hTorrent-Gateway anstelle des lokalen"
+msgstr ""
+"Verwenden Sie ein woanders gehostetes hTorrent-Gateway anstelle des lokalen"
 
 #: ../assets/resources/preferences.blp:70 ../assets/resources/preferences.ui:82
 msgid "URL"
@@ -419,6 +365,11 @@ msgstr ""
 msgid "Subtitles"
 msgstr "Untertitel"
 
+#: ../assets/resources/subtitles.blp:29 ../assets/resources/assistant.blp:85
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr "Metadaten werden abgerufen ..."
+
 #: ../assets/resources/subtitles.blp:64 ../assets/resources/subtitles.ui:72
 msgid "Tracks"
 msgstr "Spuren"
@@ -427,29 +378,57 @@ msgstr "Spuren"
 msgid "Add from file"
 msgstr "Aus Datei hinzufügen"
 
-#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:11
-msgid "No Media Player Could Be Found"
-msgstr "Kein Mediaplayer konnte gefunden werden"
+#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
+msgid "Previous"
+msgstr "Zurück"
 
-#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:12
+#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
+#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
+msgid "Next"
+msgstr "Weiter"
+
+#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
 msgid ""
-"Please install mpv or configure the exisiting installation to able to play "
-"media."
+"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> to start streaming"
 msgstr ""
-"Bitte installieren Sie mpv oder konfigurieren Sie die bestehende "
-"Installation, um Medien abspielen zu können."
+"Geben Sie einen <a href=\"https://en.wikipedia.org/wiki/"
+"Magnet_URI_scheme\">Magnet-Link</a> oder <a href=\"https://github.com/"
+"pojntfx/multiplex/wiki/Stream-Codes\">Stream-Code</a> ein, um das Streaming "
+"zu starten"
 
-#: ../assets/resources/warning.blp:10 ../assets/resources/warning.ui:15
-msgid "Get from Flathub"
-msgstr "Von Flathub herunterladen"
+#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
+msgid "Magnet link or stream code"
+msgstr "Magnet-Link oder Stream-Code"
 
-#: ../assets/resources/warning.blp:16 ../assets/resources/warning.ui:21
-msgid "Get from mpv.io"
-msgstr "Von mpv.io herunterladen"
+#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
+msgid "Media"
+msgstr "Medien"
 
-#: ../assets/resources/warning.blp:21 ../assets/resources/warning.ui:26
-msgid "Manual configuration"
-msgstr "Manuelle Konfiguration"
+#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
+msgid "Select the file you want to play"
+msgstr "Wählen Sie die Datei aus, die Sie abspielen möchten"
+
+#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
+msgid "You're all set!"
+msgstr "Alles bereit!"
+
+#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
+msgid "I have the right to stream the selected media"
+msgstr "Ich habe das Recht, die ausgewählten Medien zu streamen"
+
+#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
+msgid "Download and Play"
+msgstr "Herunterladen und abspielen"
+
+#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
+msgid "Stream without Downloading"
+msgstr "Streamen ohne herunterzuladen"
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
@@ -461,8 +440,8 @@ msgid ""
 "Multiplex is an app to watch torrents together, providing an experience "
 "similar to Apple's SharePlay and Amazon's Prime Video Watch Party."
 msgstr ""
-"Multiplex ist eine App zum gemeinsamen Anschauen von Torrents,"
-"ähnlich wie Apples SharePlay und Amazons Prime Video Watch Party."
+"Multiplex ist eine App zum gemeinsamen Anschauen von Torrents,ähnlich wie "
+"Apples SharePlay und Amazons Prime Video Watch Party."
 
 #: ../assets/resources/metainfo.xml.in:53
 msgid "It enables you to:"
@@ -473,8 +452,8 @@ msgid ""
 "Stream any file directly using a wide range of video and audio formats with "
 "the mpv video player"
 msgstr ""
-"Jegliche Datei direkt mit einer Vielzahl von Video- und Audioformaten mit dem "
-"mpv-Videoplayer streamen"
+"Jegliche Datei direkt mit einer Vielzahl von Video- und Audioformaten mit "
+"dem mpv-Videoplayer streamen"
 
 #: ../assets/resources/metainfo.xml.in:57
 msgid ""
@@ -540,7 +519,8 @@ msgstr "Bessere Unterstützung für Systeme mit anderen Sprachen als Englisch"
 #: ../assets/resources/metainfo.xml.in:138
 #: ../assets/resources/metainfo.xml.in:162
 msgid "Visual refinements to match the state of the art of GNOME apps"
-msgstr "Visuelle Verfeinerungen, um dem neuesten Stand der GNOME-Apps zu entsprechen"
+msgstr ""
+"Visuelle Verfeinerungen, um dem neuesten Stand der GNOME-Apps zu entsprechen"
 
 #: ../assets/resources/metainfo.xml.in:146
 msgid "Refinements to the screenshots and descriptions"
@@ -569,3 +549,27 @@ msgstr "Fehler melden"
 #: ../assets/resources/error.ui:11
 msgid "Close Multiplex"
 msgstr "Multiplex schließen"
+
+#: ../assets/resources/warning.ui:6
+msgid "No Media Player Could Be Found"
+msgstr "Kein Mediaplayer konnte gefunden werden"
+
+#: ../assets/resources/warning.ui:7
+msgid ""
+"Please install mpv or configure the existing installation to be able to\n"
+"      play media."
+msgstr ""
+"Bitte installieren Sie mpv oder konfigurieren Sie die bestehende "
+"Installation, um Medien abspielen zu können."
+
+#: ../assets/resources/warning.ui:13
+msgid "Get from Flathub"
+msgstr "Von Flathub herunterladen"
+
+#: ../assets/resources/warning.ui:14
+msgid "Get from mpv.io"
+msgstr "Von mpv.io herunterladen"
+
+#: ../assets/resources/warning.ui:15
+msgid "Manual configuration"
+msgstr "Manuelle Konfiguration"

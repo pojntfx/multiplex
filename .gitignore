@@ -5,3 +5,4 @@ LINGUAS
 metainfo.xml
 *.desktop
 !error.ui
+!warning.ui

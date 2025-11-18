@@ -99,70 +99,12 @@ msgstr ""
 msgid "This file does not contain subtitles."
 msgstr ""
 
-#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
-#: ../assets/resources/assistant.blp:124 ../assets/resources/controls.blp:8
+#: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8
+#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:124
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:138 ../assets/resources/controls.ui:13
 msgid "Multiplex"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
-msgid "Previous"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
-#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
-msgid "Welcome"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
-#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
-msgstr ""
-
-#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
-msgid "Next"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
-msgid ""
-"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
-"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">stream code</a> to start streaming"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
-msgid "Magnet link or stream code"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
-msgid "Media"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
-msgid "Select the file you want to play"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
-msgid "You're all set!"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
-msgid "I have the right to stream the selected media"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
-msgid "Download and Play"
-msgstr ""
-
-#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
-msgid "Stream without Downloading"
 msgstr ""
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
@@ -178,6 +120,11 @@ msgstr ""
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:44
 #: ../assets/resources/subtitles.ui:49 ../assets/resources/audiotracks.ui:27
 msgid "OK"
+msgstr ""
+
+#: ../assets/resources/controls.blp:29 ../assets/resources/assistant.blp:50
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
 msgstr ""
 
 #: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
@@ -406,6 +353,11 @@ msgstr ""
 msgid "Subtitles"
 msgstr ""
 
+#: ../assets/resources/subtitles.blp:29 ../assets/resources/assistant.blp:85
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr ""
+
 #: ../assets/resources/subtitles.blp:64 ../assets/resources/subtitles.ui:72
 msgid "Tracks"
 msgstr ""
@@ -414,26 +366,52 @@ msgstr ""
 msgid "Add from file"
 msgstr ""
 
-#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:11
-msgid "No Media Player Could Be Found"
+#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
+msgid "Previous"
 msgstr ""
 
-#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:12
+#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
+#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
+msgid "Welcome"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
+msgid "Next"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
 msgid ""
-"Please install mpv or configure the exisiting installation to able to play "
-"media."
+"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> to start streaming"
 msgstr ""
 
-#: ../assets/resources/warning.blp:10 ../assets/resources/warning.ui:15
-msgid "Get from Flathub"
+#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
+msgid "Magnet link or stream code"
 msgstr ""
 
-#: ../assets/resources/warning.blp:16 ../assets/resources/warning.ui:21
-msgid "Get from mpv.io"
+#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
+msgid "Media"
 msgstr ""
 
-#: ../assets/resources/warning.blp:21 ../assets/resources/warning.ui:26
-msgid "Manual configuration"
+#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
+msgid "Select the file you want to play"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
+msgid "You're all set!"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
+msgid "I have the right to stream the selected media"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
+msgid "Download and Play"
+msgstr ""
+
+#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
+msgid "Stream without Downloading"
 msgstr ""
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
@@ -545,4 +523,26 @@ msgstr ""
 
 #: ../assets/resources/error.ui:11
 msgid "Close Multiplex"
+msgstr ""
+
+#: ../assets/resources/warning.ui:6
+msgid "No Media Player Could Be Found"
+msgstr ""
+
+#: ../assets/resources/warning.ui:7
+msgid ""
+"Please install mpv or configure the existing installation to be able to\n"
+"      play media."
+msgstr ""
+
+#: ../assets/resources/warning.ui:13
+msgid "Get from Flathub"
+msgstr ""
+
+#: ../assets/resources/warning.ui:14
+msgid "Get from mpv.io"
+msgstr ""
+
+#: ../assets/resources/warning.ui:15
+msgid "Manual configuration"
 msgstr ""
