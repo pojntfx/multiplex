@@ -86,23 +86,23 @@ msgid "Could not continue due to a fatal error"
 msgstr ""
 "Aufgrund eines schwerwiegenden Fehlers konnte nicht fortgefahren werden"
 
-#: ../internal/components/main_window.go:310
+#: ../internal/components/main_window.go:304
 msgid "Could not get info for this magnet link."
 msgstr "Informationen für diesen Magnet-Link konnten nicht abgerufen werden."
 
-#: ../internal/components/main_window.go:404
+#: ../internal/components/main_window.go:398
 msgid "Media (%v MB)"
 msgstr "Medien (%v MB)"
 
-#: ../internal/components/main_window.go:406
+#: ../internal/components/main_window.go:400
 msgid "Extra file (%v MB)"
 msgstr "Zusatzdatei (%v MB)"
 
-#: ../internal/components/main_window.go:450
+#: ../internal/components/main_window.go:444
 msgid "This stream code is invalid."
 msgstr "Dieser Stream-Code ist ungültig."
 
-#: ../internal/components/main_window.go:608
+#: ../internal/components/main_window.go:602
 msgid "No README found."
 msgstr "Keine README-Datei gefunden."
 

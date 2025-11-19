@@ -151,7 +151,18 @@ func NewMainWindow(
 	// TODO: Make these their own subclasses
 	v.initializeDescriptionWindow()
 	v.initializeWarningDialog()
-	v.initializeMenu()
+
+	v.preferencesDialog, v.mpvCommandInput = AddMainMenu(
+		ctx,
+		app,
+		&v.ApplicationWindow,
+		settings,
+		v.menuButton,
+		v.overlay,
+		gateway,
+		nil,
+		cancel,
+	)
 
 	v.stack.SetVisibleChildName(welcomePageName)
 	v.app.GetStyleManager().SetColorScheme(adw.ColorSchemeDefaultValue)
@@ -261,23 +272,6 @@ func (w *MainWindow) initializeWarningDialog() {
 		w.onWarningDialogResponse(response)
 	}
 	warningDialog.ConnectResponse(&responseCallback)
-}
-
-func (w *MainWindow) initializeMenu() {
-	preferencesDialog, mpvCommandInput := AddMainMenu(
-		w.ctx,
-		w.app,
-		&w.ApplicationWindow,
-		w.settings,
-		w.menuButton,
-		w.overlay,
-		w.gateway,
-		nil,
-		w.cancel,
-	)
-
-	w.preferencesDialog = preferencesDialog
-	w.mpvCommandInput = mpvCommandInput
 }
 
 func (w *MainWindow) onNext() {
