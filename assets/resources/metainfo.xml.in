@@ -64,57 +64,65 @@
     <screenshots>
         <screenshot type="default">
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-initial.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-initial.png</image>
             <caption>Entering a magnet link or stream code</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-media-selection.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-media-selection.png</image>
             <caption>Media selection</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-confirmation.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-confirmation.png</image>
             <caption>Confirming playback</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback-controls.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-playback-controls.png</image>
             <caption>Media controls</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-playback-player.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-playback-player.png</image>
             <caption>Playing media with MPV</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-audiotracks.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-audiotracks.png</image>
             <caption>Selecting audio tracks</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-subtitles.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-subtitles.png</image>
             <caption>Selecting subtitles</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-playback.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-prefs-playback.png</image>
             <caption>Playback preferences</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-remoting.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-prefs-remoting.png</image>
             <caption>Remoting preferences</caption>
         </screenshot>
         <screenshot>
             <image>
-                https://raw.githubusercontent.com/pojntfx/multiplex/main/docs/screenshot-prefs-sync.png</image>
+                https://raw.githubusercontent.com/pojntfx/multiplex/main/assets/meta/screenshot-prefs-sync.png</image>
             <caption>Synchronization preferences</caption>
         </screenshot>
     </screenshots>
 
     <releases>
+        <release version="0.1.8" date='2025-11-18T00:00:00Z-0700'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.8</url>
+
+            <description>
+                <p>Visual refinements to match the state of the art of GNOME apps</p>
+            </description>
+        </release>
+
         <release version="0.1.7" date='2025-03-13T17:30:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.7</url>
 
