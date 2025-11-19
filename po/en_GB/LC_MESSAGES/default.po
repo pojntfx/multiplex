@@ -20,64 +20,64 @@ msgstr ""
 msgid "This file does not contain subtitles."
 msgstr ""
 
-#: ../internal/components/controls.go:384
+#: ../internal/components/controls.go:366
 msgid "Someone joined the session."
 msgstr ""
 
-#: ../internal/components/controls.go:390
+#: ../internal/components/controls.go:372
 msgid "Someone left the session."
 msgstr ""
 
-#: ../internal/components/controls.go:396 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:378 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr ""
 
-#: ../internal/components/controls.go:402
+#: ../internal/components/controls.go:384
 msgid "You're currently watching with %v other person."
 msgstr ""
 
-#: ../internal/components/controls.go:407
+#: ../internal/components/controls.go:389
 msgid "You're currently watching with %v other people."
 msgstr ""
 
-#: ../internal/components/controls.go:500
+#: ../internal/components/controls.go:483
 msgid "%v MB/%v MB (%v peers)"
 msgstr ""
 
-#: ../internal/components/controls.go:505
+#: ../internal/components/controls.go:488
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls.go:1223
+#: ../internal/components/controls.go:1206
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls.go:1228
+#: ../internal/components/controls.go:1211
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls.go:1231
+#: ../internal/components/controls.go:1214
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1234
+#: ../internal/components/controls.go:1217
 msgid "Extra file from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1323
+#: ../internal/components/controls.go:1306
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls.go:1325
+#: ../internal/components/controls.go:1308
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls.go:1333
+#: ../internal/components/controls.go:1316
 msgid "Untitled Track"
 msgstr ""
 
-#: ../internal/components/controls.go:1645
+#: ../internal/components/controls.go:1628
 msgid "Manually added"
 msgstr ""
 
@@ -528,27 +528,28 @@ msgid "Synchronization preferences"
 msgstr ""
 
 #: ../assets/resources/metainfo.xml.in:122
-msgid "Better support for systems with languages other than English"
-msgstr ""
-
-#: ../assets/resources/metainfo.xml.in:130
 #: ../assets/resources/metainfo.xml.in:138
-#: ../assets/resources/metainfo.xml.in:162
+#: ../assets/resources/metainfo.xml.in:146
+#: ../assets/resources/metainfo.xml.in:170
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:146
-msgid "Refinements to the screenshots and descriptions"
+#: ../assets/resources/metainfo.xml.in:130
+msgid "Better support for systems with languages other than English"
 msgstr ""
 
 #: ../assets/resources/metainfo.xml.in:154
+msgid "Refinements to the screenshots and descriptions"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:162
 msgid "Refinements to the screenshots and app metadata"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:178
 msgid "Simplify summary and improve build system conventions"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Initial release"
 msgstr ""

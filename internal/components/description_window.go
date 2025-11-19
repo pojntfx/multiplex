@@ -19,9 +19,10 @@ var (
 type DescriptionWindow struct {
 	adw.Window
 
-	text              *gtk.TextView
-	headerbarTitle    *gtk.Label
-	headerbarSubtitle *gtk.Label
+	text                 *gtk.TextView
+	headerbarTitle       *gtk.Label
+	headerbarSubtitle    *gtk.Label
+	preparingProgressBar *gtk.ProgressBar
 }
 
 func NewDescriptionWindow(transientFor *adw.ApplicationWindow) DescriptionWindow {
@@ -51,6 +52,11 @@ func (d *DescriptionWindow) HeaderbarSubtitle() *gtk.Label {
 	return descW.headerbarSubtitle
 }
 
+func (d *DescriptionWindow) PreparingProgressBar() *gtk.ProgressBar {
+	descW := (*DescriptionWindow)(unsafe.Pointer(d.Widget.GetData(dataKeyGoInstance)))
+	return descW.preparingProgressBar
+}
+
 func init() {
 	var classInit gobject.ClassInitFunc = func(tc *gobject.TypeClass, u uintptr) {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
@@ -59,6 +65,7 @@ func init() {
 		typeClass.BindTemplateChildFull("description-text", false, 0)
 		typeClass.BindTemplateChildFull("headerbar-title", false, 0)
 		typeClass.BindTemplateChildFull("headerbar-subtitle", false, 0)
+		typeClass.BindTemplateChildFull("preparing-progress-bar", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -72,19 +79,22 @@ func init() {
 			parent.InitTemplate()
 
 			var (
-				descriptionText              gtk.TextView
-				descriptionHeaderbarTitle    gtk.Label
-				descriptionHeaderbarSubtitle gtk.Label
+				descriptionText                 gtk.TextView
+				descriptionHeaderbarTitle       gtk.Label
+				descriptionHeaderbarSubtitle    gtk.Label
+				descriptionPreparingProgressBar gtk.ProgressBar
 			)
 			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "description-text").Cast(&descriptionText)
 			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-title").Cast(&descriptionHeaderbarTitle)
 			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "preparing-progress-bar").Cast(&descriptionPreparingProgressBar)
 
 			w := &DescriptionWindow{
-				Window:            parent,
-				text:              &descriptionText,
-				headerbarTitle:    &descriptionHeaderbarTitle,
-				headerbarSubtitle: &descriptionHeaderbarSubtitle,
+				Window:               parent,
+				text:                 &descriptionText,
+				headerbarTitle:       &descriptionHeaderbarTitle,
+				headerbarSubtitle:    &descriptionHeaderbarSubtitle,
+				preparingProgressBar: &descriptionPreparingProgressBar,
 			}
 
 			ctrl := gtk.NewEventControllerKey()

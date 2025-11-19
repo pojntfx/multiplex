@@ -220,25 +220,7 @@ func OpenControlsWindow(
 	builder.GetObject("copy-stream-code-button").Cast(&copyStreamCodeButton)
 	defer copyStreamCodeButton.Unref()
 
-	descriptionBuilder := gtk.NewBuilderFromResource(resources.ResourceDescriptionPath)
-	defer descriptionBuilder.Unref()
-	var (
-		descriptionWindow            adw.Window
-		descriptionText              gtk.TextView
-		descriptionHeaderbarTitle    gtk.Label
-		descriptionHeaderbarSubtitle gtk.Label
-		descriptionProgressBar       gtk.ProgressBar
-	)
-	descriptionBuilder.GetObject("description-window").Cast(&descriptionWindow)
-	defer descriptionWindow.Unref()
-	descriptionBuilder.GetObject("description-text").Cast(&descriptionText)
-	defer descriptionText.Unref()
-	descriptionBuilder.GetObject("headerbar-title").Cast(&descriptionHeaderbarTitle)
-	defer descriptionHeaderbarTitle.Unref()
-	descriptionBuilder.GetObject("headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
-	defer descriptionHeaderbarSubtitle.Unref()
-	descriptionBuilder.GetObject("preparing-progress-bar").Cast(&descriptionProgressBar)
-	defer descriptionProgressBar.Unref()
+	descriptionWindow := NewDescriptionWindow(&window)
 
 	subtitlesBuilder := gtk.NewBuilderFromResource(resources.ResourceSubtitlesPath)
 	defer subtitlesBuilder.Unref()
@@ -298,12 +280,12 @@ func OpenControlsWindow(
 	defer preparingCancelButton.Unref()
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
-	descriptionHeaderbarTitle.SetLabel(torrentTitle)
+	descriptionWindow.HeaderbarTitle().SetLabel(torrentTitle)
 	buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
-	descriptionHeaderbarSubtitle.SetVisible(true)
-	descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
+	descriptionWindow.HeaderbarSubtitle().SetVisible(true)
+	descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(selectedTorrentMedia))
 
-	descriptionProgressBar.SetVisible(true)
+	descriptionWindow.PreparingProgressBar().SetVisible(true)
 
 	if community == "" || password == "" || key == "" {
 		sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
@@ -447,15 +429,16 @@ func OpenControlsWindow(
 	}
 	ctrl.ConnectKeyReleased(&descKeyReleasedCallback)
 
-	descriptionText.SetWrapMode(gtk.WrapWordValue)
+	descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
 	if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
-		descriptionText.GetBuffer().SetText(L(readmePlaceholder), -1)
+		descriptionWindow.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
 	} else {
-		descriptionText.GetBuffer().SetText(torrentReadme, -1)
+		descriptionWindow.Text().GetBuffer().SetText(torrentReadme, -1)
 	}
 
 	preparingWindow.SetTransientFor(&window.Window)
 
+	descriptionProgressBar := descriptionWindow.PreparingProgressBar()
 	progressBarTicker := time.NewTicker(time.Millisecond * 500)
 	go func() {
 		for range progressBarTicker.C {
@@ -494,7 +477,7 @@ func OpenControlsWindow(
 			}
 
 		n:
-			for _, progressBar := range []*gtk.ProgressBar{&preparingProgressBar, &descriptionProgressBar} {
+			for _, progressBar := range []*gtk.ProgressBar{&preparingProgressBar, descriptionProgressBar} {
 				if length > 0 {
 					progressBar.SetFraction(completed / length)
 					progressBar.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"), int(completed/1000/1000), int(length/1000/1000), peers))
