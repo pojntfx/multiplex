@@ -1,21 +1,17 @@
-#: ../internal/components/assistant.go:214
-msgid "Could not get info for this magnet link."
+#: ../internal/components/main_menu.go:123
+msgid "Reopen to apply the changes."
 msgstr ""
 
-#: ../internal/components/assistant.go:308
-msgid "Media (%v MB)"
+#: ../internal/components/main_menu.go:124
+msgid "Reopen"
 msgstr ""
 
-#: ../internal/components/assistant.go:310
-msgid "Extra file (%v MB)"
+#: ../internal/components/main_menu.go:184
+msgid "Select storage location"
 msgstr ""
 
-#: ../internal/components/assistant.go:354
-msgid "This stream code is invalid."
-msgstr ""
-
-#: ../internal/components/assistant.go:512
-msgid "No README found."
+#: ../internal/components/subtitles.go:116
+msgid "This file does not contain subtitles."
 msgstr ""
 
 #: ../internal/components/controls.go:384
@@ -39,43 +35,43 @@ msgstr ""
 msgid "You're currently watching with %v other people."
 msgstr ""
 
-#: ../internal/components/controls.go:501
+#: ../internal/components/controls.go:500
 msgid "%v MB/%v MB (%v peers)"
 msgstr ""
 
-#: ../internal/components/controls.go:506
+#: ../internal/components/controls.go:505
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls.go:1225
+#: ../internal/components/controls.go:1223
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls.go:1230
+#: ../internal/components/controls.go:1228
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls.go:1233
+#: ../internal/components/controls.go:1231
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1236
+#: ../internal/components/controls.go:1234
 msgid "Extra file from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1325
+#: ../internal/components/controls.go:1323
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls.go:1327
+#: ../internal/components/controls.go:1325
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls.go:1335
+#: ../internal/components/controls.go:1333
 msgid "Untitled Track"
 msgstr ""
 
-#: ../internal/components/controls.go:1647
+#: ../internal/components/controls.go:1645
 msgid "Manually added"
 msgstr ""
 
@@ -83,20 +79,24 @@ msgstr ""
 msgid "Could not continue due to a fatal error"
 msgstr ""
 
-#: ../internal/components/main_menu.go:123
-msgid "Reopen to apply the changes."
+#: ../internal/components/main_window.go:310
+msgid "Could not get info for this magnet link."
 msgstr ""
 
-#: ../internal/components/main_menu.go:124
-msgid "Reopen"
+#: ../internal/components/main_window.go:404
+msgid "Media (%v MB)"
 msgstr ""
 
-#: ../internal/components/main_menu.go:184
-msgid "Select storage location"
+#: ../internal/components/main_window.go:406
+msgid "Extra file (%v MB)"
 msgstr ""
 
-#: ../internal/components/subtitles.go:116
-msgid "This file does not contain subtitles."
+#: ../internal/components/main_window.go:450
+msgid "This stream code is invalid."
+msgstr ""
+
+#: ../internal/components/main_window.go:608
+msgid "No README found."
 msgstr ""
 
 #: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8
@@ -120,73 +120,6 @@ msgstr ""
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:44
 #: ../assets/resources/subtitles.ui:49 ../assets/resources/audiotracks.ui:27
 msgid "OK"
-msgstr ""
-
-#: ../assets/resources/controls.blp:29 ../assets/resources/assistant.blp:50
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr ""
-
-#: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
-#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
-msgid "Preparing stream ..."
-msgstr ""
-
-#: ../assets/resources/controls.blp:69 ../assets/resources/controls.ui:78
-msgid "Show peers"
-msgstr ""
-
-#: ../assets/resources/controls.blp:75 ../assets/resources/controls.ui:85
-msgid "Open primary menu"
-msgstr ""
-
-#: ../assets/resources/controls.blp:100 ../assets/resources/controls.ui:113
-msgid "Toggle playback"
-msgstr ""
-
-#: ../assets/resources/controls.blp:109 ../assets/resources/controls.ui:122
-msgid "Stop playback"
-msgstr ""
-
-#: ../assets/resources/controls.blp:124 ../assets/resources/controls.ui:138
-msgid "Elapsed time"
-msgstr ""
-
-#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:144
-msgid "Playback progress"
-msgstr ""
-
-#: ../assets/resources/controls.blp:138 ../assets/resources/controls.ui:153
-msgid "Remaining playback time"
-msgstr ""
-
-#: ../assets/resources/controls.blp:153 ../assets/resources/controls.ui:169
-msgid "Change audio volume"
-msgstr ""
-
-#: ../assets/resources/controls.blp:163 ../assets/resources/controls.ui:179
-msgid "Change audio track"
-msgstr ""
-
-#: ../assets/resources/controls.blp:172 ../assets/resources/controls.ui:188
-msgid "Change subtitles"
-msgstr ""
-
-#: ../assets/resources/controls.blp:181 ../assets/resources/controls.ui:197
-msgid "Toggle fullscreen"
-msgstr ""
-
-#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:231
-msgid ""
-"Ask the people you want to watch with to enter the following stream code:"
-msgstr ""
-
-#: ../assets/resources/controls.blp:225 ../assets/resources/controls.ui:248
-msgid "Copy stream code to clipboard"
-msgstr ""
-
-#: ../assets/resources/controls.blp:242 ../assets/resources/controls.ui:267
-msgid "Mute/unmute"
 msgstr ""
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
@@ -348,6 +281,11 @@ msgid ""
 "servers (in format username:credential@turn:host:port)"
 msgstr ""
 
+#: ../assets/resources/preparing.blp:23 ../assets/resources/controls.blp:59
+#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
+msgid "Preparing stream ..."
+msgstr ""
+
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:34
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:39
 msgid "Subtitles"
@@ -364,6 +302,102 @@ msgstr ""
 
 #: ../assets/resources/subtitles.blp:82 ../assets/resources/subtitles.ui:89
 msgid "Add from file"
+msgstr ""
+
+#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
+msgid "No Media Player Could Be Found"
+msgstr ""
+
+#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:11
+msgid ""
+"Please install mpv or configure the existing installation to be able to play "
+"media."
+msgstr ""
+
+#: ../assets/resources/warning.blp:11 ../assets/resources/warning.ui:15
+msgid "Get from Flathub"
+msgstr ""
+
+#: ../assets/resources/warning.blp:12 ../assets/resources/warning.ui:16
+msgid "Get from mpv.io"
+msgstr ""
+
+#: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
+msgid "Manual configuration"
+msgstr ""
+
+#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
+msgid "A Fatal Error Occured"
+msgstr ""
+
+#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
+msgid "Report Error"
+msgstr ""
+
+#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
+msgid "Close Multiplex"
+msgstr ""
+
+#: ../assets/resources/controls.blp:29 ../assets/resources/assistant.blp:50
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr ""
+
+#: ../assets/resources/controls.blp:69 ../assets/resources/controls.ui:78
+msgid "Show peers"
+msgstr ""
+
+#: ../assets/resources/controls.blp:75 ../assets/resources/controls.ui:85
+msgid "Open primary menu"
+msgstr ""
+
+#: ../assets/resources/controls.blp:100 ../assets/resources/controls.ui:113
+msgid "Toggle playback"
+msgstr ""
+
+#: ../assets/resources/controls.blp:109 ../assets/resources/controls.ui:122
+msgid "Stop playback"
+msgstr ""
+
+#: ../assets/resources/controls.blp:124 ../assets/resources/controls.ui:138
+msgid "Elapsed time"
+msgstr ""
+
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:144
+msgid "Playback progress"
+msgstr ""
+
+#: ../assets/resources/controls.blp:138 ../assets/resources/controls.ui:153
+msgid "Remaining playback time"
+msgstr ""
+
+#: ../assets/resources/controls.blp:153 ../assets/resources/controls.ui:169
+msgid "Change audio volume"
+msgstr ""
+
+#: ../assets/resources/controls.blp:163 ../assets/resources/controls.ui:179
+msgid "Change audio track"
+msgstr ""
+
+#: ../assets/resources/controls.blp:172 ../assets/resources/controls.ui:188
+msgid "Change subtitles"
+msgstr ""
+
+#: ../assets/resources/controls.blp:181 ../assets/resources/controls.ui:197
+msgid "Toggle fullscreen"
+msgstr ""
+
+#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:231
+msgid ""
+"Ask the people you want to watch with to enter the following stream code:"
+msgstr ""
+
+#: ../assets/resources/controls.blp:225 ../assets/resources/controls.ui:248
+msgid "Copy stream code to clipboard"
+msgstr ""
+
+#: ../assets/resources/controls.blp:242 ../assets/resources/controls.ui:267
+msgid "Mute/unmute"
 msgstr ""
 
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
@@ -412,40 +446,6 @@ msgstr ""
 
 #: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
 msgid "Stream without Downloading"
-msgstr ""
-
-#: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
-msgid "No Media Player Could Be Found"
-msgstr ""
-
-#: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:11
-msgid ""
-"Please install mpv or configure the existing installation to be able to play "
-"media."
-msgstr ""
-
-#: ../assets/resources/warning.blp:11 ../assets/resources/warning.ui:15
-msgid "Get from Flathub"
-msgstr ""
-
-#: ../assets/resources/warning.blp:12 ../assets/resources/warning.ui:16
-msgid "Get from mpv.io"
-msgstr ""
-
-#: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
-msgid "Manual configuration"
-msgstr ""
-
-#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
-msgid "A Fatal Error Occured"
-msgstr ""
-
-#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
-msgid "Report Error"
-msgstr ""
-
-#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
-msgid "Close Multiplex"
 msgstr ""
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5

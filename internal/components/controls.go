@@ -415,11 +415,10 @@ func OpenControlsWindow(
 	stopButtonCallback := func(gtk.Button) {
 		window.Close()
 
-		if err := OpenAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
-			OpenErrorDialog(ctx, &window, err)
+		mainWindow := NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir)
 
-			return
-		}
+		app.AddWindow(&mainWindow.ApplicationWindow.Window)
+		mainWindow.SetVisible(true)
 	}
 	stopButton.ConnectClicked(&stopButtonCallback)
 
@@ -532,11 +531,10 @@ func OpenControlsWindow(
 
 		preparingWindow.Close()
 
-		if err := OpenAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
-			OpenErrorDialog(ctx, &window, err)
+		mainWindow := NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir)
 
-			return
-		}
+		app.AddWindow(&mainWindow.ApplicationWindow.Window)
+		mainWindow.SetVisible(true)
 	}
 	preparingCancelButton.ConnectClicked(&prepCancelCallback)
 

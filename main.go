@@ -238,9 +238,10 @@ func main() {
 			ctx,
 		)
 
-		if err := components.OpenAssistantWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir); err != nil {
-			panic(err)
-		}
+		mainWindow := components.NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir)
+
+		app.AddWindow(&mainWindow.ApplicationWindow.Window)
+		mainWindow.SetVisible(true)
 	}
 	app.ConnectActivate(&activateCallback)
 
