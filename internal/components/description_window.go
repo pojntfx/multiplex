@@ -1,0 +1,132 @@
+package components
+
+import (
+	"runtime"
+	"unsafe"
+
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gdk"
+	"github.com/jwijenbergh/puregotk/v4/glib"
+	"github.com/jwijenbergh/puregotk/v4/gobject"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
+	"github.com/pojntfx/multiplex/assets/resources"
+)
+
+var (
+	gTypeDescriptionWindow gobject.Type
+)
+
+type DescriptionWindow struct {
+	adw.Window
+
+	text              *gtk.TextView
+	headerbarTitle    *gtk.Label
+	headerbarSubtitle *gtk.Label
+}
+
+func NewDescriptionWindow(transientFor *adw.ApplicationWindow) DescriptionWindow {
+	var w gtk.Window
+	transientFor.Cast(&w)
+
+	obj := gobject.NewObject(gTypeDescriptionWindow, "transient-for", w)
+
+	var v DescriptionWindow
+	obj.Cast(&v)
+
+	return v
+}
+
+func (d *DescriptionWindow) Text() *gtk.TextView {
+	descW := (*DescriptionWindow)(unsafe.Pointer(d.Widget.GetData(dataKeyGoInstance)))
+	return descW.text
+}
+
+func (d *DescriptionWindow) HeaderbarTitle() *gtk.Label {
+	descW := (*DescriptionWindow)(unsafe.Pointer(d.Widget.GetData(dataKeyGoInstance)))
+	return descW.headerbarTitle
+}
+
+func (d *DescriptionWindow) HeaderbarSubtitle() *gtk.Label {
+	descW := (*DescriptionWindow)(unsafe.Pointer(d.Widget.GetData(dataKeyGoInstance)))
+	return descW.headerbarSubtitle
+}
+
+func init() {
+	var classInit gobject.ClassInitFunc = func(tc *gobject.TypeClass, u uintptr) {
+		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
+		typeClass.SetTemplateFromResource(resources.ResourceDescriptionPath)
+
+		typeClass.BindTemplateChildFull("description-text", false, 0)
+		typeClass.BindTemplateChildFull("headerbar-title", false, 0)
+		typeClass.BindTemplateChildFull("headerbar-subtitle", false, 0)
+
+		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
+
+		objClass.OverrideConstructed(func(o *gobject.Object) {
+			parentObjClass := (*gobject.ObjectClass)(unsafe.Pointer(tc.PeekParent()))
+			parentObjClass.GetConstructed()(o)
+
+			var parent adw.Window
+			o.Cast(&parent)
+
+			parent.InitTemplate()
+
+			var (
+				descriptionText              gtk.TextView
+				descriptionHeaderbarTitle    gtk.Label
+				descriptionHeaderbarSubtitle gtk.Label
+			)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "description-text").Cast(&descriptionText)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-title").Cast(&descriptionHeaderbarTitle)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
+
+			w := &DescriptionWindow{
+				Window:            parent,
+				text:              &descriptionText,
+				headerbarTitle:    &descriptionHeaderbarTitle,
+				headerbarSubtitle: &descriptionHeaderbarSubtitle,
+			}
+
+			ctrl := gtk.NewEventControllerKey()
+			parent.AddController(&ctrl.EventController)
+
+			closeRequestCallback := func(gtk.Window) bool {
+				parent.Close()
+				parent.SetVisible(false)
+				return true
+			}
+			parent.ConnectCloseRequest(&closeRequestCallback)
+
+			keyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+				if keycode == keycodeEscape {
+					parent.Close()
+					parent.SetVisible(false)
+				}
+			}
+			ctrl.ConnectKeyReleased(&keyReleasedCallback)
+
+			var pinner runtime.Pinner
+			pinner.Pin(w)
+
+			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+				pinner.Unpin()
+			}
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &cleanupCallback)
+		})
+	}
+
+	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
+
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+
+	gTypeDescriptionWindow = gobject.TypeRegisterStaticSimple(
+		parentQuery.Type,
+		"DescriptionWindow",
+		parentQuery.ClassSize,
+		&classInit,
+		parentQuery.InstanceSize+uint(unsafe.Sizeof(DescriptionWindow{}))+uint(unsafe.Sizeof(&DescriptionWindow{})),
+		&instanceInit,
+		0,
+	)
+}

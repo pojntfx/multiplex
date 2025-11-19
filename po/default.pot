@@ -79,23 +79,23 @@ msgstr ""
 msgid "Could not continue due to a fatal error"
 msgstr ""
 
-#: ../internal/components/main_window.go:304
+#: ../internal/components/main_window.go:246
 msgid "Could not get info for this magnet link."
 msgstr ""
 
-#: ../internal/components/main_window.go:398
+#: ../internal/components/main_window.go:340
 msgid "Media (%v MB)"
 msgstr ""
 
-#: ../internal/components/main_window.go:400
+#: ../internal/components/main_window.go:342
 msgid "Extra file (%v MB)"
 msgstr ""
 
-#: ../internal/components/main_window.go:444
+#: ../internal/components/main_window.go:386
 msgid "This stream code is invalid."
 msgstr ""
 
-#: ../internal/components/main_window.go:602
+#: ../internal/components/main_window.go:544
 msgid "No README found."
 msgstr ""
 

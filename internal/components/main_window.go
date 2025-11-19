@@ -22,7 +22,6 @@ import (
 
 	"github.com/anacrolix/torrent"
 	"github.com/jwijenbergh/puregotk/v4/adw"
-	"github.com/jwijenbergh/puregotk/v4/gdk"
 	"github.com/jwijenbergh/puregotk/v4/gio"
 	"github.com/jwijenbergh/puregotk/v4/glib"
 	"github.com/jwijenbergh/puregotk/v4/gobject"
@@ -111,13 +110,10 @@ type MainWindow struct {
 	adapterCtx           context.Context
 	cancelAdapterCtx     func()
 
-	descriptionWindow            *adw.Window
-	descriptionText              *gtk.TextView
-	descriptionHeaderbarTitle    *gtk.Label
-	descriptionHeaderbarSubtitle *gtk.Label
-	warningDialog                *adw.AlertDialog
-	preferencesDialog            *adw.PreferencesWindow
-	mpvCommandInput              *adw.EntryRow
+	descriptionWindow DescriptionWindow
+	warningDialog     WarningDialog
+	preferencesDialog *adw.PreferencesWindow
+	mpvCommandInput   *adw.EntryRow
 }
 
 func NewMainWindow(
@@ -148,9 +144,9 @@ func NewMainWindow(
 	v.cancel = cancel
 	v.tmpDir = tmpDir
 
-	// TODO: Make these their own subclasses
-	v.initializeDescriptionWindow()
-	v.initializeWarningDialog()
+	v.descriptionWindow = NewDescriptionWindow(&v.ApplicationWindow)
+	v.warningDialog = NewWarningDialog()
+	v.warningDialog.SetResponseCallback(v.onWarningDialogResponse)
 
 	v.preferencesDialog, v.mpvCommandInput = AddMainMenu(
 		ctx,
@@ -219,60 +215,6 @@ func (w *MainWindow) setupSignalHandlers() {
 	w.ApplicationWindow.ConnectShow(&onShow)
 }
 
-func (w *MainWindow) initializeDescriptionWindow() {
-	descriptionBuilder := gtk.NewBuilderFromResource(resources.ResourceDescriptionPath)
-	defer descriptionBuilder.Unref()
-
-	var (
-		descriptionWindow            adw.Window
-		descriptionText              gtk.TextView
-		descriptionHeaderbarTitle    gtk.Label
-		descriptionHeaderbarSubtitle gtk.Label
-	)
-	descriptionBuilder.GetObject("description-window").Cast(&descriptionWindow)
-	descriptionBuilder.GetObject("description-text").Cast(&descriptionText)
-	descriptionBuilder.GetObject("headerbar-title").Cast(&descriptionHeaderbarTitle)
-	descriptionBuilder.GetObject("headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
-
-	w.descriptionWindow = &descriptionWindow
-	w.descriptionText = &descriptionText
-	w.descriptionHeaderbarTitle = &descriptionHeaderbarTitle
-	w.descriptionHeaderbarSubtitle = &descriptionHeaderbarSubtitle
-
-	ctrl := gtk.NewEventControllerKey()
-	descriptionWindow.AddController(&ctrl.EventController)
-	descriptionWindow.SetTransientFor(&w.ApplicationWindow.Window)
-
-	closeRequestCallback := func(gtk.Window) bool {
-		descriptionWindow.Close()
-		descriptionWindow.SetVisible(false)
-		return true
-	}
-	descriptionWindow.ConnectCloseRequest(&closeRequestCallback)
-
-	keyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
-		if keycode == keycodeEscape {
-			descriptionWindow.Close()
-			descriptionWindow.SetVisible(false)
-		}
-	}
-	ctrl.ConnectKeyReleased(&keyReleasedCallback)
-}
-
-func (w *MainWindow) initializeWarningDialog() {
-	warningBuilder := gtk.NewBuilderFromResource(resources.ResourceWarningPath)
-	defer warningBuilder.Unref()
-
-	var warningDialog adw.AlertDialog
-	warningBuilder.GetObject("warning-dialog").Cast(&warningDialog)
-
-	w.warningDialog = &warningDialog
-
-	responseCallback := func(dialog adw.AlertDialog, response string) {
-		w.onWarningDialogResponse(response)
-	}
-	warningDialog.ConnectResponse(&responseCallback)
-}
 
 func (w *MainWindow) onNext() {
 	switch w.stack.GetVisibleChildName() {
@@ -413,16 +355,16 @@ func (w *MainWindow) onNext() {
 				w.previousButton.SetVisible(true)
 
 				w.buttonHeaderbarTitle.SetLabel(w.torrentTitle)
-				w.descriptionHeaderbarTitle.SetLabel(w.torrentTitle)
+				w.descriptionWindow.HeaderbarTitle().SetLabel(w.torrentTitle)
 
 				w.mediaInfoDisplay.SetVisible(false)
 				w.mediaInfoButton.SetVisible(true)
 
-				w.descriptionText.SetWrapMode(gtk.WrapWordValue)
+				w.descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
 				if !utf8.Valid([]byte(w.torrentReadme)) || strings.TrimSpace(w.torrentReadme) == "" {
-					w.descriptionText.GetBuffer().SetText(L(readmePlaceholder), -1)
+					w.descriptionWindow.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
 				} else {
-					w.descriptionText.GetBuffer().SetText(w.torrentReadme, -1)
+					w.descriptionWindow.Text().GetBuffer().SetText(w.torrentReadme, -1)
 				}
 
 				w.stack.SetVisibleChildName(mediaPageName)
@@ -592,24 +534,24 @@ func (w *MainWindow) onNext() {
 				w.previousButton.SetVisible(true)
 
 				w.buttonHeaderbarTitle.SetLabel(w.torrentTitle)
-				w.descriptionHeaderbarTitle.SetLabel(w.torrentTitle)
+				w.descriptionWindow.HeaderbarTitle().SetLabel(w.torrentTitle)
 
 				w.mediaInfoDisplay.SetVisible(false)
 				w.mediaInfoButton.SetVisible(true)
 
-				w.descriptionText.SetWrapMode(gtk.WrapWordValue)
+				w.descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
 				if !utf8.Valid([]byte(w.torrentReadme)) || strings.TrimSpace(w.torrentReadme) == "" {
-					w.descriptionText.GetBuffer().SetText(L("No README found."), -1)
+					w.descriptionWindow.Text().GetBuffer().SetText(L("No README found."), -1)
 				} else {
-					w.descriptionText.GetBuffer().SetText(w.torrentReadme, -1)
+					w.descriptionWindow.Text().GetBuffer().SetText(w.torrentReadme, -1)
 				}
 
 				w.nextButton.SetVisible(false)
 
 				w.buttonHeaderbarSubtitle.SetVisible(true)
-				w.descriptionHeaderbarSubtitle.SetVisible(true)
+				w.descriptionWindow.HeaderbarSubtitle().SetVisible(true)
 				w.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
-				w.descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
+				w.descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
 
 				w.stack.SetVisibleChildName(readyPageName)
 			}()
@@ -618,9 +560,9 @@ func (w *MainWindow) onNext() {
 		w.nextButton.SetVisible(false)
 
 		w.buttonHeaderbarSubtitle.SetVisible(true)
-		w.descriptionHeaderbarSubtitle.SetVisible(true)
+		w.descriptionWindow.HeaderbarSubtitle().SetVisible(true)
 		w.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
-		w.descriptionHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
+		w.descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
 
 		w.stack.SetVisibleChildName(readyPageName)
 	}
@@ -640,7 +582,7 @@ func (w *MainWindow) onPrevious(gtk.Button) {
 		w.nextButton.SetVisible(true)
 
 		w.buttonHeaderbarSubtitle.SetVisible(false)
-		w.descriptionHeaderbarSubtitle.SetVisible(false)
+		w.descriptionWindow.HeaderbarSubtitle().SetVisible(false)
 
 		if !w.isNewSession {
 			if w.adapter != nil {
