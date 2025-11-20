@@ -112,7 +112,7 @@ type MainWindow struct {
 
 	descriptionWindow DescriptionWindow
 	warningDialog     WarningDialog
-	preferencesDialog *adw.PreferencesWindow
+	preferencesDialog *PreferencesDialog
 	mpvCommandInput   *adw.EntryRow
 }
 

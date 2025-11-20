@@ -1,15 +1,3 @@
-#: ../internal/components/main_menu.go:123
-msgid "Reopen to apply the changes."
-msgstr ""
-
-#: ../internal/components/main_menu.go:124
-msgid "Reopen"
-msgstr ""
-
-#: ../internal/components/main_menu.go:184
-msgid "Select storage location"
-msgstr ""
-
 #: ../internal/components/controls.go:366
 msgid "Someone joined the session."
 msgstr ""
@@ -93,6 +81,18 @@ msgstr ""
 
 #: ../internal/components/main_window.go:544
 msgid "No README found."
+msgstr ""
+
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen to apply the changes."
+msgstr ""
+
+#: ../internal/components/preferences_dialog.go:142
+msgid "Reopen"
+msgstr ""
+
+#: ../internal/components/preferences_dialog.go:161
+msgid "Select storage location"
 msgstr ""
 
 #: ../internal/utils/subtitles.go:100

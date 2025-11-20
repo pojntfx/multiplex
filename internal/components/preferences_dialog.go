@@ -1,0 +1,302 @@
+package components
+
+import (
+	"context"
+	"math"
+	"runtime"
+	"unsafe"
+
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
+
+	"github.com/jwijenbergh/puregotk/v4/adw"
+	"github.com/jwijenbergh/puregotk/v4/gio"
+	"github.com/jwijenbergh/puregotk/v4/glib"
+	"github.com/jwijenbergh/puregotk/v4/gobject"
+	"github.com/jwijenbergh/puregotk/v4/gtk"
+	"github.com/pojntfx/htorrent/pkg/server"
+	"github.com/pojntfx/multiplex/assets/resources"
+)
+
+var (
+	gTypePreferencesDialog gobject.Type
+)
+
+type PreferencesDialog struct {
+	adw.PreferencesWindow
+
+	storageLocationInput       *gtk.Button
+	mpvCommandInput            *adw.EntryRow
+	verbosityLevelInput        *adw.SpinRow
+	remoteGatewaySwitchInput   *gtk.Switch
+	remoteGatewayURLInput      *adw.EntryRow
+	remoteGatewayUsernameInput *adw.EntryRow
+	remoteGatewayPasswordInput *adw.PasswordEntryRow
+	weronURLInput              *adw.EntryRow
+	weronICEInput              *adw.EntryRow
+	weronTimeoutInput          *adw.SpinRow
+	weronForceRelayInput       *gtk.Switch
+
+	preferencesHaveChanged bool
+	closeRequestCallback   func() bool
+
+	// Dependencies for setup
+	ctx      context.Context
+	settings *gio.Settings
+	window   *adw.ApplicationWindow
+	overlay  *adw.ToastOverlay
+	gateway  *server.Gateway
+	cancel   func()
+}
+
+func NewPreferencesDialog(
+	ctx context.Context,
+	settings *gio.Settings,
+	window *adw.ApplicationWindow,
+	overlay *adw.ToastOverlay,
+	gateway *server.Gateway,
+	cancel func(),
+) *PreferencesDialog {
+	obj := gobject.NewObject(gTypePreferencesDialog, "css-name")
+
+	v := (*PreferencesDialog)(unsafe.Pointer(obj.GetData(dataKeyGoInstance)))
+	v.ctx = ctx
+	v.settings = settings
+	v.window = window
+	v.overlay = overlay
+	v.gateway = gateway
+	v.cancel = cancel
+
+	v.setupBindings()
+	v.setupCallbacks()
+
+	return v
+}
+
+func (p *PreferencesDialog) MpvCommandInput() *adw.EntryRow {
+	return p.mpvCommandInput
+}
+
+func (p *PreferencesDialog) setCloseRequestCallback(callback func() bool) {
+	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
+	prefD.closeRequestCallback = callback
+}
+
+func (p *PreferencesDialog) markPreferencesChanged() {
+	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
+	prefD.preferencesHaveChanged = true
+}
+
+func (p *PreferencesDialog) resetPreferencesChanged() {
+	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
+	prefD.preferencesHaveChanged = false
+}
+
+func (p *PreferencesDialog) havePreferencesChanged() bool {
+	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
+	return prefD.preferencesHaveChanged
+}
+
+func (p *PreferencesDialog) setupBindings() {
+	p.settings.Bind(resources.SchemaMPVKey, &p.mpvCommandInput.Object, "text", gio.GSettingsBindDefaultValue)
+
+	p.verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
+	p.settings.Bind(resources.SchemaVerboseKey, &p.verbosityLevelInput.Object, "value", gio.GSettingsBindDefaultValue)
+
+	p.settings.Bind(resources.SchemaGatewayRemoteKey, &p.remoteGatewaySwitchInput.Object, "active", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaGatewayURLKey, &p.remoteGatewayURLInput.Object, "text", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaGatewayUsernameKey, &p.remoteGatewayUsernameInput.Object, "text", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaGatewayPasswordKey, &p.remoteGatewayPasswordInput.Object, "text", gio.GSettingsBindDefaultValue)
+
+	p.settings.Bind(resources.SchemaWeronURLKey, &p.weronURLInput.Object, "text", gio.GSettingsBindDefaultValue)
+
+	p.weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
+	p.settings.Bind(resources.SchemaWeronTimeoutKey, &p.weronTimeoutInput.Object, "value", gio.GSettingsBindDefaultValue)
+
+	p.settings.Bind(resources.SchemaWeronICEKey, &p.weronICEInput.Object, "text", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaWeronForceRelayKey, &p.weronForceRelayInput.Object, "active", gio.GSettingsBindDefaultValue)
+}
+
+func (p *PreferencesDialog) setupCallbacks() {
+	p.SetTransientFor(&p.window.Window)
+
+	syncSensitivityState := func() {
+		if p.remoteGatewaySwitchInput.GetActive() {
+			p.remoteGatewayURLInput.SetEditable(true)
+			p.remoteGatewayUsernameInput.SetEditable(true)
+			p.remoteGatewayPasswordInput.SetEditable(true)
+		} else {
+			p.remoteGatewayURLInput.SetEditable(false)
+			p.remoteGatewayUsernameInput.SetEditable(false)
+			p.remoteGatewayPasswordInput.SetEditable(false)
+		}
+	}
+
+	closeRequestCallback := func() bool {
+		p.Close()
+		p.SetVisible(false)
+
+		if p.havePreferencesChanged() {
+			p.settings.Apply()
+
+			toast := adw.NewToast(L("Reopen to apply the changes."))
+			toast.SetButtonLabel(L("Reopen"))
+			toast.SetActionName("win." + applyPreferencesActionName)
+
+			p.overlay.AddToast(toast)
+		}
+
+		p.resetPreferencesChanged()
+
+		return true
+	}
+	p.setCloseRequestCallback(closeRequestCallback)
+
+	showCallback := func(gtk.Widget) {
+		syncSensitivityState()
+	}
+	p.ConnectShow(&showCallback)
+
+	clickedCallback := func(gtk.Button) {
+		filePicker := gtk.NewFileChooserNative(
+			L("Select storage location"),
+			&p.window.Window,
+			gtk.FileChooserActionSelectFolderValue,
+			"",
+			"")
+		filePicker.SetModal(true)
+		filePickerResponseCallback := func(dialog gtk.NativeDialog, responseId int) {
+			if responseId == int(gtk.ResponseAcceptValue) {
+				p.settings.SetString(resources.SchemaStorageKey, filePicker.GetFile().GetPath())
+
+				p.markPreferencesChanged()
+			}
+
+			filePicker.Destroy()
+		}
+		filePicker.ConnectResponse(&filePickerResponseCallback)
+
+		filePicker.Show()
+	}
+	p.storageLocationInput.ConnectClicked(&clickedCallback)
+
+	stateSetCallback1 := func(gtk.Switch, bool) bool {
+		p.markPreferencesChanged()
+
+		syncSensitivityState()
+
+		return false
+	}
+	p.remoteGatewaySwitchInput.ConnectStateSet(&stateSetCallback1)
+
+	stateSetCallback2 := func(gtk.Switch, bool) bool {
+		p.markPreferencesChanged()
+
+		return false
+	}
+	p.weronForceRelayInput.ConnectStateSet(&stateSetCallback2)
+}
+
+func init() {
+	var classInit gobject.ClassInitFunc = func(tc *gobject.TypeClass, u uintptr) {
+		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
+		typeClass.SetTemplateFromResource(resources.ResourcePreferencesPath)
+
+		typeClass.BindTemplateChildFull("storage-location-input", false, 0)
+		typeClass.BindTemplateChildFull("mpv-command-input", false, 0)
+		typeClass.BindTemplateChildFull("verbosity-level-input", false, 0)
+		typeClass.BindTemplateChildFull("htorrent-remote-gateway-switch", false, 0)
+		typeClass.BindTemplateChildFull("htorrent-url-input", false, 0)
+		typeClass.BindTemplateChildFull("htorrent-username-input", false, 0)
+		typeClass.BindTemplateChildFull("htorrent-password-input", false, 0)
+		typeClass.BindTemplateChildFull("weron-url-input", false, 0)
+		typeClass.BindTemplateChildFull("weron-ice-input", false, 0)
+		typeClass.BindTemplateChildFull("weron-timeout-input", false, 0)
+		typeClass.BindTemplateChildFull("weron-force-relay-input", false, 0)
+
+		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
+
+		objClass.OverrideConstructed(func(o *gobject.Object) {
+			parentObjClass := (*gobject.ObjectClass)(unsafe.Pointer(tc.PeekParent()))
+			parentObjClass.GetConstructed()(o)
+
+			var parent adw.PreferencesWindow
+			o.Cast(&parent)
+
+			parent.InitTemplate()
+
+			var (
+				storageLocationInput       gtk.Button
+				mpvCommandInput            adw.EntryRow
+				verbosityLevelInput        adw.SpinRow
+				remoteGatewaySwitchInput   gtk.Switch
+				remoteGatewayURLInput      adw.EntryRow
+				remoteGatewayUsernameInput adw.EntryRow
+				remoteGatewayPasswordInput adw.PasswordEntryRow
+				weronURLInput              adw.EntryRow
+				weronICEInput              adw.EntryRow
+				weronTimeoutInput          adw.SpinRow
+				weronForceRelayInput       gtk.Switch
+			)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "storage-location-input").Cast(&storageLocationInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "mpv-command-input").Cast(&mpvCommandInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "verbosity-level-input").Cast(&verbosityLevelInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent-remote-gateway-switch").Cast(&remoteGatewaySwitchInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent-url-input").Cast(&remoteGatewayURLInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent-username-input").Cast(&remoteGatewayUsernameInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent-password-input").Cast(&remoteGatewayPasswordInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron-url-input").Cast(&weronURLInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron-ice-input").Cast(&weronICEInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron-timeout-input").Cast(&weronTimeoutInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron-force-relay-input").Cast(&weronForceRelayInput)
+
+			p := &PreferencesDialog{
+				PreferencesWindow: parent,
+
+				storageLocationInput:       &storageLocationInput,
+				mpvCommandInput:            &mpvCommandInput,
+				verbosityLevelInput:        &verbosityLevelInput,
+				remoteGatewaySwitchInput:   &remoteGatewaySwitchInput,
+				remoteGatewayURLInput:      &remoteGatewayURLInput,
+				remoteGatewayUsernameInput: &remoteGatewayUsernameInput,
+				remoteGatewayPasswordInput: &remoteGatewayPasswordInput,
+				weronURLInput:              &weronURLInput,
+				weronICEInput:              &weronICEInput,
+				weronTimeoutInput:          &weronTimeoutInput,
+				weronForceRelayInput:       &weronForceRelayInput,
+
+				preferencesHaveChanged: false,
+			}
+
+			closeRequestCallback := func(gtk.Window) bool {
+				if p.closeRequestCallback != nil {
+					return p.closeRequestCallback()
+				}
+				return false
+			}
+			parent.ConnectCloseRequest(&closeRequestCallback)
+
+			var pinner runtime.Pinner
+			pinner.Pin(p)
+
+			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+				pinner.Unpin()
+			}
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(p)), &cleanupCallback)
+		})
+	}
+
+	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
+
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.PreferencesWindowGLibType(), &parentQuery)
+
+	gTypePreferencesDialog = gobject.TypeRegisterStaticSimple(
+		parentQuery.Type,
+		"PreferencesDialog",
+		parentQuery.ClassSize,
+		&classInit,
+		parentQuery.InstanceSize+uint(unsafe.Sizeof(PreferencesDialog{}))+uint(unsafe.Sizeof(&PreferencesDialog{})),
+		&instanceInit,
+		0,
+	)
+}

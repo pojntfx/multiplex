@@ -4,18 +4,6 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/main_menu.go:123
-msgid "Reopen to apply the changes."
-msgstr "Die App muss neugestartet werden um die Änderungen anzuwenden."
-
-#: ../internal/components/main_menu.go:124
-msgid "Reopen"
-msgstr "App neustarten"
-
-#: ../internal/components/main_menu.go:184
-msgid "Select storage location"
-msgstr "Speicherort auswählen"
-
 #: ../internal/components/controls.go:366
 msgid "Someone joined the session."
 msgstr "Jemand ist der Sitzung beigetreten."
@@ -101,6 +89,18 @@ msgstr "Dieser Stream-Code ist ungültig."
 #: ../internal/components/main_window.go:544
 msgid "No README found."
 msgstr "Keine README-Datei gefunden."
+
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen to apply the changes."
+msgstr "Die App muss neugestartet werden um die Änderungen anzuwenden."
+
+#: ../internal/components/preferences_dialog.go:142
+msgid "Reopen"
+msgstr "App neustarten"
+
+#: ../internal/components/preferences_dialog.go:161
+msgid "Select storage location"
+msgstr "Speicherort auswählen"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
