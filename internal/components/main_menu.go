@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	. "github.com/pojntfx/go-gettext/pkg/i18n"
-
 	"github.com/jwijenbergh/puregotk/v4/adw"
 	"github.com/jwijenbergh/puregotk/v4/gio"
 	"github.com/jwijenbergh/puregotk/v4/gtk"
@@ -42,15 +40,15 @@ func AddMainMenu(
 	preferencesDialog := NewPreferencesDialog(ctx, settings, window, overlay, gateway, cancel)
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
-	preferencesCallback := func(action gio.SimpleAction, parameter uintptr) {
+	onPreferences := func(action gio.SimpleAction, parameter uintptr) {
 		preferencesDialog.Present()
 	}
-	preferencesAction.ConnectActivate(&preferencesCallback)
+	preferencesAction.ConnectActivate(&onPreferences)
 	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
 	window.AddAction(preferencesAction)
 
 	openDownloadsAction := gio.NewSimpleAction(openDownloadsActionName, nil)
-	openDownloadsCallback := func(action gio.SimpleAction, parameter uintptr) {
+	onOpenDownloads := func(action gio.SimpleAction, parameter uintptr) {
 		_, err := gio.AppInfoLaunchDefaultForUri(fmt.Sprintf("file://%v", settings.GetString(resources.SchemaStorageKey)), nil)
 		if err != nil {
 			OpenErrorDialog(ctx, window, err)
@@ -58,20 +56,20 @@ func AddMainMenu(
 			return
 		}
 	}
-	openDownloadsAction.ConnectActivate(&openDownloadsCallback)
+	openDownloadsAction.ConnectActivate(&onOpenDownloads)
 	window.AddAction(openDownloadsAction)
 
 	if getMagnetLink != nil {
 		copyMagnetLinkAction := gio.NewSimpleAction(copyMagnetLinkActionName, nil)
-		copyMagnetLinkCallback := func(action gio.SimpleAction, parameter uintptr) {
+		onCopyMagnetLink := func(action gio.SimpleAction, parameter uintptr) {
 			window.GetClipboard().SetText(getMagnetLink())
 		}
-		copyMagnetLinkAction.ConnectActivate(&copyMagnetLinkCallback)
+		copyMagnetLinkAction.ConnectActivate(&onCopyMagnetLink)
 		window.AddAction(copyMagnetLinkAction)
 	}
 
 	applyPreferencesAction := gio.NewSimpleAction(applyPreferencesActionName, nil)
-	applyPreferencesCallback := func(action gio.SimpleAction, parameter uintptr) {
+	onApplyPreferences := func(action gio.SimpleAction, parameter uintptr) {
 		cancel()
 
 		if gateway != nil {
@@ -97,14 +95,14 @@ func AddMainMenu(
 
 		os.Exit(0)
 	}
-	applyPreferencesAction.ConnectActivate(&applyPreferencesCallback)
+	applyPreferencesAction.ConnectActivate(&onApplyPreferences)
 	window.AddAction(applyPreferencesAction)
 
 	aboutAction := gio.NewSimpleAction("about", nil)
-	aboutCallback := func(action gio.SimpleAction, parameter uintptr) {
+	onAbout := func(action gio.SimpleAction, parameter uintptr) {
 		aboutDialog.Present(&window.Window.Widget)
 	}
-	aboutAction.ConnectActivate(&aboutCallback)
+	aboutAction.ConnectActivate(&onAbout)
 	window.AddAction(aboutAction)
 
 	menuButton.SetMenuModel(&menu.MenuModel)

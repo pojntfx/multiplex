@@ -324,7 +324,7 @@ func (w *MainWindow) onNext() {
 
 					m := file.name
 					activator.SetActive(false)
-					activateCallback := func(gtk.CheckButton) {
+					onActivate := func(gtk.CheckButton) {
 						if m != w.selectedTorrentMedia {
 							w.selectedTorrentMedia = m
 
@@ -333,7 +333,7 @@ func (w *MainWindow) onNext() {
 
 						w.nextButton.SetSensitive(true)
 					}
-					activator.ConnectActivate(&activateCallback)
+					activator.ConnectActivate(&onActivate)
 
 					row.SetTitle(getDisplayPathWithoutRoot(file.name))
 					if file.priority == 0 {
@@ -905,10 +905,10 @@ func init() {
 			var pinner runtime.Pinner
 			pinner.Pin(w)
 
-			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+			onCleanup := glib.DestroyNotify(func(data uintptr) {
 				pinner.Unpin()
-			}
-			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &cleanupCallback)
+			})
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &onCleanup)
 
 			w.setupSignalHandlers()
 		})

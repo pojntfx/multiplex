@@ -55,20 +55,20 @@ func init() {
 				AlertDialog: parent,
 			}
 
-			responseCallback := func(dialog adw.AlertDialog, response string) {
+			onResponse := func(dialog adw.AlertDialog, response string) {
 				if w.responseCallback != nil {
 					w.responseCallback(response)
 				}
 			}
-			parent.ConnectResponse(&responseCallback)
+			parent.ConnectResponse(&onResponse)
 
 			var pinner runtime.Pinner
 			pinner.Pin(w)
 
-			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+			onCleanup := glib.DestroyNotify(func(data uintptr) {
 				pinner.Unpin()
-			}
-			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &cleanupCallback)
+			})
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &onCleanup)
 		})
 	}
 

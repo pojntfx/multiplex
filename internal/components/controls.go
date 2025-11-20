@@ -389,12 +389,12 @@ func OpenControlsWindow(
 		watchingWithTitleLabel.SetText(fmt.Sprintf(L("You're currently watching with %v other people."), *connectedPeers))
 	}
 
-	copyStreamCodeCallback := func(gtk.Button) {
+	onCopyStreamCode := func(gtk.Button) {
 		window.GetClipboard().SetText(streamCodeInput.GetText())
 	}
-	copyStreamCodeButton.ConnectClicked(&copyStreamCodeCallback)
+	copyStreamCodeButton.ConnectClicked(&onCopyStreamCode)
 
-	stopButtonCallback := func(gtk.Button) {
+	onStopButton := func(gtk.Button) {
 		window.Close()
 
 		mainWindow := NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir)
@@ -402,32 +402,32 @@ func OpenControlsWindow(
 		app.AddWindow(&mainWindow.ApplicationWindow.Window)
 		mainWindow.SetVisible(true)
 	}
-	stopButton.ConnectClicked(&stopButtonCallback)
+	stopButton.ConnectClicked(&onStopButton)
 
-	mediaInfoButtonCallback := func(gtk.Button) {
+	onMediaInfoButton := func(gtk.Button) {
 		descriptionWindow.SetVisible(true)
 	}
-	mediaInfoButton.ConnectClicked(&mediaInfoButtonCallback)
+	mediaInfoButton.ConnectClicked(&onMediaInfoButton)
 
 	ctrl := gtk.NewEventControllerKey()
 	descriptionWindow.AddController(&ctrl.EventController)
 	descriptionWindow.SetTransientFor(&window.Window)
 
-	descCloseRequestCallback := func(gtk.Window) bool {
+	onDescCloseRequest := func(gtk.Window) bool {
 		descriptionWindow.Close()
 		descriptionWindow.SetVisible(false)
 
 		return true
 	}
-	descriptionWindow.ConnectCloseRequest(&descCloseRequestCallback)
+	descriptionWindow.ConnectCloseRequest(&onDescCloseRequest)
 
-	descKeyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+	onDescKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
 		if keycode == keycodeEscape {
 			descriptionWindow.Close()
 			descriptionWindow.SetVisible(false)
 		}
 	}
-	ctrl.ConnectKeyReleased(&descKeyReleasedCallback)
+	ctrl.ConnectKeyReleased(&onDescKeyReleased)
 
 	descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
 	if !utf8.Valid([]byte(torrentReadme)) || strings.TrimSpace(torrentReadme) == "" {
@@ -490,15 +490,15 @@ func OpenControlsWindow(
 		}
 	}()
 
-	prepCloseRequestCallback := func(gtk.Window) bool {
+	onPrepCloseRequest := func(gtk.Window) bool {
 		preparingWindow.Close()
 		preparingWindow.SetVisible(false)
 
 		return true
 	}
-	preparingWindow.ConnectCloseRequest(&prepCloseRequestCallback)
+	preparingWindow.ConnectCloseRequest(&onPrepCloseRequest)
 
-	prepCancelCallback := func(gtk.Button) {
+	onPrepCancel := func(gtk.Button) {
 		adapter.Close()
 		cancelAdapterCtx()
 
@@ -519,7 +519,7 @@ func OpenControlsWindow(
 		app.AddWindow(&mainWindow.ApplicationWindow.Window)
 		mainWindow.SetVisible(true)
 	}
-	preparingCancelButton.ConnectClicked(&prepCancelCallback)
+	preparingCancelButton.ConnectClicked(&onPrepCancel)
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
 
@@ -582,7 +582,7 @@ func OpenControlsWindow(
 		window.Close()
 	}()
 
-	showCallback := func(gtk.Widget) {
+	onShow := func(gtk.Widget) {
 		preparingWindow.SetVisible(true)
 
 		go func() {
@@ -595,7 +595,7 @@ func OpenControlsWindow(
 			}
 		}()
 
-		closeRequestCallback := func(gtk.Window) bool {
+		onCloseRequest := func(gtk.Window) bool {
 			adapter.Close()
 			cancelAdapterCtx()
 
@@ -621,7 +621,7 @@ func OpenControlsWindow(
 
 			return true
 		}
-		window.ConnectCloseRequest(&closeRequestCallback)
+		window.ConnectCloseRequest(&onCloseRequest)
 
 		go func() {
 			<-ready
@@ -1072,7 +1072,7 @@ func OpenControlsWindow(
 				p := file.priority
 				sid := file.id
 				j := i
-				subtitleActivateCallback := func(gtk.CheckButton) {
+				onSubtitleActivate := func(gtk.CheckButton) {
 					defer func() {
 						if len(subtitleActivators) <= 1 {
 							activator.SetActive(true)
@@ -1203,7 +1203,7 @@ func OpenControlsWindow(
 						}
 					}()
 				}
-				activator.ConnectActivate(&subtitleActivateCallback)
+				activator.ConnectActivate(&onSubtitleActivate)
 
 				if i == 0 {
 					row.SetTitle(file.name)
@@ -1254,7 +1254,7 @@ func OpenControlsWindow(
 
 				a := audiotrack
 				j := i
-				audiotrackActivateCallback := func(gtk.CheckButton) {
+				onAudiotrackActivate := func(gtk.CheckButton) {
 					defer func() {
 						if len(audiotrackActivators) <= 1 {
 							activator.SetActive(true)
@@ -1304,7 +1304,7 @@ func OpenControlsWindow(
 						return
 					}
 				}
-				activator.ConnectActivate(&audiotrackActivateCallback)
+				activator.ConnectActivate(&onAudiotrackActivate)
 
 				if j == 0 {
 					row.SetSubtitle(L("Disable audio"))
@@ -1331,24 +1331,24 @@ func OpenControlsWindow(
 			}
 
 			ctrl := gtk.NewEventControllerMotion()
-			enterCallback := func(gtk.EventControllerMotion, float64, float64) {
+			onEnter := func(gtk.EventControllerMotion, float64, float64) {
 				seekerIsUnderPointer = true
 			}
-			ctrl.ConnectEnter(&enterCallback)
-			leaveCallback := func(gtk.EventControllerMotion) {
+			ctrl.ConnectEnter(&onEnter)
+			onLeave := func(gtk.EventControllerMotion) {
 				seekerIsUnderPointer = false
 			}
-			ctrl.ConnectLeave(&leaveCallback)
+			ctrl.ConnectLeave(&onLeave)
 			seeker.AddController(&ctrl.EventController)
 
-			changeValueCallback := func(r gtk.Range, scroll gtk.ScrollType, value float64) bool {
+			onChangeValue := func(r gtk.Range, scroll gtk.ScrollType, value float64) bool {
 				seekToPosition(value)
 
 				positions.Broadcast(value)
 
 				return true
 			}
-			seeker.ConnectChangeValue(&changeValueCallback)
+			seeker.ConnectChangeValue(&onChangeValue)
 
 			preparingClosed := false
 			done := make(chan struct{})
@@ -1472,16 +1472,16 @@ func OpenControlsWindow(
 				}
 			}()
 
-			volumeMuteClickedCallback := func(gtk.Button) {
+			onVolumeMuteClicked := func(gtk.Button) {
 				if volumeScale.GetValue() <= 0 {
 					volumeScale.SetValue(1)
 				} else {
 					volumeScale.SetValue(0)
 				}
 			}
-			volumeMuteButton.ConnectClicked(&volumeMuteClickedCallback)
+			volumeMuteButton.ConnectClicked(&onVolumeMuteClicked)
 
-			volumeValueChangedCallback := func(gtk.Range) {
+			onVolumeValueChanged := func(gtk.Range) {
 				value := volumeScale.GetValue()
 
 				if value <= 0 {
@@ -1514,17 +1514,17 @@ func OpenControlsWindow(
 					OpenErrorDialog(ctx, &window, err)
 				}
 			}
-			volumeScale.ConnectValueChanged(&volumeValueChangedCallback)
+			volumeScale.ConnectValueChanged(&onVolumeValueChanged)
 
-			subtitleClickedCallback := func(gtk.Button) {
+			onSubtitleClicked := func(gtk.Button) {
 				subtitlesDialog.Present()
 			}
-			subtitleButton.ConnectClicked(&subtitleClickedCallback)
+			subtitleButton.ConnectClicked(&onSubtitleClicked)
 
-			audiotracksClickedCallback := func(gtk.Button) {
+			onAudiotracksClicked := func(gtk.Button) {
 				audiotracksDialog.Present()
 			}
-			audiotracksButton.ConnectClicked(&audiotracksClickedCallback)
+			audiotracksButton.ConnectClicked(&onAudiotracksClicked)
 
 			for _, d := range []adw.Window{subtitlesDialog, audiotracksDialog} {
 				dialog := d
@@ -1533,16 +1533,16 @@ func OpenControlsWindow(
 				dialog.AddController(&escCtrl.EventController)
 				dialog.SetTransientFor(&window.Window)
 
-				escKeyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+				onEscKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
 					if keycode == keycodeEscape {
 						dialog.Close()
 						dialog.SetVisible(false)
 					}
 				}
-				escCtrl.ConnectKeyReleased(&escKeyReleasedCallback)
+				escCtrl.ConnectKeyReleased(&onEscKeyReleased)
 			}
 
-			subtitlesCancelClickedCallback := func(gtk.Button) {
+			onSubtitlesCancelClicked := func(gtk.Button) {
 				log.Info().
 					Msg("Disabling subtitles")
 
@@ -1561,27 +1561,27 @@ func OpenControlsWindow(
 
 				subtitlesDialog.Close()
 			}
-			subtitlesCancelButton.ConnectClicked(&subtitlesCancelClickedCallback)
+			subtitlesCancelButton.ConnectClicked(&onSubtitlesCancelClicked)
 
-			subtitlesOKClickedCallback := func(gtk.Button) {
+			onSubtitlesOKClicked := func(gtk.Button) {
 				subtitlesDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			subtitlesOKButton.ConnectClicked(&subtitlesOKClickedCallback)
+			subtitlesOKButton.ConnectClicked(&onSubtitlesOKClicked)
 
-			audiotracksCancelClickedCallback := func(gtk.Button) {
+			onAudiotracksCancelClicked := func(gtk.Button) {
 				audiotracksDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			audiotracksCancelButton.ConnectClicked(&audiotracksCancelClickedCallback)
+			audiotracksCancelButton.ConnectClicked(&onAudiotracksCancelClicked)
 
-			audiotracksOKClickedCallback := func(gtk.Button) {
+			onAudiotracksOKClicked := func(gtk.Button) {
 				audiotracksDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			audiotracksOKButton.ConnectClicked(&audiotracksOKClickedCallback)
+			audiotracksOKButton.ConnectClicked(&onAudiotracksOKClicked)
 
-			addSubtitlesFromFileClickedCallback := func(gtk.Button) {
+			onAddSubtitlesFromFileClicked := func(gtk.Button) {
 				filePicker := gtk.NewFileChooserNative(
 					"Select storage location",
 					&window.Window,
@@ -1589,7 +1589,7 @@ func OpenControlsWindow(
 					"",
 					"")
 				filePicker.SetModal(true)
-				filePickerResponseCallback := func(dialog gtk.NativeDialog, responseId int) {
+				onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int) {
 					if responseId == int(gtk.ResponseAcceptValue) {
 						log.Info().
 							Str("path", filePicker.GetFile().GetPath()).
@@ -1618,7 +1618,7 @@ func OpenControlsWindow(
 						subtitleActivators = append(subtitleActivators, *activator)
 
 						activator.SetActive(true)
-						fileSubtitleActivateCallback := func(gtk.CheckButton) {
+						onFileSubtitleActivate := func(gtk.CheckButton) {
 							m := filePicker.GetFile().GetPath()
 							subtitlesFile, err := os.Open(m)
 							if err != nil {
@@ -1634,7 +1634,7 @@ func OpenControlsWindow(
 								return
 							}
 						}
-						activator.ConnectActivate(&fileSubtitleActivateCallback)
+						activator.ConnectActivate(&onFileSubtitleActivate)
 
 						row.SetTitle(filePicker.GetFile().GetBasename())
 						row.SetSubtitle(L("Manually added"))
@@ -1649,13 +1649,13 @@ func OpenControlsWindow(
 
 					filePicker.Destroy()
 				}
-				filePicker.ConnectResponse(&filePickerResponseCallback)
+				filePicker.ConnectResponse(&onFilePickerResponse)
 
 				filePicker.Show()
 			}
-			addSubtitlesFromFileButton.ConnectClicked(&addSubtitlesFromFileClickedCallback)
+			addSubtitlesFromFileButton.ConnectClicked(&onAddSubtitlesFromFileClicked)
 
-			fullscreenClickedCallback := func(gtk.Button) {
+			onFullscreenClicked := func(gtk.Button) {
 				if fullscreenButton.GetActive() {
 					if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 						log.Info().Msg("Enabling fullscreen")
@@ -1690,9 +1690,9 @@ func OpenControlsWindow(
 					return
 				}
 			}
-			fullscreenButton.ConnectClicked(&fullscreenClickedCallback)
+			fullscreenButton.ConnectClicked(&onFullscreenClicked)
 
-			playClickedCallback := func(gtk.Button) {
+			onPlayClicked := func(gtk.Button) {
 				if !headerbarSpinner.GetSpinning() {
 					if playButton.GetIconName() == playIcon {
 						pauses.Broadcast(false)
@@ -1707,7 +1707,7 @@ func OpenControlsWindow(
 					pausePlayback()
 				}
 			}
-			playButton.ConnectClicked(&playClickedCallback)
+			playButton.ConnectClicked(&onPlayClicked)
 
 			go func() {
 				if err := command.Wait(); err != nil && err.Error() != errKilled.Error() {
@@ -1724,7 +1724,7 @@ func OpenControlsWindow(
 			playButton.GrabFocus()
 		}()
 	}
-	window.ConnectShow(&showCallback)
+	window.ConnectShow(&onShow)
 
 	window.SetVisible(true)
 

@@ -100,28 +100,28 @@ func init() {
 			ctrl := gtk.NewEventControllerKey()
 			parent.AddController(&ctrl.EventController)
 
-			closeRequestCallback := func(gtk.Window) bool {
+			onCloseRequest := func(gtk.Window) bool {
 				parent.Close()
 				parent.SetVisible(false)
 				return true
 			}
-			parent.ConnectCloseRequest(&closeRequestCallback)
+			parent.ConnectCloseRequest(&onCloseRequest)
 
-			keyReleasedCallback := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
 				if keycode == keycodeEscape {
 					parent.Close()
 					parent.SetVisible(false)
 				}
 			}
-			ctrl.ConnectKeyReleased(&keyReleasedCallback)
+			ctrl.ConnectKeyReleased(&onKeyReleased)
 
 			var pinner runtime.Pinner
 			pinner.Pin(w)
 
-			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+			onCleanup := glib.DestroyNotify(func(data uintptr) {
 				pinner.Unpin()
-			}
-			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &cleanupCallback)
+			})
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(w)), &onCleanup)
 		})
 	}
 

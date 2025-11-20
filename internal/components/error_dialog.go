@@ -53,7 +53,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 	errorDialog := NewErrorDialog()
 	errorDialog.SetBody(err.Error())
 
-	responseCallback := func(response string) {
+	onResponse := func(response string) {
 		switch response {
 		case "report":
 			_ = openuri.OpenURI("", issuesURL, nil)
@@ -68,7 +68,7 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 			os.Exit(1)
 		}
 	}
-	errorDialog.SetResponseCallback(responseCallback)
+	errorDialog.SetResponseCallback(onResponse)
 
 	errorDialog.Present(&window.Widget)
 }
@@ -93,20 +93,20 @@ func init() {
 				AlertDialog: parent,
 			}
 
-			responseCallback := func(dialog adw.AlertDialog, response string) {
+			onResponse := func(dialog adw.AlertDialog, response string) {
 				if e.responseCallback != nil {
 					e.responseCallback(response)
 				}
 			}
-			parent.ConnectResponse(&responseCallback)
+			parent.ConnectResponse(&onResponse)
 
 			var pinner runtime.Pinner
 			pinner.Pin(e)
 
-			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+			onCleanup := glib.DestroyNotify(func(data uintptr) {
 				pinner.Unpin()
-			}
-			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(e)), &cleanupCallback)
+			})
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(e)), &onCleanup)
 		})
 	}
 

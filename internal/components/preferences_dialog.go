@@ -131,7 +131,7 @@ func (p *PreferencesDialog) setupCallbacks() {
 		}
 	}
 
-	closeRequestCallback := func() bool {
+	onCloseRequest := func() bool {
 		p.Close()
 		p.SetVisible(false)
 
@@ -149,14 +149,14 @@ func (p *PreferencesDialog) setupCallbacks() {
 
 		return true
 	}
-	p.setCloseRequestCallback(closeRequestCallback)
+	p.setCloseRequestCallback(onCloseRequest)
 
-	showCallback := func(gtk.Widget) {
+	onShow := func(gtk.Widget) {
 		syncSensitivityState()
 	}
-	p.ConnectShow(&showCallback)
+	p.ConnectShow(&onShow)
 
-	clickedCallback := func(gtk.Button) {
+	onClicked := func(gtk.Button) {
 		filePicker := gtk.NewFileChooserNative(
 			L("Select storage location"),
 			&p.window.Window,
@@ -164,7 +164,7 @@ func (p *PreferencesDialog) setupCallbacks() {
 			"",
 			"")
 		filePicker.SetModal(true)
-		filePickerResponseCallback := func(dialog gtk.NativeDialog, responseId int) {
+		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int) {
 			if responseId == int(gtk.ResponseAcceptValue) {
 				p.settings.SetString(resources.SchemaStorageKey, filePicker.GetFile().GetPath())
 
@@ -173,27 +173,27 @@ func (p *PreferencesDialog) setupCallbacks() {
 
 			filePicker.Destroy()
 		}
-		filePicker.ConnectResponse(&filePickerResponseCallback)
+		filePicker.ConnectResponse(&onFilePickerResponse)
 
 		filePicker.Show()
 	}
-	p.storageLocationInput.ConnectClicked(&clickedCallback)
+	p.storageLocationInput.ConnectClicked(&onClicked)
 
-	stateSetCallback1 := func(gtk.Switch, bool) bool {
+	onRemoteGatewayStateSet := func(gtk.Switch, bool) bool {
 		p.markPreferencesChanged()
 
 		syncSensitivityState()
 
 		return false
 	}
-	p.remoteGatewaySwitchInput.ConnectStateSet(&stateSetCallback1)
+	p.remoteGatewaySwitchInput.ConnectStateSet(&onRemoteGatewayStateSet)
 
-	stateSetCallback2 := func(gtk.Switch, bool) bool {
+	onWeronForceRelayStateSet := func(gtk.Switch, bool) bool {
 		p.markPreferencesChanged()
 
 		return false
 	}
-	p.weronForceRelayInput.ConnectStateSet(&stateSetCallback2)
+	p.weronForceRelayInput.ConnectStateSet(&onWeronForceRelayStateSet)
 }
 
 func init() {
@@ -267,21 +267,21 @@ func init() {
 				preferencesHaveChanged: false,
 			}
 
-			closeRequestCallback := func(gtk.Window) bool {
+			onCloseRequest := func(gtk.Window) bool {
 				if p.closeRequestCallback != nil {
 					return p.closeRequestCallback()
 				}
 				return false
 			}
-			parent.ConnectCloseRequest(&closeRequestCallback)
+			parent.ConnectCloseRequest(&onCloseRequest)
 
 			var pinner runtime.Pinner
 			pinner.Pin(p)
 
-			var cleanupCallback glib.DestroyNotify = func(data uintptr) {
+			onCleanup := glib.DestroyNotify(func(data uintptr) {
 				pinner.Unpin()
-			}
-			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(p)), &cleanupCallback)
+			})
+			o.SetDataFull(dataKeyGoInstance, uintptr(unsafe.Pointer(p)), &onCleanup)
 		})
 	}
 
