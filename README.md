@@ -14,6 +14,7 @@ Watch torrents with your friends.
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.25-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/multiplex.svg)](https://pkg.go.dev/github.com/pojntfx/multiplex)
 [![Matrix](https://img.shields.io/matrix/multiplex:matrix.org)](https://matrix.to/#/#multiplex:matrix.org?via=matrix.org)
+[![Weblate translation status](https://hosted.weblate.org/widget/multiplex/svg-badge.svg)](https://hosted.weblate.org/engage/multiplex/)
 
 ## Overview
 
@@ -175,6 +176,10 @@ $ go run .
 ```
 
 You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gnome.Builder) and run it by clicking the play button in the header bar. Note that GNOME Builder doesn't automatically download the sources specified in [go.mod.json](./go.mod.json), so you need to either run `go mod vendor` manually or copy the contents of [go.mod.json](./go.mod.json) into the `.modules[] | select(.name == "multiplex") | .sources` field of [com.pojtinger.felicitas.Multiplex.json](./com.pojtinger.felicitas.Multiplex.json).
+
+To translate Multiplex, you can use [Weblate](https://hosted.weblate.org/engage/multiplex/). This is the current translation status:
+
+[![Weblate translation status graphs](https://hosted.weblate.org/widget/multiplex/multi-auto.svg)](https://hosted.weblate.org/engage/multiplex/)
 
 ## License
 

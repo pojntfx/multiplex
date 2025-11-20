@@ -339,7 +339,7 @@ msgid "Manual configuration"
 msgstr "Manuelle Konfiguration"
 
 #: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
-msgid "A Fatal Error Occured"
+msgid "A Fatal Error Occurred"
 msgstr "Ein schwerwiegender Fehler ist aufgetreten"
 
 #: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
