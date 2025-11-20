@@ -16,10 +16,6 @@ msgstr ""
 msgid "Select storage location"
 msgstr ""
 
-#: ../internal/components/subtitles.go:116
-msgid "This file does not contain subtitles."
-msgstr ""
-
 #: ../internal/components/controls.go:366
 msgid "Someone joined the session."
 msgstr ""
@@ -49,35 +45,35 @@ msgstr ""
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls.go:1206
+#: ../internal/components/controls.go:1210
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls.go:1211
+#: ../internal/components/controls.go:1215
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls.go:1214
+#: ../internal/components/controls.go:1218
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1217
+#: ../internal/components/controls.go:1221
 msgid "Extra file from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1306
+#: ../internal/components/controls.go:1310
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls.go:1308
+#: ../internal/components/controls.go:1312
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls.go:1316
+#: ../internal/components/controls.go:1320
 msgid "Untitled Track"
 msgstr ""
 
-#: ../internal/components/controls.go:1628
+#: ../internal/components/controls.go:1640
 msgid "Manually added"
 msgstr ""
 
@@ -103,6 +99,10 @@ msgstr ""
 
 #: ../internal/components/main_window.go:544
 msgid "No README found."
+msgstr ""
+
+#: ../internal/utils/subtitles.go:100
+msgid "This file does not contain subtitles."
 msgstr ""
 
 #: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8

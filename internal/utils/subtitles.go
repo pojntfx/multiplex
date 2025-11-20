@@ -1,9 +1,8 @@
-package components
+package utils
 
 import (
 	. "github.com/pojntfx/go-gettext/pkg/i18n"
 
-	"context"
 	"encoding/json"
 	"io"
 	"os"
@@ -19,9 +18,6 @@ import (
 )
 
 func SetSubtitles(
-	ctx context.Context,
-	window *adw.ApplicationWindow,
-
 	filePath string,
 	file io.Reader,
 	tmpDir string,
@@ -29,26 +25,20 @@ func SetSubtitles(
 
 	noneActivator *gtk.CheckButton,
 	subtitlesOverlay *adw.ToastOverlay,
-) {
+) error {
 	subtitlesDir, err := os.MkdirTemp(tmpDir, "subtitles")
 	if err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
 	subtitlesFile := filepath.Join(subtitlesDir, path.Base(filePath))
 	f, err := os.Create(subtitlesFile)
 	if err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
 	if _, err := io.Copy(f, file); err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
 	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
@@ -63,9 +53,7 @@ func SetSubtitles(
 		var successResponse mpv.ResponseSuccess
 		return decoder.Decode(&successResponse)
 	}); err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
 	var trackListResponse mpv.ResponseTrackList
@@ -78,9 +66,7 @@ func SetSubtitles(
 
 		return decoder.Decode(&trackListResponse)
 	}); err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
 	sid := -1
@@ -108,16 +94,14 @@ func SetSubtitles(
 			var successResponse mpv.ResponseSuccess
 			return decoder.Decode(&successResponse)
 		}); err != nil {
-			OpenErrorDialog(ctx, window, err)
-
-			return
+			return err
 		}
 
 		toast := adw.NewToast(L("This file does not contain subtitles."))
 
 		subtitlesOverlay.AddToast(toast)
 
-		return
+		return nil
 	}
 
 	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
@@ -133,21 +117,15 @@ func SetSubtitles(
 		var successResponse mpv.ResponseSuccess
 		return decoder.Decode(&successResponse)
 	}); err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
+		return err
 	}
 
-	if err := mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+	return mpvClient.ExecuteMPVRequest(ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
 		if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
 			return err
 		}
 
 		var successResponse mpv.ResponseSuccess
 		return decoder.Decode(&successResponse)
-	}); err != nil {
-		OpenErrorDialog(ctx, window, err)
-
-		return
-	}
+	})
 }

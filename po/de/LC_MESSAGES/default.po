@@ -16,10 +16,6 @@ msgstr "App neustarten"
 msgid "Select storage location"
 msgstr "Speicherort auswählen"
 
-#: ../internal/components/subtitles.go:116
-msgid "This file does not contain subtitles."
-msgstr "Diese Datei enthält keine Untertitel."
-
 #: ../internal/components/controls.go:366
 msgid "Someone joined the session."
 msgstr "Jemand ist der Sitzung beigetreten."
@@ -49,35 +45,35 @@ msgstr "%v MB/%v MB (%v Knoten)"
 msgid "Searching for peers"
 msgstr "Suche nach Knoten"
 
-#: ../internal/components/controls.go:1206
+#: ../internal/components/controls.go:1210
 msgid "Disable subtitles"
 msgstr "Untertitel deaktivieren"
 
-#: ../internal/components/controls.go:1211
+#: ../internal/components/controls.go:1215
 msgid "Integrated subtitle"
 msgstr "Integrierter Untertitel"
 
-#: ../internal/components/controls.go:1214
+#: ../internal/components/controls.go:1218
 msgid "Subtitle from torrent"
 msgstr "Untertitel aus Torrent"
 
-#: ../internal/components/controls.go:1217
+#: ../internal/components/controls.go:1221
 msgid "Extra file from torrent"
 msgstr "Zusatzdatei aus Torrent"
 
-#: ../internal/components/controls.go:1306
+#: ../internal/components/controls.go:1310
 msgid "Disable audio"
 msgstr "Audio deaktivieren"
 
-#: ../internal/components/controls.go:1308
+#: ../internal/components/controls.go:1312
 msgid "Track %v"
 msgstr "Spur %v"
 
-#: ../internal/components/controls.go:1316
+#: ../internal/components/controls.go:1320
 msgid "Untitled Track"
 msgstr "Unbenannte Spur"
 
-#: ../internal/components/controls.go:1628
+#: ../internal/components/controls.go:1640
 msgid "Manually added"
 msgstr "Manuell hinzugefügt"
 
@@ -105,6 +101,10 @@ msgstr "Dieser Stream-Code ist ungültig."
 #: ../internal/components/main_window.go:544
 msgid "No README found."
 msgstr "Keine README-Datei gefunden."
+
+#: ../internal/utils/subtitles.go:100
+msgid "This file does not contain subtitles."
+msgstr "Diese Datei enthält keine Untertitel."
 
 #: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:124

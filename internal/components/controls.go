@@ -1196,7 +1196,11 @@ func OpenControlsWindow(
 							Str("streamURL", streamURL).
 							Msg("Finished downloading subtitles")
 
-						SetSubtitles(ctx, &window, m, res.Body, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay)
+						if err := utils.SetSubtitles(m, res.Body, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+							OpenErrorDialog(ctx, &window, err)
+
+							return
+						}
 					}()
 				}
 				activator.ConnectActivate(&subtitleActivateCallback)
@@ -1600,7 +1604,11 @@ func OpenControlsWindow(
 						}
 						defer subtitlesFile.Close()
 
-						SetSubtitles(ctx, &window, m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay)
+						if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+							OpenErrorDialog(ctx, &window, err)
+
+							return
+						}
 
 						row := adw.NewActionRow()
 
@@ -1620,7 +1628,11 @@ func OpenControlsWindow(
 							}
 							defer subtitlesFile.Close()
 
-							SetSubtitles(ctx, &window, m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay)
+							if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+								OpenErrorDialog(ctx, &window, err)
+
+								return
+							}
 						}
 						activator.ConnectActivate(&fileSubtitleActivateCallback)
 
