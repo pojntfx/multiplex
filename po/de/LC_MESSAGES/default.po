@@ -548,29 +548,33 @@ msgid "Synchronization preferences"
 msgstr "Synchronisierungseinstellungen"
 
 #: ../assets/resources/metainfo.xml.in:122
-#: ../assets/resources/metainfo.xml.in:138
+msgid "Add German and French translations"
+msgstr "Deutsche und französische Übersetzungen hinzugefügt"
+
+#: ../assets/resources/metainfo.xml.in:130
 #: ../assets/resources/metainfo.xml.in:146
-#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:154
+#: ../assets/resources/metainfo.xml.in:178
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr ""
 "Visuelle Verfeinerungen, um dem neuesten Stand der GNOME-Apps zu entsprechen"
 
-#: ../assets/resources/metainfo.xml.in:130
+#: ../assets/resources/metainfo.xml.in:138
 msgid "Better support for systems with languages other than English"
 msgstr "Bessere Unterstützung für Systeme mit anderen Sprachen als Englisch"
 
-#: ../assets/resources/metainfo.xml.in:154
+#: ../assets/resources/metainfo.xml.in:162
 msgid "Refinements to the screenshots and descriptions"
 msgstr "Verfeinerungen an den Screenshots und Beschreibungen"
 
-#: ../assets/resources/metainfo.xml.in:162
+#: ../assets/resources/metainfo.xml.in:170
 msgid "Refinements to the screenshots and app metadata"
 msgstr "Verfeinerungen an den Screenshots und App-Metadaten"
 
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Simplify summary and improve build system conventions"
 msgstr "Zusammenfassung vereinfacht und Build-System-Konventionen verbessert"
 
-#: ../assets/resources/metainfo.xml.in:186
+#: ../assets/resources/metainfo.xml.in:194
 msgid "Initial release"
 msgstr "Erste Veröffentlichung"

@@ -522,28 +522,32 @@ msgid "Synchronization preferences"
 msgstr ""
 
 #: ../assets/resources/metainfo.xml.in:122
-#: ../assets/resources/metainfo.xml.in:138
-#: ../assets/resources/metainfo.xml.in:146
-#: ../assets/resources/metainfo.xml.in:170
-msgid "Visual refinements to match the state of the art of GNOME apps"
+msgid "Add German and French translations"
 msgstr ""
 
 #: ../assets/resources/metainfo.xml.in:130
+#: ../assets/resources/metainfo.xml.in:146
+#: ../assets/resources/metainfo.xml.in:154
+#: ../assets/resources/metainfo.xml.in:178
+msgid "Visual refinements to match the state of the art of GNOME apps"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:138
 msgid "Better support for systems with languages other than English"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:154
+#: ../assets/resources/metainfo.xml.in:162
 msgid "Refinements to the screenshots and descriptions"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:162
+#: ../assets/resources/metainfo.xml.in:170
 msgid "Refinements to the screenshots and app metadata"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Simplify summary and improve build system conventions"
 msgstr ""
 
-#: ../assets/resources/metainfo.xml.in:186
+#: ../assets/resources/metainfo.xml.in:194
 msgid "Initial release"
 msgstr ""
