@@ -81,7 +81,7 @@ msgstr ""
 msgid "Manually added"
 msgstr ""
 
-#: ../internal/components/error_dialog.go:23
+#: ../internal/components/error_dialog.go:51
 msgid "Could not continue due to a fatal error"
 msgstr ""
 
