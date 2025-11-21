@@ -221,32 +221,7 @@ func OpenControlsWindow(
 	defer copyStreamCodeButton.Unref()
 
 	descriptionWindow := NewDescriptionWindow(&window)
-
-	subtitlesBuilder := gtk.NewBuilderFromResource(resources.ResourceSubtitlesPath)
-	defer subtitlesBuilder.Unref()
-	var (
-		subtitlesDialog            adw.Window
-		subtitlesCancelButton      gtk.Button
-		subtitlesSpinner           gtk.Spinner
-		subtitlesOKButton          gtk.Button
-		subtitlesSelectionGroup    adw.PreferencesGroup
-		addSubtitlesFromFileButton gtk.Button
-		subtitlesOverlay           adw.ToastOverlay
-	)
-	subtitlesBuilder.GetObject("subtitles-dialog").Cast(&subtitlesDialog)
-	defer subtitlesDialog.Unref()
-	subtitlesBuilder.GetObject("button-cancel").Cast(&subtitlesCancelButton)
-	defer subtitlesCancelButton.Unref()
-	subtitlesBuilder.GetObject("headerbar-spinner").Cast(&subtitlesSpinner)
-	defer subtitlesSpinner.Unref()
-	subtitlesBuilder.GetObject("button-ok").Cast(&subtitlesOKButton)
-	defer subtitlesOKButton.Unref()
-	subtitlesBuilder.GetObject("subtitle-tracks").Cast(&subtitlesSelectionGroup)
-	defer subtitlesSelectionGroup.Unref()
-	subtitlesBuilder.GetObject("add-from-file-button").Cast(&addSubtitlesFromFileButton)
-	defer addSubtitlesFromFileButton.Unref()
-	subtitlesBuilder.GetObject("toast-overlay").Cast(&subtitlesOverlay)
-	defer subtitlesOverlay.Unref()
+	subtitlesDialog := NewSubtitlesDialog(&window)
 
 	audiotracksBuilder := gtk.NewBuilderFromResource(resources.ResourceAudiotracksPath)
 	defer audiotracksBuilder.Unref()
@@ -1147,14 +1122,14 @@ func OpenControlsWindow(
 
 					go func() {
 						defer func() {
-							subtitlesSpinner.SetSpinning(false)
-							subtitlesSpinner.SetVisible(false)
-							subtitlesOKButton.SetSensitive(true)
+							subtitlesDialog.Spinner().SetSpinning(false)
+							subtitlesDialog.Spinner().SetVisible(false)
+							subtitlesDialog.OKButton().SetSensitive(true)
 						}()
 
-						subtitlesOKButton.SetSensitive(false)
-						subtitlesSpinner.SetVisible(true)
-						subtitlesSpinner.SetSpinning(true)
+						subtitlesDialog.OKButton().SetSensitive(false)
+						subtitlesDialog.Spinner().SetVisible(true)
+						subtitlesDialog.Spinner().SetSpinning(true)
 
 						streamURL, err := getStreamURL(apiAddr, magnetLink, m)
 						if err != nil {
@@ -1196,7 +1171,7 @@ func OpenControlsWindow(
 							Str("streamURL", streamURL).
 							Msg("Finished downloading subtitles")
 
-						if err := utils.SetSubtitles(m, res.Body, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+						if err := utils.SetSubtitles(m, res.Body, tmpDir, ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
 							OpenErrorDialog(ctx, &window, err)
 
 							return
@@ -1226,7 +1201,7 @@ func OpenControlsWindow(
 				row.AddPrefix(&activator.Widget)
 				row.SetActivatableWidget(&activator.Widget)
 
-				subtitlesSelectionGroup.Add(&row.PreferencesRow.Widget)
+				subtitlesDialog.SelectionGroup().Add(&row.PreferencesRow.Widget)
 			}
 
 			audiotrackActivators := []gtk.CheckButton{}
@@ -1526,7 +1501,7 @@ func OpenControlsWindow(
 			}
 			audiotracksButton.ConnectClicked(&onAudiotracksClicked)
 
-			for _, d := range []adw.Window{subtitlesDialog, audiotracksDialog} {
+			for _, d := range []adw.Window{subtitlesDialog.Window, audiotracksDialog} {
 				dialog := d
 
 				escCtrl := gtk.NewEventControllerKey()
@@ -1561,13 +1536,17 @@ func OpenControlsWindow(
 
 				subtitlesDialog.Close()
 			}
-			subtitlesCancelButton.ConnectClicked(&onSubtitlesCancelClicked)
+			subtitlesDialog.SetCancelCallback(func() {
+				onSubtitlesCancelClicked(gtk.Button{})
+			})
 
 			onSubtitlesOKClicked := func(gtk.Button) {
 				subtitlesDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			subtitlesOKButton.ConnectClicked(&onSubtitlesOKClicked)
+			subtitlesDialog.SetOKCallback(func() {
+				onSubtitlesOKClicked(gtk.Button{})
+			})
 
 			onAudiotracksCancelClicked := func(gtk.Button) {
 				audiotracksDialog.Close()
@@ -1604,7 +1583,7 @@ func OpenControlsWindow(
 						}
 						defer subtitlesFile.Close()
 
-						if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+						if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
 							OpenErrorDialog(ctx, &window, err)
 
 							return
@@ -1628,7 +1607,7 @@ func OpenControlsWindow(
 							}
 							defer subtitlesFile.Close()
 
-							if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], &subtitlesOverlay); err != nil {
+							if err := utils.SetSubtitles(m, subtitlesFile, tmpDir, ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
 								OpenErrorDialog(ctx, &window, err)
 
 								return
@@ -1644,7 +1623,7 @@ func OpenControlsWindow(
 						row.AddPrefix(&activator.Widget)
 						row.SetActivatableWidget(&activator.Widget)
 
-						subtitlesSelectionGroup.Add(&row.PreferencesRow.Widget)
+						subtitlesDialog.SelectionGroup().Add(&row.PreferencesRow.Widget)
 					}
 
 					filePicker.Destroy()
@@ -1653,7 +1632,9 @@ func OpenControlsWindow(
 
 				filePicker.Show()
 			}
-			addSubtitlesFromFileButton.ConnectClicked(&onAddSubtitlesFromFileClicked)
+			subtitlesDialog.SetAddFromFileCallback(func() {
+				onAddSubtitlesFromFileClicked(gtk.Button{})
+			})
 
 			onFullscreenClicked := func(gtk.Button) {
 				if fullscreenButton.GetActive() {

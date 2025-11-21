@@ -4,64 +4,64 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/controls.go:366
+#: ../internal/components/controls.go:341
 msgid "Someone joined the session."
 msgstr "Jemand ist der Sitzung beigetreten."
 
-#: ../internal/components/controls.go:372
+#: ../internal/components/controls.go:347
 msgid "Someone left the session."
 msgstr "Jemand hat die Sitzung verlassen."
 
-#: ../internal/components/controls.go:378 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:353 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr "Sie schauen derzeit alleine zu."
 
-#: ../internal/components/controls.go:384
+#: ../internal/components/controls.go:359
 msgid "You're currently watching with %v other person."
 msgstr "Sie schauen derzeit mit %v weiterer Person."
 
-#: ../internal/components/controls.go:389
+#: ../internal/components/controls.go:364
 msgid "You're currently watching with %v other people."
 msgstr "Sie schauen derzeit mit %v weiteren Personen."
 
-#: ../internal/components/controls.go:483
+#: ../internal/components/controls.go:458
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v MB/%v MB (%v Knoten)"
 
-#: ../internal/components/controls.go:488
+#: ../internal/components/controls.go:463
 msgid "Searching for peers"
 msgstr "Suche nach Knoten"
 
-#: ../internal/components/controls.go:1210
+#: ../internal/components/controls.go:1185
 msgid "Disable subtitles"
 msgstr "Untertitel deaktivieren"
 
-#: ../internal/components/controls.go:1215
+#: ../internal/components/controls.go:1190
 msgid "Integrated subtitle"
 msgstr "Integrierter Untertitel"
 
-#: ../internal/components/controls.go:1218
+#: ../internal/components/controls.go:1193
 msgid "Subtitle from torrent"
 msgstr "Untertitel aus Torrent"
 
-#: ../internal/components/controls.go:1221
+#: ../internal/components/controls.go:1196
 msgid "Extra file from torrent"
 msgstr "Zusatzdatei aus Torrent"
 
-#: ../internal/components/controls.go:1310
+#: ../internal/components/controls.go:1285
 msgid "Disable audio"
 msgstr "Audio deaktivieren"
 
-#: ../internal/components/controls.go:1312
+#: ../internal/components/controls.go:1287
 msgid "Track %v"
 msgstr "Spur %v"
 
-#: ../internal/components/controls.go:1320
+#: ../internal/components/controls.go:1295
 msgid "Untitled Track"
 msgstr "Unbenannte Spur"
 
-#: ../internal/components/controls.go:1640
+#: ../internal/components/controls.go:1619
 msgid "Manually added"
 msgstr "Manuell hinzugefügt"
 

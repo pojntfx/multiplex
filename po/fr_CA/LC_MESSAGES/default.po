@@ -4,64 +4,64 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/controls.go:366
+#: ../internal/components/controls.go:341
 msgid "Someone joined the session."
 msgstr "Quelqu'un a rejoint la session."
 
-#: ../internal/components/controls.go:372
+#: ../internal/components/controls.go:347
 msgid "Someone left the session."
 msgstr "Quelqu'un a quitté la session."
 
-#: ../internal/components/controls.go:378 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:353 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr "Vous regardez actuellement seul."
 
-#: ../internal/components/controls.go:384
+#: ../internal/components/controls.go:359
 msgid "You're currently watching with %v other person."
 msgstr "Vous regardez actuellement avec %v autre personne."
 
-#: ../internal/components/controls.go:389
+#: ../internal/components/controls.go:364
 msgid "You're currently watching with %v other people."
 msgstr "Vous regardez actuellement avec %v autres personnes."
 
-#: ../internal/components/controls.go:483
+#: ../internal/components/controls.go:458
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v Mo/%v Mo (%v pairs)"
 
-#: ../internal/components/controls.go:488
+#: ../internal/components/controls.go:463
 msgid "Searching for peers"
 msgstr "Recherche de pairs"
 
-#: ../internal/components/controls.go:1210
+#: ../internal/components/controls.go:1185
 msgid "Disable subtitles"
 msgstr "Désactiver les sous-titres"
 
-#: ../internal/components/controls.go:1215
+#: ../internal/components/controls.go:1190
 msgid "Integrated subtitle"
 msgstr "Sous-titre intégré"
 
-#: ../internal/components/controls.go:1218
+#: ../internal/components/controls.go:1193
 msgid "Subtitle from torrent"
 msgstr "Sous-titre du torrent"
 
-#: ../internal/components/controls.go:1221
+#: ../internal/components/controls.go:1196
 msgid "Extra file from torrent"
 msgstr "Fichier supplémentaire du torrent"
 
-#: ../internal/components/controls.go:1310
+#: ../internal/components/controls.go:1285
 msgid "Disable audio"
 msgstr "Désactiver l'audio"
 
-#: ../internal/components/controls.go:1312
+#: ../internal/components/controls.go:1287
 msgid "Track %v"
 msgstr "Piste %v"
 
-#: ../internal/components/controls.go:1320
+#: ../internal/components/controls.go:1295
 msgid "Untitled Track"
 msgstr "Piste sans titre"
 
-#: ../internal/components/controls.go:1640
+#: ../internal/components/controls.go:1619
 msgid "Manually added"
 msgstr "Ajouté manuellement"
 
