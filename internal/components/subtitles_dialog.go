@@ -43,29 +43,31 @@ func NewSubtitlesDialog(transientFor *adw.ApplicationWindow) SubtitlesDialog {
 	return v
 }
 
-func (s *SubtitlesDialog) CancelButton() *gtk.Button {
+func (s *SubtitlesDialog) EnableSpinner() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.cancelButton
+	subD.spinner.SetVisible(true)
+	subD.spinner.SetSpinning(true)
 }
 
-func (s *SubtitlesDialog) Spinner() *gtk.Spinner {
+func (s *SubtitlesDialog) DisableSpinner() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.spinner
+	subD.spinner.SetSpinning(false)
+	subD.spinner.SetVisible(false)
 }
 
-func (s *SubtitlesDialog) OKButton() *gtk.Button {
+func (s *SubtitlesDialog) EnableOKButton() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.okButton
+	subD.okButton.SetSensitive(true)
 }
 
-func (s *SubtitlesDialog) SelectionGroup() *adw.PreferencesGroup {
+func (s *SubtitlesDialog) DisableOKButton() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.selectionGroup
+	subD.okButton.SetSensitive(false)
 }
 
-func (s *SubtitlesDialog) AddFromFileButton() *gtk.Button {
+func (s *SubtitlesDialog) AddSubtitleTrack(row *adw.ActionRow) {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.addFromFileButton
+	subD.selectionGroup.Add(&row.PreferencesRow.Widget)
 }
 
 func (s *SubtitlesDialog) Overlay() *adw.ToastOverlay {

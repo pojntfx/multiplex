@@ -33,35 +33,35 @@ msgstr "%v Mo/%v Mo (%v pairs)"
 msgid "Searching for peers"
 msgstr "Recherche de pairs"
 
-#: ../internal/components/controls.go:1185
+#: ../internal/components/controls.go:1183
 msgid "Disable subtitles"
 msgstr "Désactiver les sous-titres"
 
-#: ../internal/components/controls.go:1190
+#: ../internal/components/controls.go:1188
 msgid "Integrated subtitle"
 msgstr "Sous-titre intégré"
 
-#: ../internal/components/controls.go:1193
+#: ../internal/components/controls.go:1191
 msgid "Subtitle from torrent"
 msgstr "Sous-titre du torrent"
 
-#: ../internal/components/controls.go:1196
+#: ../internal/components/controls.go:1194
 msgid "Extra file from torrent"
 msgstr "Fichier supplémentaire du torrent"
 
-#: ../internal/components/controls.go:1285
+#: ../internal/components/controls.go:1283
 msgid "Disable audio"
 msgstr "Désactiver l'audio"
 
-#: ../internal/components/controls.go:1287
+#: ../internal/components/controls.go:1285
 msgid "Track %v"
 msgstr "Piste %v"
 
-#: ../internal/components/controls.go:1295
+#: ../internal/components/controls.go:1293
 msgid "Untitled Track"
 msgstr "Piste sans titre"
 
-#: ../internal/components/controls.go:1619
+#: ../internal/components/controls.go:1617
 msgid "Manually added"
 msgstr "Ajouté manuellement"
 

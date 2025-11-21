@@ -1122,14 +1122,12 @@ func OpenControlsWindow(
 
 					go func() {
 						defer func() {
-							subtitlesDialog.Spinner().SetSpinning(false)
-							subtitlesDialog.Spinner().SetVisible(false)
-							subtitlesDialog.OKButton().SetSensitive(true)
+							subtitlesDialog.DisableSpinner()
+							subtitlesDialog.EnableOKButton()
 						}()
 
-						subtitlesDialog.OKButton().SetSensitive(false)
-						subtitlesDialog.Spinner().SetVisible(true)
-						subtitlesDialog.Spinner().SetSpinning(true)
+						subtitlesDialog.DisableOKButton()
+						subtitlesDialog.EnableSpinner()
 
 						streamURL, err := getStreamURL(apiAddr, magnetLink, m)
 						if err != nil {
@@ -1201,7 +1199,7 @@ func OpenControlsWindow(
 				row.AddPrefix(&activator.Widget)
 				row.SetActivatableWidget(&activator.Widget)
 
-				subtitlesDialog.SelectionGroup().Add(&row.PreferencesRow.Widget)
+				subtitlesDialog.AddSubtitleTrack(row)
 			}
 
 			audiotrackActivators := []gtk.CheckButton{}
@@ -1623,7 +1621,7 @@ func OpenControlsWindow(
 						row.AddPrefix(&activator.Widget)
 						row.SetActivatableWidget(&activator.Widget)
 
-						subtitlesDialog.SelectionGroup().Add(&row.PreferencesRow.Widget)
+						subtitlesDialog.AddSubtitleTrack(row)
 					}
 
 					filePicker.Destroy()
