@@ -4,64 +4,64 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/controls.go:341
+#: ../internal/components/controls.go:325
 msgid "Someone joined the session."
 msgstr "Jemand ist der Sitzung beigetreten."
 
-#: ../internal/components/controls.go:347
+#: ../internal/components/controls.go:331
 msgid "Someone left the session."
 msgstr "Jemand hat die Sitzung verlassen."
 
-#: ../internal/components/controls.go:353 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:337 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr "Sie schauen derzeit alleine zu."
 
-#: ../internal/components/controls.go:359
+#: ../internal/components/controls.go:343
 msgid "You're currently watching with %v other person."
 msgstr "Sie schauen derzeit mit %v weiterer Person."
 
-#: ../internal/components/controls.go:364
+#: ../internal/components/controls.go:348
 msgid "You're currently watching with %v other people."
 msgstr "Sie schauen derzeit mit %v weiteren Personen."
 
-#: ../internal/components/controls.go:458
+#: ../internal/components/controls.go:442
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v MB/%v MB (%v Knoten)"
 
-#: ../internal/components/controls.go:463
+#: ../internal/components/controls.go:447
 msgid "Searching for peers"
 msgstr "Suche nach Knoten"
 
-#: ../internal/components/controls.go:1183
+#: ../internal/components/controls.go:1167
 msgid "Disable subtitles"
 msgstr "Untertitel deaktivieren"
 
-#: ../internal/components/controls.go:1188
+#: ../internal/components/controls.go:1172
 msgid "Integrated subtitle"
 msgstr "Integrierter Untertitel"
 
-#: ../internal/components/controls.go:1191
+#: ../internal/components/controls.go:1175
 msgid "Subtitle from torrent"
 msgstr "Untertitel aus Torrent"
 
-#: ../internal/components/controls.go:1194
+#: ../internal/components/controls.go:1178
 msgid "Extra file from torrent"
 msgstr "Zusatzdatei aus Torrent"
 
-#: ../internal/components/controls.go:1283
+#: ../internal/components/controls.go:1267
 msgid "Disable audio"
 msgstr "Audio deaktivieren"
 
-#: ../internal/components/controls.go:1285
+#: ../internal/components/controls.go:1269
 msgid "Track %v"
 msgstr "Spur %v"
 
-#: ../internal/components/controls.go:1293
+#: ../internal/components/controls.go:1277
 msgid "Untitled Track"
 msgstr "Unbenannte Spur"
 
-#: ../internal/components/controls.go:1617
+#: ../internal/components/controls.go:1605
 msgid "Manually added"
 msgstr "Manuell hinzugefügt"
 
@@ -90,15 +90,15 @@ msgstr "Dieser Stream-Code ist ungültig."
 msgid "No README found."
 msgstr "Keine README-Datei gefunden."
 
-#: ../internal/components/preferences_dialog.go:141
+#: ../internal/components/preferences_dialog.go:140
 msgid "Reopen to apply the changes."
 msgstr "Die App muss neugestartet werden um die Änderungen anzuwenden."
 
-#: ../internal/components/preferences_dialog.go:142
+#: ../internal/components/preferences_dialog.go:141
 msgid "Reopen"
 msgstr "App neustarten"
 
-#: ../internal/components/preferences_dialog.go:161
+#: ../internal/components/preferences_dialog.go:160
 msgid "Select storage location"
 msgstr "Speicherort auswählen"
 

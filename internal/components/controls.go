@@ -222,23 +222,7 @@ func OpenControlsWindow(
 
 	descriptionWindow := NewDescriptionWindow(&window)
 	subtitlesDialog := NewSubtitlesDialog(&window)
-
-	audiotracksBuilder := gtk.NewBuilderFromResource(resources.ResourceAudiotracksPath)
-	defer audiotracksBuilder.Unref()
-	var (
-		audiotracksDialog         adw.Window
-		audiotracksCancelButton   gtk.Button
-		audiotracksOKButton       gtk.Button
-		audiotracksSelectionGroup adw.PreferencesGroup
-	)
-	audiotracksBuilder.GetObject("audiotracks-dialog").Cast(&audiotracksDialog)
-	defer audiotracksDialog.Unref()
-	audiotracksBuilder.GetObject("button-cancel").Cast(&audiotracksCancelButton)
-	defer audiotracksCancelButton.Unref()
-	audiotracksBuilder.GetObject("button-ok").Cast(&audiotracksOKButton)
-	defer audiotracksOKButton.Unref()
-	audiotracksBuilder.GetObject("audiotracks").Cast(&audiotracksSelectionGroup)
-	defer audiotracksSelectionGroup.Unref()
+	audiotracksDialog := NewAudioTracksDialog(&window)
 
 	preparingBuilder := gtk.NewBuilderFromResource(resources.ResourcePreparingPath)
 	defer preparingBuilder.Unref()
@@ -1300,7 +1284,7 @@ func OpenControlsWindow(
 				row.AddPrefix(&activator.Widget)
 				row.SetActivatableWidget(&activator.Widget)
 
-				audiotracksSelectionGroup.Add(&row.PreferencesRow.Widget)
+				audiotracksDialog.AddAudioTrack(row)
 			}
 
 			ctrl := gtk.NewEventControllerMotion()
@@ -1499,7 +1483,7 @@ func OpenControlsWindow(
 			}
 			audiotracksButton.ConnectClicked(&onAudiotracksClicked)
 
-			for _, d := range []adw.Window{subtitlesDialog.Window, audiotracksDialog} {
+			for _, d := range []adw.Window{subtitlesDialog.Window, audiotracksDialog.Window} {
 				dialog := d
 
 				escCtrl := gtk.NewEventControllerKey()
@@ -1550,13 +1534,17 @@ func OpenControlsWindow(
 				audiotracksDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			audiotracksCancelButton.ConnectClicked(&onAudiotracksCancelClicked)
+			audiotracksDialog.SetCancelCallback(func() {
+				onAudiotracksCancelClicked(gtk.Button{})
+			})
 
 			onAudiotracksOKClicked := func(gtk.Button) {
 				audiotracksDialog.Close()
 				subtitlesDialog.SetVisible(false)
 			}
-			audiotracksOKButton.ConnectClicked(&onAudiotracksOKClicked)
+			audiotracksDialog.SetOKCallback(func() {
+				onAudiotracksOKClicked(gtk.Button{})
+			})
 
 			onAddSubtitlesFromFileClicked := func(gtk.Button) {
 				filePicker := gtk.NewFileChooserNative(

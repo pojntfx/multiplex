@@ -4,64 +4,64 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/controls.go:341
+#: ../internal/components/controls.go:325
 msgid "Someone joined the session."
 msgstr "Quelqu'un a rejoint la session."
 
-#: ../internal/components/controls.go:347
+#: ../internal/components/controls.go:331
 msgid "Someone left the session."
 msgstr "Quelqu'un a quitté la session."
 
-#: ../internal/components/controls.go:353 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:337 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr "Vous regardez actuellement seul."
 
-#: ../internal/components/controls.go:359
+#: ../internal/components/controls.go:343
 msgid "You're currently watching with %v other person."
 msgstr "Vous regardez actuellement avec %v autre personne."
 
-#: ../internal/components/controls.go:364
+#: ../internal/components/controls.go:348
 msgid "You're currently watching with %v other people."
 msgstr "Vous regardez actuellement avec %v autres personnes."
 
-#: ../internal/components/controls.go:458
+#: ../internal/components/controls.go:442
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v Mo/%v Mo (%v pairs)"
 
-#: ../internal/components/controls.go:463
+#: ../internal/components/controls.go:447
 msgid "Searching for peers"
 msgstr "Recherche de pairs"
 
-#: ../internal/components/controls.go:1183
+#: ../internal/components/controls.go:1167
 msgid "Disable subtitles"
 msgstr "Désactiver les sous-titres"
 
-#: ../internal/components/controls.go:1188
+#: ../internal/components/controls.go:1172
 msgid "Integrated subtitle"
 msgstr "Sous-titre intégré"
 
-#: ../internal/components/controls.go:1191
+#: ../internal/components/controls.go:1175
 msgid "Subtitle from torrent"
 msgstr "Sous-titre du torrent"
 
-#: ../internal/components/controls.go:1194
+#: ../internal/components/controls.go:1178
 msgid "Extra file from torrent"
 msgstr "Fichier supplémentaire du torrent"
 
-#: ../internal/components/controls.go:1283
+#: ../internal/components/controls.go:1267
 msgid "Disable audio"
 msgstr "Désactiver l'audio"
 
-#: ../internal/components/controls.go:1285
+#: ../internal/components/controls.go:1269
 msgid "Track %v"
 msgstr "Piste %v"
 
-#: ../internal/components/controls.go:1293
+#: ../internal/components/controls.go:1277
 msgid "Untitled Track"
 msgstr "Piste sans titre"
 
-#: ../internal/components/controls.go:1617
+#: ../internal/components/controls.go:1605
 msgid "Manually added"
 msgstr "Ajouté manuellement"
 
@@ -89,15 +89,15 @@ msgstr "Ce code de diffusion est invalide."
 msgid "No README found."
 msgstr "Aucun fichier README trouvé."
 
-#: ../internal/components/preferences_dialog.go:141
+#: ../internal/components/preferences_dialog.go:140
 msgid "Reopen to apply the changes."
 msgstr "L'application doit être redémarrée pour appliquer les modifications."
 
-#: ../internal/components/preferences_dialog.go:142
+#: ../internal/components/preferences_dialog.go:141
 msgid "Reopen"
 msgstr "Redémarrer l'application"
 
-#: ../internal/components/preferences_dialog.go:161
+#: ../internal/components/preferences_dialog.go:160
 msgid "Select storage location"
 msgstr "Sélectionner l'emplacement de stockage"
 

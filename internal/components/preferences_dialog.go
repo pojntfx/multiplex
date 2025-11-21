@@ -39,7 +39,6 @@ type PreferencesDialog struct {
 	preferencesHaveChanged bool
 	closeRequestCallback   func() bool
 
-	// Dependencies for setup
 	ctx      context.Context
 	settings *gio.Settings
 	window   *adw.ApplicationWindow

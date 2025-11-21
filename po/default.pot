@@ -1,61 +1,61 @@
-#: ../internal/components/controls.go:341
+#: ../internal/components/controls.go:325
 msgid "Someone joined the session."
 msgstr ""
 
-#: ../internal/components/controls.go:347
+#: ../internal/components/controls.go:331
 msgid "Someone left the session."
 msgstr ""
 
-#: ../internal/components/controls.go:353 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:337 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr ""
 
-#: ../internal/components/controls.go:359
+#: ../internal/components/controls.go:343
 msgid "You're currently watching with %v other person."
 msgstr ""
 
-#: ../internal/components/controls.go:364
+#: ../internal/components/controls.go:348
 msgid "You're currently watching with %v other people."
 msgstr ""
 
-#: ../internal/components/controls.go:458
+#: ../internal/components/controls.go:442
 msgid "%v MB/%v MB (%v peers)"
 msgstr ""
 
-#: ../internal/components/controls.go:463
+#: ../internal/components/controls.go:447
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls.go:1183
+#: ../internal/components/controls.go:1167
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls.go:1188
+#: ../internal/components/controls.go:1172
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls.go:1191
+#: ../internal/components/controls.go:1175
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1194
+#: ../internal/components/controls.go:1178
 msgid "Extra file from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1283
+#: ../internal/components/controls.go:1267
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls.go:1285
+#: ../internal/components/controls.go:1269
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls.go:1293
+#: ../internal/components/controls.go:1277
 msgid "Untitled Track"
 msgstr ""
 
-#: ../internal/components/controls.go:1617
+#: ../internal/components/controls.go:1605
 msgid "Manually added"
 msgstr ""
 
@@ -83,15 +83,15 @@ msgstr ""
 msgid "No README found."
 msgstr ""
 
-#: ../internal/components/preferences_dialog.go:141
+#: ../internal/components/preferences_dialog.go:140
 msgid "Reopen to apply the changes."
 msgstr ""
 
-#: ../internal/components/preferences_dialog.go:142
+#: ../internal/components/preferences_dialog.go:141
 msgid "Reopen"
 msgstr ""
 
-#: ../internal/components/preferences_dialog.go:161
+#: ../internal/components/preferences_dialog.go:160
 msgid "Select storage location"
 msgstr ""
 
