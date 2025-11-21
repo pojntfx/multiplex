@@ -223,20 +223,7 @@ func OpenControlsWindow(
 	descriptionWindow := NewDescriptionWindow(&window)
 	subtitlesDialog := NewSubtitlesDialog(&window)
 	audiotracksDialog := NewAudioTracksDialog(&window)
-
-	preparingBuilder := gtk.NewBuilderFromResource(resources.ResourcePreparingPath)
-	defer preparingBuilder.Unref()
-	var (
-		preparingWindow       adw.Window
-		preparingProgressBar  gtk.ProgressBar
-		preparingCancelButton gtk.Button
-	)
-	preparingBuilder.GetObject("preparing-window").Cast(&preparingWindow)
-	defer preparingWindow.Unref()
-	preparingBuilder.GetObject("preparing-progress-bar").Cast(&preparingProgressBar)
-	defer preparingProgressBar.Unref()
-	preparingBuilder.GetObject("cancel-preparing-button").Cast(&preparingCancelButton)
-	defer preparingCancelButton.Unref()
+	preparingWindow := NewPreparingWindow(&window)
 
 	buttonHeaderbarTitle.SetLabel(torrentTitle)
 	descriptionWindow.HeaderbarTitle().SetLabel(torrentTitle)
@@ -436,7 +423,7 @@ func OpenControlsWindow(
 			}
 
 		n:
-			for _, progressBar := range []*gtk.ProgressBar{&preparingProgressBar, descriptionProgressBar} {
+			for _, progressBar := range []*gtk.ProgressBar{preparingWindow.ProgressBar(), descriptionProgressBar} {
 				if length > 0 {
 					progressBar.SetFraction(completed / length)
 					progressBar.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"), int(completed/1000/1000), int(length/1000/1000), peers))
@@ -455,7 +442,9 @@ func OpenControlsWindow(
 
 		return true
 	}
-	preparingWindow.ConnectCloseRequest(&onPrepCloseRequest)
+	preparingWindow.SetCloseRequestCallback(func() bool {
+		return onPrepCloseRequest(gtk.Window{})
+	})
 
 	onPrepCancel := func(gtk.Button) {
 		adapter.Close()
@@ -478,7 +467,9 @@ func OpenControlsWindow(
 		app.AddWindow(&mainWindow.ApplicationWindow.Window)
 		mainWindow.SetVisible(true)
 	}
-	preparingCancelButton.ConnectClicked(&onPrepCancel)
+	preparingWindow.SetCancelCallback(func() {
+		onPrepCancel(gtk.Button{})
+	})
 
 	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", apiUsername, apiPassword)))
 

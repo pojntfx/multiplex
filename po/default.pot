@@ -1,61 +1,61 @@
-#: ../internal/components/controls.go:325
+#: ../internal/components/controls.go:312
 msgid "Someone joined the session."
 msgstr ""
 
-#: ../internal/components/controls.go:331
+#: ../internal/components/controls.go:318
 msgid "Someone left the session."
 msgstr ""
 
-#: ../internal/components/controls.go:337 ../assets/resources/controls.blp:205
+#: ../internal/components/controls.go:324 ../assets/resources/controls.blp:205
 #: ../assets/resources/controls.ui:225
 msgid "You're currently watching alone."
 msgstr ""
 
-#: ../internal/components/controls.go:343
+#: ../internal/components/controls.go:330
 msgid "You're currently watching with %v other person."
 msgstr ""
 
-#: ../internal/components/controls.go:348
+#: ../internal/components/controls.go:335
 msgid "You're currently watching with %v other people."
 msgstr ""
 
-#: ../internal/components/controls.go:442
+#: ../internal/components/controls.go:429
 msgid "%v MB/%v MB (%v peers)"
 msgstr ""
 
-#: ../internal/components/controls.go:447
+#: ../internal/components/controls.go:434
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls.go:1167
+#: ../internal/components/controls.go:1158
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls.go:1172
+#: ../internal/components/controls.go:1163
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls.go:1175
+#: ../internal/components/controls.go:1166
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1178
+#: ../internal/components/controls.go:1169
 msgid "Extra file from torrent"
 msgstr ""
 
-#: ../internal/components/controls.go:1267
+#: ../internal/components/controls.go:1258
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls.go:1269
+#: ../internal/components/controls.go:1260
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls.go:1277
+#: ../internal/components/controls.go:1268
 msgid "Untitled Track"
 msgstr ""
 
-#: ../internal/components/controls.go:1605
+#: ../internal/components/controls.go:1596
 msgid "Manually added"
 msgstr ""
 
