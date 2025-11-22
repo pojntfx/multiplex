@@ -645,7 +645,7 @@ func (w *MainWindow) onDownloadAndPlay(adw.SplitButton) {
 
 	ctxDownload, cancel := context.WithCancel(context.Background())
 	ready := make(chan struct{})
-	if err := OpenControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, dstFile, w.settings, w.gateway, w.cancel, w.tmpDir, ready, cancel, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
+	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, dstFile, w.settings, w.gateway, w.cancel, w.tmpDir, ready, cancel, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
 		OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
 		return
@@ -733,7 +733,7 @@ func (w *MainWindow) onStreamWithoutDownloading(gtk.Button) {
 	}
 
 	ready := make(chan struct{})
-	if err := OpenControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, streamURL, w.settings, w.gateway, w.cancel, w.tmpDir, ready, func() {}, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
+	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, streamURL, w.settings, w.gateway, w.cancel, w.tmpDir, ready, func() {}, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
 		OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
 		return

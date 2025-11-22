@@ -4,70 +4,21 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/controls.go:312
-msgid "Someone joined the session."
-msgstr "Someone joined the session."
-
-#: ../internal/components/controls.go:318
-msgid "Someone left the session."
-msgstr "Someone left the session."
-
-#: ../internal/components/controls.go:324 ../assets/resources/controls.blp:205
-#: ../assets/resources/controls.ui:225
-msgid "You're currently watching alone."
-msgstr "You're currently watching alone."
-
-#: ../internal/components/controls.go:330
-msgid "You're currently watching with %v other person."
-msgstr "You're currently watching with %v other person."
-
-#: ../internal/components/controls.go:335
-msgid "You're currently watching with %v other people."
-msgstr "You're currently watching with %v other people."
-
-#: ../internal/components/controls.go:429
-msgid "%v MB/%v MB (%v peers)"
-msgstr "%v MB/%v MB (%v peers)"
-
-#: ../internal/components/controls.go:434
-msgid "Searching for peers"
-msgstr "Searching for peers"
-
-#: ../internal/components/controls.go:1158
-msgid "Disable subtitles"
-msgstr "Disable subtitles"
-
-#: ../internal/components/controls.go:1163
-msgid "Integrated subtitle"
-msgstr "Integrated subtitle"
-
-#: ../internal/components/controls.go:1166
-msgid "Subtitle from torrent"
-msgstr "Subtitle from torrent"
-
-#: ../internal/components/controls.go:1169
-msgid "Extra file from torrent"
-msgstr "Extra file from torrent"
-
-#: ../internal/components/controls.go:1258
-msgid "Disable audio"
-msgstr "Disable audio"
-
-#: ../internal/components/controls.go:1260
-msgid "Track %v"
-msgstr "Track %v"
-
-#: ../internal/components/controls.go:1268
-msgid "Untitled Track"
-msgstr "Untitled Track"
-
-#: ../internal/components/controls.go:1596
-msgid "Manually added"
-msgstr "Manually added"
-
 #: ../internal/components/error_dialog.go:51
 msgid "Could not continue due to a fatal error"
 msgstr "Could not continue due to a fatal error"
+
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "Reopen to apply the changes."
+
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "Reopen"
+
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Select storage location"
 
 #: ../internal/components/main_window.go:246
 msgid "Could not get info for this magnet link."
@@ -89,17 +40,66 @@ msgstr "This stream code is invalid."
 msgid "No README found."
 msgstr "No README found."
 
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "Reopen to apply the changes."
+#: ../internal/components/controls_window.go:335
+msgid "Someone joined the session."
+msgstr "Someone joined the session."
 
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "Reopen"
+#: ../internal/components/controls_window.go:340
+msgid "Someone left the session."
+msgstr "Someone left the session."
 
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Select storage location"
+#: ../internal/components/controls_window.go:345
+#: ../assets/resources/controls.blp:205 ../assets/resources/controls.ui:225
+msgid "You're currently watching alone."
+msgstr "You're currently watching alone."
+
+#: ../internal/components/controls_window.go:350
+msgid "You're currently watching with %v other person."
+msgstr "You're currently watching with %v other person."
+
+#: ../internal/components/controls_window.go:354
+msgid "You're currently watching with %v other people."
+msgstr "You're currently watching with %v other people."
+
+#: ../internal/components/controls_window.go:444
+msgid "%v MB/%v MB (%v peers)"
+msgstr "%v MB/%v MB (%v peers)"
+
+#: ../internal/components/controls_window.go:448
+msgid "Searching for peers"
+msgstr "Searching for peers"
+
+#: ../internal/components/controls_window.go:1222
+msgid "Disable subtitles"
+msgstr "Disable subtitles"
+
+#: ../internal/components/controls_window.go:1227
+msgid "Integrated subtitle"
+msgstr "Integrated subtitle"
+
+#: ../internal/components/controls_window.go:1230
+msgid "Subtitle from torrent"
+msgstr "Subtitle from torrent"
+
+#: ../internal/components/controls_window.go:1233
+msgid "Extra file from torrent"
+msgstr "Extra file from torrent"
+
+#: ../internal/components/controls_window.go:1296
+msgid "Manually added"
+msgstr "Manually added"
+
+#: ../internal/components/controls_window.go:1396
+msgid "Disable audio"
+msgstr "Disable audio"
+
+#: ../internal/components/controls_window.go:1398
+msgid "Track %v"
+msgstr "Track %v"
+
+#: ../internal/components/controls_window.go:1406
+msgid "Untitled Track"
+msgstr "Untitled Track"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
