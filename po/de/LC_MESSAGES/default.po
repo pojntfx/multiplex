@@ -50,6 +50,11 @@ msgstr "%v MB/%v MB (%v Knoten)"
 msgid "Searching for peers"
 msgstr "Suche nach Knoten"
 
+#: ../internal/components/controls_window.go:1074
+#: ../internal/components/controls_window.go:1325
+msgid "None"
+msgstr "Keine"
+
 #: ../internal/components/controls_window.go:1222
 msgid "Disable subtitles"
 msgstr "Untertitel deaktivieren"
@@ -65,6 +70,10 @@ msgstr "Untertitel aus Torrent"
 #: ../internal/components/controls_window.go:1233
 msgid "Extra file from torrent"
 msgstr "Zusatzdatei aus Torrent"
+
+#: ../internal/components/controls_window.go:1246
+msgid "Select subtitle file"
+msgstr "Untertitel-Datei auswählen"
 
 #: ../internal/components/controls_window.go:1296
 msgid "Manually added"
@@ -101,6 +110,10 @@ msgstr "Dieser Stream-Code ist ungültig."
 #: ../internal/components/main_window.go:544
 msgid "No README found."
 msgstr "Keine README-Datei gefunden."
+
+#: ../internal/components/main_window.go:638
+msgid "Manual Downloads"
+msgstr "Manuelle Downloads"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."

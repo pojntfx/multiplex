@@ -635,7 +635,7 @@ func (w *MainWindow) onDownloadAndPlay(adw.SplitButton) {
 		return
 	}
 
-	dstFile := filepath.Join(w.settings.GetString(resources.SchemaStorageKey), "Manual Downloads", selectedTorrent.InfoHash.HexString(), w.selectedTorrentMedia)
+	dstFile := filepath.Join(w.settings.GetString(resources.SchemaStorageKey), L("Manual Downloads"), selectedTorrent.InfoHash.HexString(), w.selectedTorrentMedia)
 
 	if err := os.MkdirAll(filepath.Dir(dstFile), os.ModePerm); err != nil {
 		OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)

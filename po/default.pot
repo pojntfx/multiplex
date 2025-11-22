@@ -43,6 +43,11 @@ msgstr ""
 msgid "Searching for peers"
 msgstr ""
 
+#: ../internal/components/controls_window.go:1074
+#: ../internal/components/controls_window.go:1325
+msgid "None"
+msgstr ""
+
 #: ../internal/components/controls_window.go:1222
 msgid "Disable subtitles"
 msgstr ""
@@ -57,6 +62,10 @@ msgstr ""
 
 #: ../internal/components/controls_window.go:1233
 msgid "Extra file from torrent"
+msgstr ""
+
+#: ../internal/components/controls_window.go:1246
+msgid "Select subtitle file"
 msgstr ""
 
 #: ../internal/components/controls_window.go:1296
@@ -93,6 +102,10 @@ msgstr ""
 
 #: ../internal/components/main_window.go:544
 msgid "No README found."
+msgstr ""
+
+#: ../internal/components/main_window.go:638
+msgid "Manual Downloads"
 msgstr ""
 
 #: ../internal/utils/subtitles.go:100

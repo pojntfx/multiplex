@@ -49,6 +49,11 @@ msgstr "%v Mo/%v Mo (%v pairs)"
 msgid "Searching for peers"
 msgstr "Recherche de pairs"
 
+#: ../internal/components/controls_window.go:1074
+#: ../internal/components/controls_window.go:1325
+msgid "None"
+msgstr "Aucun"
+
 #: ../internal/components/controls_window.go:1222
 msgid "Disable subtitles"
 msgstr "Désactiver les sous-titres"
@@ -64,6 +69,10 @@ msgstr "Sous-titre du torrent"
 #: ../internal/components/controls_window.go:1233
 msgid "Extra file from torrent"
 msgstr "Fichier supplémentaire du torrent"
+
+#: ../internal/components/controls_window.go:1246
+msgid "Select subtitle file"
+msgstr "Sélectionner le fichier de sous-titres"
 
 #: ../internal/components/controls_window.go:1296
 msgid "Manually added"
@@ -100,6 +109,10 @@ msgstr "Ce code de diffusion est invalide."
 #: ../internal/components/main_window.go:544
 msgid "No README found."
 msgstr "Aucun fichier README trouvé."
+
+#: ../internal/components/main_window.go:638
+msgid "Manual Downloads"
+msgstr "Téléchargements manuels"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."

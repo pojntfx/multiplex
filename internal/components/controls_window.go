@@ -1071,7 +1071,7 @@ func (c *ControlsWindow) setupSubtitleHandlers(subtracks []mediaWithPriorityAndI
 	for i, file := range append(
 		append([]mediaWithPriorityAndID{
 			{media: media{
-				name: "None",
+				name: L("None"),
 				size: 0,
 			},
 				priority: -1,
@@ -1243,7 +1243,7 @@ func (c *ControlsWindow) setupSubtitleHandlers(subtracks []mediaWithPriorityAndI
 
 	onAddSubtitlesFromFileClicked := func(gtk.Button) {
 		filePicker := gtk.NewFileChooserNative(
-			"Select storage location",
+			L("Select subtitle file"),
 			&controlsW.ApplicationWindow.Window,
 			gtk.FileChooserActionOpenValue,
 			"",
@@ -1322,7 +1322,7 @@ func (c *ControlsWindow) setupAudioTrackHandlers(audiotracks []audioTrack, audio
 	for i, audiotrack := range append(
 		[]audioTrack{
 			{
-				lang: "None",
+				lang: L("None"),
 				id:   -1,
 			},
 		},
