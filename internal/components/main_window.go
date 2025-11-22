@@ -68,7 +68,7 @@ type MainWindow struct {
 	previousButton                 *gtk.Button
 	nextButton                     *gtk.Button
 	menuButton                     *gtk.MenuButton
-	headerbarSpinner               *gtk.Spinner
+	headerbarSpinner               *adw.Spinner
 	stack                          *gtk.Stack
 	magnetLinkEntry                *gtk.Entry
 	mediaSelectionGroup            *adw.PreferencesGroup
@@ -229,7 +229,7 @@ func (w *MainWindow) onNext() {
 					w.nextButton.SetSensitive(false)
 				}
 
-				w.headerbarSpinner.SetSpinning(true)
+				w.headerbarSpinner.SetVisible(true)
 				w.magnetLinkEntry.SetSensitive(false)
 
 				log.Info().
@@ -247,7 +247,7 @@ func (w *MainWindow) onNext() {
 
 					w.overlay.AddToast(toast)
 
-					w.headerbarSpinner.SetSpinning(false)
+					w.headerbarSpinner.SetVisible(false)
 					w.magnetLinkEntry.SetSensitive(true)
 
 					w.magnetLinkEntry.GrabFocus()
@@ -350,7 +350,7 @@ func (w *MainWindow) onNext() {
 					w.mediaSelectionGroup.Add(&row.PreferencesRow.Widget)
 				}
 
-				w.headerbarSpinner.SetSpinning(false)
+				w.headerbarSpinner.SetVisible(false)
 				w.magnetLinkEntry.SetSensitive(true)
 				w.previousButton.SetVisible(true)
 
@@ -398,7 +398,7 @@ func (w *MainWindow) onNext() {
 					return
 				}
 
-				w.headerbarSpinner.SetSpinning(true)
+				w.headerbarSpinner.SetVisible(true)
 				w.magnetLinkEntry.SetSensitive(false)
 
 				q := wu.Query()
@@ -529,7 +529,7 @@ func (w *MainWindow) onNext() {
 					})
 				}
 
-				w.headerbarSpinner.SetSpinning(false)
+				w.headerbarSpinner.SetVisible(false)
 				w.magnetLinkEntry.SetSensitive(true)
 				w.previousButton.SetVisible(true)
 
@@ -848,7 +848,7 @@ func init() {
 				previousButton                 gtk.Button
 				nextButton                     gtk.Button
 				menuButton                     gtk.MenuButton
-				headerbarSpinner               gtk.Spinner
+				headerbarSpinner               adw.Spinner
 				stack                          gtk.Stack
 				magnetLinkEntry                gtk.Entry
 				mediaSelectionGroup            adw.PreferencesGroup

@@ -89,7 +89,7 @@ type ControlsWindow struct {
 	audiotracksButton       *gtk.Button
 	fullscreenButton        *gtk.ToggleButton
 	mediaInfoButton         *gtk.Button
-	headerbarSpinner        *gtk.Spinner
+	headerbarSpinner        *adw.Spinner
 	menuButton              *gtk.MenuButton
 	elapsedTrackLabel       *gtk.Label
 	remainingTrackLabel     *gtk.Label
@@ -764,7 +764,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 				Str("channel", peer.ChannelID).
 				Msg("Disconnected from peer")
 
-			controlsW.headerbarSpinner.SetSpinning(false)
+			controlsW.headerbarSpinner.SetVisible(false)
 
 			syncWatchingWithLabel(false)
 		}()
@@ -968,7 +968,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 				}
 
 				if b.Buffering {
-					controlsW.headerbarSpinner.SetSpinning(true)
+					controlsW.headerbarSpinner.SetVisible(true)
 
 					if pausePlayback != nil {
 						pausePlayback()
@@ -976,7 +976,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 
 					controlsW.playButton.SetIconName(pauseIcon)
 				} else {
-					controlsW.headerbarSpinner.SetSpinning(false)
+					controlsW.headerbarSpinner.SetVisible(false)
 
 					if startPlayback != nil {
 						startPlayback()
@@ -1038,7 +1038,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	controlsW.setupFullscreenControl()
 
 	onPlayClicked := func(gtk.Button) {
-		if !controlsW.headerbarSpinner.GetSpinning() {
+		if !controlsW.headerbarSpinner.GetVisible() {
 			if controlsW.playButton.GetIconName() == playIcon {
 				pauses.Broadcast(false)
 				startPlayback()
@@ -1518,7 +1518,7 @@ func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSee
 				if !previouslyBuffered {
 					previouslyBuffered = true
 
-					controlsW.headerbarSpinner.SetSpinning(true)
+					controlsW.headerbarSpinner.SetVisible(true)
 					buffering.Broadcast(true)
 					pauses.Broadcast(true)
 					positions.Broadcast(float64(elapsed.Nanoseconds()))
@@ -1527,7 +1527,7 @@ func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSee
 				if previouslyBuffered {
 					previouslyBuffered = false
 
-					controlsW.headerbarSpinner.SetSpinning(false)
+					controlsW.headerbarSpinner.SetVisible(false)
 					buffering.Broadcast(false)
 					pauses.Broadcast(false)
 					positions.Broadcast(float64(elapsed.Nanoseconds()))
@@ -1777,7 +1777,7 @@ func init() {
 				audiotracksButton       gtk.Button
 				fullscreenButton        gtk.ToggleButton
 				mediaInfoButton         gtk.Button
-				headerbarSpinner        gtk.Spinner
+				headerbarSpinner        adw.Spinner
 				menuButton              gtk.MenuButton
 				elapsedTrackLabel       gtk.Label
 				remainingTrackLabel     gtk.Label

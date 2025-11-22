@@ -81,8 +81,13 @@ template $MainWindow: Adw.ApplicationWindow {
           spacing: 12;
           valign: start;
 
-          Spinner headerbar-spinner {
+          Adw.Spinner headerbar-spinner {
             tooltip-text: _("Getting metadata ...");
+            visible: false;
+            halign: center;
+            valign: center;
+            width-request: 16;
+            height-request: 16;
           }
 
           Button next-button {

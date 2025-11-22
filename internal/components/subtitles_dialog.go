@@ -20,7 +20,7 @@ type SubtitlesDialog struct {
 	adw.Window
 
 	cancelButton      *gtk.Button
-	spinner           *gtk.Spinner
+	spinner           *adw.Spinner
 	okButton          *gtk.Button
 	selectionGroup    *adw.PreferencesGroup
 	addFromFileButton *gtk.Button
@@ -46,12 +46,10 @@ func NewSubtitlesDialog(transientFor *adw.ApplicationWindow) SubtitlesDialog {
 func (s *SubtitlesDialog) EnableSpinner() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
 	subD.spinner.SetVisible(true)
-	subD.spinner.SetSpinning(true)
 }
 
 func (s *SubtitlesDialog) DisableSpinner() {
 	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.spinner.SetSpinning(false)
 	subD.spinner.SetVisible(false)
 }
 
@@ -115,7 +113,7 @@ func init() {
 
 			var (
 				cancelButton      gtk.Button
-				spinner           gtk.Spinner
+				spinner           adw.Spinner
 				okButton          gtk.Button
 				selectionGroup    adw.PreferencesGroup
 				addFromFileButton gtk.Button

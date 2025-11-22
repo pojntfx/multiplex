@@ -21,26 +21,6 @@ msgstr "App neustarten"
 msgid "Select storage location"
 msgstr "Speicherort auswählen"
 
-#: ../internal/components/main_window.go:246
-msgid "Could not get info for this magnet link."
-msgstr "Informationen für diesen Magnet-Link konnten nicht abgerufen werden."
-
-#: ../internal/components/main_window.go:340
-msgid "Media (%v MB)"
-msgstr "Medien (%v MB)"
-
-#: ../internal/components/main_window.go:342
-msgid "Extra file (%v MB)"
-msgstr "Zusatzdatei (%v MB)"
-
-#: ../internal/components/main_window.go:386
-msgid "This stream code is invalid."
-msgstr "Dieser Stream-Code ist ungültig."
-
-#: ../internal/components/main_window.go:544
-msgid "No README found."
-msgstr "Keine README-Datei gefunden."
-
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
 msgstr "Jemand ist der Sitzung beigetreten."
@@ -50,7 +30,7 @@ msgid "Someone left the session."
 msgstr "Jemand hat die Sitzung verlassen."
 
 #: ../internal/components/controls_window.go:345
-#: ../assets/resources/controls.blp:205 ../assets/resources/controls.ui:225
+#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:230
 msgid "You're currently watching alone."
 msgstr "Sie schauen derzeit alleine zu."
 
@@ -102,15 +82,35 @@ msgstr "Spur %v"
 msgid "Untitled Track"
 msgstr "Unbenannte Spur"
 
+#: ../internal/components/main_window.go:246
+msgid "Could not get info for this magnet link."
+msgstr "Informationen für diesen Magnet-Link konnten nicht abgerufen werden."
+
+#: ../internal/components/main_window.go:340
+msgid "Media (%v MB)"
+msgstr "Medien (%v MB)"
+
+#: ../internal/components/main_window.go:342
+msgid "Extra file (%v MB)"
+msgstr "Zusatzdatei (%v MB)"
+
+#: ../internal/components/main_window.go:386
+msgid "This stream code is invalid."
+msgstr "Dieser Stream-Code ist ungültig."
+
+#: ../internal/components/main_window.go:544
+msgid "No README found."
+msgstr "Keine README-Datei gefunden."
+
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
 msgstr "Diese Datei enthält keine Untertitel."
 
-#: ../mockups/playback/window.blp:7 ../assets/resources/controls.blp:8
-#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:124
+#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
+#: ../assets/resources/assistant.blp:129 ../assets/resources/controls.blp:8
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
-#: ../assets/resources/assistant.ui:138 ../assets/resources/controls.ui:13
+#: ../assets/resources/assistant.ui:143 ../assets/resources/controls.ui:13
 msgid "Multiplex"
 msgstr "Multiplex"
 
@@ -124,8 +124,8 @@ msgstr "Audiospuren"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:44
-#: ../assets/resources/subtitles.ui:49 ../assets/resources/audiotracks.ui:27
+#: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
+#: ../assets/resources/subtitles.ui:53 ../assets/resources/audiotracks.ui:27
 msgid "OK"
 msgstr "OK"
 
@@ -296,24 +296,6 @@ msgstr ""
 msgid "Preparing stream ..."
 msgstr "Stream wird vorbereitet ..."
 
-#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:34
-#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:39
-msgid "Subtitles"
-msgstr "Untertitel"
-
-#: ../assets/resources/subtitles.blp:29 ../assets/resources/assistant.blp:85
-#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
-msgstr "Metadaten werden abgerufen ..."
-
-#: ../assets/resources/subtitles.blp:64 ../assets/resources/subtitles.ui:72
-msgid "Tracks"
-msgstr "Spuren"
-
-#: ../assets/resources/subtitles.blp:82 ../assets/resources/subtitles.ui:89
-msgid "Add from file"
-msgstr "Aus Datei hinzufügen"
-
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
 msgid "No Media Player Could Be Found"
 msgstr "Kein Mediaplayer konnte gefunden werden"
@@ -350,70 +332,6 @@ msgstr "Fehler melden"
 msgid "Close Multiplex"
 msgstr "Multiplex schließen"
 
-#: ../assets/resources/controls.blp:29 ../assets/resources/assistant.blp:50
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr "Mediendetails öffnen"
-
-#: ../assets/resources/controls.blp:69 ../assets/resources/controls.ui:78
-msgid "Show peers"
-msgstr "Knoten anzeigen"
-
-#: ../assets/resources/controls.blp:75 ../assets/resources/controls.ui:85
-msgid "Open primary menu"
-msgstr "Hauptmenü öffnen"
-
-#: ../assets/resources/controls.blp:100 ../assets/resources/controls.ui:113
-msgid "Toggle playback"
-msgstr "Wiedergabe umschalten"
-
-#: ../assets/resources/controls.blp:109 ../assets/resources/controls.ui:122
-msgid "Stop playback"
-msgstr "Wiedergabe stoppen"
-
-#: ../assets/resources/controls.blp:124 ../assets/resources/controls.ui:138
-msgid "Elapsed time"
-msgstr "Verstrichene Zeit"
-
-#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:144
-msgid "Playback progress"
-msgstr "Wiedergabefortschritt"
-
-#: ../assets/resources/controls.blp:138 ../assets/resources/controls.ui:153
-msgid "Remaining playback time"
-msgstr "Verbleibende Wiedergabezeit"
-
-#: ../assets/resources/controls.blp:153 ../assets/resources/controls.ui:169
-msgid "Change audio volume"
-msgstr "Lautstärke ändern"
-
-#: ../assets/resources/controls.blp:163 ../assets/resources/controls.ui:179
-msgid "Change audio track"
-msgstr "Audiospur wechseln"
-
-#: ../assets/resources/controls.blp:172 ../assets/resources/controls.ui:188
-msgid "Change subtitles"
-msgstr "Untertitel wechseln"
-
-#: ../assets/resources/controls.blp:181 ../assets/resources/controls.ui:197
-msgid "Toggle fullscreen"
-msgstr "Vollbild umschalten"
-
-#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:231
-msgid ""
-"Ask the people you want to watch with to enter the following stream code:"
-msgstr ""
-"Bitten Sie die Personen, mit denen Sie zuschauen möchten, den folgenden "
-"Stream-Code einzugeben:"
-
-#: ../assets/resources/controls.blp:225 ../assets/resources/controls.ui:248
-msgid "Copy stream code to clipboard"
-msgstr "Stream-Code in Zwischenablage kopieren"
-
-#: ../assets/resources/controls.blp:242 ../assets/resources/controls.ui:267
-msgid "Mute/unmute"
-msgstr "Stummschalten/Stummschaltung aufheben"
-
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
 msgid "Previous"
 msgstr "Zurück"
@@ -423,11 +341,21 @@ msgstr "Zurück"
 msgid "Welcome"
 msgstr "Willkommen"
 
-#: ../assets/resources/assistant.blp:93 ../assets/resources/assistant.ui:101
+#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr "Mediendetails öffnen"
+
+#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr "Metadaten werden abgerufen ..."
+
+#: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
 msgid "Next"
 msgstr "Weiter"
 
-#: ../assets/resources/assistant.blp:125 ../assets/resources/assistant.ui:139
+#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
 msgid ""
 "Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
 "link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
@@ -438,33 +366,105 @@ msgstr ""
 "pojntfx/multiplex/wiki/Stream-Codes\">Stream-Code</a> ein, um das Streaming "
 "zu starten"
 
-#: ../assets/resources/assistant.blp:128 ../assets/resources/assistant.ui:142
+#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
 msgid "Magnet link or stream code"
 msgstr "Magnet-Link oder Stream-Code"
 
-#: ../assets/resources/assistant.blp:146 ../assets/resources/assistant.ui:164
+#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
 msgid "Media"
 msgstr "Medien"
 
-#: ../assets/resources/assistant.blp:147 ../assets/resources/assistant.ui:165
+#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Select the file you want to play"
 msgstr "Wählen Sie die Datei aus, die Sie abspielen möchten"
 
-#: ../assets/resources/assistant.blp:166 ../assets/resources/assistant.ui:188
+#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
 msgid "You're all set!"
 msgstr "Alles bereit!"
 
-#: ../assets/resources/assistant.blp:175 ../assets/resources/assistant.ui:197
+#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
 msgid "I have the right to stream the selected media"
 msgstr "Ich habe das Recht, die ausgewählten Medien zu streamen"
 
-#: ../assets/resources/assistant.blp:183 ../assets/resources/assistant.ui:205
+#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
 msgid "Download and Play"
 msgstr "Herunterladen und abspielen"
 
-#: ../assets/resources/assistant.blp:210 ../assets/resources/assistant.ui:240
+#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
 msgid "Stream without Downloading"
 msgstr "Streamen ohne herunterzuladen"
+
+#: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
+msgid "Show peers"
+msgstr "Knoten anzeigen"
+
+#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
+msgid "Open primary menu"
+msgstr "Hauptmenü öffnen"
+
+#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
+msgid "Toggle playback"
+msgstr "Wiedergabe umschalten"
+
+#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
+msgid "Stop playback"
+msgstr "Wiedergabe stoppen"
+
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
+msgid "Elapsed time"
+msgstr "Verstrichene Zeit"
+
+#: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
+msgid "Playback progress"
+msgstr "Wiedergabefortschritt"
+
+#: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
+msgid "Remaining playback time"
+msgstr "Verbleibende Wiedergabezeit"
+
+#: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
+msgid "Change audio volume"
+msgstr "Lautstärke ändern"
+
+#: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
+msgid "Change audio track"
+msgstr "Audiospur wechseln"
+
+#: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
+msgid "Change subtitles"
+msgstr "Untertitel wechseln"
+
+#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
+msgid "Toggle fullscreen"
+msgstr "Vollbild umschalten"
+
+#: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
+msgid ""
+"Ask the people you want to watch with to enter the following stream code:"
+msgstr ""
+"Bitten Sie die Personen, mit denen Sie zuschauen möchten, den folgenden "
+"Stream-Code einzugeben:"
+
+#: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
+msgid "Copy stream code to clipboard"
+msgstr "Stream-Code in Zwischenablage kopieren"
+
+#: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
+msgid "Mute/unmute"
+msgstr "Stummschalten/Stummschaltung aufheben"
+
+#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
+#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
+msgid "Subtitles"
+msgstr "Untertitel"
+
+#: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
+msgid "Tracks"
+msgstr "Spuren"
+
+#: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
+msgid "Add from file"
+msgstr "Aus Datei hinzufügen"
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
