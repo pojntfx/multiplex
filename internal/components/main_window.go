@@ -42,9 +42,9 @@ var (
 )
 
 const (
-	welcomePageName = "welcome-page"
-	mediaPageName   = "media-page"
-	readyPageName   = "ready-page"
+	welcomePageName = "welcome_page"
+	mediaPageName   = "media_page"
+	readyPageName   = "ready_page"
 
 	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
 	mpvWebsiteURL = "https://mpv.io/installation/"
@@ -813,22 +813,22 @@ func init() {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
 		typeClass.SetTemplateFromResource(resources.ResourceAssistantPath)
 
-		typeClass.BindTemplateChildFull("toast-overlay", false, 0)
-		typeClass.BindTemplateChildFull("button-headerbar-title", false, 0)
-		typeClass.BindTemplateChildFull("button-headerbar-subtitle", false, 0)
-		typeClass.BindTemplateChildFull("previous-button", false, 0)
-		typeClass.BindTemplateChildFull("next-button", false, 0)
-		typeClass.BindTemplateChildFull("menu-button", false, 0)
-		typeClass.BindTemplateChildFull("headerbar-spinner", false, 0)
+		typeClass.BindTemplateChildFull("toast_overlay", false, 0)
+		typeClass.BindTemplateChildFull("button_headerbar_title", false, 0)
+		typeClass.BindTemplateChildFull("button_headerbar_subtitle", false, 0)
+		typeClass.BindTemplateChildFull("previous_button", false, 0)
+		typeClass.BindTemplateChildFull("next_button", false, 0)
+		typeClass.BindTemplateChildFull("menu_button", false, 0)
+		typeClass.BindTemplateChildFull("headerbar_spinner", false, 0)
 		typeClass.BindTemplateChildFull("stack", false, 0)
-		typeClass.BindTemplateChildFull("magnet-link-entry", false, 0)
-		typeClass.BindTemplateChildFull("media-selection-group", false, 0)
-		typeClass.BindTemplateChildFull("rights-confirmation-button", false, 0)
-		typeClass.BindTemplateChildFull("download-and-play-button", false, 0)
-		typeClass.BindTemplateChildFull("stream-without-downloading-button", false, 0)
-		typeClass.BindTemplateChildFull("stream-popover", false, 0)
-		typeClass.BindTemplateChildFull("media-info-display", false, 0)
-		typeClass.BindTemplateChildFull("media-info-button", false, 0)
+		typeClass.BindTemplateChildFull("magnet_link_entry", false, 0)
+		typeClass.BindTemplateChildFull("media_selection_group", false, 0)
+		typeClass.BindTemplateChildFull("rights_confirmation_button", false, 0)
+		typeClass.BindTemplateChildFull("download_and_play_button", false, 0)
+		typeClass.BindTemplateChildFull("stream_without_downloading_button", false, 0)
+		typeClass.BindTemplateChildFull("stream_popover", false, 0)
+		typeClass.BindTemplateChildFull("media_info_display", false, 0)
+		typeClass.BindTemplateChildFull("media_info_button", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -859,22 +859,22 @@ func init() {
 				mediaInfoDisplay               gtk.Box
 				mediaInfoButton                gtk.Button
 			)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "toast-overlay").Cast(&overlay)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "button-headerbar-title").Cast(&buttonHeaderbarTitle)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "button-headerbar-subtitle").Cast(&buttonHeaderbarSubtitle)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "previous-button").Cast(&previousButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "next-button").Cast(&nextButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "menu-button").Cast(&menuButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "headerbar-spinner").Cast(&headerbarSpinner)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "toast_overlay").Cast(&overlay)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "button_headerbar_title").Cast(&buttonHeaderbarTitle)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "button_headerbar_subtitle").Cast(&buttonHeaderbarSubtitle)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "previous_button").Cast(&previousButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "next_button").Cast(&nextButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "menu_button").Cast(&menuButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "headerbar_spinner").Cast(&headerbarSpinner)
 			parent.Widget.GetTemplateChild(gTypeMainWindow, "stack").Cast(&stack)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "magnet-link-entry").Cast(&magnetLinkEntry)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "media-selection-group").Cast(&mediaSelectionGroup)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "rights-confirmation-button").Cast(&rightsConfirmationButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "download-and-play-button").Cast(&downloadAndPlayButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "stream-without-downloading-button").Cast(&streamWithoutDownloadingButton)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "stream-popover").Cast(&streamPopover)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "media-info-display").Cast(&mediaInfoDisplay)
-			parent.Widget.GetTemplateChild(gTypeMainWindow, "media-info-button").Cast(&mediaInfoButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "magnet_link_entry").Cast(&magnetLinkEntry)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "media_selection_group").Cast(&mediaSelectionGroup)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "rights_confirmation_button").Cast(&rightsConfirmationButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "download_and_play_button").Cast(&downloadAndPlayButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "stream_without_downloading_button").Cast(&streamWithoutDownloadingButton)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "stream_popover").Cast(&streamPopover)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "media_info_display").Cast(&mediaInfoDisplay)
+			parent.Widget.GetTemplateChild(gTypeMainWindow, "media_info_button").Cast(&mediaInfoButton)
 
 			w := &MainWindow{
 				ApplicationWindow: parent,

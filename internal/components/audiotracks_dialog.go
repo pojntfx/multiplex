@@ -59,8 +59,8 @@ func init() {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
 		typeClass.SetTemplateFromResource(resources.ResourceAudiotracksPath)
 
-		typeClass.BindTemplateChildFull("button-cancel", false, 0)
-		typeClass.BindTemplateChildFull("button-ok", false, 0)
+		typeClass.BindTemplateChildFull("button_cancel", false, 0)
+		typeClass.BindTemplateChildFull("button_ok", false, 0)
 		typeClass.BindTemplateChildFull("audiotracks", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
@@ -79,8 +79,8 @@ func init() {
 				okButton       gtk.Button
 				selectionGroup adw.PreferencesGroup
 			)
-			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "button-cancel").Cast(&cancelButton)
-			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "button-ok").Cast(&okButton)
+			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "button_cancel").Cast(&cancelButton)
+			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "button_ok").Cast(&okButton)
 			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "audiotracks").Cast(&selectionGroup)
 
 			a := &AudioTracksDialog{

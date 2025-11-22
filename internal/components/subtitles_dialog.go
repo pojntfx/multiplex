@@ -93,12 +93,12 @@ func init() {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
 		typeClass.SetTemplateFromResource(resources.ResourceSubtitlesPath)
 
-		typeClass.BindTemplateChildFull("button-cancel", false, 0)
-		typeClass.BindTemplateChildFull("headerbar-spinner", false, 0)
-		typeClass.BindTemplateChildFull("button-ok", false, 0)
-		typeClass.BindTemplateChildFull("subtitle-tracks", false, 0)
-		typeClass.BindTemplateChildFull("add-from-file-button", false, 0)
-		typeClass.BindTemplateChildFull("toast-overlay", false, 0)
+		typeClass.BindTemplateChildFull("button_cancel", false, 0)
+		typeClass.BindTemplateChildFull("headerbar_spinner", false, 0)
+		typeClass.BindTemplateChildFull("button_ok", false, 0)
+		typeClass.BindTemplateChildFull("subtitle_tracks", false, 0)
+		typeClass.BindTemplateChildFull("add_from_file_button", false, 0)
+		typeClass.BindTemplateChildFull("toast_overlay", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -119,12 +119,12 @@ func init() {
 				addFromFileButton gtk.Button
 				overlay           adw.ToastOverlay
 			)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "button-cancel").Cast(&cancelButton)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "headerbar-spinner").Cast(&spinner)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "button-ok").Cast(&okButton)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "subtitle-tracks").Cast(&selectionGroup)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "add-from-file-button").Cast(&addFromFileButton)
-			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "toast-overlay").Cast(&overlay)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "button_cancel").Cast(&cancelButton)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "headerbar_spinner").Cast(&spinner)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "button_ok").Cast(&okButton)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "subtitle_tracks").Cast(&selectionGroup)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "add_from_file_button").Cast(&addFromFileButton)
+			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "toast_overlay").Cast(&overlay)
 
 			s := &SubtitlesDialog{
 				Window:            parent,

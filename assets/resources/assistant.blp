@@ -7,7 +7,7 @@ template $MainWindow: Adw.ApplicationWindow {
   title: _("Multiplex");
 
   [content]
-  Adw.ToastOverlay toast-overlay {
+  Adw.ToastOverlay toast_overlay {
     Box {
       orientation: vertical;
 
@@ -19,7 +19,7 @@ template $MainWindow: Adw.ApplicationWindow {
         show-end-title-buttons: false;
 
         [start]
-        Button previous-button {
+        Button previous_button {
           label: _("Previous");
           visible: false;
           valign: start;
@@ -27,7 +27,7 @@ template $MainWindow: Adw.ApplicationWindow {
 
         [title]
         Box {
-          Box media-info-display {
+          Box media_info_display {
             orientation: vertical;
             halign: center;
             valign: center;
@@ -41,7 +41,7 @@ template $MainWindow: Adw.ApplicationWindow {
             }
           }
 
-          Button media-info-button {
+          Button media_info_button {
             styles [
               "flat",
             ]
@@ -55,7 +55,7 @@ template $MainWindow: Adw.ApplicationWindow {
                 halign: center;
                 valign: center;
 
-                Label button-headerbar-title {
+                Label button_headerbar_title {
                   styles [
                     "title",
                   ]
@@ -63,7 +63,7 @@ template $MainWindow: Adw.ApplicationWindow {
                   label: _("Welcome");
                 }
 
-                Label button-headerbar-subtitle {
+                Label button_headerbar_subtitle {
                   styles [
                     "subtitle",
                   ]
@@ -81,7 +81,7 @@ template $MainWindow: Adw.ApplicationWindow {
           spacing: 12;
           valign: start;
 
-          Adw.Spinner headerbar-spinner {
+          Adw.Spinner headerbar_spinner {
             tooltip-text: _("Getting metadata ...");
             visible: false;
             halign: center;
@@ -90,7 +90,7 @@ template $MainWindow: Adw.ApplicationWindow {
             height-request: 16;
           }
 
-          Button next-button {
+          Button next_button {
             styles [
               "suggested-action",
             ]
@@ -99,7 +99,7 @@ template $MainWindow: Adw.ApplicationWindow {
             sensitive: false;
           }
 
-          MenuButton menu-button {
+          MenuButton menu_button {
             icon-name: 'open-menu-symbolic';
             primary: true;
           }
@@ -115,7 +115,7 @@ template $MainWindow: Adw.ApplicationWindow {
           transition-type: slide_left_right;
 
           StackPage {
-            name: 'welcome-page';
+            name: 'welcome_page';
 
             child: Adw.Clamp {
               maximum-size: 295;
@@ -129,7 +129,7 @@ template $MainWindow: Adw.ApplicationWindow {
                 title: _("Multiplex");
                 description: _("Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-Codes\">stream code</a> to start streaming");
 
-                Entry magnet-link-entry {
+                Entry magnet_link_entry {
                   placeholder-text: _("Magnet link or stream code");
                 }
               }
@@ -137,7 +137,7 @@ template $MainWindow: Adw.ApplicationWindow {
           }
 
           StackPage {
-            name: 'media-page';
+            name: 'media_page';
 
             child: Adw.Clamp {
               maximum-size: 600;
@@ -151,13 +151,13 @@ template $MainWindow: Adw.ApplicationWindow {
                 title: _("Media");
                 description: _("Select the file you want to play");
 
-                Adw.PreferencesGroup media-selection-group {}
+                Adw.PreferencesGroup media_selection_group {}
               }
             };
           }
 
           StackPage {
-            name: 'ready-page';
+            name: 'ready_page';
 
             child: Adw.Clamp {
               maximum-size: 295;
@@ -176,11 +176,11 @@ template $MainWindow: Adw.ApplicationWindow {
                   halign: center;
                   valign: center;
 
-                  CheckButton rights-confirmation-button {
+                  CheckButton rights_confirmation_button {
                     label: _("I have the right to stream the selected media");
                   }
 
-                  Adw.SplitButton download-and-play-button {
+                  Adw.SplitButton download_and_play_button {
                     styles [
                       "pill",
                     ]
@@ -188,7 +188,7 @@ template $MainWindow: Adw.ApplicationWindow {
                     label: _("Download and Play");
                     sensitive: false;
                     halign: center;
-                    popover: stream-popover;
+                    popover: stream_popover;
                   }
                 }
               }
@@ -200,14 +200,14 @@ template $MainWindow: Adw.ApplicationWindow {
   }
 }
 
-Popover stream-popover {
+Popover stream_popover {
   Box {
     orientation: vertical;
     halign: center;
     valign: center;
     spacing: 12;
 
-    Button stream-without-downloading-button {
+    Button stream_without_downloading_button {
       styles [
         "flat",
       ]

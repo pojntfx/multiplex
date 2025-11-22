@@ -21,13 +21,13 @@ template $DescriptionWindow: Adw.Window {
         halign: center;
         valign: center;
 
-        Label headerbar-title {
+        Label headerbar_title {
           styles [
             "title",
           ]
         }
 
-        Label headerbar-subtitle {
+        Label headerbar_subtitle {
           styles [
             "subtitle",
           ]
@@ -45,9 +45,9 @@ template $DescriptionWindow: Adw.Window {
       Box {
         orientation: vertical;
 
-        ProgressBar preparing-progress-bar {
+        ProgressBar preparing_progress_bar {
           styles [
-            "preparing-progress-bar",
+            "preparing_progress_bar",
           ]
 
           show-text: true;
@@ -55,9 +55,9 @@ template $DescriptionWindow: Adw.Window {
           visible: false;
         }
 
-        TextView description-text {
+        TextView description_text {
           styles [
-            "rounded-corners",
+            "rounded_corners",
           ]
 
           editable: false;

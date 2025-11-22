@@ -14,7 +14,7 @@ template $SubtitlesDialog: Adw.Window {
       show-start-title-buttons: false;
 
       [start]
-      Button button-cancel {
+      Button button_cancel {
         label: _("Cancel");
       }
 
@@ -25,7 +25,7 @@ template $SubtitlesDialog: Adw.Window {
         valign: center;
         halign: center;
 
-        Adw.Spinner headerbar-spinner {
+        Adw.Spinner headerbar_spinner {
           tooltip-text: _("Getting metadata ...");
           visible: false;
           halign: center;
@@ -44,7 +44,7 @@ template $SubtitlesDialog: Adw.Window {
       }
 
       [end]
-      Button button-ok {
+      Button button_ok {
         label: _("OK");
 
         styles [
@@ -53,7 +53,7 @@ template $SubtitlesDialog: Adw.Window {
       }
     }
 
-    Adw.ToastOverlay toast-overlay {
+    Adw.ToastOverlay toast_overlay {
       ScrolledWindow {
         Adw.Clamp {
           maximum-size: 600;
@@ -64,11 +64,11 @@ template $SubtitlesDialog: Adw.Window {
           margin-end: 12;
           margin-bottom: 12;
 
-          Adw.PreferencesGroup subtitle-tracks {
+          Adw.PreferencesGroup subtitle_tracks {
             title: _("Tracks");
 
             [header-suffix]
-            Button add-from-file-button {
+            Button add_from_file_button {
               styles [
                 "flat",
               ]

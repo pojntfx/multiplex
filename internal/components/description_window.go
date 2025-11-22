@@ -62,10 +62,10 @@ func init() {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
 		typeClass.SetTemplateFromResource(resources.ResourceDescriptionPath)
 
-		typeClass.BindTemplateChildFull("description-text", false, 0)
-		typeClass.BindTemplateChildFull("headerbar-title", false, 0)
-		typeClass.BindTemplateChildFull("headerbar-subtitle", false, 0)
-		typeClass.BindTemplateChildFull("preparing-progress-bar", false, 0)
+		typeClass.BindTemplateChildFull("description_text", false, 0)
+		typeClass.BindTemplateChildFull("headerbar_title", false, 0)
+		typeClass.BindTemplateChildFull("headerbar_subtitle", false, 0)
+		typeClass.BindTemplateChildFull("preparing_progress_bar", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -84,10 +84,10 @@ func init() {
 				descriptionHeaderbarSubtitle    gtk.Label
 				descriptionPreparingProgressBar gtk.ProgressBar
 			)
-			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "description-text").Cast(&descriptionText)
-			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-title").Cast(&descriptionHeaderbarTitle)
-			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar-subtitle").Cast(&descriptionHeaderbarSubtitle)
-			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "preparing-progress-bar").Cast(&descriptionPreparingProgressBar)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "description_text").Cast(&descriptionText)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar_title").Cast(&descriptionHeaderbarTitle)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "headerbar_subtitle").Cast(&descriptionHeaderbarSubtitle)
+			parent.Widget.GetTemplateChild(gTypeDescriptionWindow, "preparing_progress_bar").Cast(&descriptionPreparingProgressBar)
 
 			w := &DescriptionWindow{
 				Window:               parent,

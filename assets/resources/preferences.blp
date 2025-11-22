@@ -14,9 +14,9 @@ template $PreferencesDialog: Adw.PreferencesWindow {
       Adw.ActionRow {
         title: _("Storage location");
         subtitle: _("Path to store downloaded torrents in");
-        activatable-widget: storage-location-input;
+        activatable-widget: storage_location_input;
 
-        Button storage-location-input {
+        Button storage_location_input {
           styles [
             "flat",
           ]
@@ -26,7 +26,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
         }
       }
 
-      Adw.EntryRow mpv-command-input {
+      Adw.EntryRow mpv_command_input {
         title: _("Player command");
 
         MenuButton {
@@ -38,7 +38,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
           icon-name: 'help-about';
           tooltip-text: _("Show help");
           valign: center;
-          popover: mpv-command-input-help-popover;
+          popover: mpv_command_input_help_popover;
         }
       }
     }
@@ -46,7 +46,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
     Adw.PreferencesGroup {
       title: _("Advanced");
 
-      Adw.SpinRow verbosity-level-input {
+      Adw.SpinRow verbosity_level_input {
         title: _("Verbosity level");
         subtitle: _("Verbosity level (0 is disabled, default is info, 7 is trace)");
 
@@ -59,14 +59,14 @@ template $PreferencesDialog: Adw.PreferencesWindow {
         Adw.ActionRow {
           title: _("Use remote gateway");
           subtitle: _("Use a remote hTorrent gateway instead of the local one");
-          activatable-widget: htorrent-remote-gateway-switch;
+          activatable-widget: htorrent_remote_gateway_switch;
 
-          Switch htorrent-remote-gateway-switch {
+          Switch htorrent_remote_gateway_switch {
             valign: center;
           }
         }
 
-        Adw.EntryRow htorrent-url-input {
+        Adw.EntryRow htorrent_url_input {
           title: _("URL");
           editable: false;
 
@@ -79,11 +79,11 @@ template $PreferencesDialog: Adw.PreferencesWindow {
             icon-name: 'help-about';
             tooltip-text: _("Show help");
             valign: center;
-            popover: htorrent-url-input-popover;
+            popover: htorrent_url_input_popover;
           }
         }
 
-        Adw.EntryRow htorrent-username-input {
+        Adw.EntryRow htorrent_username_input {
           title: _("Username");
           editable: false;
 
@@ -96,11 +96,11 @@ template $PreferencesDialog: Adw.PreferencesWindow {
             icon-name: 'help-about';
             tooltip-text: _("Show help");
             valign: center;
-            popover: htorrent-username-input-popover;
+            popover: htorrent_username_input_popover;
           }
         }
 
-        Adw.PasswordEntryRow htorrent-password-input {
+        Adw.PasswordEntryRow htorrent_password_input {
           title: _("Password");
           editable: false;
 
@@ -113,7 +113,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
             icon-name: 'help-about';
             tooltip-text: _("Show help");
             valign: center;
-            popover: htorrent-password-input-popover;
+            popover: htorrent_password_input_popover;
           }
         }
       }
@@ -127,7 +127,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
     Adw.PreferencesGroup {
       title: _("General");
 
-      Adw.EntryRow weron-url-input {
+      Adw.EntryRow weron_url_input {
         title: _("Signaling server URL");
 
         MenuButton {
@@ -139,11 +139,11 @@ template $PreferencesDialog: Adw.PreferencesWindow {
           icon-name: 'help-about';
           tooltip-text: _("Show help");
           valign: center;
-          popover: weron-url-input-popover;
+          popover: weron_url_input_popover;
         }
       }
 
-      Adw.EntryRow weron-ice-input {
+      Adw.EntryRow weron_ice_input {
         title: _("STUN/TURN servers");
 
         MenuButton {
@@ -155,7 +155,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
           icon-name: 'help-about';
           tooltip-text: _("Show help");
           valign: center;
-          popover: weron-ice-input-popover;
+          popover: weron_ice_input_popover;
         }
       }
     }
@@ -163,7 +163,7 @@ template $PreferencesDialog: Adw.PreferencesWindow {
     Adw.PreferencesGroup {
       title: _("Advanced");
 
-      Adw.SpinRow weron-timeout-input {
+      Adw.SpinRow weron_timeout_input {
         title: _("Connection timeout");
         subtitle: _("Time to wait to connect to the weron signaling server");
 
@@ -173,9 +173,9 @@ template $PreferencesDialog: Adw.PreferencesWindow {
       Adw.ActionRow {
         title: _("Relay mode");
         subtitle: _("Force usage of TURN servers for weron");
-        activatable-widget: weron-force-relay-input;
+        activatable-widget: weron_force_relay_input;
 
-        Switch weron-force-relay-input {
+        Switch weron_force_relay_input {
           valign: center;
         }
       }
@@ -183,37 +183,37 @@ template $PreferencesDialog: Adw.PreferencesWindow {
   }
 }
 
-Popover mpv-command-input-help-popover {
+Popover mpv_command_input_help_popover {
   Label {
     label: _("Command to launch mpv with");
   }
 }
 
-Popover htorrent-url-input-popover {
+Popover htorrent_url_input_popover {
   Label {
     label: _("API address of the remote gateway");
   }
 }
 
-Popover htorrent-username-input-popover {
+Popover htorrent_username_input_popover {
   Label {
     label: _("The remote gateway's username");
   }
 }
 
-Popover htorrent-password-input-popover {
+Popover htorrent_password_input_popover {
   Label {
     label: _("The remote gateway's password");
   }
 }
 
-Popover weron-url-input-popover {
+Popover weron_url_input_popover {
   Label {
     label: _("URL for the weron signaling server");
   }
 }
 
-Popover weron-ice-input-popover {
+Popover weron_ice_input_popover {
   Label {
     label: _("Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)");
   }

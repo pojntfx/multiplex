@@ -1,16 +1,16 @@
-.tabular-nums {
+.tabular_nums {
   font-variant-numeric: tabular-nums;
 }
 
-.rounded-corners {
+.rounded_corners {
   padding: 8px;
   border-radius: 8px;
 }
 
-.large-spinner {
+.large_spinner {
   min-height: 40px;
 }
 
-.preparing-progress-bar text {
+.preparing_progress_bar text {
   margin-bottom: 4px;
 }

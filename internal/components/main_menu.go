@@ -29,7 +29,7 @@ func AddMainMenu(
 	menuBuilder := gtk.NewBuilderFromResource(resources.ResourceMenuPath)
 	defer menuBuilder.Unref()
 	var menu gio.Menu
-	menuBuilder.GetObject("main-menu").Cast(&menu)
+	menuBuilder.GetObject("main_menu").Cast(&menu)
 	defer menu.Unref()
 
 	aboutDialog := adw.NewAboutDialogFromAppdata(resources.ResourceMetainfoPath, resources.AppVersion)

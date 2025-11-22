@@ -14,12 +14,12 @@ template $AudioTracksDialog: Adw.Window {
       show-start-title-buttons: false;
 
       [start]
-      Button button-cancel {
+      Button button_cancel {
         label: _("Cancel");
       }
 
       [end]
-      Button button-ok {
+      Button button_ok {
         label: _("OK");
 
         styles [
@@ -28,7 +28,7 @@ template $AudioTracksDialog: Adw.Window {
       }
     }
 
-    Adw.ToastOverlay toast-overlay {
+    Adw.ToastOverlay toast_overlay {
       ScrolledWindow {
         Adw.Clamp {
           maximum-size: 600;

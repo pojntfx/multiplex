@@ -8,7 +8,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
   title: _("Multiplex");
   resizable: false;
 
-  content: Adw.ToastOverlay toast-overlay {
+  content: Adw.ToastOverlay toast_overlay {
     WindowHandle {
       Box {
         orientation: vertical;
@@ -21,7 +21,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
           show-end-title-buttons: false;
 
           [title]
-          Button media-info-button {
+          Button media_info_button {
             styles [
               "flat",
             ]
@@ -34,13 +34,13 @@ template $ControlsWindow: Adw.ApplicationWindow {
                 halign: center;
                 valign: center;
 
-                Label button-headerbar-title {
+                Label button_headerbar_title {
                   styles [
                     "title",
                   ]
                 }
 
-                Label button-headerbar-subtitle {
+                Label button_headerbar_subtitle {
                   styles [
                     "subtitle",
                   ]
@@ -55,7 +55,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
             spacing: 12;
             valign: start;
 
-            Adw.Spinner headerbar-spinner {
+            Adw.Spinner headerbar_spinner {
               tooltip-text: _("Preparing stream ...");
               visible: false;
               halign: center;
@@ -70,11 +70,11 @@ template $ControlsWindow: Adw.ApplicationWindow {
               ]
 
               icon-name: 'system-users-symbolic';
-              popover: users-popover;
+              popover: users_popover;
               tooltip-text: _("Show peers");
             }
 
-            MenuButton menu-button {
+            MenuButton menu_button {
               icon-name: 'open-menu-symbolic';
               primary: true;
               tooltip-text: _("Open primary menu");
@@ -96,7 +96,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
           margin-end: 18;
           margin-bottom: 24;
 
-          Button play-button {
+          Button play_button {
             styles [
               "flat",
             ]
@@ -105,7 +105,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
             tooltip-text: _("Toggle playback");
           }
 
-          Button stop-button {
+          Button stop_button {
             styles [
               "flat",
             ]
@@ -120,9 +120,9 @@ template $ControlsWindow: Adw.ApplicationWindow {
             ]
           }
 
-          Label elapsed-track-label {
+          Label elapsed_track_label {
             styles [
-              "tabular-nums",
+              "tabular_nums",
             ]
 
             label: '00:00:00';
@@ -134,9 +134,9 @@ template $ControlsWindow: Adw.ApplicationWindow {
             tooltip-text: _("Playback progress");
           }
 
-          Label remaining-track-label {
+          Label remaining_track_label {
             styles [
-              "tabular-nums",
+              "tabular_nums",
             ]
 
             label: '-00:00:00';
@@ -149,17 +149,17 @@ template $ControlsWindow: Adw.ApplicationWindow {
             ]
           }
 
-          MenuButton volume-button {
+          MenuButton volume_button {
             styles [
               "flat",
             ]
 
             icon-name: 'audio-volume-high-symbolic';
             tooltip-text: _("Change audio volume");
-            popover: audiovolume-button-popover;
+            popover: audiovolume_button_popover;
           }
 
-          Button audiotracks-button {
+          Button audiotracks_button {
             styles [
               "flat",
             ]
@@ -168,7 +168,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
             tooltip-text: _("Change audio track");
           }
 
-          Button subtitle-button {
+          Button subtitle_button {
             styles [
               "flat",
             ]
@@ -177,7 +177,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
             tooltip-text: _("Change subtitles");
           }
 
-          ToggleButton fullscreen-button {
+          ToggleButton fullscreen_button {
             styles [
               "flat",
             ]
@@ -191,7 +191,7 @@ template $ControlsWindow: Adw.ApplicationWindow {
   };
 }
 
-Popover users-popover {
+Popover users_popover {
   Box {
     orientation: vertical;
     halign: center;
@@ -202,7 +202,7 @@ Popover users-popover {
     margin-end: 8;
     margin-bottom: 8;
 
-    Label watching-with-title-label {
+    Label watching_with_title_label {
       styles [
         "title",
       ]
@@ -220,12 +220,12 @@ Popover users-popover {
         "linked",
       ]
 
-      Entry stream-code-input {
+      Entry stream_code_input {
         editable: false;
         hexpand: true;
       }
 
-      Button copy-stream-code-button {
+      Button copy_stream_code_button {
         icon-name: 'edit-copy-symbolic';
         tooltip-text: _("Copy stream code to clipboard");
       }
@@ -233,7 +233,7 @@ Popover users-popover {
   }
 }
 
-Popover audiovolume-button-popover {
+Popover audiovolume_button_popover {
   width-request: 250;
 
   Box {
@@ -242,7 +242,7 @@ Popover audiovolume-button-popover {
     margin-start: 6;
     margin-end: 6;
 
-    Button audiovolume-button-mute-button {
+    Button audiovolume_button_mute_button {
       icon-name: "audio-volume-high-symbolic";
       tooltip-text: _("Mute/unmute");
 
@@ -251,7 +251,7 @@ Popover audiovolume-button-popover {
       ]
     }
 
-    Scale volume-scale {
+    Scale volume_scale {
       hexpand: true;
 
       adjustment: Adjustment {

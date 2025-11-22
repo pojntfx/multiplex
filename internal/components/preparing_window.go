@@ -58,8 +58,8 @@ func init() {
 		typeClass := (*gtk.WidgetClass)(unsafe.Pointer(tc))
 		typeClass.SetTemplateFromResource(resources.ResourcePreparingPath)
 
-		typeClass.BindTemplateChildFull("preparing-progress-bar", false, 0)
-		typeClass.BindTemplateChildFull("cancel-preparing-button", false, 0)
+		typeClass.BindTemplateChildFull("preparing_progress_bar", false, 0)
+		typeClass.BindTemplateChildFull("cancel_preparing_button", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -76,8 +76,8 @@ func init() {
 				progressBar  gtk.ProgressBar
 				cancelButton gtk.Button
 			)
-			parent.Widget.GetTemplateChild(gTypePreparingWindow, "preparing-progress-bar").Cast(&progressBar)
-			parent.Widget.GetTemplateChild(gTypePreparingWindow, "cancel-preparing-button").Cast(&cancelButton)
+			parent.Widget.GetTemplateChild(gTypePreparingWindow, "preparing_progress_bar").Cast(&progressBar)
+			parent.Widget.GetTemplateChild(gTypePreparingWindow, "cancel_preparing_button").Cast(&cancelButton)
 
 			p := &PreparingWindow{
 				Window:       parent,
