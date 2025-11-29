@@ -132,7 +132,7 @@ func init() {
 
 	gTypeDescriptionWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"DescriptionWindow",
+		"MultiplexDescriptionWindow",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(DescriptionWindow{}))+uint(unsafe.Sizeof(&DescriptionWindow{})),

@@ -135,7 +135,7 @@ func init() {
 
 	gTypePreparingWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"PreparingWindow",
+		"MultiplexPreparingWindow",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(PreparingWindow{}))+uint(unsafe.Sizeof(&PreparingWindow{})),

@@ -81,16 +81,16 @@ func init() {
 	if err := i18n.InitI18n("default", i18t); err != nil {
 		panic(err)
 	}
-}
-
-func main() {
-	defer os.RemoveAll(i18t)
 
 	gresources, err := gio.NewResourceFromData(glib.NewBytes(resources.ResourceContents, uint(len(resources.ResourceContents))))
 	if err != nil {
 		panic(err)
 	}
 	gio.ResourcesRegister(gresources)
+}
+
+func main() {
+	defer os.RemoveAll(i18t)
 
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
 	if err != nil {

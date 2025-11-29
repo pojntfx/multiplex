@@ -1848,7 +1848,7 @@ func init() {
 
 	gTypeControlsWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"ControlsWindow",
+		"MultiplexControlsWindow",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(ControlsWindow{}))+uint(unsafe.Sizeof(&ControlsWindow{})),

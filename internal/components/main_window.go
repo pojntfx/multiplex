@@ -921,7 +921,7 @@ func init() {
 
 	gTypeMainWindow = gobject.TypeRegisterStaticSimple(
 		windowParentQuery.Type,
-		"MainWindow",
+		"MultiplexMainWindow",
 		windowParentQuery.ClassSize,
 		&windowClassInit,
 		windowParentQuery.InstanceSize+uint(unsafe.Sizeof(MainWindow{}))+uint(unsafe.Sizeof(&MainWindow{})),

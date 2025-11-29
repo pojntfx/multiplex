@@ -291,7 +291,7 @@ func init() {
 
 	gTypePreferencesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"PreferencesDialog",
+		"MultiplexPreferencesDialog",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(PreferencesDialog{}))+uint(unsafe.Sizeof(&PreferencesDialog{})),

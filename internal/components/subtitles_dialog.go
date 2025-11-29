@@ -192,7 +192,7 @@ func init() {
 
 	gTypeSubtitlesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"SubtitlesDialog",
+		"MultiplexSubtitlesDialog",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(SubtitlesDialog{}))+uint(unsafe.Sizeof(&SubtitlesDialog{})),

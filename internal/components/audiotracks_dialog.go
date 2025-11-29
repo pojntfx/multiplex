@@ -139,7 +139,7 @@ func init() {
 
 	gTypeAudioTracksDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"AudioTracksDialog",
+		"MultiplexAudioTracksDialog",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(AudioTracksDialog{}))+uint(unsafe.Sizeof(&AudioTracksDialog{})),

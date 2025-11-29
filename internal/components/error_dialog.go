@@ -117,7 +117,7 @@ func init() {
 
 	gTypeErrorDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
-		"ErrorDialog",
+		"MultiplexErrorDialog",
 		parentQuery.ClassSize,
 		&classInit,
 		parentQuery.InstanceSize+uint(unsafe.Sizeof(ErrorDialog{}))+uint(unsafe.Sizeof(&ErrorDialog{}))+uint(unsafe.Sizeof(adw.AlertDialog{})), // TODO: Figure out why we need the extra `adw.AlertDialog` here
