@@ -30,7 +30,7 @@
         <binary>multiplex</binary>
     </provides>
 
-    <translation type="gettext">default</translation>
+    <translation type="gettext">multiplex</translation>
 
     <supports>
         <control>pointing</control>
@@ -113,6 +113,14 @@
             <caption>Synchronization preferences</caption>
         </screenshot>
     </screenshots>
+
+    <keywords>
+        <keyword>watch torrents with friends</keyword>
+        <keyword>video streaming</keyword>
+        <keyword>peer to peer video playback</keyword>
+        <keyword>watch party</keyword>
+        <keyword>torrent viewer</keyword>
+    </keywords>
 
     <releases>
         <release version="0.1.9" date='2025-11-20T00:00:00Z-0700'>
