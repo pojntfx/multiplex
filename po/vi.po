@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-23 10:09+0200\n"
-"PO-Revision-Date: 2025-11-24 09:51+0000\n"
+"PO-Revision-Date: 2025-12-05 14:00+0000\n"
 "Last-Translator: Loc Huynh <huynhloc.contact@gmail.com>\n"
 "Language-Team: Vietnamese <https://hosted.weblate.org/projects/multiplex/"
 "multiplex/vi/>\n"
@@ -568,23 +568,23 @@ msgstr "Tùy chọn đồng bộ hóa"
 
 #: ../assets/resources/metainfo.xml.in:118
 msgid "watch torrents with friends"
-msgstr ""
+msgstr "xem torrent cùng bạn bè"
 
 #: ../assets/resources/metainfo.xml.in:119
 msgid "video streaming"
-msgstr ""
+msgstr "truyền phát video"
 
 #: ../assets/resources/metainfo.xml.in:120
 msgid "peer to peer video playback"
-msgstr ""
+msgstr "phát lại video ngang hàng"
 
 #: ../assets/resources/metainfo.xml.in:121
 msgid "watch party"
-msgstr ""
+msgstr "xem chung"
 
 #: ../assets/resources/metainfo.xml.in:122
 msgid "torrent viewer"
-msgstr ""
+msgstr "trình xem torrent"
 
 #: ../assets/resources/metainfo.xml.in:130
 msgid "Add German and French translations"
