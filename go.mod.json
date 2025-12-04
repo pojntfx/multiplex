@@ -13,10 +13,10 @@
   },
   {
     "dest": "vendor/github.com/jwijenbergh/puregotk",
-    "sha256": "e0250ddaa1fcbf9fabf60e1bc132994ca32cd007032d112c684353f30ef6b729",
+    "sha256": "2f386c11285dba4ba7bd57f22ba1ac16e93d0fb5a7cc6c4aaae5f6d957867af4",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/pojntfx/puregotk/@v/v0.0.0-20251025231904-c77cab625c00.zip"
+    "url": "https://proxy.golang.org/github.com/jwijenbergh/puregotk/@v/v0.0.0-20251201161753-28ec1479c381.zip"
   },
   {
     "dest": "vendor/github.com/mitchellh/mapstructure",
@@ -34,10 +34,10 @@
   },
   {
     "dest": "vendor/github.com/pojntfx/go-gettext",
-    "sha256": "f2c433c3a070aa3164fa95757c21cd6a754b1d8e2038aca7fc5c056466377821",
+    "sha256": "a1e286161e04c4d7f02cd3ef9185df7be7ccf85daf9349a0974ed42746827fb4",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/pojntfx/go-gettext/@v/v0.1.2.zip"
+    "url": "https://proxy.golang.org/github.com/pojntfx/go-gettext/@v/v0.2.0.zip"
   },
   {
     "dest": "vendor/github.com/pojntfx/htorrent",

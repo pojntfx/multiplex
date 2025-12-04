@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"io"
-	"io/fs"
 	"net"
 	"os"
 	"path/filepath"
@@ -22,7 +20,6 @@ import (
 	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/components"
 	"github.com/pojntfx/multiplex/internal/crypto"
-	"github.com/pojntfx/multiplex/po"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -30,55 +27,16 @@ import (
 //go:generate sh -c "if [ -z \"$FLATPAK_ID\" ]; then go tool github.com/dennwc/flatpak-go-mod --json .; fi"
 
 const (
-	schemaDirEnvVar = "GSETTINGS_SCHEMA_DIR"
+	schemaDirEnvVar    = "GSETTINGS_SCHEMA_DIR"
+	gettextPackage     = "multiplex"
 )
 
 var (
-	i18t = ""
+	LocaleDir = "/usr/share/locale"
 )
 
 func init() {
-	var err error
-	i18t, err = os.MkdirTemp("", "")
-	if err != nil {
-		panic(err)
-	}
-
-	if err := fs.WalkDir(po.FS, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if d.IsDir() {
-			if err := os.MkdirAll(filepath.Join(i18t, path), os.ModePerm); err != nil {
-				return err
-			}
-
-			return nil
-		}
-
-		src, err := po.FS.Open(path)
-		if err != nil {
-			return err
-		}
-		defer src.Close()
-
-		dst, err := os.Create(filepath.Join(i18t, path))
-		if err != nil {
-			return err
-		}
-		defer dst.Close()
-
-		if _, err := io.Copy(dst, src); err != nil {
-			return err
-		}
-
-		return nil
-	}); err != nil {
-		panic(err)
-	}
-
-	if err := i18n.InitI18n("default", i18t); err != nil {
+	if err := i18n.InitI18n(gettextPackage, LocaleDir); err != nil {
 		panic(err)
 	}
 
@@ -90,8 +48,6 @@ func init() {
 }
 
 func main() {
-	defer os.RemoveAll(i18t)
-
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
 	if err != nil {
 		panic(err)

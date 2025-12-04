@@ -559,37 +559,57 @@ msgstr "Préférences de passerelle distante"
 msgid "Synchronization preferences"
 msgstr "Préférences de synchronisation"
 
+#: ../assets/resources/metainfo.xml.in:118
+msgid "watch torrents with friends"
+msgstr "Regarder des torrents avec des amis"
+
+#: ../assets/resources/metainfo.xml.in:119
+msgid "video streaming"
+msgstr "Streaming vidéo"
+
+#: ../assets/resources/metainfo.xml.in:120
+msgid "peer to peer video playback"
+msgstr "Lecture vidéo peer-to-peer"
+
+#: ../assets/resources/metainfo.xml.in:121
+msgid "watch party"
+msgstr "Soirée visionnage"
+
 #: ../assets/resources/metainfo.xml.in:122
+msgid "torrent viewer"
+msgstr "Visionneuse de torrents"
+
+#: ../assets/resources/metainfo.xml.in:130
 msgid "Add German and French translations"
 msgstr "Ajout des traductions allemandes et françaises"
 
-#: ../assets/resources/metainfo.xml.in:130
-#: ../assets/resources/metainfo.xml.in:146
+#: ../assets/resources/metainfo.xml.in:138
 #: ../assets/resources/metainfo.xml.in:154
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:162
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr ""
 "Améliorations visuelles pour correspondre aux dernières applications GNOME"
 
-#: ../assets/resources/metainfo.xml.in:138
+#: ../assets/resources/metainfo.xml.in:146
 msgid "Better support for systems with languages other than English"
 msgstr ""
 "Meilleur support pour les systèmes dans des langues autres que l'anglais"
 
-#: ../assets/resources/metainfo.xml.in:162
+#: ../assets/resources/metainfo.xml.in:170
 msgid "Refinements to the screenshots and descriptions"
 msgstr "Améliorations des captures d'écran et des descriptions"
 
-#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:178
 msgid "Refinements to the screenshots and app metadata"
 msgstr "Améliorations des captures d'écran et des métadonnées de l'application"
 
-#: ../assets/resources/metainfo.xml.in:186
+#: ../assets/resources/metainfo.xml.in:194
 msgid "Simplify summary and improve build system conventions"
 msgstr ""
 "Simplification du résumé et amélioration des conventions du système de "
 "compilation"
 
-#: ../assets/resources/metainfo.xml.in:194
+#: ../assets/resources/metainfo.xml.in:202
 msgid "Initial release"
 msgstr "Version initiale"

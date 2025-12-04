@@ -4,14 +4,12 @@ go 1.25.0
 
 tool github.com/dennwc/flatpak-go-mod
 
-replace github.com/jwijenbergh/puregotk => github.com/pojntfx/puregotk v0.0.0-20251025231904-c77cab625c00
-
 require (
 	github.com/anacrolix/torrent v1.59.1
-	github.com/jwijenbergh/puregotk v0.0.0-20251022075221-eae1610c7d83
+	github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
-	github.com/pojntfx/go-gettext v0.1.2
+	github.com/pojntfx/go-gettext v0.2.0
 	github.com/pojntfx/htorrent v0.5.4
 	github.com/pojntfx/weron v0.3.0
 	github.com/rs/zerolog v1.34.0
