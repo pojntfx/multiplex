@@ -123,6 +123,14 @@
     </keywords>
 
     <releases>
+        <release version="0.1.10" date='2025-12-03T00:00:00Z-0800'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.10</url>
+
+            <description>
+                <p>Add Vietnamese translations</p>
+            </description>
+        </release>
+
         <release version="0.1.9" date='2025-11-20T00:00:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.9</url>
 
