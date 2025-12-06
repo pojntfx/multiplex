@@ -3,129 +3,130 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-06 23:15+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-12-06 22:46+0000\n"
+"Last-Translator: John Peter Sa <johnppetersa@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
+"multiplex/multiplex/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Translate Toolkit 3.17.4\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #: ../internal/components/error_dialog.go:51
 msgid "Could not continue due to a fatal error"
-msgstr ""
+msgstr "Não foi possível continuar devido a um erro fatal"
 
 #: ../internal/components/preferences_dialog.go:140
 msgid "Reopen to apply the changes."
-msgstr ""
+msgstr "Reabra para aplicar as alterações."
 
 #: ../internal/components/preferences_dialog.go:141
 msgid "Reopen"
-msgstr ""
+msgstr "Reabrir"
 
 #: ../internal/components/preferences_dialog.go:160
 msgid "Select storage location"
-msgstr ""
+msgstr "Selecione o local de armazenamento"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
-msgstr ""
+msgstr "Alguém entrou na sessão."
 
 #: ../internal/components/controls_window.go:340
 msgid "Someone left the session."
-msgstr ""
+msgstr "Alguém saiu da sessão."
 
 #: ../internal/components/controls_window.go:345
 #: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:230
 msgid "You're currently watching alone."
-msgstr ""
+msgstr "Você está assistindo sozinho(a)."
 
 #: ../internal/components/controls_window.go:350
 msgid "You're currently watching with %v other person."
-msgstr ""
+msgstr "Você está assistindo a este vídeo com %v outra pessoa."
 
 #: ../internal/components/controls_window.go:354
 msgid "You're currently watching with %v other people."
-msgstr ""
+msgstr "Você está assistindo a esta transmissão com %v outras pessoas."
 
 #: ../internal/components/controls_window.go:444
 msgid "%v MB/%v MB (%v peers)"
-msgstr ""
+msgstr "%v MB/%v MB (%v pares)"
 
 #: ../internal/components/controls_window.go:448
 msgid "Searching for peers"
-msgstr ""
+msgstr "Em busca de colegas"
 
 #: ../internal/components/controls_window.go:1074
 #: ../internal/components/controls_window.go:1325
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 #: ../internal/components/controls_window.go:1222
 msgid "Disable subtitles"
-msgstr ""
+msgstr "Desativar legendas"
 
 #: ../internal/components/controls_window.go:1227
 msgid "Integrated subtitle"
-msgstr ""
+msgstr "Legendas integradas"
 
 #: ../internal/components/controls_window.go:1230
 msgid "Subtitle from torrent"
-msgstr ""
+msgstr "Legenda do torrent"
 
 #: ../internal/components/controls_window.go:1233
 msgid "Extra file from torrent"
-msgstr ""
+msgstr "Arquivo extra do torrent"
 
 #: ../internal/components/controls_window.go:1246
 msgid "Select subtitle file"
-msgstr ""
+msgstr "Selecione o arquivo de legenda"
 
 #: ../internal/components/controls_window.go:1296
 msgid "Manually added"
-msgstr ""
+msgstr "Adicionado manualmente"
 
 #: ../internal/components/controls_window.go:1396
 msgid "Disable audio"
-msgstr ""
+msgstr "Desativar áudio"
 
 #: ../internal/components/controls_window.go:1398
 msgid "Track %v"
-msgstr ""
+msgstr "Rastrear %v"
 
 #: ../internal/components/controls_window.go:1406
 msgid "Untitled Track"
-msgstr ""
+msgstr "Faixa sem título"
 
 #: ../internal/components/main_window.go:246
 msgid "Could not get info for this magnet link."
-msgstr ""
+msgstr "Não foi possível obter informações para este link magnético."
 
 #: ../internal/components/main_window.go:340
 msgid "Media (%v MB)"
-msgstr ""
+msgstr "Mídia (%v MB)"
 
 #: ../internal/components/main_window.go:342
 msgid "Extra file (%v MB)"
-msgstr ""
+msgstr "Arquivo extra (%v MB)"
 
 #: ../internal/components/main_window.go:386
 msgid "This stream code is invalid."
-msgstr ""
+msgstr "Este código de fluxo é inválido."
 
 #: ../internal/components/main_window.go:544
 msgid "No README found."
-msgstr ""
+msgstr "Nenhum arquivo README encontrado."
 
 #: ../internal/components/main_window.go:638
 msgid "Manual Downloads"
-msgstr ""
+msgstr "Downloads de manuais"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
-msgstr ""
+msgstr "Este arquivo não contém legendas."
 
 #: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
 #: ../assets/resources/assistant.blp:129 ../assets/resources/controls.blp:8
@@ -133,60 +134,60 @@ msgstr ""
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:143 ../assets/resources/controls.ui:13
 msgid "Multiplex"
-msgstr ""
+msgstr "Multiplex"
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
-msgstr ""
+msgstr "Faixas de áudio"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
 #: ../assets/resources/subtitles.blp:18 ../assets/resources/preparing.ui:46
 #: ../assets/resources/subtitles.ui:22 ../assets/resources/audiotracks.ui:22
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
 #: ../assets/resources/subtitles.ui:53 ../assets/resources/audiotracks.ui:27
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "Open Downloads"
-msgstr ""
+msgstr "Abrir Downloads"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
 msgid "Copy Magnet Link"
-msgstr ""
+msgstr "Copiar link Magnet"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
 msgid "Preferences"
-msgstr ""
+msgstr "Preferências"
 
 #: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
 msgid "About Multiplex"
-msgstr ""
+msgstr "Sobre Multiplex"
 
 #: ../assets/resources/preferences.blp:8 ../assets/resources/preferences.ui:13
 msgid "Playback"
-msgstr ""
+msgstr "Reprodução"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
 msgid "General"
-msgstr ""
+msgstr "Em geral"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
 msgid "Storage location"
-msgstr ""
+msgstr "Local de armazenamento"
 
 #: ../assets/resources/preferences.blp:16 ../assets/resources/preferences.ui:21
 msgid "Path to store downloaded torrents in"
-msgstr ""
+msgstr "Caminho para armazenar os torrents baixados em"
 
 #: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:36
 msgid "Player command"
-msgstr ""
+msgstr "Comando do jogador"
 
 #: ../assets/resources/preferences.blp:39
 #: ../assets/resources/preferences.blp:80
@@ -200,107 +201,109 @@ msgstr ""
 #: ../assets/resources/preferences.ui:157
 #: ../assets/resources/preferences.ui:174
 msgid "Show help"
-msgstr ""
+msgstr "Mostrar ajuda"
 
 #: ../assets/resources/preferences.blp:47
 #: ../assets/resources/preferences.blp:164
 #: ../assets/resources/preferences.ui:55 ../assets/resources/preferences.ui:185
 msgid "Advanced"
-msgstr ""
+msgstr "Avançado"
 
 #: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
 msgid "Verbosity level"
-msgstr ""
+msgstr "Nível de detalhamento"
 
 #: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
 msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
 msgstr ""
+"Nível de detalhamento (0 significa desativado, o padrão é informativo, 7 é "
+"rastreamento)"
 
 #: ../assets/resources/preferences.blp:57 ../assets/resources/preferences.ui:67
 msgid "Remoting"
-msgstr ""
+msgstr "Remoto"
 
 #: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
 msgid "Use remote gateway"
-msgstr ""
+msgstr "Usar gateway remoto"
 
 #: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
 msgid "Use a remote hTorrent gateway instead of the local one"
-msgstr ""
+msgstr "Use um gateway hTorrent remoto em vez do local"
 
 #: ../assets/resources/preferences.blp:70 ../assets/resources/preferences.ui:82
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ../assets/resources/preferences.blp:87
 #: ../assets/resources/preferences.ui:100
 msgid "Username"
-msgstr ""
+msgstr "Nome de usuário"
 
 #: ../assets/resources/preferences.blp:104
 #: ../assets/resources/preferences.ui:118
 msgid "Password"
-msgstr ""
+msgstr "Senha"
 
 #: ../assets/resources/preferences.blp:124
 #: ../assets/resources/preferences.ui:142
 msgid "Synchronization"
-msgstr ""
+msgstr "Sincronização"
 
 #: ../assets/resources/preferences.blp:131
 #: ../assets/resources/preferences.ui:149
 msgid "Signaling server URL"
-msgstr ""
+msgstr "URL do servidor de sinalização"
 
 #: ../assets/resources/preferences.blp:147
 #: ../assets/resources/preferences.ui:166
 msgid "STUN/TURN servers"
-msgstr ""
+msgstr "Servidores STUN/TURN"
 
 #: ../assets/resources/preferences.blp:167
 #: ../assets/resources/preferences.ui:188
 msgid "Connection timeout"
-msgstr ""
+msgstr "Tempo limite de conexão"
 
 #: ../assets/resources/preferences.blp:168
 #: ../assets/resources/preferences.ui:189
 msgid "Time to wait to connect to the weron signaling server"
-msgstr ""
+msgstr "Tempo de espera para conectar ao servidor de sinalização Weron"
 
 #: ../assets/resources/preferences.blp:174
 #: ../assets/resources/preferences.ui:197
 msgid "Relay mode"
-msgstr ""
+msgstr "Modo de relé"
 
 #: ../assets/resources/preferences.blp:175
 #: ../assets/resources/preferences.ui:198
 msgid "Force usage of TURN servers for weron"
-msgstr ""
+msgstr "Forçar o uso de servidores TURN para weron"
 
 #: ../assets/resources/preferences.blp:188
 #: ../assets/resources/preferences.ui:215
 msgid "Command to launch mpv with"
-msgstr ""
+msgstr "Comando para iniciar o mpv com"
 
 #: ../assets/resources/preferences.blp:194
 #: ../assets/resources/preferences.ui:222
 msgid "API address of the remote gateway"
-msgstr ""
+msgstr "Endereço API do gateway remoto"
 
 #: ../assets/resources/preferences.blp:200
 #: ../assets/resources/preferences.ui:229
 msgid "The remote gateway's username"
-msgstr ""
+msgstr "Nome de usuário do gateways remoto"
 
 #: ../assets/resources/preferences.blp:206
 #: ../assets/resources/preferences.ui:236
 msgid "The remote gateway's password"
-msgstr ""
+msgstr "A senha do gateways remoto"
 
 #: ../assets/resources/preferences.blp:212
 #: ../assets/resources/preferences.ui:243
 msgid "URL for the weron signaling server"
-msgstr ""
+msgstr "URL do servidor de sinalização Weron"
 
 #: ../assets/resources/preferences.blp:218
 #: ../assets/resources/preferences.ui:250
@@ -308,68 +311,72 @@ msgid ""
 "Comma-separated list of weron STUN (in format stun:host:port) and TURN "
 "servers (in format username:credential@turn:host:port)"
 msgstr ""
+"Lista de servidores STUN (no formato stun:host:porta) e TURN (no formato "
+"nome de usuário:credencial@turn:host:porta) separados por vírgulas"
 
 #: ../assets/resources/preparing.blp:23 ../assets/resources/controls.blp:59
 #: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
 msgid "Preparing stream ..."
-msgstr ""
+msgstr "Preparando o fluxo..."
 
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
 msgid "No Media Player Could Be Found"
-msgstr ""
+msgstr "Não foi possível encontrar nenhum reprodutor de mídia"
 
 #: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:11
 msgid ""
 "Please install mpv or configure the existing installation to be able to play "
 "media."
 msgstr ""
+"Instale o mpv ou configure a instalação existente para reproduzir conteúdo "
+"multimídia."
 
 #: ../assets/resources/warning.blp:11 ../assets/resources/warning.ui:15
 msgid "Get from Flathub"
-msgstr ""
+msgstr "Compre na Flathub"
 
 #: ../assets/resources/warning.blp:12 ../assets/resources/warning.ui:16
 msgid "Get from mpv.io"
-msgstr ""
+msgstr "Obtenha em mpv.io"
 
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
-msgstr ""
+msgstr "Configuração manual"
 
 #: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
 msgid "A Fatal Error Occurred"
-msgstr ""
+msgstr "Ocorreu um erro fatal"
 
 #: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
 msgid "Report Error"
-msgstr ""
+msgstr "Reportar erro"
 
 #: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
 msgid "Close Multiplex"
-msgstr ""
+msgstr "Fechar Multiplex"
 
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 #: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
 #: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
 msgid "Welcome"
-msgstr ""
+msgstr "Bem-vindo"
 
 #: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
 #: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
 msgid "Open media details"
-msgstr ""
+msgstr "Detalhes da mídia aberta"
 
 #: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
 #: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
 msgid "Getting metadata ..."
-msgstr ""
+msgstr "Obtendo metadados..."
 
 #: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
 msgid "Next"
-msgstr ""
+msgstr "Próximo"
 
 #: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
 msgid ""
@@ -377,201 +384,216 @@ msgid ""
 "link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
 "Codes\">stream code</a> to start streaming"
 msgstr ""
+"Insira um <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">link "
+"magnet</a> ou um <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">código de transmissão</a> para iniciar a transmissão"
 
 #: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
 msgid "Magnet link or stream code"
-msgstr ""
+msgstr "Link magnético ou código de transmissão"
 
 #: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
 msgid "Media"
-msgstr ""
+msgstr "Mídia"
 
 #: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Select the file you want to play"
-msgstr ""
+msgstr "Selecione o arquivo que deseja reproduzir"
 
 #: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
 msgid "You're all set!"
-msgstr ""
+msgstr "Está tudo pronto!"
 
 #: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
 msgid "I have the right to stream the selected media"
-msgstr ""
+msgstr "Tenho o direito de transmitir o conteúdo selecionado"
 
 #: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
 msgid "Download and Play"
-msgstr ""
+msgstr "Baixe e reproduza"
 
 #: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
 msgid "Stream without Downloading"
-msgstr ""
+msgstr "Transmita sem baixar"
 
 #: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
 msgid "Show peers"
-msgstr ""
+msgstr "Mostrar colegas"
 
 #: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
 msgid "Open primary menu"
-msgstr ""
+msgstr "Abrir menu principal"
 
 #: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
 msgid "Toggle playback"
-msgstr ""
+msgstr "Alternar reprodução"
 
 #: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
 msgid "Stop playback"
-msgstr ""
+msgstr "Interromper reprodução"
 
 #: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
 msgid "Elapsed time"
-msgstr ""
+msgstr "Tempo decorrido"
 
 #: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
 msgid "Playback progress"
-msgstr ""
+msgstr "Progresso da reprodução"
 
 #: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
 msgid "Remaining playback time"
-msgstr ""
+msgstr "Tempo de reprodução restante"
 
 #: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
 msgid "Change audio volume"
-msgstr ""
+msgstr "Alterar o volume do áudio"
 
 #: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
 msgid "Change audio track"
-msgstr ""
+msgstr "Alterar faixa de áudio"
 
 #: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
 msgid "Change subtitles"
-msgstr ""
+msgstr "Alterar legendas"
 
 #: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Alternar tela cheia"
 
 #: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
 msgid ""
 "Ask the people you want to watch with to enter the following stream code:"
 msgstr ""
+"Peça às pessoas com quem você deseja assistir que insiram o seguinte código "
+"de transmissão:"
 
 #: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
 msgid "Copy stream code to clipboard"
-msgstr ""
+msgstr "Copiar código de fluxo para a área de transferência"
 
 #: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
 msgid "Mute/unmute"
-msgstr ""
+msgstr "Silenciar/ativar som"
 
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
 msgid "Subtitles"
-msgstr ""
+msgstr "Legendas"
 
 #: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
 msgid "Tracks"
-msgstr ""
+msgstr "Faixas"
 
 #: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
 msgid "Add from file"
-msgstr ""
+msgstr "Adicionar a partir de um arquivo"
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
 msgid "Watch torrents with your friends"
-msgstr ""
+msgstr "Assista a torrents com seus amigos"
 
 #: ../assets/resources/metainfo.xml.in:51
 msgid ""
 "Multiplex is an app to watch torrents together, providing an experience "
 "similar to Apple's SharePlay and Amazon's Prime Video Watch Party."
 msgstr ""
+"Multiplex é um aplicativo para assistir a torrents em conjunto, "
+"proporcionando uma experiência semelhante ao SharePlay da Apple e ao Watch "
+"Party do Prime Video da Amazon."
 
 #: ../assets/resources/metainfo.xml.in:53
 msgid "It enables you to:"
-msgstr ""
+msgstr "Isso permite que você:"
 
 #: ../assets/resources/metainfo.xml.in:55
 msgid ""
 "Stream any file directly using a wide range of video and audio formats with "
 "the mpv video player"
 msgstr ""
+"Transmita qualquer arquivo diretamente usando uma ampla variedade de "
+"formatos de vídeo e áudio com o reprodutor de vídeo mpv"
 
 #: ../assets/resources/metainfo.xml.in:57
 msgid ""
 "Host online watch parties while preserving your privacy by synchronizing "
 "video playback with friends without a central server"
 msgstr ""
+"Organize sessões de exibição online com seus amigos, preservando sua "
+"privacidade ao sincronizar a reprodução de vídeos sem a necessidade de um "
+"servidor central"
 
 #: ../assets/resources/metainfo.xml.in:59
 msgid ""
 "Bypass internet restrictions by optionally separating the backend and user "
 "interface into two separate components"
 msgstr ""
+"Contorne as restrições da internet separando opcionalmente o backend e a "
+"interface do usuário em dois componentes distintos"
 
 #: ../assets/resources/metainfo.xml.in:68
 msgid "Entering a magnet link or stream code"
-msgstr ""
+msgstr "Inserir um link magnético ou um código de transmissão"
 
 #: ../assets/resources/metainfo.xml.in:73
 msgid "Media selection"
-msgstr ""
+msgstr "Seleção de mídia"
 
 #: ../assets/resources/metainfo.xml.in:78
 msgid "Confirming playback"
-msgstr ""
+msgstr "Confirmando a reprodução"
 
 #: ../assets/resources/metainfo.xml.in:83
 msgid "Media controls"
-msgstr ""
+msgstr "Controles de mídia"
 
 #: ../assets/resources/metainfo.xml.in:88
 msgid "Playing media with MPV"
-msgstr ""
+msgstr "Reproduzindo mídia com MPV"
 
 #: ../assets/resources/metainfo.xml.in:93
 msgid "Selecting audio tracks"
-msgstr ""
+msgstr "Selecionando faixas de áudio"
 
 #: ../assets/resources/metainfo.xml.in:98
 msgid "Selecting subtitles"
-msgstr ""
+msgstr "Selecionando legendas"
 
 #: ../assets/resources/metainfo.xml.in:103
 msgid "Playback preferences"
-msgstr ""
+msgstr "Preferências de reprodução"
 
 #: ../assets/resources/metainfo.xml.in:108
 msgid "Remoting preferences"
-msgstr ""
+msgstr "Preferências de acesso remoto"
 
 #: ../assets/resources/metainfo.xml.in:113
 msgid "Synchronization preferences"
-msgstr ""
+msgstr "Preferências de sincronização"
 
 #: ../assets/resources/metainfo.xml.in:118
 msgid "watch torrents with friends"
-msgstr ""
+msgstr "assistir torrents com amigos"
 
 #: ../assets/resources/metainfo.xml.in:119
 msgid "video streaming"
-msgstr ""
+msgstr "transmissão de vídeo"
 
 #: ../assets/resources/metainfo.xml.in:120
 msgid "peer to peer video playback"
-msgstr ""
+msgstr "reprodução de vídeo ponto a ponto"
 
 #: ../assets/resources/metainfo.xml.in:121
 msgid "watch party"
-msgstr ""
+msgstr "festa para assistir"
 
 #: ../assets/resources/metainfo.xml.in:122
 msgid "torrent viewer"
-msgstr ""
+msgstr "visualizador de torrent"
 
 #: ../assets/resources/metainfo.xml.in:130
 msgid "Add German and French translations"
-msgstr ""
+msgstr "Adicionar traduções para alemão e francês"
 
 #: ../assets/resources/metainfo.xml.in:138
 #: ../assets/resources/metainfo.xml.in:154
@@ -579,23 +601,25 @@ msgstr ""
 #: ../assets/resources/metainfo.xml.in:186
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr ""
+"Aprimoramentos visuais para acompanhar o que há de mais moderno em "
+"aplicativos GNOME"
 
 #: ../assets/resources/metainfo.xml.in:146
 msgid "Better support for systems with languages other than English"
-msgstr ""
+msgstr "Melhor suporte para sistemas com idiomas diferentes do inglês"
 
 #: ../assets/resources/metainfo.xml.in:170
 msgid "Refinements to the screenshots and descriptions"
-msgstr ""
+msgstr "Aprimoramentos nas capturas de tela e descrições"
 
 #: ../assets/resources/metainfo.xml.in:178
 msgid "Refinements to the screenshots and app metadata"
-msgstr ""
+msgstr "Aprimoramentos nas capturas de tela e nos metadados do aplicativo"
 
 #: ../assets/resources/metainfo.xml.in:194
 msgid "Simplify summary and improve build system conventions"
-msgstr ""
+msgstr "Simplificar o resumo e aprimorar as convenções do sistema de compilação"
 
 #: ../assets/resources/metainfo.xml.in:202
 msgid "Initial release"
-msgstr ""
+msgstr "Lançamento inicial"
