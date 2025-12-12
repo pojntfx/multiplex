@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-23 10:09+0200\n"
-"PO-Revision-Date: 2025-12-05 14:00+0000\n"
+"PO-Revision-Date: 2025-12-12 03:00+0000\n"
 "Last-Translator: Loc Huynh <huynhloc.contact@gmail.com>\n"
 "Language-Team: Vietnamese <https://hosted.weblate.org/projects/multiplex/"
 "multiplex/vi/>\n"
@@ -98,7 +98,7 @@ msgstr "Track %v"
 
 #: ../internal/components/controls_window.go:1406
 msgid "Untitled Track"
-msgstr "Track Không Có Tiêu Đề"
+msgstr "Bản nhạc không có tiêu đề"
 
 #: ../internal/components/main_window.go:246
 msgid "Could not get info for this magnet link."
@@ -138,7 +138,7 @@ msgstr "Multiplex"
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
-msgstr "Track Âm Thanh"
+msgstr "Bản nhạc âm thanh"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
 #: ../assets/resources/subtitles.blp:18 ../assets/resources/preparing.ui:46
@@ -153,29 +153,29 @@ msgstr "OK"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "Open Downloads"
-msgstr "Mở Tải Xuống"
+msgstr "Mở Tải xuống"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
 msgid "Copy Magnet Link"
-msgstr "Sao Chép Magnet Link"
+msgstr "Sao chép magnet link"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
 msgid "Preferences"
-msgstr "Tùy Chọn"
+msgstr "Tùy chọn"
 
 #: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
 msgid "About Multiplex"
-msgstr "Về Multiplex"
+msgstr "Giới thiệu về Multiplex"
 
 #: ../assets/resources/preferences.blp:8 ../assets/resources/preferences.ui:13
 msgid "Playback"
-msgstr "Phát Lại"
+msgstr "Phát lại"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
 msgid "General"
-msgstr "Chung"
+msgstr "Tổng quan"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
 msgid "Storage location"
@@ -187,7 +187,7 @@ msgstr "Đường dẫn lưu trữ torrent đã tải xuống trong"
 
 #: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:36
 msgid "Player command"
-msgstr "Lệnh người chơi"
+msgstr "Lệnh trình chơi"
 
 #: ../assets/resources/preferences.blp:39
 #: ../assets/resources/preferences.blp:80
@@ -211,11 +211,11 @@ msgstr "Nâng cao"
 
 #: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
 msgid "Verbosity level"
-msgstr "Mức độ ghi log"
+msgstr "Mức độ ghi nhật ký"
 
 #: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
 msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
-msgstr "Mức độ ghi log (0: Tắt, Mặc định: Info, 7: Trace)"
+msgstr "Mức độ ghi nhật ký (0: Tắt, Mặc định: Info, 7: Dấu vết)"
 
 #: ../assets/resources/preferences.blp:57 ../assets/resources/preferences.ui:67
 msgid "Remoting"
@@ -236,17 +236,17 @@ msgstr "URL"
 #: ../assets/resources/preferences.blp:87
 #: ../assets/resources/preferences.ui:100
 msgid "Username"
-msgstr "Tên Người Dùng"
+msgstr "Tên người dùng"
 
 #: ../assets/resources/preferences.blp:104
 #: ../assets/resources/preferences.ui:118
 msgid "Password"
-msgstr "Mật Khẩu"
+msgstr "Mật khẩu"
 
 #: ../assets/resources/preferences.blp:124
 #: ../assets/resources/preferences.ui:142
 msgid "Synchronization"
-msgstr "Đồng Bộ Hóa"
+msgstr "Đồng bộ hóa"
 
 #: ../assets/resources/preferences.blp:131
 #: ../assets/resources/preferences.ui:149
@@ -319,7 +319,7 @@ msgstr "Đang chuẩn bị stream..."
 
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
 msgid "No Media Player Could Be Found"
-msgstr "Không Tìm Thấy Trình Phát Đa Phương Tiện"
+msgstr "Không tìm thấy Trình phát phương tiện"
 
 #: ../assets/resources/warning.blp:6 ../assets/resources/warning.ui:11
 msgid ""
@@ -343,15 +343,15 @@ msgstr "Cấu hình thủ công"
 
 #: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
 msgid "A Fatal Error Occurred"
-msgstr "Đã Xảy Ra Lỗi Nghiêm Trọng"
+msgstr "Đã xảy ra lỗi nghiêm trọng"
 
 #: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
 msgid "Report Error"
-msgstr "Báo Cáo Lỗi"
+msgstr "Báo cáo lỗi"
 
 #: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
 msgid "Close Multiplex"
-msgstr "Đóng Đa Kênh"
+msgstr "Đóng Multiplex"
 
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
 msgid "Previous"
@@ -360,7 +360,7 @@ msgstr "Trước"
 #: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
 #: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
 msgid "Welcome"
-msgstr "Chào Mừng"
+msgstr "Chào mừng"
 
 #: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
 #: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
@@ -396,7 +396,7 @@ msgstr "Phương tiện"
 
 #: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Select the file you want to play"
-msgstr "Chọn tập tin bạn muốn chơi"
+msgstr "Chọn tập tin bạn muốn phát"
 
 #: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
 msgid "You're all set!"
@@ -408,11 +408,11 @@ msgstr "Tôi có quyền stream phương tiện đã chọn"
 
 #: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
 msgid "Download and Play"
-msgstr "Tải Xuống và Chơi"
+msgstr "Tải xuống và Phát"
 
 #: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
 msgid "Stream without Downloading"
-msgstr "Stream mà không cần Tải Xuống"
+msgstr "Stream mà không cần tải xuống"
 
 #: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
 msgid "Show peers"
@@ -474,11 +474,11 @@ msgstr "Tắt/bật tiếng"
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
 msgid "Subtitles"
-msgstr "Phụ Đề"
+msgstr "Phụ đề"
 
 #: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
 msgid "Tracks"
-msgstr "Track"
+msgstr "Bản nhạc"
 
 #: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
 msgid "Add from file"
