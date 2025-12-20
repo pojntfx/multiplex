@@ -4,142 +4,171 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../internal/components/error_dialog.go:51
-msgid "Could not continue due to a fatal error"
-msgstr "Impossible de continuer en raison d'une erreur fatale"
-
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "L'application doit être redémarrée pour appliquer les modifications."
-
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "Redémarrer l'application"
-
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Sélectionner l'emplacement de stockage"
-
-#: ../internal/components/controls_window.go:335
-msgid "Someone joined the session."
-msgstr "Quelqu'un a rejoint la session."
-
-#: ../internal/components/controls_window.go:340
-msgid "Someone left the session."
-msgstr "Quelqu'un a quitté la session."
-
-#: ../internal/components/controls_window.go:345
-#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:230
-msgid "You're currently watching alone."
-msgstr "Vous regardez actuellement seul."
-
-#: ../internal/components/controls_window.go:350
-msgid "You're currently watching with %v other person."
-msgstr "Vous regardez actuellement avec %v autre personne."
-
-#: ../internal/components/controls_window.go:354
-msgid "You're currently watching with %v other people."
-msgstr "Vous regardez actuellement avec %v autres personnes."
-
-#: ../internal/components/controls_window.go:444
-msgid "%v MB/%v MB (%v peers)"
-msgstr "%v Mo/%v Mo (%v pairs)"
-
-#: ../internal/components/controls_window.go:448
-msgid "Searching for peers"
-msgstr "Recherche de pairs"
-
-#: ../internal/components/controls_window.go:1074
-#: ../internal/components/controls_window.go:1325
-msgid "None"
-msgstr "Aucun"
-
-#: ../internal/components/controls_window.go:1222
-msgid "Disable subtitles"
-msgstr "Désactiver les sous-titres"
-
-#: ../internal/components/controls_window.go:1227
-msgid "Integrated subtitle"
-msgstr "Sous-titre intégré"
-
-#: ../internal/components/controls_window.go:1230
-msgid "Subtitle from torrent"
-msgstr "Sous-titre du torrent"
-
-#: ../internal/components/controls_window.go:1233
-msgid "Extra file from torrent"
-msgstr "Fichier supplémentaire du torrent"
-
-#: ../internal/components/controls_window.go:1246
-msgid "Select subtitle file"
-msgstr "Sélectionner le fichier de sous-titres"
-
-#: ../internal/components/controls_window.go:1296
-msgid "Manually added"
-msgstr "Ajouté manuellement"
-
-#: ../internal/components/controls_window.go:1396
-msgid "Disable audio"
-msgstr "Désactiver l'audio"
-
-#: ../internal/components/controls_window.go:1398
-msgid "Track %v"
-msgstr "Piste %v"
-
-#: ../internal/components/controls_window.go:1406
-msgid "Untitled Track"
-msgstr "Piste sans titre"
-
-#: ../internal/components/main_window.go:246
-msgid "Could not get info for this magnet link."
-msgstr "Impossible d'obtenir les informations pour ce lien magnet."
-
-#: ../internal/components/main_window.go:340
-msgid "Media (%v MB)"
-msgstr "Média (%v Mo)"
-
-#: ../internal/components/main_window.go:342
-msgid "Extra file (%v MB)"
-msgstr "Fichier supplémentaire (%v Mo)"
-
-#: ../internal/components/main_window.go:386
-msgid "This stream code is invalid."
-msgstr "Ce code de diffusion est invalide."
-
-#: ../internal/components/main_window.go:544
-msgid "No README found."
-msgstr "Aucun fichier README trouvé."
-
-#: ../internal/components/main_window.go:638
-msgid "Manual Downloads"
-msgstr "Téléchargements manuels"
-
-#: ../internal/utils/subtitles.go:100
-msgid "This file does not contain subtitles."
-msgstr "Ce fichier ne contient pas de sous-titres."
-
-#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
-#: ../assets/resources/assistant.blp:129 ../assets/resources/controls.blp:8
+#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:129
+#: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:143 ../assets/resources/controls.ui:13
 msgid "Multiplex"
 msgstr "Multiplexe"
 
+#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
+msgid "Previous"
+msgstr "Précédent"
+
+#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
+#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
+msgid "Welcome"
+msgstr "Bienvenue"
+
+#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr "Ouvrir les détails du média"
+
+#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr "Récupération des métadonnées…"
+
+#: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
+msgid "Next"
+msgstr "Suivant"
+
+#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
+msgid ""
+"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> to start streaming"
+msgstr ""
+"Entrez un <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">lien "
+"magnet</a> ou un <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">code de diffusion</a> pour commencer la diffusion"
+
+#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
+msgid "Magnet link or stream code"
+msgstr "Lien magnet ou code de diffusion"
+
+#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
+msgid "Media"
+msgstr "Média"
+
+#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
+msgid "Select the file you want to play"
+msgstr "Sélectionnez le fichier que vous souhaitez lire"
+
+#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
+msgid "You're all set!"
+msgstr "Tout est prêt !"
+
+#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
+msgid "I have the right to stream the selected media"
+msgstr "J'ai le droit de diffuser le média sélectionné"
+
+#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
+msgid "Download and Play"
+msgstr "Télécharger et lire"
+
+#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
+msgid "Stream without Downloading"
+msgstr "Diffuser sans télécharger"
+
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
 msgstr "Pistes audio"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
-#: ../assets/resources/subtitles.blp:18 ../assets/resources/preparing.ui:46
-#: ../assets/resources/subtitles.ui:22 ../assets/resources/audiotracks.ui:22
+#: ../assets/resources/subtitles.blp:18 ../assets/resources/audiotracks.ui:22
+#: ../assets/resources/preparing.ui:46 ../assets/resources/subtitles.ui:22
 msgid "Cancel"
 msgstr "Annuler"
 
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
-#: ../assets/resources/subtitles.ui:53 ../assets/resources/audiotracks.ui:27
+#: ../assets/resources/audiotracks.ui:27 ../assets/resources/subtitles.ui:53
 msgid "OK"
 msgstr "OK"
+
+#: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
+#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
+msgid "Preparing stream ..."
+msgstr "Préparation du flux en cours…"
+
+#: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
+msgid "Show peers"
+msgstr "Afficher les pairs"
+
+#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
+msgid "Open primary menu"
+msgstr "Ouvrir le menu principal"
+
+#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
+msgid "Toggle playback"
+msgstr "Basculer la lecture"
+
+#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
+msgid "Stop playback"
+msgstr "Arrêter la lecture"
+
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
+msgid "Elapsed time"
+msgstr "Temps écoulé"
+
+#: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
+msgid "Playback progress"
+msgstr "Progression de la lecture"
+
+#: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
+msgid "Remaining playback time"
+msgstr "Temps de lecture restant"
+
+#: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
+msgid "Change audio volume"
+msgstr "Modifier le volume audio"
+
+#: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
+msgid "Change audio track"
+msgstr "Changer de piste audio"
+
+#: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
+msgid "Change subtitles"
+msgstr "Changer les sous-titres"
+
+#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
+msgid "Toggle fullscreen"
+msgstr "Basculer en plein écran"
+
+#: ../assets/resources/controls.blp:210
+#: ../internal/components/controls_window.go:345
+#: ../assets/resources/controls.ui:230
+msgid "You're currently watching alone."
+msgstr "Vous regardez actuellement seul."
+
+#: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
+msgid ""
+"Ask the people you want to watch with to enter the following stream code:"
+msgstr ""
+"Demandez aux personnes avec qui vous souhaitez regarder d’entrer le code de "
+"diffusion suivant :"
+
+#: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
+msgid "Copy stream code to clipboard"
+msgstr "Copier le code de diffusion dans le presse-papiers"
+
+#: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
+msgid "Mute/unmute"
+msgstr "Activer/désactiver le son"
+
+#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
+msgid "A Fatal Error Occurred"
+msgstr "Une erreur fatale s'est produite"
+
+#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
+msgid "Report Error"
+msgstr "Signaler l'erreur"
+
+#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
+msgid "Close Multiplex"
+msgstr "Fermer Multiplexe"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "Open Downloads"
@@ -303,10 +332,18 @@ msgstr ""
 "Liste séparée par des virgules des serveurs STUN weron (au format "
 "stun:host:port) et TURN (au format username:credential@turn:host:port)"
 
-#: ../assets/resources/preparing.blp:23 ../assets/resources/controls.blp:59
-#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
-msgid "Preparing stream ..."
-msgstr "Préparation du flux en cours…"
+#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
+#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
+msgid "Subtitles"
+msgstr "Sous-titres"
+
+#: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
+msgid "Tracks"
+msgstr "Pistes"
+
+#: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
+msgid "Add from file"
+msgstr "Ajouter depuis un fichier"
 
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
 msgid "No Media Player Could Be Found"
@@ -332,150 +369,114 @@ msgstr "Télécharger depuis mpv.io"
 msgid "Manual configuration"
 msgstr "Configuration manuelle"
 
-#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
-msgid "A Fatal Error Occurred"
-msgstr "Une erreur fatale s'est produite"
+#: ../internal/components/controls_window.go:335
+msgid "Someone joined the session."
+msgstr "Quelqu'un a rejoint la session."
 
-#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
-msgid "Report Error"
-msgstr "Signaler l'erreur"
+#: ../internal/components/controls_window.go:340
+msgid "Someone left the session."
+msgstr "Quelqu'un a quitté la session."
 
-#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
-msgid "Close Multiplex"
-msgstr "Fermer Multiplexe"
+#: ../internal/components/controls_window.go:350
+msgid "You're currently watching with %v other person."
+msgstr "Vous regardez actuellement avec %v autre personne."
 
-#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
-msgid "Previous"
-msgstr "Précédent"
+#: ../internal/components/controls_window.go:354
+msgid "You're currently watching with %v other people."
+msgstr "Vous regardez actuellement avec %v autres personnes."
 
-#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
-#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
-msgid "Welcome"
-msgstr "Bienvenue"
+#: ../internal/components/controls_window.go:444
+msgid "%v MB/%v MB (%v peers)"
+msgstr "%v Mo/%v Mo (%v pairs)"
 
-#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr "Ouvrir les détails du média"
+#: ../internal/components/controls_window.go:448
+msgid "Searching for peers"
+msgstr "Recherche de pairs"
 
-#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
-#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
-msgstr "Récupération des métadonnées…"
+#: ../internal/components/controls_window.go:1074
+#: ../internal/components/controls_window.go:1325
+msgid "None"
+msgstr "Aucun"
 
-#: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
-msgid "Next"
-msgstr "Suivant"
+#: ../internal/components/controls_window.go:1222
+msgid "Disable subtitles"
+msgstr "Désactiver les sous-titres"
 
-#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
-msgid ""
-"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
-"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">stream code</a> to start streaming"
-msgstr ""
-"Entrez un <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">lien "
-"magnet</a> ou un <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">code de diffusion</a> pour commencer la diffusion"
+#: ../internal/components/controls_window.go:1227
+msgid "Integrated subtitle"
+msgstr "Sous-titre intégré"
 
-#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
-msgid "Magnet link or stream code"
-msgstr "Lien magnet ou code de diffusion"
+#: ../internal/components/controls_window.go:1230
+msgid "Subtitle from torrent"
+msgstr "Sous-titre du torrent"
 
-#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
-msgid "Media"
-msgstr "Média"
+#: ../internal/components/controls_window.go:1233
+msgid "Extra file from torrent"
+msgstr "Fichier supplémentaire du torrent"
 
-#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
-msgid "Select the file you want to play"
-msgstr "Sélectionnez le fichier que vous souhaitez lire"
+#: ../internal/components/controls_window.go:1246
+msgid "Select subtitle file"
+msgstr "Sélectionner le fichier de sous-titres"
 
-#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
-msgid "You're all set!"
-msgstr "Tout est prêt !"
+#: ../internal/components/controls_window.go:1296
+msgid "Manually added"
+msgstr "Ajouté manuellement"
 
-#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
-msgid "I have the right to stream the selected media"
-msgstr "J'ai le droit de diffuser le média sélectionné"
+#: ../internal/components/controls_window.go:1396
+msgid "Disable audio"
+msgstr "Désactiver l'audio"
 
-#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
-msgid "Download and Play"
-msgstr "Télécharger et lire"
+#: ../internal/components/controls_window.go:1398
+msgid "Track %v"
+msgstr "Piste %v"
 
-#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
-msgid "Stream without Downloading"
-msgstr "Diffuser sans télécharger"
+#: ../internal/components/controls_window.go:1406
+msgid "Untitled Track"
+msgstr "Piste sans titre"
 
-#: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
-msgid "Show peers"
-msgstr "Afficher les pairs"
+#: ../internal/components/error_dialog.go:51
+msgid "Could not continue due to a fatal error"
+msgstr "Impossible de continuer en raison d'une erreur fatale"
 
-#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
-msgid "Open primary menu"
-msgstr "Ouvrir le menu principal"
+#: ../internal/components/main_window.go:246
+msgid "Could not get info for this magnet link."
+msgstr "Impossible d'obtenir les informations pour ce lien magnet."
 
-#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
-msgid "Toggle playback"
-msgstr "Basculer la lecture"
+#: ../internal/components/main_window.go:340
+msgid "Media (%v MB)"
+msgstr "Média (%v Mo)"
 
-#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
-msgid "Stop playback"
-msgstr "Arrêter la lecture"
+#: ../internal/components/main_window.go:342
+msgid "Extra file (%v MB)"
+msgstr "Fichier supplémentaire (%v Mo)"
 
-#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
-msgid "Elapsed time"
-msgstr "Temps écoulé"
+#: ../internal/components/main_window.go:386
+msgid "This stream code is invalid."
+msgstr "Ce code de diffusion est invalide."
 
-#: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
-msgid "Playback progress"
-msgstr "Progression de la lecture"
+#: ../internal/components/main_window.go:544
+msgid "No README found."
+msgstr "Aucun fichier README trouvé."
 
-#: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
-msgid "Remaining playback time"
-msgstr "Temps de lecture restant"
+#: ../internal/components/main_window.go:638
+msgid "Manual Downloads"
+msgstr "Téléchargements manuels"
 
-#: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
-msgid "Change audio volume"
-msgstr "Modifier le volume audio"
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "L'application doit être redémarrée pour appliquer les modifications."
 
-#: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
-msgid "Change audio track"
-msgstr "Changer de piste audio"
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "Redémarrer l'application"
 
-#: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
-msgid "Change subtitles"
-msgstr "Changer les sous-titres"
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Sélectionner l'emplacement de stockage"
 
-#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
-msgid "Toggle fullscreen"
-msgstr "Basculer en plein écran"
-
-#: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
-msgid ""
-"Ask the people you want to watch with to enter the following stream code:"
-msgstr ""
-"Demandez aux personnes avec qui vous souhaitez regarder d’entrer le code de "
-"diffusion suivant :"
-
-#: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
-msgid "Copy stream code to clipboard"
-msgstr "Copier le code de diffusion dans le presse-papiers"
-
-#: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
-msgid "Mute/unmute"
-msgstr "Activer/désactiver le son"
-
-#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
-#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
-msgid "Subtitles"
-msgstr "Sous-titres"
-
-#: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
-msgid "Tracks"
-msgstr "Pistes"
-
-#: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
-msgid "Add from file"
-msgstr "Ajouter depuis un fichier"
+#: ../internal/utils/subtitles.go:100
+msgid "This file does not contain subtitles."
+msgstr "Ce fichier ne contient pas de sous-titres."
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
@@ -580,36 +581,48 @@ msgid "torrent viewer"
 msgstr "Visionneuse de torrents"
 
 #: ../assets/resources/metainfo.xml.in:130
+msgid ""
+"Add Portuguese (Brazil) translations and improve Vietnamese translations"
+msgstr ""
+"Ajout des traductions portugaises (Brésil) et amélioration des traductions "
+"vietnamiennes"
+
+#: ../assets/resources/metainfo.xml.in:138
+#, fuzzy
+msgid "Add Vietnamese translations"
+msgstr "Ajout des traductions allemandes et françaises"
+
+#: ../assets/resources/metainfo.xml.in:146
 msgid "Add German and French translations"
 msgstr "Ajout des traductions allemandes et françaises"
 
-#: ../assets/resources/metainfo.xml.in:138
 #: ../assets/resources/metainfo.xml.in:154
-#: ../assets/resources/metainfo.xml.in:162
-#: ../assets/resources/metainfo.xml.in:186
+#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:202
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr ""
 "Améliorations visuelles pour correspondre aux dernières applications GNOME"
 
-#: ../assets/resources/metainfo.xml.in:146
+#: ../assets/resources/metainfo.xml.in:162
 msgid "Better support for systems with languages other than English"
 msgstr ""
 "Meilleur support pour les systèmes dans des langues autres que l'anglais"
 
-#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Refinements to the screenshots and descriptions"
 msgstr "Améliorations des captures d'écran et des descriptions"
 
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:194
 msgid "Refinements to the screenshots and app metadata"
 msgstr "Améliorations des captures d'écran et des métadonnées de l'application"
 
-#: ../assets/resources/metainfo.xml.in:194
+#: ../assets/resources/metainfo.xml.in:210
 msgid "Simplify summary and improve build system conventions"
 msgstr ""
 "Simplification du résumé et amélioration des conventions du système de "
 "compilation"
 
-#: ../assets/resources/metainfo.xml.in:202
+#: ../assets/resources/metainfo.xml.in:218
 msgid "Initial release"
 msgstr "Version initiale"

@@ -14,142 +14,169 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 5.15-dev\n"
 
-#: ../internal/components/error_dialog.go:51
-msgid "Could not continue due to a fatal error"
-msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
-
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "Mở lại để áp dụng các thay đổi."
-
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "Mở lại"
-
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Chọn vị trí lưu trữ"
-
-#: ../internal/components/controls_window.go:335
-msgid "Someone joined the session."
-msgstr "Có người đã tham gia phiên họp."
-
-#: ../internal/components/controls_window.go:340
-msgid "Someone left the session."
-msgstr "Ai đó đã rời khỏi phiên họp."
-
-#: ../internal/components/controls_window.go:345
-#: ../assets/resources/controls.blp:210 ../assets/resources/controls.ui:230
-msgid "You're currently watching alone."
-msgstr "Bạn hiện đang xem một mình."
-
-#: ../internal/components/controls_window.go:350
-msgid "You're currently watching with %v other person."
-msgstr "Bạn hiện đang xem với %v người khác."
-
-#: ../internal/components/controls_window.go:354
-msgid "You're currently watching with %v other people."
-msgstr "Bạn hiện đang xem cùng %v người khác."
-
-#: ../internal/components/controls_window.go:444
-msgid "%v MB/%v MB (%v peers)"
-msgstr "%v MB/%v MB (%v thiết bị)"
-
-#: ../internal/components/controls_window.go:448
-msgid "Searching for peers"
-msgstr "Đang tìm kiếm thiết bị"
-
-#: ../internal/components/controls_window.go:1074
-#: ../internal/components/controls_window.go:1325
-msgid "None"
-msgstr "Không có"
-
-#: ../internal/components/controls_window.go:1222
-msgid "Disable subtitles"
-msgstr "Tắt phụ đề"
-
-#: ../internal/components/controls_window.go:1227
-msgid "Integrated subtitle"
-msgstr "Phụ đề tích hợp"
-
-#: ../internal/components/controls_window.go:1230
-msgid "Subtitle from torrent"
-msgstr "Phụ đề từ torrent"
-
-#: ../internal/components/controls_window.go:1233
-msgid "Extra file from torrent"
-msgstr "Tệp bổ sung từ torrent"
-
-#: ../internal/components/controls_window.go:1246
-msgid "Select subtitle file"
-msgstr "Chọn tệp phụ đề"
-
-#: ../internal/components/controls_window.go:1296
-msgid "Manually added"
-msgstr "Đã thêm thủ công"
-
-#: ../internal/components/controls_window.go:1396
-msgid "Disable audio"
-msgstr "Tắt âm thanh"
-
-#: ../internal/components/controls_window.go:1398
-msgid "Track %v"
-msgstr "Track %v"
-
-#: ../internal/components/controls_window.go:1406
-msgid "Untitled Track"
-msgstr "Bản nhạc không có tiêu đề"
-
-#: ../internal/components/main_window.go:246
-msgid "Could not get info for this magnet link."
-msgstr "Không thể lấy thông tin cho magnet link này."
-
-#: ../internal/components/main_window.go:340
-msgid "Media (%v MB)"
-msgstr "Phương tiện (%v MB)"
-
-#: ../internal/components/main_window.go:342
-msgid "Extra file (%v MB)"
-msgstr "Tệp bổ sung (%v MB)"
-
-#: ../internal/components/main_window.go:386
-msgid "This stream code is invalid."
-msgstr "Stream code này không hợp lệ."
-
-#: ../internal/components/main_window.go:544
-msgid "No README found."
-msgstr "Không tìm thấy README."
-
-#: ../internal/components/main_window.go:638
-msgid "Manual Downloads"
-msgstr "Tải Xuống Thủ Công"
-
-#: ../internal/utils/subtitles.go:100
-msgid "This file does not contain subtitles."
-msgstr "Tập tin này không chứa phụ đề."
-
-#: ../mockups/playback/window.blp:7 ../assets/resources/assistant.blp:7
-#: ../assets/resources/assistant.blp:129 ../assets/resources/controls.blp:8
+#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:129
+#: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:143 ../assets/resources/controls.ui:13
 msgid "Multiplex"
 msgstr "Multiplex"
 
+#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
+msgid "Previous"
+msgstr "Trước"
+
+#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
+#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
+msgid "Welcome"
+msgstr "Chào mừng"
+
+#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
+#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
+msgid "Open media details"
+msgstr "Mở chi tiết phương tiện"
+
+#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
+#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
+msgid "Getting metadata ..."
+msgstr "Đang lấy metadata ..."
+
+#: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
+msgid "Next"
+msgstr "Tiếp"
+
+#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
+msgid ""
+"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> to start streaming"
+msgstr ""
+"Nhập <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
+"link</a> hoặc <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
+"Codes\">stream code</a> để bắt đầu phát trực tuyến"
+
+#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
+msgid "Magnet link or stream code"
+msgstr "Magnet link hoặc stream code"
+
+#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
+msgid "Media"
+msgstr "Phương tiện"
+
+#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
+msgid "Select the file you want to play"
+msgstr "Chọn tập tin bạn muốn phát"
+
+#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
+msgid "You're all set!"
+msgstr "Đã xong!"
+
+#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
+msgid "I have the right to stream the selected media"
+msgstr "Tôi có quyền stream phương tiện đã chọn"
+
+#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
+msgid "Download and Play"
+msgstr "Tải xuống và Phát"
+
+#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
+msgid "Stream without Downloading"
+msgstr "Stream mà không cần tải xuống"
+
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
 msgstr "Bản nhạc âm thanh"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
-#: ../assets/resources/subtitles.blp:18 ../assets/resources/preparing.ui:46
-#: ../assets/resources/subtitles.ui:22 ../assets/resources/audiotracks.ui:22
+#: ../assets/resources/subtitles.blp:18 ../assets/resources/audiotracks.ui:22
+#: ../assets/resources/preparing.ui:46 ../assets/resources/subtitles.ui:22
 msgid "Cancel"
 msgstr "Hủy"
 
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
-#: ../assets/resources/subtitles.ui:53 ../assets/resources/audiotracks.ui:27
+#: ../assets/resources/audiotracks.ui:27 ../assets/resources/subtitles.ui:53
 msgid "OK"
 msgstr "OK"
+
+#: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
+#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
+msgid "Preparing stream ..."
+msgstr "Đang chuẩn bị stream..."
+
+#: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
+msgid "Show peers"
+msgstr "Hiển thị thiết bị"
+
+#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
+msgid "Open primary menu"
+msgstr "Mở menu chính"
+
+#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
+msgid "Toggle playback"
+msgstr "Chuyển đổi phát lại"
+
+#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
+msgid "Stop playback"
+msgstr "Dừng phát lại"
+
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
+msgid "Elapsed time"
+msgstr "Thời gian đã trôi qua"
+
+#: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
+msgid "Playback progress"
+msgstr "Tiến trình phát lại"
+
+#: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
+msgid "Remaining playback time"
+msgstr "Thời gian phát lại còn lại"
+
+#: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
+msgid "Change audio volume"
+msgstr "Thay đổi âm lượng"
+
+#: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
+msgid "Change audio track"
+msgstr "Thay đổi bản âm thanh"
+
+#: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
+msgid "Change subtitles"
+msgstr "Thay đổi phụ đề"
+
+#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
+msgid "Toggle fullscreen"
+msgstr "Bật/tắt toàn màn hình"
+
+#: ../assets/resources/controls.blp:210
+#: ../internal/components/controls_window.go:345
+#: ../assets/resources/controls.ui:230
+msgid "You're currently watching alone."
+msgstr "Bạn hiện đang xem một mình."
+
+#: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
+msgid ""
+"Ask the people you want to watch with to enter the following stream code:"
+msgstr "Yêu cầu những người bạn muốn xem cùng nhập stream code sau:"
+
+#: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
+msgid "Copy stream code to clipboard"
+msgstr "Sao chép stream code vào bộ nhớ tạm"
+
+#: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
+msgid "Mute/unmute"
+msgstr "Tắt/bật tiếng"
+
+#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
+msgid "A Fatal Error Occurred"
+msgstr "Đã xảy ra lỗi nghiêm trọng"
+
+#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
+msgid "Report Error"
+msgstr "Báo cáo lỗi"
+
+#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
+msgid "Close Multiplex"
+msgstr "Đóng Multiplex"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "Open Downloads"
@@ -312,10 +339,18 @@ msgstr ""
 "Danh sách máy chủ weron STUN (ở định dạng stun:host:port) và TURN được phân "
 "tách bằng dấu phẩy (ở định dạng tên người dùng:credential@turn:host:port)"
 
-#: ../assets/resources/preparing.blp:23 ../assets/resources/controls.blp:59
-#: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
-msgid "Preparing stream ..."
-msgstr "Đang chuẩn bị stream..."
+#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
+#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
+msgid "Subtitles"
+msgstr "Phụ đề"
+
+#: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
+msgid "Tracks"
+msgstr "Bản nhạc"
+
+#: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
+msgid "Add from file"
+msgstr "Thêm từ tệp"
 
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
 msgid "No Media Player Could Be Found"
@@ -341,148 +376,114 @@ msgstr "Tải từ mpv.io"
 msgid "Manual configuration"
 msgstr "Cấu hình thủ công"
 
-#: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
-msgid "A Fatal Error Occurred"
-msgstr "Đã xảy ra lỗi nghiêm trọng"
+#: ../internal/components/controls_window.go:335
+msgid "Someone joined the session."
+msgstr "Có người đã tham gia phiên họp."
 
-#: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
-msgid "Report Error"
-msgstr "Báo cáo lỗi"
+#: ../internal/components/controls_window.go:340
+msgid "Someone left the session."
+msgstr "Ai đó đã rời khỏi phiên họp."
 
-#: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
-msgid "Close Multiplex"
-msgstr "Đóng Multiplex"
+#: ../internal/components/controls_window.go:350
+msgid "You're currently watching with %v other person."
+msgstr "Bạn hiện đang xem với %v người khác."
 
-#: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
-msgid "Previous"
-msgstr "Trước"
+#: ../internal/components/controls_window.go:354
+msgid "You're currently watching with %v other people."
+msgstr "Bạn hiện đang xem cùng %v người khác."
 
-#: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
-#: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
-msgid "Welcome"
-msgstr "Chào mừng"
+#: ../internal/components/controls_window.go:444
+msgid "%v MB/%v MB (%v peers)"
+msgstr "%v MB/%v MB (%v thiết bị)"
 
-#: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
-#: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
-msgstr "Mở chi tiết phương tiện"
+#: ../internal/components/controls_window.go:448
+msgid "Searching for peers"
+msgstr "Đang tìm kiếm thiết bị"
 
-#: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
-#: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
-msgstr "Đang lấy metadata ..."
+#: ../internal/components/controls_window.go:1074
+#: ../internal/components/controls_window.go:1325
+msgid "None"
+msgstr "Không có"
 
-#: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
-msgid "Next"
-msgstr "Tiếp"
+#: ../internal/components/controls_window.go:1222
+msgid "Disable subtitles"
+msgstr "Tắt phụ đề"
 
-#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
-msgid ""
-"Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
-"link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">stream code</a> to start streaming"
-msgstr ""
-"Nhập <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
-"link</a> hoặc <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
-"Codes\">stream code</a> để bắt đầu phát trực tuyến"
+#: ../internal/components/controls_window.go:1227
+msgid "Integrated subtitle"
+msgstr "Phụ đề tích hợp"
 
-#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
-msgid "Magnet link or stream code"
-msgstr "Magnet link hoặc stream code"
+#: ../internal/components/controls_window.go:1230
+msgid "Subtitle from torrent"
+msgstr "Phụ đề từ torrent"
 
-#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
-msgid "Media"
-msgstr "Phương tiện"
+#: ../internal/components/controls_window.go:1233
+msgid "Extra file from torrent"
+msgstr "Tệp bổ sung từ torrent"
 
-#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
-msgid "Select the file you want to play"
-msgstr "Chọn tập tin bạn muốn phát"
+#: ../internal/components/controls_window.go:1246
+msgid "Select subtitle file"
+msgstr "Chọn tệp phụ đề"
 
-#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
-msgid "You're all set!"
-msgstr "Đã xong!"
+#: ../internal/components/controls_window.go:1296
+msgid "Manually added"
+msgstr "Đã thêm thủ công"
 
-#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
-msgid "I have the right to stream the selected media"
-msgstr "Tôi có quyền stream phương tiện đã chọn"
+#: ../internal/components/controls_window.go:1396
+msgid "Disable audio"
+msgstr "Tắt âm thanh"
 
-#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
-msgid "Download and Play"
-msgstr "Tải xuống và Phát"
+#: ../internal/components/controls_window.go:1398
+msgid "Track %v"
+msgstr "Track %v"
 
-#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
-msgid "Stream without Downloading"
-msgstr "Stream mà không cần tải xuống"
+#: ../internal/components/controls_window.go:1406
+msgid "Untitled Track"
+msgstr "Bản nhạc không có tiêu đề"
 
-#: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
-msgid "Show peers"
-msgstr "Hiển thị thiết bị"
+#: ../internal/components/error_dialog.go:51
+msgid "Could not continue due to a fatal error"
+msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
 
-#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
-msgid "Open primary menu"
-msgstr "Mở menu chính"
+#: ../internal/components/main_window.go:246
+msgid "Could not get info for this magnet link."
+msgstr "Không thể lấy thông tin cho magnet link này."
 
-#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
-msgid "Toggle playback"
-msgstr "Chuyển đổi phát lại"
+#: ../internal/components/main_window.go:340
+msgid "Media (%v MB)"
+msgstr "Phương tiện (%v MB)"
 
-#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
-msgid "Stop playback"
-msgstr "Dừng phát lại"
+#: ../internal/components/main_window.go:342
+msgid "Extra file (%v MB)"
+msgstr "Tệp bổ sung (%v MB)"
 
-#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
-msgid "Elapsed time"
-msgstr "Thời gian đã trôi qua"
+#: ../internal/components/main_window.go:386
+msgid "This stream code is invalid."
+msgstr "Stream code này không hợp lệ."
 
-#: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
-msgid "Playback progress"
-msgstr "Tiến trình phát lại"
+#: ../internal/components/main_window.go:544
+msgid "No README found."
+msgstr "Không tìm thấy README."
 
-#: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
-msgid "Remaining playback time"
-msgstr "Thời gian phát lại còn lại"
+#: ../internal/components/main_window.go:638
+msgid "Manual Downloads"
+msgstr "Tải Xuống Thủ Công"
 
-#: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
-msgid "Change audio volume"
-msgstr "Thay đổi âm lượng"
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "Mở lại để áp dụng các thay đổi."
 
-#: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
-msgid "Change audio track"
-msgstr "Thay đổi bản âm thanh"
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "Mở lại"
 
-#: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
-msgid "Change subtitles"
-msgstr "Thay đổi phụ đề"
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Chọn vị trí lưu trữ"
 
-#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
-msgid "Toggle fullscreen"
-msgstr "Bật/tắt toàn màn hình"
-
-#: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
-msgid ""
-"Ask the people you want to watch with to enter the following stream code:"
-msgstr "Yêu cầu những người bạn muốn xem cùng nhập stream code sau:"
-
-#: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
-msgid "Copy stream code to clipboard"
-msgstr "Sao chép stream code vào bộ nhớ tạm"
-
-#: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
-msgid "Mute/unmute"
-msgstr "Tắt/bật tiếng"
-
-#: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
-#: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
-msgid "Subtitles"
-msgstr "Phụ đề"
-
-#: ../assets/resources/subtitles.blp:68 ../assets/resources/subtitles.ui:76
-msgid "Tracks"
-msgstr "Bản nhạc"
-
-#: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
-msgid "Add from file"
-msgstr "Thêm từ tệp"
+#: ../internal/utils/subtitles.go:100
+msgid "This file does not contain subtitles."
+msgstr "Tập tin này không chứa phụ đề."
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:5
@@ -587,32 +588,42 @@ msgid "torrent viewer"
 msgstr "trình xem torrent"
 
 #: ../assets/resources/metainfo.xml.in:130
+msgid ""
+"Add Portuguese (Brazil) translations and improve Vietnamese translations"
+msgstr ""
+
+#: ../assets/resources/metainfo.xml.in:138
+#, fuzzy
+msgid "Add Vietnamese translations"
+msgstr "Thêm bản dịch tiếng Đức và tiếng Pháp"
+
+#: ../assets/resources/metainfo.xml.in:146
 msgid "Add German and French translations"
 msgstr "Thêm bản dịch tiếng Đức và tiếng Pháp"
 
-#: ../assets/resources/metainfo.xml.in:138
 #: ../assets/resources/metainfo.xml.in:154
-#: ../assets/resources/metainfo.xml.in:162
-#: ../assets/resources/metainfo.xml.in:186
+#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:202
 msgid "Visual refinements to match the state of the art of GNOME apps"
 msgstr "Tinh chỉnh giao diện để đạt chuẩn hiện đại của ứng dụng GNOME"
 
-#: ../assets/resources/metainfo.xml.in:146
+#: ../assets/resources/metainfo.xml.in:162
 msgid "Better support for systems with languages other than English"
 msgstr "Hỗ trợ tốt hơn cho các hệ thống có ngôn ngữ khác ngoài tiếng Anh"
 
-#: ../assets/resources/metainfo.xml.in:170
+#: ../assets/resources/metainfo.xml.in:186
 msgid "Refinements to the screenshots and descriptions"
 msgstr "Tinh chỉnh ảnh chụp màn hình và mô tả"
 
-#: ../assets/resources/metainfo.xml.in:178
+#: ../assets/resources/metainfo.xml.in:194
 msgid "Refinements to the screenshots and app metadata"
 msgstr "Tinh chỉnh ảnh chụp màn hình và metadata ứng dụng"
 
-#: ../assets/resources/metainfo.xml.in:194
+#: ../assets/resources/metainfo.xml.in:210
 msgid "Simplify summary and improve build system conventions"
 msgstr "Đơn giản hóa tóm tắt và cải thiện các quy ước hệ thống xây dựng"
 
-#: ../assets/resources/metainfo.xml.in:202
+#: ../assets/resources/metainfo.xml.in:218
 msgid "Initial release"
 msgstr "Bản phát hành đầu tiên"

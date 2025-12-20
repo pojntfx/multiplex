@@ -134,8 +134,8 @@ github.com/coreos/go-oidc/v3/oidc
 # github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/dennwc/flatpak-go-mod v0.1.0
-## explicit; go 1.21.8
+# github.com/dennwc/flatpak-go-mod v0.1.1-0.20250809093520-ddf8d84264aa
+## explicit; go 1.24.4
 github.com/dennwc/flatpak-go-mod
 # github.com/dustin/go-humanize v1.0.1
 ## explicit; go 1.16
@@ -143,9 +143,6 @@ github.com/dustin/go-humanize
 # github.com/edsrzf/mmap-go v1.2.0
 ## explicit; go 1.17
 github.com/edsrzf/mmap-go
-# github.com/fatih/color v1.10.0
-## explicit; go 1.13
-github.com/fatih/color
 # github.com/go-jose/go-jose/v4 v4.1.3
 ## explicit; go 1.24.0
 github.com/go-jose/go-jose/v4
@@ -167,11 +164,12 @@ github.com/go-logr/logr/funcr
 # github.com/go-logr/stdr v1.2.2
 ## explicit; go 1.16
 github.com/go-logr/stdr
-# github.com/goccy/go-yaml v1.12.0
-## explicit; go 1.19
+# github.com/goccy/go-yaml v1.18.0
+## explicit; go 1.21.0
 github.com/goccy/go-yaml
 github.com/goccy/go-yaml/ast
 github.com/goccy/go-yaml/internal/errors
+github.com/goccy/go-yaml/internal/format
 github.com/goccy/go-yaml/lexer
 github.com/goccy/go-yaml/parser
 github.com/goccy/go-yaml/printer
@@ -585,10 +583,6 @@ golang.org/x/text/unicode/norm
 # golang.org/x/time v0.14.0
 ## explicit; go 1.24.0
 golang.org/x/time/rate
-# golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da
-## explicit; go 1.18
-golang.org/x/xerrors
-golang.org/x/xerrors/internal
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
