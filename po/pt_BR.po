@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-06 23:15+0200\n"
-"PO-Revision-Date: 2025-12-06 22:46+0000\n"
+"PO-Revision-Date: 2026-01-06 17:01+0000\n"
 "Last-Translator: John Peter Sa <johnppetersa@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "multiplex/multiplex/pt_BR/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.15-dev\n"
+"X-Generator: Weblate 5.15.1\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:129
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
@@ -596,11 +596,12 @@ msgstr "visualizador de torrent"
 msgid ""
 "Add Portuguese (Brazil) translations and improve Vietnamese translations"
 msgstr ""
+"Adicionar traduções para português (Brasil) e melhorar as traduções para "
+"vietnamita"
 
 #: ../assets/resources/metainfo.xml.in:138
-#, fuzzy
 msgid "Add Vietnamese translations"
-msgstr "Adicionar traduções para alemão e francês"
+msgstr "Adicionar traduções em vietnamita"
 
 #: ../assets/resources/metainfo.xml.in:146
 msgid "Add German and French translations"
