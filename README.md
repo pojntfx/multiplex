@@ -183,6 +183,6 @@ To translate Multiplex, you can use [Weblate](https://hosted.weblate.org/engage/
 
 ## License
 
-Multiplex (c) 2025 Felicitas Pojtinger and contributors
+Multiplex (c) 2026 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0

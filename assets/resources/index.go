@@ -27,7 +27,7 @@ var (
 
 	AppDevelopers = []string{"Felicitas Pojtinger"}
 	AppArtists    = append(AppDevelopers, "Brage Fuglseth")
-	AppCopyright  = "© 2025 " + strings.Join(AppDevelopers, ", ")
+	AppCopyright  = "© 2026 " + strings.Join(AppDevelopers, ", ")
 
 	ResourceAssistantPath   = path.Join(AppPath, "assistant.ui")
 	ResourceControlsPath    = path.Join(AppPath, "controls.ui")
