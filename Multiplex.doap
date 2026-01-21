@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:gnome="http://api.gnome.org/doap-extensions#"
+  xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">Multiplex</name>
+  <shortdesc xml:lang="en">Watch torrents with your friends</shortdesc>
+  <description xml:lang="en">Multiplex is an app to watch torrents together, providing an experience
+    similar to Apple's SharePlay and Amazon's Prime Video Watch Party.</description>
+
+  <homepage rdf:resource="https://github.com/pojntfx/multiplex/" />
+  <download-page rdf:resource="https://flathub.org/apps/com.pojtinger.felicitas.Multiplex" />
+  <bug-database rdf:resource="https://github.com/pojntfx/multiplex/issues/" />
+
+  <programming-language>Go</programming-language>
+  <platform>GTK 4</platform>
+  <platform>Libadwaita</platform>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Felicitas Pojtinger</foaf:name>
+      <foaf:account>
+        <foaf:OnlineAccount>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com" />
+          <foaf:accountName>pojntfx</foaf:accountName>
+        </foaf:OnlineAccount>
+      </foaf:account>
+    </foaf:Person>
+  </maintainer>
+</Project>
