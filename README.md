@@ -164,7 +164,7 @@ Click on an image to see a larger version.
 
 ## Contributing
 
-To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
+To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow the [GNOME Code of Conduct](https://conduct.gnome.org/).
 
 To build and start a development version of Multiplex locally, run the following:
 
