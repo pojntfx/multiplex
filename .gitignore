@@ -6,3 +6,4 @@ builddir
 LINGUAS
 metainfo.xml
 *.desktop
+*.compiled

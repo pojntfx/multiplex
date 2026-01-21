@@ -8,6 +8,7 @@ import (
 	"github.com/jwijenbergh/puregotk/v4/adw"
 	"github.com/jwijenbergh/puregotk/v4/gio"
 	"github.com/jwijenbergh/puregotk/v4/gtk"
+	. "github.com/pojntfx/go-gettext/pkg/i18n"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/utils"
@@ -36,6 +37,8 @@ func AddMainMenu(
 	aboutDialog.SetDevelopers(resources.AppDevelopers)
 	aboutDialog.SetArtists(resources.AppArtists)
 	aboutDialog.SetCopyright(resources.AppCopyright)
+	// TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
+	aboutDialog.SetTranslatorCredits(L("translator-credits"))
 
 	preferencesDialog := NewPreferencesDialog(ctx, settings, window, overlay, gateway, cancel)
 

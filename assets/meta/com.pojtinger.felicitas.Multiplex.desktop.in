@@ -6,3 +6,8 @@ Comment=Watch torrents with your friends
 Exec=multiplex
 Icon=com.pojtinger.felicitas.Multiplex
 Categories=AudioVideo;Video
+# Extra keywords that can be used to search for Multiplex
+# TRANSLATORS: Search terms to find this application.
+#              Do NOT translate or localize the semicolons!
+#              The list MUST also end with a semicolon!
+Keywords=watch torrents with friends;video streaming;peer to peer video playback;watch party;torrent viewer;

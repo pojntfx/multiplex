@@ -114,107 +114,76 @@
         </screenshot>
     </screenshots>
 
-    <keywords>
-        <keyword>watch torrents with friends</keyword>
-        <keyword>video streaming</keyword>
-        <keyword>peer to peer video playback</keyword>
-        <keyword>watch party</keyword>
-        <keyword>torrent viewer</keyword>
-    </keywords>
-
     <releases>
         <release version="0.1.11" date='2025-12-20T00:00:00Z00:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.11</url>
-
-            <description>
+            <description translate="no">
                 <p>Add Portuguese (Brazil) translations and improve Vietnamese translations</p>
             </description>
         </release>
-
         <release version="0.1.10" date='2025-12-03T00:00:00Z-0800'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.10</url>
-
-            <description>
+            <description translate="no">
                 <p>Add Vietnamese translations</p>
             </description>
         </release>
-
         <release version="0.1.9" date='2025-11-20T00:00:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.9</url>
-
-            <description>
+            <description translate="no">
                 <p>Add German and French translations</p>
             </description>
         </release>
-
         <release version="0.1.8" date='2025-11-18T00:00:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.8</url>
-
-            <description>
+            <description translate="no">
                 <p>Visual refinements to match the state of the art of GNOME apps</p>
             </description>
         </release>
-
         <release version="0.1.7" date='2025-03-13T17:30:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.7</url>
-
-            <description>
+            <description translate="no">
                 <p>Better support for systems with languages other than English</p>
             </description>
         </release>
-
         <release version="0.1.6" date='2025-01-16T18:00:00Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.6</url>
-
-            <description>
+            <description translate="no">
                 <p>Visual refinements to match the state of the art of GNOME apps</p>
             </description>
         </release>
-
         <release version="0.1.5" date='2024-08-15T18:58:38Z-0700'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.5</url>
-
-            <description>
+            <description translate="no">
                 <p>Visual refinements to match the state of the art of GNOME apps</p>
             </description>
         </release>
-
         <release version="0.1.4" date='2024-04-22T10:09:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.4</url>
-
-            <description>
+            <description translate="no">
                 <p>Refinements to the screenshots and descriptions</p>
             </description>
         </release>
-
         <release version="0.1.3" date='2024-04-20T19:08:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.3</url>
-
-            <description>
+            <description translate="no">
                 <p>Refinements to the screenshots and app metadata</p>
             </description>
         </release>
-
         <release version="0.1.2" date='2023-09-22T19:08:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.2</url>
-
-            <description>
+            <description translate="no">
                 <p>Visual refinements to match the state of the art of GNOME apps</p>
             </description>
         </release>
-
         <release version="0.1.1" date='2023-09-07T14:16:00Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.1</url>
-
-            <description>
+            <description translate="no">
                 <p>Simplify summary and improve build system conventions</p>
             </description>
         </release>
-
         <release version="0.1.0" date='2023-08-25T20:47:35Z07:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.0</url>
-
-            <description>
+            <description translate="no">
                 <p>Initial release</p>
             </description>
         </release>

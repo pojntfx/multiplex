@@ -438,6 +438,11 @@ msgstr "Piste sans titre"
 msgid "Could not continue due to a fatal error"
 msgstr "Impossible de continuer en raison d'une erreur fatale"
 
+#. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#: ../internal/components/main_menu.go:41
+msgid "translator-credits"
+msgstr "Felicitas Pojtinger <felicitas@pojtinger.com>"
+
 #: ../internal/components/main_window.go:246
 msgid "Could not get info for this magnet link."
 msgstr "Impossible d'obtenir les informations pour ce lien magnet."
@@ -482,6 +487,17 @@ msgstr "Ce fichier ne contient pas de sous-titres."
 #: ../assets/resources/metainfo.xml.in:5
 msgid "Watch torrents with your friends"
 msgstr "Regardez des torrents avec vos amis"
+
+#. TRANSLATORS: Search terms to find this application.
+#. Do NOT translate or localize the semicolons!
+#. The list MUST also end with a semicolon!
+#: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:13
+msgid ""
+"watch torrents with friends;video streaming;peer to peer video "
+"playback;watch party;torrent viewer;"
+msgstr ""
+"Regarder des torrents avec des amis;Streaming vidéo;Lecture vidéo "
+"peer-to-peer;Soirée visionnage;Visionneuse de torrents;"
 
 #: ../assets/resources/metainfo.xml.in:51
 msgid ""
@@ -559,70 +575,3 @@ msgstr "Préférences de passerelle distante"
 #: ../assets/resources/metainfo.xml.in:113
 msgid "Synchronization preferences"
 msgstr "Préférences de synchronisation"
-
-#: ../assets/resources/metainfo.xml.in:118
-msgid "watch torrents with friends"
-msgstr "Regarder des torrents avec des amis"
-
-#: ../assets/resources/metainfo.xml.in:119
-msgid "video streaming"
-msgstr "Streaming vidéo"
-
-#: ../assets/resources/metainfo.xml.in:120
-msgid "peer to peer video playback"
-msgstr "Lecture vidéo peer-to-peer"
-
-#: ../assets/resources/metainfo.xml.in:121
-msgid "watch party"
-msgstr "Soirée visionnage"
-
-#: ../assets/resources/metainfo.xml.in:122
-msgid "torrent viewer"
-msgstr "Visionneuse de torrents"
-
-#: ../assets/resources/metainfo.xml.in:130
-msgid ""
-"Add Portuguese (Brazil) translations and improve Vietnamese translations"
-msgstr ""
-"Ajout des traductions portugaises (Brésil) et amélioration des traductions "
-"vietnamiennes"
-
-#: ../assets/resources/metainfo.xml.in:138
-#, fuzzy
-msgid "Add Vietnamese translations"
-msgstr "Ajout des traductions allemandes et françaises"
-
-#: ../assets/resources/metainfo.xml.in:146
-msgid "Add German and French translations"
-msgstr "Ajout des traductions allemandes et françaises"
-
-#: ../assets/resources/metainfo.xml.in:154
-#: ../assets/resources/metainfo.xml.in:170
-#: ../assets/resources/metainfo.xml.in:178
-#: ../assets/resources/metainfo.xml.in:202
-msgid "Visual refinements to match the state of the art of GNOME apps"
-msgstr ""
-"Améliorations visuelles pour correspondre aux dernières applications GNOME"
-
-#: ../assets/resources/metainfo.xml.in:162
-msgid "Better support for systems with languages other than English"
-msgstr ""
-"Meilleur support pour les systèmes dans des langues autres que l'anglais"
-
-#: ../assets/resources/metainfo.xml.in:186
-msgid "Refinements to the screenshots and descriptions"
-msgstr "Améliorations des captures d'écran et des descriptions"
-
-#: ../assets/resources/metainfo.xml.in:194
-msgid "Refinements to the screenshots and app metadata"
-msgstr "Améliorations des captures d'écran et des métadonnées de l'application"
-
-#: ../assets/resources/metainfo.xml.in:210
-msgid "Simplify summary and improve build system conventions"
-msgstr ""
-"Simplification du résumé et amélioration des conventions du système de "
-"compilation"
-
-#: ../assets/resources/metainfo.xml.in:218
-msgid "Initial release"
-msgstr "Version initiale"
