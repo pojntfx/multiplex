@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net"
 	"os"
 	"path/filepath"
@@ -27,12 +28,12 @@ import (
 //go:generate sh -c "if [ -z \"$FLATPAK_ID\" ]; then go tool github.com/dennwc/flatpak-go-mod --json .; fi"
 
 const (
-	schemaDirEnvVar    = "GSETTINGS_SCHEMA_DIR"
-	gettextPackage     = "multiplex"
+	gettextPackage = "multiplex"
 )
 
 var (
 	LocaleDir = "/usr/share/locale"
+	SchemaDir = ""
 )
 
 func init() {
@@ -48,21 +49,28 @@ func init() {
 }
 
 func main() {
-	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex-gschemas")
+	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex")
 	if err != nil {
 		panic(err)
 	}
 	defer os.RemoveAll(tmpDir)
 
-	if err := os.WriteFile(filepath.Join(tmpDir, "gschemas.compiled"), resources.Schema, os.ModePerm); err != nil {
-		panic(err)
-	}
+	var settings gio.Settings
+	if SchemaDir == "" {
+		settings = *gio.NewSettings(resources.AppID)
+	} else {
+		source, err := gio.NewSettingsSchemaSourceFromDirectory(SchemaDir, gio.SettingsSchemaSourceGetDefault(), true)
+		if err != nil {
+			panic(err)
+		}
 
-	if err := os.Setenv(schemaDirEnvVar, tmpDir); err != nil {
-		panic(err)
-	}
+		schema := source.Lookup(resources.AppID, false)
+		if schema == nil {
+			panic(errors.New("could not find schema"))
+		}
 
-	settings := gio.NewSettings(resources.AppID)
+		settings = *gio.NewSettingsFull(schema, nil, schema.GetPath())
+	}
 
 	if storage := settings.GetString(resources.SchemaStorageKey); strings.TrimSpace(storage) == "" {
 		downloadPath := glib.GetUserSpecialDir(glib.GUserDirectoryDownloadValue)
@@ -194,7 +202,7 @@ func main() {
 			ctx,
 		)
 
-		mainWindow := components.NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, settings, gateway, cancel, tmpDir)
+		mainWindow := components.NewMainWindow(ctx, app, manager, apiAddr, apiUsername, apiPassword, &settings, gateway, cancel, tmpDir)
 
 		app.AddWindow(&mainWindow.ApplicationWindow.Window)
 		mainWindow.SetVisible(true)
