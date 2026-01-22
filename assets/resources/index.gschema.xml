@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<schemalist>
+<schemalist gettext-domain="multiplex">
     <schema id="com.pojtinger.felicitas.Multiplex" path="/com/pojtinger/felicitas/Multiplex/">
         <key name='verbose' type='x'>
             <default>5</default>

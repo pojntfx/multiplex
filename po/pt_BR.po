@@ -207,10 +207,12 @@ msgid "General"
 msgstr "Em geral"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
+#: ../assets/resources/index.gschema.xml:12
 msgid "Storage location"
 msgstr "Local de armazenamento"
 
 #: ../assets/resources/preferences.blp:16 ../assets/resources/preferences.ui:21
+#: ../assets/resources/index.gschema.xml:13
 msgid "Path to store downloaded torrents in"
 msgstr "Caminho para armazenar os torrents baixados em"
 
@@ -239,10 +241,12 @@ msgid "Advanced"
 msgstr "Avançado"
 
 #: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
+#: ../assets/resources/index.gschema.xml:6
 msgid "Verbosity level"
 msgstr "Nível de detalhamento"
 
 #: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
+#: ../assets/resources/index.gschema.xml:7
 msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
 msgstr ""
 "Nível de detalhamento (0 significa desativado, o padrão é informativo, 7 é "
@@ -253,10 +257,12 @@ msgid "Remoting"
 msgstr "Remoto"
 
 #: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
+#: ../assets/resources/index.gschema.xml:24
 msgid "Use remote gateway"
 msgstr "Usar gateway remoto"
 
 #: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
+#: ../assets/resources/index.gschema.xml:25
 msgid "Use a remote hTorrent gateway instead of the local one"
 msgstr "Use um gateway hTorrent remoto em vez do local"
 
@@ -296,6 +302,7 @@ msgstr "Tempo limite de conexão"
 
 #: ../assets/resources/preferences.blp:168
 #: ../assets/resources/preferences.ui:189
+#: ../assets/resources/index.gschema.xml:55
 msgid "Time to wait to connect to the weron signaling server"
 msgstr "Tempo de espera para conectar ao servidor de sinalização Weron"
 
@@ -306,11 +313,13 @@ msgstr "Modo de relé"
 
 #: ../assets/resources/preferences.blp:175
 #: ../assets/resources/preferences.ui:198
+#: ../assets/resources/index.gschema.xml:69
 msgid "Force usage of TURN servers for weron"
 msgstr "Forçar o uso de servidores TURN para weron"
 
 #: ../assets/resources/preferences.blp:188
 #: ../assets/resources/preferences.ui:215
+#: ../assets/resources/index.gschema.xml:19
 msgid "Command to launch mpv with"
 msgstr "Comando para iniciar o mpv com"
 
@@ -331,6 +340,7 @@ msgstr "A senha do gateways remoto"
 
 #: ../assets/resources/preferences.blp:212
 #: ../assets/resources/preferences.ui:243
+#: ../assets/resources/index.gschema.xml:49
 msgid "URL for the weron signaling server"
 msgstr "URL do servidor de sinalização Weron"
 
@@ -587,3 +597,54 @@ msgstr "Preferências de acesso remoto"
 #: ../assets/resources/metainfo.xml.in:113
 msgid "Synchronization preferences"
 msgstr "Preferências de sincronização"
+
+#: ../assets/resources/index.gschema.xml:18
+msgid "mpv command"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:30
+msgid "hTorrent URL"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:31
+msgid "URL of the remote hTorrent gateway to use"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:36
+msgid "hTorrent username"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:37
+msgid "Username for the remote hTorrent gateway"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:42
+msgid "hTorrent password"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:43
+msgid "Password for the remote hTorrent gateway"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:48
+msgid "weron URL"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:54
+msgid "weron timeout"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:60
+msgid "weron STUN/TURN servers"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:61
+msgid ""
+"Comma-separated list of STUN servers (in format stun:host:port) and TURN "
+"servers to use (in format username:credential@turn:host:port) (i.e. "
+"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:68
+msgid "weron relay mode"
+msgstr ""

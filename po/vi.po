@@ -205,10 +205,12 @@ msgid "General"
 msgstr "Tổng quan"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
+#: ../assets/resources/index.gschema.xml:12
 msgid "Storage location"
 msgstr "Vị trí lưu trữ"
 
 #: ../assets/resources/preferences.blp:16 ../assets/resources/preferences.ui:21
+#: ../assets/resources/index.gschema.xml:13
 msgid "Path to store downloaded torrents in"
 msgstr "Đường dẫn lưu trữ torrent đã tải xuống trong"
 
@@ -237,10 +239,12 @@ msgid "Advanced"
 msgstr "Nâng cao"
 
 #: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
+#: ../assets/resources/index.gschema.xml:6
 msgid "Verbosity level"
 msgstr "Mức độ ghi nhật ký"
 
 #: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
+#: ../assets/resources/index.gschema.xml:7
 msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
 msgstr "Mức độ ghi nhật ký (0: Tắt, Mặc định: Info, 7: Dấu vết)"
 
@@ -249,10 +253,12 @@ msgid "Remoting"
 msgstr "Từ xa"
 
 #: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
+#: ../assets/resources/index.gschema.xml:24
 msgid "Use remote gateway"
 msgstr "Sử dụng cổng mạng từ xa"
 
 #: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
+#: ../assets/resources/index.gschema.xml:25
 msgid "Use a remote hTorrent gateway instead of the local one"
 msgstr "Sử dụng cổng hTorrent từ xa thay vì cổng cục bộ"
 
@@ -292,6 +298,7 @@ msgstr "Hết thời gian kết nối"
 
 #: ../assets/resources/preferences.blp:168
 #: ../assets/resources/preferences.ui:189
+#: ../assets/resources/index.gschema.xml:55
 msgid "Time to wait to connect to the weron signaling server"
 msgstr "Đã đến lúc chờ kết nối với máy chủ báo hiệu weron"
 
@@ -302,11 +309,13 @@ msgstr "Chế độ chuyển tiếp"
 
 #: ../assets/resources/preferences.blp:175
 #: ../assets/resources/preferences.ui:198
+#: ../assets/resources/index.gschema.xml:69
 msgid "Force usage of TURN servers for weron"
 msgstr "Buộc sử dụng máy chủ TURN cho weron"
 
 #: ../assets/resources/preferences.blp:188
 #: ../assets/resources/preferences.ui:215
+#: ../assets/resources/index.gschema.xml:19
 msgid "Command to launch mpv with"
 msgstr "Lệnh khởi chạy mpv với"
 
@@ -327,6 +336,7 @@ msgstr "Mật khẩu của cổng từ xa"
 
 #: ../assets/resources/preferences.blp:212
 #: ../assets/resources/preferences.ui:243
+#: ../assets/resources/index.gschema.xml:49
 msgid "URL for the weron signaling server"
 msgstr "URL cho máy chủ báo hiệu weron"
 
@@ -582,3 +592,54 @@ msgstr "Tùy chọn từ xa"
 #: ../assets/resources/metainfo.xml.in:113
 msgid "Synchronization preferences"
 msgstr "Tùy chọn đồng bộ hóa"
+
+#: ../assets/resources/index.gschema.xml:18
+msgid "mpv command"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:30
+msgid "hTorrent URL"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:31
+msgid "URL of the remote hTorrent gateway to use"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:36
+msgid "hTorrent username"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:37
+msgid "Username for the remote hTorrent gateway"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:42
+msgid "hTorrent password"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:43
+msgid "Password for the remote hTorrent gateway"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:48
+msgid "weron URL"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:54
+msgid "weron timeout"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:60
+msgid "weron STUN/TURN servers"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:61
+msgid ""
+"Comma-separated list of STUN servers (in format stun:host:port) and TURN "
+"servers to use (in format username:credential@turn:host:port) (i.e. "
+"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+msgstr ""
+
+#: ../assets/resources/index.gschema.xml:68
+msgid "weron relay mode"
+msgstr ""
