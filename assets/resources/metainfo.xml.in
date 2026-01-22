@@ -115,6 +115,12 @@
     </screenshots>
 
     <releases>
+        <release version="0.1.12" date='2026-01-21T00:00:00Z00:00'>
+            <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.12</url>
+            <description translate="no">
+                <p>Add Chinese (Simplified) translations and improve translation system</p>
+            </description>
+        </release>
         <release version="0.1.11" date='2025-12-20T00:00:00Z00:00'>
             <url type="details">https://github.com/pojntfx/multiplex/releases/tag/v0.1.11</url>
             <description translate="no">
