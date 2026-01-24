@@ -11,6 +11,7 @@
         <file>subtitles.ui</file>
         <file>audiotracks.ui</file>
         <file>preparing.ui</file>
+        <file>shortcuts-dialog.ui</file>
         <file>style.css</file>
         <file>metainfo.xml</file>
     </gresource>

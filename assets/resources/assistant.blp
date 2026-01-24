@@ -47,7 +47,7 @@ template $MultiplexMainWindow: Adw.ApplicationWindow {
             ]
 
             visible: false;
-            tooltip-text: _("Open media details");
+            tooltip-text: _("Open Media Details");
 
             Box {
               Box {
@@ -82,7 +82,7 @@ template $MultiplexMainWindow: Adw.ApplicationWindow {
           valign: start;
 
           Adw.Spinner headerbar_spinner {
-            tooltip-text: _("Getting metadata ...");
+            tooltip-text: _("Getting Metadata...");
             visible: false;
             halign: center;
             valign: center;
@@ -101,6 +101,7 @@ template $MultiplexMainWindow: Adw.ApplicationWindow {
 
           MenuButton menu_button {
             icon-name: 'open-menu-symbolic';
+            tooltip-text: _("Main Menu");
             primary: true;
           }
 

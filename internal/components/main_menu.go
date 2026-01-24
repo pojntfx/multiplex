@@ -108,6 +108,35 @@ func AddMainMenu(
 	aboutAction.ConnectActivate(&onAbout)
 	window.AddAction(aboutAction)
 
+	shortcutsBuilder := gtk.NewBuilderFromResource(resources.ResourceShortcutsDialogPath)
+	defer shortcutsBuilder.Unref()
+	var shortcutsDialog adw.ShortcutsDialog
+	shortcutsBuilder.GetObject("shortcuts_dialog").Cast(&shortcutsDialog)
+
+	shortcutsAction := gio.NewSimpleAction("shortcuts", nil)
+	onShortcuts := func(action gio.SimpleAction, parameter uintptr) {
+		shortcutsDialog.Present(&window.Window.Widget)
+	}
+	shortcutsAction.ConnectActivate(&onShortcuts)
+	window.AddAction(shortcutsAction)
+	app.SetAccelsForAction("win.shortcuts", []string{`<Primary>question`})
+
+	closeWindowAction := gio.NewSimpleAction("closeWindow", nil)
+	onCloseWindow := func(action gio.SimpleAction, parameter uintptr) {
+		window.ApplicationWindow.Close()
+	}
+	closeWindowAction.ConnectActivate(&onCloseWindow)
+	window.AddAction(closeWindowAction)
+	app.SetAccelsForAction("win.closeWindow", []string{`<Primary>w`})
+
+	quitAction := gio.NewSimpleAction("quit", nil)
+	onQuit := func(action gio.SimpleAction, parameter uintptr) {
+		app.Application.Quit()
+	}
+	quitAction.ConnectActivate(&onQuit)
+	app.AddAction(quitAction)
+	app.SetAccelsForAction("app.quit", []string{`<Primary>q`})
+
 	menuButton.SetMenuModel(&menu.MenuModel)
 
 	return preferencesDialog, preferencesDialog.MpvCommandInput()

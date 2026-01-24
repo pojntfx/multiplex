@@ -35,7 +35,8 @@ var (
 	ResourceSubtitlesPath   = path.Join(AppPath, "subtitles.ui")
 	ResourceAudiotracksPath = path.Join(AppPath, "audiotracks.ui")
 	ResourceErrorPath       = path.Join(AppPath, "error.ui")
-	ResourceWarningPath     = path.Join(AppPath, "warning.ui")
+	ResourceWarningPath          = path.Join(AppPath, "warning.ui")
+	ResourceShortcutsDialogPath  = path.Join(AppPath, "shortcuts-dialog.ui")
 
 	ResourceStyleCSSPath = path.Join(AppPath, "style.css")
 	ResourceMetainfoPath = path.Join(AppPath, "metainfo.xml")

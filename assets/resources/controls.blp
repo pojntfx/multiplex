@@ -26,7 +26,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
               "flat",
             ]
 
-            tooltip-text: _("Open media details");
+            tooltip-text: _("Open Media Details");
 
             Box {
               Box {
@@ -56,7 +56,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             valign: start;
 
             Adw.Spinner headerbar_spinner {
-              tooltip-text: _("Preparing stream ...");
+              tooltip-text: _("Preparing Stream...");
               visible: false;
               halign: center;
               valign: center;
@@ -71,13 +71,13 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
 
               icon-name: 'system-users-symbolic';
               popover: users_popover;
-              tooltip-text: _("Show peers");
+              tooltip-text: _("Show Peers");
             }
 
             MenuButton menu_button {
               icon-name: 'open-menu-symbolic';
               primary: true;
-              tooltip-text: _("Open primary menu");
+              tooltip-text: _("Main Menu");
             }
 
             WindowControls {
@@ -102,7 +102,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'media-playback-start-symbolic';
-            tooltip-text: _("Toggle playback");
+            tooltip-text: _("Toggle Playback");
           }
 
           Button stop_button {
@@ -111,7 +111,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'media-playback-stop-symbolic';
-            tooltip-text: _("Stop playback");
+            tooltip-text: _("Stop Playback");
           }
 
           Separator {
@@ -126,12 +126,12 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             label: '00:00:00';
-            tooltip-text: _("Elapsed time");
+            tooltip-text: _("Elapsed Time");
           }
 
           Scale seeker {
             hexpand: true;
-            tooltip-text: _("Playback progress");
+            tooltip-text: _("Playback Progress");
           }
 
           Label remaining_track_label {
@@ -140,7 +140,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             label: '-00:00:00';
-            tooltip-text: _("Remaining playback time");
+            tooltip-text: _("Remaining Playback Time");
           }
 
           Separator {
@@ -155,7 +155,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'audio-volume-high-symbolic';
-            tooltip-text: _("Change audio volume");
+            tooltip-text: _("Change Audio Volume");
             popover: audiovolume_button_popover;
           }
 
@@ -165,7 +165,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'media-optical-cd-audio-symbolic';
-            tooltip-text: _("Change audio track");
+            tooltip-text: _("Change Audio Track");
           }
 
           Button subtitle_button {
@@ -174,7 +174,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'media-view-subtitles-symbolic';
-            tooltip-text: _("Change subtitles");
+            tooltip-text: _("Change Subtitles");
           }
 
           ToggleButton fullscreen_button {
@@ -183,7 +183,7 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             ]
 
             icon-name: 'view-fullscreen-symbolic';
-            tooltip-text: _("Toggle fullscreen");
+            tooltip-text: _("Toggle Fullscreen");
           }
         }
       }
@@ -227,7 +227,7 @@ Popover users_popover {
 
       Button copy_stream_code_button {
         icon-name: 'edit-copy-symbolic';
-        tooltip-text: _("Copy stream code to clipboard");
+        tooltip-text: _("Copy Stream Code to Clipboard");
       }
     }
   }
