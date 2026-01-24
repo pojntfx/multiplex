@@ -4,11 +4,11 @@ msgstr ""
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:129
+#: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
-#: ../assets/resources/assistant.ui:143 ../assets/resources/controls.ui:13
+#: ../assets/resources/assistant.ui:144 ../assets/resources/controls.ui:13
 msgid "Multiplex"
 msgstr "Multiplexe"
 
@@ -23,19 +23,24 @@ msgstr "Bienvenue"
 
 #: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
 #: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
-msgid "Open media details"
+msgid "Open Media Details"
 msgstr "Ouvrir les détails du média"
 
 #: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
 #: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
-msgid "Getting metadata ..."
+msgid "Getting Metadata..."
 msgstr "Récupération des métadonnées…"
 
 #: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
 msgid "Next"
 msgstr "Suivant"
 
-#: ../assets/resources/assistant.blp:130 ../assets/resources/assistant.ui:144
+#: ../assets/resources/assistant.blp:104 ../assets/resources/controls.blp:80
+#: ../assets/resources/assistant.ui:113 ../assets/resources/controls.ui:90
+msgid "Main Menu"
+msgstr "Menu principal"
+
+#: ../assets/resources/assistant.blp:131 ../assets/resources/assistant.ui:145
 msgid ""
 "Enter a <a href=\"https://en.wikipedia.org/wiki/Magnet_URI_scheme\">magnet "
 "link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
@@ -45,31 +50,31 @@ msgstr ""
 "magnet</a> ou un <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
 "Codes\">code de diffusion</a> pour commencer la diffusion"
 
-#: ../assets/resources/assistant.blp:133 ../assets/resources/assistant.ui:147
+#: ../assets/resources/assistant.blp:134 ../assets/resources/assistant.ui:148
 msgid "Magnet link or stream code"
 msgstr "Lien magnet ou code de diffusion"
 
-#: ../assets/resources/assistant.blp:151 ../assets/resources/assistant.ui:169
+#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Media"
 msgstr "Média"
 
-#: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
+#: ../assets/resources/assistant.blp:153 ../assets/resources/assistant.ui:171
 msgid "Select the file you want to play"
 msgstr "Sélectionnez le fichier que vous souhaitez lire"
 
-#: ../assets/resources/assistant.blp:171 ../assets/resources/assistant.ui:193
+#: ../assets/resources/assistant.blp:172 ../assets/resources/assistant.ui:194
 msgid "You're all set!"
 msgstr "Tout est prêt !"
 
-#: ../assets/resources/assistant.blp:180 ../assets/resources/assistant.ui:202
+#: ../assets/resources/assistant.blp:181 ../assets/resources/assistant.ui:203
 msgid "I have the right to stream the selected media"
 msgstr "J'ai le droit de diffuser le média sélectionné"
 
-#: ../assets/resources/assistant.blp:188 ../assets/resources/assistant.ui:210
+#: ../assets/resources/assistant.blp:189 ../assets/resources/assistant.ui:211
 msgid "Download and Play"
 msgstr "Télécharger et lire"
 
-#: ../assets/resources/assistant.blp:215 ../assets/resources/assistant.ui:245
+#: ../assets/resources/assistant.blp:216 ../assets/resources/assistant.ui:246
 msgid "Stream without Downloading"
 msgstr "Diffuser sans télécharger"
 
@@ -90,51 +95,53 @@ msgstr "OK"
 
 #: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
 #: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
-msgid "Preparing stream ..."
+msgid "Preparing Stream..."
 msgstr "Préparation du flux en cours…"
 
 #: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
-msgid "Show peers"
+msgid "Show Peers"
 msgstr "Afficher les pairs"
 
-#: ../assets/resources/controls.blp:80 ../assets/resources/controls.ui:90
-msgid "Open primary menu"
-msgstr "Ouvrir le menu principal"
-
-#: ../assets/resources/controls.blp:105 ../assets/resources/controls.ui:118
-msgid "Toggle playback"
+#: ../assets/resources/controls.blp:105
+#: ../assets/resources/shortcuts-dialog.blp:33
+#: ../assets/resources/controls.ui:118
+#: ../assets/resources/shortcuts-dialog.ui:44
+msgid "Toggle Playback"
 msgstr "Basculer la lecture"
 
 #: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
-msgid "Stop playback"
+msgid "Stop Playback"
 msgstr "Arrêter la lecture"
 
 #: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
-msgid "Elapsed time"
+msgid "Elapsed Time"
 msgstr "Temps écoulé"
 
 #: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
-msgid "Playback progress"
+msgid "Playback Progress"
 msgstr "Progression de la lecture"
 
 #: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
-msgid "Remaining playback time"
+msgid "Remaining Playback Time"
 msgstr "Temps de lecture restant"
 
 #: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
-msgid "Change audio volume"
+msgid "Change Audio Volume"
 msgstr "Modifier le volume audio"
 
 #: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
-msgid "Change audio track"
+msgid "Change Audio Track"
 msgstr "Changer de piste audio"
 
 #: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
-msgid "Change subtitles"
+msgid "Change Subtitles"
 msgstr "Changer les sous-titres"
 
-#: ../assets/resources/controls.blp:186 ../assets/resources/controls.ui:202
-msgid "Toggle fullscreen"
+#: ../assets/resources/controls.blp:186
+#: ../assets/resources/shortcuts-dialog.blp:38
+#: ../assets/resources/controls.ui:202
+#: ../assets/resources/shortcuts-dialog.ui:50
+msgid "Toggle Fullscreen"
 msgstr "Basculer en plein écran"
 
 #: ../assets/resources/controls.blp:210
@@ -151,7 +158,7 @@ msgstr ""
 "diffusion suivant :"
 
 #: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
-msgid "Copy stream code to clipboard"
+msgid "Copy Stream Code to Clipboard"
 msgstr "Copier le code de diffusion dans le presse-papiers"
 
 #: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
@@ -183,16 +190,25 @@ msgid "Preferences"
 msgstr "Préférences"
 
 #: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+msgid "Keyboard Shortcuts"
+msgstr "Raccourcis clavier"
+
+#: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
 msgid "About Multiplex"
 msgstr "À propos de Multiplexe"
 
-#: ../assets/resources/preferences.blp:8 ../assets/resources/preferences.ui:13
+#: ../assets/resources/preferences.blp:8
+#: ../assets/resources/shortcuts-dialog.blp:30
+#: ../assets/resources/preferences.ui:13
+#: ../assets/resources/shortcuts-dialog.ui:41
 msgid "Playback"
 msgstr "Lecture"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
+#: ../assets/resources/shortcuts-dialog.blp:6
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
+#: ../assets/resources/shortcuts-dialog.ui:12
 msgid "General"
 msgstr "Général"
 
@@ -221,7 +237,7 @@ msgstr "Commande du lecteur"
 #: ../assets/resources/preferences.ui:127
 #: ../assets/resources/preferences.ui:157
 #: ../assets/resources/preferences.ui:174
-msgid "Show help"
+msgid "Show Help"
 msgstr "Afficher l'aide"
 
 #: ../assets/resources/preferences.blp:47
@@ -352,7 +368,7 @@ msgid "Tracks"
 msgstr "Pistes"
 
 #: ../assets/resources/subtitles.blp:86 ../assets/resources/subtitles.ui:93
-msgid "Add from file"
+msgid "Add from File"
 msgstr "Ajouter depuis un fichier"
 
 #: ../assets/resources/warning.blp:5 ../assets/resources/warning.ui:10
@@ -378,6 +394,26 @@ msgstr "Télécharger depuis mpv.io"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Configuration manuelle"
+
+#: ../assets/resources/shortcuts-dialog.blp:9
+#: ../assets/resources/shortcuts-dialog.ui:15
+msgid "Open Menu"
+msgstr "Menu principal"
+
+#: ../assets/resources/shortcuts-dialog.blp:14
+#: ../assets/resources/shortcuts-dialog.ui:21
+msgid "Show Keyboard Shortcuts"
+msgstr "Afficher les raccourcis clavier"
+
+#: ../assets/resources/shortcuts-dialog.blp:19
+#: ../assets/resources/shortcuts-dialog.ui:27
+msgid "Close Window"
+msgstr "Fermer la fenêtre"
+
+#: ../assets/resources/shortcuts-dialog.blp:24
+#: ../assets/resources/shortcuts-dialog.ui:33
+msgid "Quit"
+msgstr "Quitter"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
@@ -633,8 +669,9 @@ msgid ""
 "username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
 msgstr ""
 "Liste séparée par des virgules des serveurs STUN (au format stun:host:port) "
-"et des serveurs TURN à utiliser (au format username:credential@turn:host:port) "
-"(p.ex. username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+"et des serveurs TURN à utiliser (au format "
+"username:credential@turn:host:port) (p.ex. "
+"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
 
 #: ../assets/resources/index.gschema.xml:68
 msgid "weron relay mode"
