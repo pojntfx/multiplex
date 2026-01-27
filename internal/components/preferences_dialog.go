@@ -286,15 +286,14 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.PreferencesWindowGLibType(), &parentQuery)
+	parentQuery := newTypeQuery(adw.PreferencesWindowGLibType())
 
 	gTypePreferencesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexPreferencesDialog",
-		parentQuery.ClassSize,
+		uint(parentQuery.ClassSize),
 		&classInit,
-		parentQuery.InstanceSize+uint(unsafe.Sizeof(PreferencesDialog{}))+uint(unsafe.Sizeof(&PreferencesDialog{})),
+		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(PreferencesDialog{}))+uint(unsafe.Sizeof(&PreferencesDialog{})),
 		&instanceInit,
 		0,
 	)

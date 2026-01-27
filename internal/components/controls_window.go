@@ -1843,15 +1843,14 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.ApplicationWindowGLibType(), &parentQuery)
+	parentQuery := newTypeQuery(adw.ApplicationWindowGLibType())
 
 	gTypeControlsWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexControlsWindow",
-		parentQuery.ClassSize,
+		uint(parentQuery.ClassSize),
 		&classInit,
-		parentQuery.InstanceSize+uint(unsafe.Sizeof(ControlsWindow{}))+uint(unsafe.Sizeof(&ControlsWindow{})),
+		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(ControlsWindow{}))+uint(unsafe.Sizeof(&ControlsWindow{})),
 		&instanceInit,
 		0,
 	)

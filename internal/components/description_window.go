@@ -127,15 +127,14 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+	parentQuery := newTypeQuery(adw.WindowGLibType())
 
 	gTypeDescriptionWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexDescriptionWindow",
-		parentQuery.ClassSize,
+		uint(parentQuery.ClassSize),
 		&classInit,
-		parentQuery.InstanceSize+uint(unsafe.Sizeof(DescriptionWindow{}))+uint(unsafe.Sizeof(&DescriptionWindow{})),
+		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(DescriptionWindow{}))+uint(unsafe.Sizeof(&DescriptionWindow{})),
 		&instanceInit,
 		0,
 	)

@@ -134,15 +134,14 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+	parentQuery := newTypeQuery(adw.WindowGLibType())
 
 	gTypeAudioTracksDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexAudioTracksDialog",
-		parentQuery.ClassSize,
+		uint(parentQuery.ClassSize),
 		&classInit,
-		parentQuery.InstanceSize+uint(unsafe.Sizeof(AudioTracksDialog{}))+uint(unsafe.Sizeof(&AudioTracksDialog{})),
+		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(AudioTracksDialog{}))+uint(unsafe.Sizeof(&AudioTracksDialog{})),
 		&instanceInit,
 		0,
 	)

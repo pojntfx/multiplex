@@ -187,15 +187,14 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+	parentQuery := newTypeQuery(adw.WindowGLibType())
 
 	gTypeSubtitlesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexSubtitlesDialog",
-		parentQuery.ClassSize,
+		uint(parentQuery.ClassSize),
 		&classInit,
-		parentQuery.InstanceSize+uint(unsafe.Sizeof(SubtitlesDialog{}))+uint(unsafe.Sizeof(&SubtitlesDialog{})),
+		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(SubtitlesDialog{}))+uint(unsafe.Sizeof(&SubtitlesDialog{})),
 		&instanceInit,
 		0,
 	)
