@@ -26,17 +26,17 @@ var (
 	AppArtists    = append(AppDevelopers, "Brage Fuglseth")
 	AppCopyright  = "© 2026 " + strings.Join(AppDevelopers, ", ")
 
-	ResourceAssistantPath   = path.Join(AppPath, "assistant.ui")
-	ResourceControlsPath    = path.Join(AppPath, "controls.ui")
-	ResourceDescriptionPath = path.Join(AppPath, "description.ui")
-	ResourceMenuPath        = path.Join(AppPath, "menu.ui")
-	ResourcePreferencesPath = path.Join(AppPath, "preferences.ui")
-	ResourcePreparingPath   = path.Join(AppPath, "preparing.ui")
-	ResourceSubtitlesPath   = path.Join(AppPath, "subtitles.ui")
-	ResourceAudiotracksPath = path.Join(AppPath, "audiotracks.ui")
-	ResourceErrorPath       = path.Join(AppPath, "error.ui")
-	ResourceWarningPath          = path.Join(AppPath, "warning.ui")
-	ResourceShortcutsDialogPath  = path.Join(AppPath, "shortcuts-dialog.ui")
+	ResourceAssistantPath       = path.Join(AppPath, "assistant.ui")
+	ResourceControlsPath        = path.Join(AppPath, "controls.ui")
+	ResourceDescriptionPath     = path.Join(AppPath, "description.ui")
+	ResourceMenuPath            = path.Join(AppPath, "menu.ui")
+	ResourcePreferencesPath     = path.Join(AppPath, "preferences.ui")
+	ResourcePreparingPath       = path.Join(AppPath, "preparing.ui")
+	ResourceSubtitlesPath       = path.Join(AppPath, "subtitles.ui")
+	ResourceAudiotracksPath     = path.Join(AppPath, "audiotracks.ui")
+	ResourceErrorPath           = path.Join(AppPath, "error.ui")
+	ResourceWarningPath         = path.Join(AppPath, "warning.ui")
+	ResourceShortcutsWindowPath = path.Join(AppPath, "shortcuts-window.ui")
 
 	ResourceStyleCSSPath = path.Join(AppPath, "style.css")
 	ResourceMetainfoPath = path.Join(AppPath, "metainfo.xml")
@@ -59,4 +59,3 @@ const (
 	SchemaWeronICEKey        = "weronice"
 	SchemaWeronForceRelayKey = "weronforcerelay"
 )
-

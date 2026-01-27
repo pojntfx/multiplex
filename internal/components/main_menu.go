@@ -108,14 +108,11 @@ func AddMainMenu(
 	aboutAction.ConnectActivate(&onAbout)
 	window.AddAction(aboutAction)
 
-	shortcutsBuilder := gtk.NewBuilderFromResource(resources.ResourceShortcutsDialogPath)
-	defer shortcutsBuilder.Unref()
-	var shortcutsDialog adw.ShortcutsDialog
-	shortcutsBuilder.GetObject("shortcuts_dialog").Cast(&shortcutsDialog)
+	shortcutsWindow := NewShortcutsWindow(window, app)
 
 	shortcutsAction := gio.NewSimpleAction("shortcuts", nil)
 	onShortcuts := func(action gio.SimpleAction, parameter uintptr) {
-		shortcutsDialog.Present(&window.Window.Widget)
+		shortcutsWindow.Present()
 	}
 	shortcutsAction.ConnectActivate(&onShortcuts)
 	window.AddAction(shortcutsAction)

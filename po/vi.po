@@ -113,9 +113,8 @@ msgid "Show Peers"
 msgstr "Hiển thị thiết bị"
 
 #: ../assets/resources/controls.blp:105
-#: ../assets/resources/shortcuts-dialog.blp:33
+#: ../internal/components/shortcuts_window.go:83
 #: ../assets/resources/controls.ui:118
-#: ../assets/resources/shortcuts-dialog.ui:44
 msgid "Toggle Playback"
 msgstr "Chuyển đổi phát lại"
 
@@ -148,9 +147,8 @@ msgid "Change Subtitles"
 msgstr "Thay đổi phụ đề"
 
 #: ../assets/resources/controls.blp:186
-#: ../assets/resources/shortcuts-dialog.blp:38
+#: ../internal/components/shortcuts_window.go:84
 #: ../assets/resources/controls.ui:202
-#: ../assets/resources/shortcuts-dialog.ui:50
 msgid "Toggle Fullscreen"
 msgstr "Bật/tắt toàn màn hình"
 
@@ -197,7 +195,8 @@ msgstr "Sao chép magnet link"
 msgid "Preferences"
 msgstr "Tùy chọn"
 
-#: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+#: ../assets/resources/menu.blp:22 ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/menu.ui:25 ../assets/resources/shortcuts-window.ui:13
 msgid "Keyboard Shortcuts"
 msgstr ""
 
@@ -206,17 +205,15 @@ msgid "About Multiplex"
 msgstr "Giới thiệu về Multiplex"
 
 #: ../assets/resources/preferences.blp:8
-#: ../assets/resources/shortcuts-dialog.blp:30
+#: ../internal/components/shortcuts_window.go:81
 #: ../assets/resources/preferences.ui:13
-#: ../assets/resources/shortcuts-dialog.ui:41
 msgid "Playback"
 msgstr "Phát lại"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
-#: ../assets/resources/shortcuts-dialog.blp:6
+#: ../internal/components/shortcuts_window.go:73
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
-#: ../assets/resources/shortcuts-dialog.ui:12
 msgid "General"
 msgstr "Tổng quan"
 
@@ -402,25 +399,21 @@ msgstr "Tải từ mpv.io"
 msgid "Manual configuration"
 msgstr "Cấu hình thủ công"
 
-#: ../assets/resources/shortcuts-dialog.blp:9
-#: ../assets/resources/shortcuts-dialog.ui:15
-msgid "Open Menu"
-msgstr ""
+#: ../internal/components/error_dialog.go:51
+msgid "Could not continue due to a fatal error"
+msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
 
-#: ../assets/resources/shortcuts-dialog.blp:14
-#: ../assets/resources/shortcuts-dialog.ui:21
-msgid "Show Keyboard Shortcuts"
-msgstr ""
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "Mở lại để áp dụng các thay đổi."
 
-#: ../assets/resources/shortcuts-dialog.blp:19
-#: ../assets/resources/shortcuts-dialog.ui:27
-msgid "Close Window"
-msgstr ""
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "Mở lại"
 
-#: ../assets/resources/shortcuts-dialog.blp:24
-#: ../assets/resources/shortcuts-dialog.ui:33
-msgid "Quit"
-msgstr ""
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Chọn vị trí lưu trữ"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
@@ -446,91 +439,87 @@ msgstr "%v MB/%v MB (%v thiết bị)"
 msgid "Searching for peers"
 msgstr "Đang tìm kiếm thiết bị"
 
-#: ../internal/components/controls_window.go:1074
-#: ../internal/components/controls_window.go:1325
+#: ../internal/components/controls_window.go:1096
+#: ../internal/components/controls_window.go:1347
 msgid "None"
 msgstr "Không có"
 
-#: ../internal/components/controls_window.go:1222
+#: ../internal/components/controls_window.go:1244
 msgid "Disable subtitles"
 msgstr "Tắt phụ đề"
 
-#: ../internal/components/controls_window.go:1227
+#: ../internal/components/controls_window.go:1249
 msgid "Integrated subtitle"
 msgstr "Phụ đề tích hợp"
 
-#: ../internal/components/controls_window.go:1230
+#: ../internal/components/controls_window.go:1252
 msgid "Subtitle from torrent"
 msgstr "Phụ đề từ torrent"
 
-#: ../internal/components/controls_window.go:1233
+#: ../internal/components/controls_window.go:1255
 msgid "Extra file from torrent"
 msgstr "Tệp bổ sung từ torrent"
 
-#: ../internal/components/controls_window.go:1246
+#: ../internal/components/controls_window.go:1268
 msgid "Select subtitle file"
 msgstr "Chọn tệp phụ đề"
 
-#: ../internal/components/controls_window.go:1296
+#: ../internal/components/controls_window.go:1318
 msgid "Manually added"
 msgstr "Đã thêm thủ công"
 
-#: ../internal/components/controls_window.go:1396
+#: ../internal/components/controls_window.go:1418
 msgid "Disable audio"
 msgstr "Tắt âm thanh"
 
-#: ../internal/components/controls_window.go:1398
+#: ../internal/components/controls_window.go:1420
 msgid "Track %v"
 msgstr "Track %v"
 
-#: ../internal/components/controls_window.go:1406
+#: ../internal/components/controls_window.go:1428
 msgid "Untitled Track"
 msgstr "Bản nhạc không có tiêu đề"
-
-#: ../internal/components/error_dialog.go:51
-msgid "Could not continue due to a fatal error"
-msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
 
 #. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
 #: ../internal/components/main_menu.go:41
 msgid "translator-credits"
 msgstr "Loc Huynh <huynhloc.contact@gmail.com>"
 
-#: ../internal/components/main_window.go:246
+#: ../internal/components/main_window.go:245
 msgid "Could not get info for this magnet link."
 msgstr "Không thể lấy thông tin cho magnet link này."
 
-#: ../internal/components/main_window.go:340
+#: ../internal/components/main_window.go:339
 msgid "Media (%v MB)"
 msgstr "Phương tiện (%v MB)"
 
-#: ../internal/components/main_window.go:342
+#: ../internal/components/main_window.go:341
 msgid "Extra file (%v MB)"
 msgstr "Tệp bổ sung (%v MB)"
 
-#: ../internal/components/main_window.go:386
+#: ../internal/components/main_window.go:385
 msgid "This stream code is invalid."
 msgstr "Stream code này không hợp lệ."
 
-#: ../internal/components/main_window.go:544
+#: ../internal/components/main_window.go:543
 msgid "No README found."
 msgstr "Không tìm thấy README."
 
-#: ../internal/components/main_window.go:638
+#: ../internal/components/main_window.go:637
 msgid "Manual Downloads"
 msgstr "Tải Xuống Thủ Công"
 
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "Mở lại để áp dụng các thay đổi."
+#: ../internal/components/shortcuts_window.go:75
+msgid "Show Keyboard Shortcuts"
+msgstr ""
 
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "Mở lại"
+#: ../internal/components/shortcuts_window.go:76
+msgid "Close Window"
+msgstr ""
 
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Chọn vị trí lưu trữ"
+#: ../internal/components/shortcuts_window.go:77
+msgid "Quit"
+msgstr ""
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."

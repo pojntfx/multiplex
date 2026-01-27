@@ -1,0 +1,41 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MultiplexShortcutsWindow: Adw.Window {
+  default-width: 600;
+  default-height: 500;
+  modal: true;
+  title: _("Keyboard Shortcuts");
+
+  [content]
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      styles [
+        "flat",
+      ]
+    }
+
+    content: ScrolledWindow {
+      vexpand: true;
+
+      Adw.Clamp {
+        // Maximum sizes and margins match Adw.ShortcutsDialog
+        maximum-size: 600;
+        margin-start: 12;
+        margin-end: 12;
+        margin-top: 12;
+        margin-bottom: 12;
+
+        Box shortcuts_container {
+          orientation: vertical;
+          spacing: 24;
+        }
+      }
+    };
+  }
+
+  styles [
+    "shortcuts",
+  ]
+}

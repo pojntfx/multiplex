@@ -215,7 +215,6 @@ func (w *MainWindow) setupSignalHandlers() {
 	w.ApplicationWindow.ConnectShow(&onShow)
 }
 
-
 func (w *MainWindow) onNext() {
 	switch w.stack.GetVisibleChildName() {
 	case welcomePageName:

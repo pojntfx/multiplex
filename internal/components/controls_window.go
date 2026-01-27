@@ -1037,7 +1037,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 
 	controlsW.setupFullscreenControl()
 
-	onPlayClicked := func(gtk.Button) {
+	togglePlayback := func() {
 		if !controlsW.headerbarSpinner.GetVisible() {
 			if controlsW.playButton.GetIconName() == playIcon {
 				pauses.Broadcast(false)
@@ -1049,7 +1049,29 @@ func (c *ControlsWindow) setupPlaybackControls(
 			pausePlayback()
 		}
 	}
+
+	onPlayClicked := func(gtk.Button) {
+		togglePlayback()
+	}
 	controlsW.playButton.ConnectClicked(&onPlayClicked)
+
+	togglePlaybackAction := gio.NewSimpleAction("togglePlayback", nil)
+	onTogglePlayback := func(action gio.SimpleAction, parameter uintptr) {
+		togglePlayback()
+	}
+	togglePlaybackAction.ConnectActivate(&onTogglePlayback)
+	controlsW.ApplicationWindow.AddAction(togglePlaybackAction)
+	controlsW.app.SetAccelsForAction("win.togglePlayback", []string{"space"})
+
+	toggleFullscreenAction := gio.NewSimpleAction("toggleFullscreen", nil)
+	onToggleFullscreen := func(action gio.SimpleAction, parameter uintptr) {
+		// We call `.Activate` on the button here instead of the actual handler for
+		// toggling fullscreen mode so that we also change the fullscreen button's state
+		controlsW.fullscreenButton.Activate()
+	}
+	toggleFullscreenAction.ConnectActivate(&onToggleFullscreen)
+	controlsW.ApplicationWindow.AddAction(toggleFullscreenAction)
+	controlsW.app.SetAccelsForAction("win.toggleFullscreen", []string{"f"})
 
 	go func() {
 		if err := controlsW.command.Wait(); err != nil && err.Error() != errKilled.Error() {
