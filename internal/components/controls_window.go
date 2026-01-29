@@ -1061,7 +1061,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	}
 	togglePlaybackAction.ConnectActivate(&onTogglePlayback)
 	controlsW.ApplicationWindow.AddAction(togglePlaybackAction)
-	controlsW.app.SetAccelsForAction("win.togglePlayback", []string{"space"})
+	controlsW.app.SetAccelsForAction("win.togglePlayback", []string{"<Ctrl>space"})
 
 	toggleFullscreenAction := gio.NewSimpleAction("toggleFullscreen", nil)
 	onToggleFullscreen := func(action gio.SimpleAction, parameter uintptr) {
@@ -1071,7 +1071,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	}
 	toggleFullscreenAction.ConnectActivate(&onToggleFullscreen)
 	controlsW.ApplicationWindow.AddAction(toggleFullscreenAction)
-	controlsW.app.SetAccelsForAction("win.toggleFullscreen", []string{"f"})
+	controlsW.app.SetAccelsForAction("win.toggleFullscreen", []string{"F11"})
 
 	go func() {
 		if err := controlsW.command.Wait(); err != nil && err.Error() != errKilled.Error() {
