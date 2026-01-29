@@ -117,14 +117,15 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	parentQuery := newTypeQuery(adw.AlertDialogGLibType())
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.AlertDialogGLibType(), &parentQuery)
 
 	gTypeErrorDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexErrorDialog",
-		uint(parentQuery.ClassSize),
+		parentQuery.ClassSize,
 		&classInit,
-		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(ErrorDialog{}))+uint(unsafe.Sizeof(&ErrorDialog{}))+uint(unsafe.Sizeof(adw.AlertDialog{})), // TODO: Figure out why we need the extra `adw.AlertDialog` here
+		parentQuery.InstanceSize+uint32(unsafe.Sizeof(ErrorDialog{}))+uint32(unsafe.Sizeof(&ErrorDialog{}))+uint32(unsafe.Sizeof(adw.AlertDialog{})), // TODO: Figure out why we need the extra `adw.AlertDialog` here
 		&instanceInit,
 		0,
 	)

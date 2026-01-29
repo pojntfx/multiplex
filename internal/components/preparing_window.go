@@ -98,7 +98,7 @@ func init() {
 			}
 			parent.ConnectCloseRequest(&onCloseRequest)
 
-			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
 				if keycode == keycodeEscape {
 					if p.closeRequestCallback != nil {
 						if p.closeRequestCallback() {
@@ -130,14 +130,15 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	parentQuery := newTypeQuery(adw.WindowGLibType())
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
 
 	gTypePreparingWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexPreparingWindow",
-		uint(parentQuery.ClassSize),
+		parentQuery.ClassSize,
 		&classInit,
-		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(PreparingWindow{}))+uint(unsafe.Sizeof(&PreparingWindow{})),
+		parentQuery.InstanceSize+uint32(unsafe.Sizeof(PreparingWindow{}))+uint32(unsafe.Sizeof(&PreparingWindow{})),
 		&instanceInit,
 		0,
 	)

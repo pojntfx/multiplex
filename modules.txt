@@ -200,7 +200,7 @@ github.com/jwijenbergh/purego/internal/cgo
 github.com/jwijenbergh/purego/internal/fakecgo
 github.com/jwijenbergh/purego/internal/strings
 github.com/jwijenbergh/purego/internal/xreflect
-# github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381
+# github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381 => ../puregotk
 ## explicit; go 1.23.0
 github.com/jwijenbergh/puregotk/internal/core
 github.com/jwijenbergh/puregotk/pkg/core

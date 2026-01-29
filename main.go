@@ -133,7 +133,7 @@ func main() {
 		gtk.StyleContextAddProviderForDisplay(
 			gdk.DisplayGetDefault(),
 			prov,
-			uint(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION),
+			uint32(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION),
 		)
 
 		addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
@@ -220,7 +220,7 @@ func main() {
 	}
 	app.ConnectShutdown(&shutdownCallback)
 
-	if code := app.Run(len(os.Args), os.Args); code > 0 {
-		os.Exit(code)
+	if code := app.Run(int32(len(os.Args)), os.Args); code > 0 {
+		os.Exit(int(code))
 	}
 }

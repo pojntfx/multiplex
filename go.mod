@@ -127,3 +127,5 @@ require (
 	modernc.org/sqlite v1.40.0 // indirect
 	zombiezen.com/go/sqlite v1.4.2 // indirect
 )
+
+replace github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381 => ../puregotk

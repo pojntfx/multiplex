@@ -164,7 +164,7 @@ func init() {
 			}
 			parent.ConnectCloseRequest(&onCloseRequest)
 
-			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
 				if keycode == keycodeEscape {
 					parent.Close()
 					parent.SetVisible(false)
@@ -184,14 +184,15 @@ func init() {
 
 	var shortcutsInstanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	shortcutsParentQuery := newTypeQuery(adw.WindowGLibType())
+	var shortcutsParentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.WindowGLibType(), &shortcutsParentQuery)
 
 	gTypeShortcutsWindow = gobject.TypeRegisterStaticSimple(
 		shortcutsParentQuery.Type,
 		"MultiplexShortcutsWindow",
-		uint(shortcutsParentQuery.ClassSize),
+		shortcutsParentQuery.ClassSize,
 		&shortcutsClassInit,
-		uint(shortcutsParentQuery.InstanceSize)+uint(unsafe.Sizeof(ShortcutsWindow{}))+uint(unsafe.Sizeof(&ShortcutsWindow{})),
+		shortcutsParentQuery.InstanceSize+uint32(unsafe.Sizeof(ShortcutsWindow{}))+uint32(unsafe.Sizeof(&ShortcutsWindow{})),
 		&shortcutsInstanceInit,
 		0,
 	)

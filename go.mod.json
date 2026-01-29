@@ -12,13 +12,6 @@
     "url": "https://proxy.golang.org/github.com/anacrolix/torrent/@v/v1.59.1.zip"
   },
   {
-    "dest": "vendor/github.com/jwijenbergh/puregotk",
-    "sha256": "2f386c11285dba4ba7bd57f22ba1ac16e93d0fb5a7cc6c4aaae5f6d957867af4",
-    "strip-components": 3,
-    "type": "archive",
-    "url": "https://proxy.golang.org/github.com/jwijenbergh/puregotk/@v/v0.0.0-20251201161753-28ec1479c381.zip"
-  },
-  {
     "dest": "vendor/github.com/mitchellh/mapstructure",
     "sha256": "118d5b2cb65c50dba967fb6d708f450a9caf93f321f8fc99080675b2ee374199",
     "strip-components": 3,

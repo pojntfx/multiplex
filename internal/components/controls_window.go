@@ -385,7 +385,7 @@ func (c *ControlsWindow) setup() error {
 	}
 	descriptionWindow.ConnectCloseRequest(&onDescCloseRequest)
 
-	onDescKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+	onDescKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
 		if keycode == keycodeEscape {
 			descriptionWindow.Close()
 			descriptionWindow.SetVisible(false)
@@ -1271,8 +1271,8 @@ func (c *ControlsWindow) setupSubtitleHandlers(subtracks []mediaWithPriorityAndI
 			"",
 			"")
 		filePicker.SetModal(true)
-		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int) {
-			if responseId == int(gtk.ResponseAcceptValue) {
+		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int32) {
+			if responseId == int32(gtk.ResponseAcceptValue) {
 				log.Info().
 					Str("path", filePicker.GetFile().GetPath()).
 					Msg("Setting subtitles")
@@ -1654,7 +1654,7 @@ func (c *ControlsWindow) setupMediaControls(subtitlesDialog SubtitlesDialog, aud
 		dialog.AddController(&escCtrl.EventController)
 		dialog.SetTransientFor(&controlsW.ApplicationWindow.Window)
 
-		onEscKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint, state gdk.ModifierType) {
+		onEscKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
 			if keycode == keycodeEscape {
 				dialog.Close()
 				dialog.SetVisible(false)
@@ -1865,14 +1865,15 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	parentQuery := newTypeQuery(adw.ApplicationWindowGLibType())
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.ApplicationWindowGLibType(), &parentQuery)
 
 	gTypeControlsWindow = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexControlsWindow",
-		uint(parentQuery.ClassSize),
+		parentQuery.ClassSize,
 		&classInit,
-		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(ControlsWindow{}))+uint(unsafe.Sizeof(&ControlsWindow{})),
+		parentQuery.InstanceSize+uint32(unsafe.Sizeof(ControlsWindow{}))+uint32(unsafe.Sizeof(&ControlsWindow{})),
 		&instanceInit,
 		0,
 	)

@@ -163,8 +163,8 @@ func (p *PreferencesDialog) setupCallbacks() {
 			"",
 			"")
 		filePicker.SetModal(true)
-		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int) {
-			if responseId == int(gtk.ResponseAcceptValue) {
+		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int32) {
+			if responseId == int32(gtk.ResponseAcceptValue) {
 				p.settings.SetString(resources.SchemaStorageKey, filePicker.GetFile().GetPath())
 
 				p.markPreferencesChanged()
@@ -286,14 +286,15 @@ func init() {
 
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	parentQuery := newTypeQuery(adw.PreferencesWindowGLibType())
+	var parentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.PreferencesWindowGLibType(), &parentQuery)
 
 	gTypePreferencesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,
 		"MultiplexPreferencesDialog",
-		uint(parentQuery.ClassSize),
+		parentQuery.ClassSize,
 		&classInit,
-		uint(parentQuery.InstanceSize)+uint(unsafe.Sizeof(PreferencesDialog{}))+uint(unsafe.Sizeof(&PreferencesDialog{})),
+		parentQuery.InstanceSize+uint32(unsafe.Sizeof(PreferencesDialog{}))+uint32(unsafe.Sizeof(&PreferencesDialog{})),
 		&instanceInit,
 		0,
 	)

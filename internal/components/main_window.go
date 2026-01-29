@@ -915,14 +915,15 @@ func init() {
 
 	var windowInstanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
-	windowParentQuery := newTypeQuery(adw.ApplicationWindowGLibType())
+	var windowParentQuery gobject.TypeQuery
+	gobject.NewTypeQuery(adw.ApplicationWindowGLibType(), &windowParentQuery)
 
 	gTypeMainWindow = gobject.TypeRegisterStaticSimple(
 		windowParentQuery.Type,
 		"MultiplexMainWindow",
-		uint(windowParentQuery.ClassSize),
+		windowParentQuery.ClassSize,
 		&windowClassInit,
-		uint(windowParentQuery.InstanceSize)+uint(unsafe.Sizeof(MainWindow{}))+uint(unsafe.Sizeof(&MainWindow{})),
+		windowParentQuery.InstanceSize+uint32(unsafe.Sizeof(MainWindow{}))+uint32(unsafe.Sizeof(&MainWindow{})),
 		&windowInstanceInit,
 		0,
 	)
