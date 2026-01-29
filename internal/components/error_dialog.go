@@ -50,27 +50,32 @@ func OpenErrorDialog(ctx context.Context, window *adw.ApplicationWindow, err err
 		Err(err).
 		Msg(L("Could not continue due to a fatal error"))
 
-	errorDialog := NewErrorDialog()
-	errorDialog.SetBody(err.Error())
+	sourceFn := glib.SourceFunc(func(_ uintptr) bool {
+		errorDialog := NewErrorDialog()
+		errorDialog.SetBody(err.Error())
 
-	onResponse := func(response string) {
-		switch response {
-		case "report":
-			_ = openuri.OpenURI("", issuesURL, nil)
+		onResponse := func(response string) {
+			switch response {
+			case "report":
+				_ = openuri.OpenURI("", issuesURL, nil)
 
-			errorDialog.Close()
+				errorDialog.Close()
 
-			os.Exit(1)
+				os.Exit(1)
 
-		default:
-			errorDialog.Close()
+			default:
+				errorDialog.Close()
 
-			os.Exit(1)
+				os.Exit(1)
+			}
 		}
-	}
-	errorDialog.SetResponseCallback(onResponse)
+		errorDialog.SetResponseCallback(onResponse)
 
-	errorDialog.Present(&window.Widget)
+		errorDialog.Present(&window.Widget)
+
+		return false
+	})
+	glib.IdleAdd(&sourceFn, 0)
 }
 
 func init() {
