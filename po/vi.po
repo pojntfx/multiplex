@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-23 10:09+0200\n"
-"PO-Revision-Date: 2025-12-24 09:00+0000\n"
+"PO-Revision-Date: 2026-02-13 05:09+0000\n"
 "Last-Translator: Loc Huynh <huynhloc.contact@gmail.com>\n"
 "Language-Team: Vietnamese <https://hosted.weblate.org/projects/multiplex/"
 "multiplex/vi/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
@@ -48,7 +48,7 @@ msgstr "Tiếp"
 #: ../assets/resources/assistant.blp:104 ../assets/resources/controls.blp:80
 #: ../assets/resources/assistant.ui:113 ../assets/resources/controls.ui:90
 msgid "Main Menu"
-msgstr ""
+msgstr "Menu chính"
 
 #: ../assets/resources/assistant.blp:131 ../assets/resources/assistant.ui:145
 msgid ""
@@ -200,7 +200,7 @@ msgstr "Tùy chọn"
 #: ../assets/resources/menu.blp:22 ../assets/resources/shortcuts-window.blp:8
 #: ../assets/resources/menu.ui:25 ../assets/resources/shortcuts-window.ui:13
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Phím tắt"
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
 msgid "About Multiplex"
@@ -451,17 +451,17 @@ msgstr "Chọn vị trí lưu trữ"
 #: ../internal/components/shortcuts_window.go:75
 #: ../assets/resources/shortcuts-dialog.ui:21
 msgid "Show Keyboard Shortcuts"
-msgstr ""
+msgstr "Hiển thị phím tắt"
 
 #: ../internal/components/shortcuts_window.go:76
 #: ../assets/resources/shortcuts-dialog.ui:27
 msgid "Close Window"
-msgstr ""
+msgstr "Đóng cửa sổ"
 
 #: ../internal/components/shortcuts_window.go:77
 #: ../assets/resources/shortcuts-dialog.ui:33
 msgid "Quit"
-msgstr ""
+msgstr "Thoát"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
@@ -627,47 +627,47 @@ msgstr "Tùy chọn đồng bộ hóa"
 
 #: ../assets/resources/shortcuts-dialog.ui:15
 msgid "Open Menu"
-msgstr ""
+msgstr "Mở menu"
 
 #: ../assets/resources/index.gschema.xml:18
 msgid "mpv command"
-msgstr ""
+msgstr "lệnh mpv"
 
 #: ../assets/resources/index.gschema.xml:30
 msgid "hTorrent URL"
-msgstr ""
+msgstr "URL hTorrent"
 
 #: ../assets/resources/index.gschema.xml:31
 msgid "URL of the remote hTorrent gateway to use"
-msgstr ""
+msgstr "URL của cổng hTorrent từ xa để sử dụng"
 
 #: ../assets/resources/index.gschema.xml:36
 msgid "hTorrent username"
-msgstr ""
+msgstr "tên người dùng hTorrent"
 
 #: ../assets/resources/index.gschema.xml:37
 msgid "Username for the remote hTorrent gateway"
-msgstr ""
+msgstr "Tên người dùng cho cổng hTorrent từ xa"
 
 #: ../assets/resources/index.gschema.xml:42
 msgid "hTorrent password"
-msgstr ""
+msgstr "mật khẩu hTorrent"
 
 #: ../assets/resources/index.gschema.xml:43
 msgid "Password for the remote hTorrent gateway"
-msgstr ""
+msgstr "Mật khẩu cho cổng hTorrent từ xa"
 
 #: ../assets/resources/index.gschema.xml:48
 msgid "weron URL"
-msgstr ""
+msgstr "URL của người sói"
 
 #: ../assets/resources/index.gschema.xml:54
 msgid "weron timeout"
-msgstr ""
+msgstr "hết thời gian weron"
 
 #: ../assets/resources/index.gschema.xml:60
 msgid "weron STUN/TURN servers"
-msgstr ""
+msgstr "weron STUN/TURN servers"
 
 #: ../assets/resources/index.gschema.xml:61
 msgid ""
@@ -675,7 +675,11 @@ msgid ""
 "servers to use (in format username:credential@turn:host:port) (i.e. "
 "username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
 msgstr ""
+"Danh sách máy chủ STUN được phân tách bằng dấu phẩy (ở định dạng "
+"stun:host:port) và máy chủ TURN sẽ sử dụng (ở định dạng tên người "
+"dùng:credential@turn:host:port) (tức là tên người "
+"dùng:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
 
 #: ../assets/resources/index.gschema.xml:68
 msgid "weron relay mode"
-msgstr ""
+msgstr "chế độ chuyển tiếp weron"
