@@ -212,10 +212,6 @@ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHm
 github.com/jtolds/gls v4.2.1+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
-github.com/jwijenbergh/purego v0.0.0-20251017112123-b71757b9ba42 h1:kQ0LX4ffJvtONhymro3HzrB8XUa6dIGgrbnkl38Rgl0=
-github.com/jwijenbergh/purego v0.0.0-20251017112123-b71757b9ba42/go.mod h1:amE5lVGstyh2GTEIHFEbgJHmoMD0llIuapnzIlZx7Fc=
-github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381 h1:Cy6in3ph8eGnl0w71S0NnH8ZCj0YhZZHzrwYEgtbtII=
-github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381/go.mod h1:mZu8qSvCSqtVL+xoiebZuicnJijwrLfGRs6/eTVgFlc=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
 github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
@@ -340,6 +336,10 @@ github.com/pojntfx/go-gettext v0.2.0 h1:Nw3Hyy0Fef3pOuvYYPZESmbOT+IdnYjqx9/ywFo4
 github.com/pojntfx/go-gettext v0.2.0/go.mod h1:eGt2r0JKvlPZjiz+GqEDtg92//F30LEV/IB0h42bk40=
 github.com/pojntfx/htorrent v0.5.4 h1:l1Wa0lQ5ZOZNP0CoTtf6f+7WKV3l0gdUx1zY37+10pE=
 github.com/pojntfx/htorrent v0.5.4/go.mod h1:0EKyQMkX/sP3HaMgcrT9ZP2YPB8vmG1YuT7dVm7b4nA=
+github.com/pojntfx/purego v0.0.0-20260128031338-5429b1e47a6d h1:f4fm8/eZJvaE/tfBomboi8CQByYmbXKxHcP6PBwAM04=
+github.com/pojntfx/purego v0.0.0-20260128031338-5429b1e47a6d/go.mod h1:amE5lVGstyh2GTEIHFEbgJHmoMD0llIuapnzIlZx7Fc=
+github.com/pojntfx/puregotk v0.0.0-20260219070647-2ad3aa90803f h1:7efyJIgqR9S84w7xu7Twd93Kp8n4CG1G9I4gj1LJGfs=
+github.com/pojntfx/puregotk v0.0.0-20260219070647-2ad3aa90803f/go.mod h1:mZu8qSvCSqtVL+xoiebZuicnJijwrLfGRs6/eTVgFlc=
 github.com/pojntfx/weron v0.3.0 h1:R+Moc3gz2T2W/qF6hLdl85ke7vavIbt2IKpEwJ/5nQo=
 github.com/pojntfx/weron v0.3.0/go.mod h1:QNLfhxm+jK+I/HbwLulpcy/0P4kUXkIijIWsP7UH5Fs=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=

@@ -12,6 +12,13 @@
     "url": "https://proxy.golang.org/github.com/anacrolix/torrent/@v/v1.59.1.zip"
   },
   {
+    "dest": "vendor/github.com/jwijenbergh/puregotk",
+    "sha256": "8b5852e2579838ced2095aaf54d0f5b44e62dab254f0a5f4fdcf47ab881201ae",
+    "strip-components": 3,
+    "type": "archive",
+    "url": "https://proxy.golang.org/github.com/pojntfx/puregotk/@v/v0.0.0-20260219070647-2ad3aa90803f.zip"
+  },
+  {
     "dest": "vendor/github.com/mitchellh/mapstructure",
     "sha256": "118d5b2cb65c50dba967fb6d708f450a9caf93f321f8fc99080675b2ee374199",
     "strip-components": 3,
@@ -356,10 +363,10 @@
   },
   {
     "dest": "vendor/github.com/jwijenbergh/purego",
-    "sha256": "aa4903b6c7333843f77e6012d68c89846462f4755fe6201a4069e69547d1000e",
+    "sha256": "fd395b72e7fb11c40f5a5ae7f45f6bde2d37e355a93221ba1c4c0aeaea26f97d",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/jwijenbergh/purego/@v/v0.0.0-20251017112123-b71757b9ba42.zip"
+    "url": "https://proxy.golang.org/github.com/pojntfx/purego/@v/v0.0.0-20260128031338-5429b1e47a6d.zip"
   },
   {
     "dest": "vendor/github.com/klauspost/cpuid/v2",

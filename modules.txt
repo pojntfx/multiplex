@@ -193,14 +193,14 @@ github.com/huandu/xstrings
 # github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
-# github.com/jwijenbergh/purego v0.0.0-20251017112123-b71757b9ba42
+# github.com/jwijenbergh/purego v0.0.0-20251017112123-b71757b9ba42 => github.com/pojntfx/purego v0.0.0-20260128031338-5429b1e47a6d
 ## explicit; go 1.18
 github.com/jwijenbergh/purego
 github.com/jwijenbergh/purego/internal/cgo
 github.com/jwijenbergh/purego/internal/fakecgo
 github.com/jwijenbergh/purego/internal/strings
 github.com/jwijenbergh/purego/internal/xreflect
-# github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381 => ../puregotk
+# github.com/jwijenbergh/puregotk v0.0.0-20251201161753-28ec1479c381 => github.com/pojntfx/puregotk v0.0.0-20260219070647-2ad3aa90803f
 ## explicit; go 1.23.0
 github.com/jwijenbergh/puregotk/internal/core
 github.com/jwijenbergh/puregotk/pkg/core
