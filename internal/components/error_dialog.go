@@ -125,7 +125,7 @@ func init() {
 		"MultiplexErrorDialog",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(ErrorDialog{}))+uint32(unsafe.Sizeof(&ErrorDialog{}))+uint32(unsafe.Sizeof(adw.AlertDialog{})), // TODO: Figure out why we need the extra `adw.AlertDialog` here
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

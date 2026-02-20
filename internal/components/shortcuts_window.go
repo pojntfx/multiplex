@@ -192,7 +192,7 @@ func init() {
 		"MultiplexShortcutsWindow",
 		shortcutsParentQuery.ClassSize,
 		&shortcutsClassInit,
-		shortcutsParentQuery.InstanceSize+uint32(unsafe.Sizeof(ShortcutsWindow{}))+uint32(unsafe.Sizeof(&ShortcutsWindow{})),
+		shortcutsParentQuery.InstanceSize,
 		&shortcutsInstanceInit,
 		0,
 	)

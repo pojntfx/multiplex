@@ -142,7 +142,7 @@ func init() {
 		"MultiplexAudioTracksDialog",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(AudioTracksDialog{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

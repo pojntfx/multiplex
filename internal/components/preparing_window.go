@@ -138,7 +138,7 @@ func init() {
 		"MultiplexPreparingWindow",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(PreparingWindow{}))+uint32(unsafe.Sizeof(&PreparingWindow{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

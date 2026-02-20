@@ -923,7 +923,7 @@ func init() {
 		"MultiplexMainWindow",
 		windowParentQuery.ClassSize,
 		&windowClassInit,
-		windowParentQuery.InstanceSize+uint32(unsafe.Sizeof(MainWindow{}))+uint32(unsafe.Sizeof(&MainWindow{})),
+		windowParentQuery.InstanceSize,
 		&windowInstanceInit,
 		0,
 	)

@@ -1873,7 +1873,7 @@ func init() {
 		"MultiplexControlsWindow",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(ControlsWindow{}))+uint32(unsafe.Sizeof(&ControlsWindow{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

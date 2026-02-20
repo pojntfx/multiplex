@@ -294,7 +294,7 @@ func init() {
 		"MultiplexPreferencesDialog",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(PreferencesDialog{}))+uint32(unsafe.Sizeof(&PreferencesDialog{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

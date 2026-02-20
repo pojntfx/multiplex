@@ -186,25 +186,24 @@ msgid "Close Multiplex"
 msgstr "Đóng Multiplex"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
-msgid "Open Downloads"
-msgstr "Mở Tải xuống"
+msgid "_Open Downloads"
+msgstr "_Mở Tải xuống"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
-msgid "Copy Magnet Link"
-msgstr "Sao chép magnet link"
+msgid "_Copy Magnet Link"
+msgstr "_Sao chép magnet link"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
-msgid "Preferences"
-msgstr "Tùy chọn"
+msgid "_Preferences"
+msgstr "_Tùy chọn"
 
-#: ../assets/resources/menu.blp:22 ../assets/resources/shortcuts-window.blp:8
-#: ../assets/resources/menu.ui:25 ../assets/resources/shortcuts-window.ui:13
-msgid "Keyboard Shortcuts"
-msgstr "Phím tắt"
+#: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+msgid "_Keyboard Shortcuts"
+msgstr "_Phím tắt"
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
-msgid "About Multiplex"
-msgstr "Giới thiệu về Multiplex"
+msgid "_About Multiplex"
+msgstr "_Giới thiệu về Multiplex"
 
 #: ../assets/resources/preferences.blp:8
 #: ../internal/components/shortcuts_window.go:81
@@ -402,6 +401,11 @@ msgstr "Tải từ mpv.io"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Cấu hình thủ công"
+
+#: ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/shortcuts-window.ui:13
+msgid "Keyboard Shortcuts"
+msgstr "Phím tắt"
 
 #: ../internal/components/main_window.go:245
 msgid "Could not get info for this magnet link."

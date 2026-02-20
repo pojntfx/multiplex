@@ -188,25 +188,24 @@ msgid "Close Multiplex"
 msgstr "Fechar Multiplex"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
-msgid "Open Downloads"
-msgstr "Abrir Downloads"
+msgid "_Open Downloads"
+msgstr "_Abrir Downloads"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
-msgid "Copy Magnet Link"
-msgstr "Copiar link Magnet"
+msgid "_Copy Magnet Link"
+msgstr "_Copiar link Magnet"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
-msgid "Preferences"
-msgstr "Preferências"
+msgid "_Preferences"
+msgstr "_Preferências"
 
-#: ../assets/resources/menu.blp:22 ../assets/resources/shortcuts-window.blp:8
-#: ../assets/resources/menu.ui:25 ../assets/resources/shortcuts-window.ui:13
-msgid "Keyboard Shortcuts"
+#: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+msgid "_Keyboard Shortcuts"
 msgstr ""
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
-msgid "About Multiplex"
-msgstr "Sobre Multiplex"
+msgid "_About Multiplex"
+msgstr "_Sobre Multiplex"
 
 #: ../assets/resources/preferences.blp:8
 #: ../internal/components/shortcuts_window.go:81
@@ -406,6 +405,11 @@ msgstr "Obtenha em mpv.io"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Configuração manual"
+
+#: ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/shortcuts-window.ui:13
+msgid "Keyboard Shortcuts"
+msgstr ""
 
 #: ../internal/components/main_window.go:245
 msgid "Could not get info for this magnet link."

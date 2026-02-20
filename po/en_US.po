@@ -177,25 +177,24 @@ msgid "Close Multiplex"
 msgstr "Close Multiplex"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
-msgid "Open Downloads"
-msgstr "Open Downloads"
+msgid "_Open Downloads"
+msgstr "_Open Downloads"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
-msgid "Copy Magnet Link"
-msgstr "Copy Magnet Link"
+msgid "_Copy Magnet Link"
+msgstr "_Copy Magnet Link"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
-msgid "Preferences"
-msgstr "Preferences"
+msgid "_Preferences"
+msgstr "_Preferences"
 
-#: ../assets/resources/menu.blp:22 ../assets/resources/shortcuts-window.blp:8
-#: ../assets/resources/menu.ui:25 ../assets/resources/shortcuts-window.ui:13
-msgid "Keyboard Shortcuts"
-msgstr "Keyboard Shortcuts"
+#: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
+msgid "_Keyboard Shortcuts"
+msgstr "_Keyboard Shortcuts"
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
-msgid "About Multiplex"
-msgstr "About Multiplex"
+msgid "_About Multiplex"
+msgstr "_About Multiplex"
 
 #: ../assets/resources/preferences.blp:8
 #: ../internal/components/shortcuts_window.go:81
@@ -393,6 +392,11 @@ msgstr "Get from mpv.io"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Manual configuration"
+
+#: ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/shortcuts-window.ui:13
+msgid "Keyboard Shortcuts"
+msgstr "Keyboard Shortcuts"
 
 #: ../internal/components/main_window.go:245
 msgid "Could not get info for this magnet link."
@@ -616,7 +620,6 @@ msgid "Synchronization preferences"
 msgstr "Synchronization preferences"
 
 #: ../assets/resources/shortcuts-dialog.ui:15
-#, fuzzy
 msgid "Open Menu"
 msgstr "Main Menu"
 

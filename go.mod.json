@@ -34,10 +34,10 @@
   },
   {
     "dest": "vendor/github.com/pojntfx/go-gettext",
-    "sha256": "a1e286161e04c4d7f02cd3ef9185df7be7ccf85daf9349a0974ed42746827fb4",
+    "sha256": "1729b4288776c82afba161bacbcc0498373031273b7aac2e2a03ac9f5d0bdf59",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/pojntfx/go-gettext/@v/v0.2.0.zip"
+    "url": "https://proxy.golang.org/github.com/pojntfx/go-gettext/@v/v0.3.0.zip"
   },
   {
     "dest": "vendor/github.com/pojntfx/htorrent",

@@ -195,7 +195,7 @@ func init() {
 		"MultiplexSubtitlesDialog",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(SubtitlesDialog{}))+uint32(unsafe.Sizeof(&SubtitlesDialog{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

@@ -82,7 +82,7 @@ func init() {
 		"MultiplexWarningDialog",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(WarningDialog{}))+uint32(unsafe.Sizeof(&WarningDialog{}))+uint32(unsafe.Sizeof(adw.AlertDialog{})), // TODO: Figure out why we need the extra `adw.AlertDialog` here
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

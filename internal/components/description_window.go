@@ -135,7 +135,7 @@ func init() {
 		"MultiplexDescriptionWindow",
 		parentQuery.ClassSize,
 		&classInit,
-		parentQuery.InstanceSize+uint32(unsafe.Sizeof(DescriptionWindow{}))+uint32(unsafe.Sizeof(&DescriptionWindow{})),
+		parentQuery.InstanceSize,
 		&instanceInit,
 		0,
 	)

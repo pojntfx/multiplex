@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net"
 	"os"
 	"path/filepath"
@@ -37,7 +38,7 @@ var (
 )
 
 func init() {
-	if err := i18n.InitI18n(gettextPackage, LocaleDir); err != nil {
+	if err := i18n.InitI18n(gettextPackage, LocaleDir, slog.Default()); err != nil {
 		panic(err)
 	}
 
