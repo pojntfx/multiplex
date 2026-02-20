@@ -338,8 +338,8 @@ github.com/pojntfx/htorrent v0.5.4 h1:l1Wa0lQ5ZOZNP0CoTtf6f+7WKV3l0gdUx1zY37+10p
 github.com/pojntfx/htorrent v0.5.4/go.mod h1:0EKyQMkX/sP3HaMgcrT9ZP2YPB8vmG1YuT7dVm7b4nA=
 github.com/pojntfx/purego v0.0.0-20260128031338-5429b1e47a6d h1:f4fm8/eZJvaE/tfBomboi8CQByYmbXKxHcP6PBwAM04=
 github.com/pojntfx/purego v0.0.0-20260128031338-5429b1e47a6d/go.mod h1:amE5lVGstyh2GTEIHFEbgJHmoMD0llIuapnzIlZx7Fc=
-github.com/pojntfx/puregotk v0.0.0-20260219070647-2ad3aa90803f h1:7efyJIgqR9S84w7xu7Twd93Kp8n4CG1G9I4gj1LJGfs=
-github.com/pojntfx/puregotk v0.0.0-20260219070647-2ad3aa90803f/go.mod h1:mZu8qSvCSqtVL+xoiebZuicnJijwrLfGRs6/eTVgFlc=
+github.com/pojntfx/puregotk v0.0.0-20260220051800-f8a38f1e0894 h1:pPTVC5Q/5DJ46RzXKISgtUbZgHl/xampBJtBaPOd1ZQ=
+github.com/pojntfx/puregotk v0.0.0-20260220051800-f8a38f1e0894/go.mod h1:mZu8qSvCSqtVL+xoiebZuicnJijwrLfGRs6/eTVgFlc=
 github.com/pojntfx/weron v0.3.0 h1:R+Moc3gz2T2W/qF6hLdl85ke7vavIbt2IKpEwJ/5nQo=
 github.com/pojntfx/weron v0.3.0/go.mod h1:QNLfhxm+jK+I/HbwLulpcy/0P4kUXkIijIWsP7UH5Fs=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=

@@ -13,10 +13,10 @@
   },
   {
     "dest": "vendor/github.com/jwijenbergh/puregotk",
-    "sha256": "8b5852e2579838ced2095aaf54d0f5b44e62dab254f0a5f4fdcf47ab881201ae",
+    "sha256": "d93f0d9ef34fe264866d0c0410d0a615d9a63752487be2c32ad365af662bbb36",
     "strip-components": 3,
     "type": "archive",
-    "url": "https://proxy.golang.org/github.com/pojntfx/puregotk/@v/v0.0.0-20260219070647-2ad3aa90803f.zip"
+    "url": "https://proxy.golang.org/github.com/pojntfx/puregotk/@v/v0.0.0-20260220051800-f8a38f1e0894.zip"
   },
   {
     "dest": "vendor/github.com/mitchellh/mapstructure",
