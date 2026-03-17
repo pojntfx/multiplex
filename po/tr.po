@@ -3,51 +3,53 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-17 16:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-03-18 16:09+0000\n"
+"Last-Translator: Ali Galip TUĞCU <aligaliptugcu@gmail.com>\n"
+"Language-Team: Turkish <https://hosted.weblate.org/projects/multiplex/"
+"multiplex/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Translate Toolkit 3.19.3\n"
+"X-Generator: Weblate 5.17-dev\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
 #: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:144 ../assets/resources/controls.ui:13
+#, fuzzy
 msgid "Multiplex"
-msgstr ""
+msgstr "ÇokKatlı"
 
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
 msgid "Previous"
-msgstr ""
+msgstr "Öncesi"
 
 #: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
 #: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
 msgid "Welcome"
-msgstr ""
+msgstr "Hoşgeldiniz"
 
 #: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
 #: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
 msgid "Open Media Details"
-msgstr ""
+msgstr "Medya Detaylarını Aç"
 
 #: ../assets/resources/assistant.blp:85 ../assets/resources/subtitles.blp:29
 #: ../assets/resources/assistant.ui:93 ../assets/resources/subtitles.ui:33
 msgid "Getting Metadata..."
-msgstr ""
+msgstr "Meta veriler alınıyor..."
 
 #: ../assets/resources/assistant.blp:98 ../assets/resources/assistant.ui:106
 msgid "Next"
-msgstr ""
+msgstr "Sonraki"
 
 #: ../assets/resources/assistant.blp:104 ../assets/resources/controls.blp:80
 #: ../assets/resources/assistant.ui:113 ../assets/resources/controls.ui:90
 msgid "Main Menu"
-msgstr ""
+msgstr "Ana Menü"
 
 #: ../assets/resources/assistant.blp:131 ../assets/resources/assistant.ui:145
 msgid ""
@@ -55,158 +57,163 @@ msgid ""
 "link</a> or <a href=\"https://github.com/pojntfx/multiplex/wiki/Stream-"
 "Codes\">stream code</a> to start streaming"
 msgstr ""
+"Akışı başlatmak için bir <a href=\"https://en.wikipedia.org/wiki/"
+"Magnet_URI_scheme\">magnet link</a> veya <a href=\"https://github.com/"
+"pojntfx/multiplex/wiki/Stream-Codes\">stream code</a> girin."
 
 #: ../assets/resources/assistant.blp:134 ../assets/resources/assistant.ui:148
 msgid "Magnet link or stream code"
-msgstr ""
+msgstr "Magnet bağlantısı veya yayın kodu"
 
 #: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Media"
-msgstr ""
+msgstr "Medya"
 
 #: ../assets/resources/assistant.blp:153 ../assets/resources/assistant.ui:171
 msgid "Select the file you want to play"
-msgstr ""
+msgstr "Oynatmak istediğiniz dosyayı seçin"
 
 #: ../assets/resources/assistant.blp:172 ../assets/resources/assistant.ui:194
 msgid "You're all set!"
-msgstr ""
+msgstr "Her şey hazır!"
 
 #: ../assets/resources/assistant.blp:181 ../assets/resources/assistant.ui:203
 msgid "I have the right to stream the selected media"
-msgstr ""
+msgstr "Seçilen medyayı izleme hakkına sahibim"
 
 #: ../assets/resources/assistant.blp:189 ../assets/resources/assistant.ui:211
 msgid "Download and Play"
-msgstr ""
+msgstr "İndir ve Oynat"
 
 #: ../assets/resources/assistant.blp:216 ../assets/resources/assistant.ui:246
 msgid "Stream without Downloading"
-msgstr ""
+msgstr "İndirmeden izleyin."
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
-msgstr ""
+msgstr "Ses Parçaları"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
 #: ../assets/resources/subtitles.blp:18 ../assets/resources/audiotracks.ui:22
 #: ../assets/resources/preparing.ui:46 ../assets/resources/subtitles.ui:22
 msgid "Cancel"
-msgstr ""
+msgstr "İptal Et"
 
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
 #: ../assets/resources/audiotracks.ui:27 ../assets/resources/subtitles.ui:53
 msgid "OK"
-msgstr ""
+msgstr "Tamam"
 
 #: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
 #: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
 msgid "Preparing Stream..."
-msgstr ""
+msgstr "Akış hazırlanıyor..."
 
 #: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
 msgid "Show Peers"
-msgstr ""
+msgstr "Akranları Göster"
 
 #: ../assets/resources/controls.blp:105
 #: ../internal/components/shortcuts_window.go:83
 #: ../assets/resources/controls.ui:118
 #: ../assets/resources/shortcuts-dialog.ui:44
 msgid "Toggle Playback"
-msgstr ""
+msgstr "Oynatmayı Aç/Kapat"
 
 #: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:127
 msgid "Stop Playback"
-msgstr ""
+msgstr "Oynatmayı Durdur"
 
 #: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:143
 msgid "Elapsed Time"
-msgstr ""
+msgstr "Geçen Süre"
 
 #: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
 msgid "Playback Progress"
-msgstr ""
+msgstr "Oynatma İlerlemesi"
 
 #: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
 msgid "Remaining Playback Time"
-msgstr ""
+msgstr "Kalan Oynatma Süresi"
 
 #: ../assets/resources/controls.blp:158 ../assets/resources/controls.ui:174
 msgid "Change Audio Volume"
-msgstr ""
+msgstr "Ses Seviyesini Değiştir"
 
 #: ../assets/resources/controls.blp:168 ../assets/resources/controls.ui:184
 msgid "Change Audio Track"
-msgstr ""
+msgstr "Ses Parçasını Değiştir"
 
 #: ../assets/resources/controls.blp:177 ../assets/resources/controls.ui:193
 msgid "Change Subtitles"
-msgstr ""
+msgstr "Altyazıları Değiştir"
 
 #: ../assets/resources/controls.blp:186
 #: ../internal/components/shortcuts_window.go:84
 #: ../assets/resources/controls.ui:202
 #: ../assets/resources/shortcuts-dialog.ui:50
 msgid "Toggle Fullscreen"
-msgstr ""
+msgstr "Tam Ekran Yap"
 
 #: ../assets/resources/controls.blp:210
 #: ../internal/components/controls_window.go:345
 #: ../assets/resources/controls.ui:230
 msgid "You're currently watching alone."
-msgstr ""
+msgstr "Şu anda tek başınıza izliyorsunuz."
 
 #: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
 msgid ""
 "Ask the people you want to watch with to enter the following stream code:"
 msgstr ""
+"Birlikte izlemek istediğiniz kişilerden aşağıdaki yayın kodunu girmelerini "
+"isteyin:"
 
 #: ../assets/resources/controls.blp:230 ../assets/resources/controls.ui:253
 msgid "Copy Stream Code to Clipboard"
-msgstr ""
+msgstr "Akış Kodunu Panoya Kopyala"
 
 #: ../assets/resources/controls.blp:247 ../assets/resources/controls.ui:272
 msgid "Mute/unmute"
-msgstr ""
+msgstr "Sustur/Susturmayı kapat"
 
 #: ../assets/resources/error.blp:5 ../assets/resources/error.ui:10
 msgid "A Fatal Error Occurred"
-msgstr ""
+msgstr "Çok kötü bir hata meydana geldi"
 
 #: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
 msgid "Report Error"
-msgstr ""
+msgstr "Geri Bildirim Hatası"
 
 #: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
 msgid "Close Multiplex"
-msgstr ""
+msgstr "Biletler'den Çık"
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "_Open Downloads"
-msgstr ""
+msgstr "_Aç İndirlenler"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
 msgid "_Copy Magnet Link"
-msgstr ""
+msgstr "_Mıknatıs Bağlantısını Kopyala"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
 msgid "_Preferences"
-msgstr ""
+msgstr "_Özellikler"
 
 #: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Klavye Kısayolları"
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
 msgid "_About Multiplex"
-msgstr ""
+msgstr "_Biletler Hakkında"
 
 #: ../assets/resources/preferences.blp:8
 #: ../internal/components/shortcuts_window.go:81
 #: ../assets/resources/preferences.ui:13
 #: ../assets/resources/shortcuts-dialog.ui:41
 msgid "Playback"
-msgstr ""
+msgstr "Geri Al"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
@@ -214,21 +221,21 @@ msgstr ""
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
 #: ../assets/resources/shortcuts-dialog.ui:12
 msgid "General"
-msgstr ""
+msgstr "Genel"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
 #: ../assets/resources/index.gschema.xml:12
 msgid "Storage location"
-msgstr ""
+msgstr "Depolama yeri"
 
 #: ../assets/resources/preferences.blp:16 ../assets/resources/preferences.ui:21
 #: ../assets/resources/index.gschema.xml:13
 msgid "Path to store downloaded torrents in"
-msgstr ""
+msgstr "İndirilen torrentlerin saklanacağı klasör yolu"
 
 #: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:36
 msgid "Player command"
-msgstr ""
+msgstr "Oynatma Komudu"
 
 #: ../assets/resources/preferences.blp:39
 #: ../assets/resources/preferences.blp:80
@@ -242,94 +249,94 @@ msgstr ""
 #: ../assets/resources/preferences.ui:157
 #: ../assets/resources/preferences.ui:174
 msgid "Show Help"
-msgstr ""
+msgstr "Yardımı Göster"
 
 #: ../assets/resources/preferences.blp:47
 #: ../assets/resources/preferences.blp:164
 #: ../assets/resources/preferences.ui:55 ../assets/resources/preferences.ui:185
 msgid "Advanced"
-msgstr ""
+msgstr "Gelişmiş"
 
 #: ../assets/resources/preferences.blp:50 ../assets/resources/preferences.ui:58
 #: ../assets/resources/index.gschema.xml:6
 msgid "Verbosity level"
-msgstr ""
+msgstr "Ayrıntı Düzeyi"
 
 #: ../assets/resources/preferences.blp:51 ../assets/resources/preferences.ui:59
 #: ../assets/resources/index.gschema.xml:7
 msgid "Verbosity level (0 is disabled, default is info, 7 is trace)"
-msgstr ""
+msgstr "Ayrıntı düzeyi (0 devre dışı, varsayılan değer bilgi, 7 ise izleme)"
 
 #: ../assets/resources/preferences.blp:57 ../assets/resources/preferences.ui:67
 msgid "Remoting"
-msgstr ""
+msgstr "Uzaktan Erişim"
 
 #: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
 #: ../assets/resources/index.gschema.xml:24
 msgid "Use remote gateway"
-msgstr ""
+msgstr "Uzak ağ geçidini kullanın"
 
 #: ../assets/resources/preferences.blp:61 ../assets/resources/preferences.ui:71
 #: ../assets/resources/index.gschema.xml:25
 msgid "Use a remote hTorrent gateway instead of the local one"
-msgstr ""
+msgstr "Yerel hTorrent ağ geçidi yerine uzak bir hTorrent ağ geçidi kullanın"
 
 #: ../assets/resources/preferences.blp:70 ../assets/resources/preferences.ui:82
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ../assets/resources/preferences.blp:87
 #: ../assets/resources/preferences.ui:100
 msgid "Username"
-msgstr ""
+msgstr "Kullanıcı Adı"
 
 #: ../assets/resources/preferences.blp:104
 #: ../assets/resources/preferences.ui:118
 msgid "Password"
-msgstr ""
+msgstr "Şifre"
 
 #: ../assets/resources/preferences.blp:124
 #: ../assets/resources/preferences.ui:142
 msgid "Synchronization"
-msgstr ""
+msgstr "Senkronizasyon"
 
 #: ../assets/resources/preferences.blp:131
 #: ../assets/resources/preferences.ui:149
 msgid "Signaling server URL"
-msgstr ""
+msgstr "Sinyal sunucusu URL'si"
 
 #: ../assets/resources/preferences.blp:147
 #: ../assets/resources/preferences.ui:166
 msgid "STUN/TURN servers"
-msgstr ""
+msgstr "STUN/TURN sunucuları"
 
 #: ../assets/resources/preferences.blp:167
 #: ../assets/resources/preferences.ui:188
 msgid "Connection timeout"
-msgstr ""
+msgstr "Bağlantı Zaman Aşımına Uğradı"
 
 #: ../assets/resources/preferences.blp:168
 #: ../assets/resources/preferences.ui:189
 #: ../assets/resources/index.gschema.xml:55
 msgid "Time to wait to connect to the weron signaling server"
-msgstr ""
+msgstr "Weron sinyal sunucusuna bağlanmak için bekleme süresi"
 
 #: ../assets/resources/preferences.blp:174
 #: ../assets/resources/preferences.ui:197
 msgid "Relay mode"
-msgstr ""
+msgstr "Yedek Bağlantı Modu (Relay mod)"
 
 #: ../assets/resources/preferences.blp:175
 #: ../assets/resources/preferences.ui:198
 #: ../assets/resources/index.gschema.xml:69
 msgid "Force usage of TURN servers for weron"
-msgstr ""
+msgstr "Weron için TURN sunucularının zorunlu kullanımı"
 
 #: ../assets/resources/preferences.blp:188
 #: ../assets/resources/preferences.ui:215
 #: ../assets/resources/index.gschema.xml:19
 msgid "Command to launch mpv with"
-msgstr ""
+msgstr "mpv'yi başlatma komutu"
 
 #: ../assets/resources/preferences.blp:194
 #: ../assets/resources/preferences.ui:222
