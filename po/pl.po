@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-19 20:16+0200\n"
-"PO-Revision-Date: 2026-04-20 19:09+0000\n"
+"PO-Revision-Date: 2026-04-22 15:13+0000\n"
 "Last-Translator: HeXed <franekkimono125@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/multiplex/"
 "multiplex/pl/>\n"
@@ -268,8 +268,9 @@ msgstr ""
 "Poziom szczegółowości (0 to wyłączone, domyślnie to info, 7 to śledzenie)"
 
 #: ../assets/resources/preferences.blp:57 ../assets/resources/preferences.ui:67
+#, fuzzy
 msgid "Remoting"
-msgstr ""
+msgstr "Zdalna bramka"
 
 #: ../assets/resources/preferences.blp:60 ../assets/resources/preferences.ui:70
 #: ../assets/resources/index.gschema.xml:24
@@ -365,6 +366,9 @@ msgid ""
 "Comma-separated list of weron STUN (in format stun:host:port) and TURN "
 "servers (in format username:credential@turn:host:port)"
 msgstr ""
+"Lista rozdzielana przecinkami dla serwerów weron STUN (w formacie "
+"stun:host:port) i serwerów TURN (w formacie "
+"username:credential@turn:host:port)"
 
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
@@ -418,7 +422,7 @@ msgstr ""
 
 #: ../internal/components/main_window.go:341
 msgid "Extra file (%v MB)"
-msgstr ""
+msgstr "Dodatkowy plik (%v MB)"
 
 #: ../internal/components/main_window.go:385
 msgid "This stream code is invalid."
@@ -519,7 +523,7 @@ msgstr "Wybierz plik z napisami"
 
 #: ../internal/components/controls_window.go:1318
 msgid "Manually added"
-msgstr ""
+msgstr "Manualnie dodano"
 
 #: ../internal/components/controls_window.go:1418
 msgid "Disable audio"
@@ -531,7 +535,7 @@ msgstr "Ścieżka %v"
 
 #: ../internal/components/controls_window.go:1428
 msgid "Untitled Track"
-msgstr ""
+msgstr "Ścieżka bez tytulu"
 
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
@@ -563,7 +567,7 @@ msgstr ""
 
 #: ../assets/resources/metainfo.xml.in:53
 msgid "It enables you to:"
-msgstr ""
+msgstr "Pozwala na:"
 
 #: ../assets/resources/metainfo.xml.in:55
 msgid ""
