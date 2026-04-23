@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-17 16:44+0200\n"
-"PO-Revision-Date: 2026-03-18 16:09+0000\n"
+"PO-Revision-Date: 2026-04-24 15:09+0000\n"
 "Last-Translator: Ali Galip TUĞCU <aligaliptugcu@gmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/multiplex/"
 "multiplex/tr/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17-dev\n"
+"X-Generator: Weblate 5.17.1-dev\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
@@ -20,9 +20,8 @@ msgstr ""
 #: ../assets/resources/metainfo.xml.in:7 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:144 ../assets/resources/controls.ui:13
 #: ../mockups/playback/out/window.ui:12
-#, fuzzy
 msgid "Multiplex"
-msgstr "ÇokKatlı"
+msgstr "Multiplex"
 
 #: ../assets/resources/assistant.blp:23 ../assets/resources/assistant.ui:26
 msgid "Previous"
