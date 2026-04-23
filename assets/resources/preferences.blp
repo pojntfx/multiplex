@@ -1,9 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $MultiplexPreferencesDialog: Adw.PreferencesWindow {
-  modal: true;
-
+template $MultiplexPreferencesDialog: Adw.PreferencesDialog {
   Adw.PreferencesPage {
     title: _("Playback");
     icon-name: 'multimedia-player-symbolic';
@@ -26,21 +24,6 @@ template $MultiplexPreferencesDialog: Adw.PreferencesWindow {
         }
       }
 
-      Adw.EntryRow mpv_command_input {
-        title: _("Player command");
-
-        MenuButton {
-          styles [
-            "flat",
-            "circular",
-          ]
-
-          icon-name: 'help-about';
-          tooltip-text: _("Show Help");
-          valign: center;
-          popover: mpv_command_input_help_popover;
-        }
-      }
     }
 
     Adw.PreferencesGroup {
@@ -180,12 +163,6 @@ template $MultiplexPreferencesDialog: Adw.PreferencesWindow {
         }
       }
     }
-  }
-}
-
-Popover mpv_command_input_help_popover {
-  Label {
-    label: _("Command to launch mpv with");
   }
 }
 

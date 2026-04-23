@@ -6,6 +6,7 @@ tool github.com/dennwc/flatpak-go-mod
 
 require (
 	codeberg.org/puregotk/puregotk v0.0.0-20260420231554-98419d54d2d2
+	codeberg.org/puregotk/puregotk/examples/gstreamer-go v0.0.0-00010101000000-000000000000
 	github.com/anacrolix/torrent v1.61.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
@@ -130,4 +131,9 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.49.1 // indirect
 	zombiezen.com/go/sqlite v1.4.2 // indirect
+)
+
+replace (
+	codeberg.org/puregotk/puregotk => ../puregotk-neo
+	codeberg.org/puregotk/puregotk/examples/gstreamer-go => ../puregotk-neo/examples/gstreamer-go
 )

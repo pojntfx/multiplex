@@ -1,13 +1,12 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $MultiplexAudioTracksDialog: Adw.Window {
-  modal: true;
+template $MultiplexAudioTracksDialog: Adw.Dialog {
   title: _("Audio Tracks");
-  default-width: 500;
-  default-height: 500;
+  content-width: 500;
+  content-height: 500;
 
-  Adw.ToolbarView {
+  child: Adw.ToolbarView {
     [top]
     Adw.HeaderBar {
       show-end-title-buttons: false;
@@ -28,7 +27,7 @@ template $MultiplexAudioTracksDialog: Adw.Window {
       }
     }
 
-    Adw.ToastOverlay toast_overlay {
+    content: Adw.ToastOverlay {
       ScrolledWindow {
         Adw.Clamp {
           maximum-size: 600;
@@ -42,6 +41,6 @@ template $MultiplexAudioTracksDialog: Adw.Window {
           Adw.PreferencesGroup audiotracks {}
         }
       }
-    }
-  }
+    };
+  };
 }

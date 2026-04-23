@@ -26,7 +26,7 @@ func AddMainMenu(
 	gateway *server.Gateway,
 	getMagnetLink func() string,
 	cancel func(),
-) (*PreferencesDialog, *adw.EntryRow) {
+) *PreferencesDialog {
 	menuBuilder := gtk.NewBuilderFromResource(resources.ResourceMenuPath)
 	defer menuBuilder.Unref()
 	var menu gio.Menu
@@ -44,7 +44,7 @@ func AddMainMenu(
 
 	preferencesAction := gio.NewSimpleAction(preferencesActionName, nil)
 	onPreferences := func(action gio.SimpleAction, parameter uintptr) {
-		preferencesDialog.Present()
+		preferencesDialog.Present(&window.Widget)
 	}
 	preferencesAction.ConnectActivate(&onPreferences)
 	app.SetAccelsForAction("win."+preferencesActionName, []string{`<Primary>comma`})
@@ -108,11 +108,9 @@ func AddMainMenu(
 	aboutAction.ConnectActivate(&onAbout)
 	window.AddAction(aboutAction)
 
-	shortcutsWindow := NewShortcutsWindow(window, app)
-
 	shortcutsAction := gio.NewSimpleAction("shortcuts", nil)
 	onShortcuts := func(action gio.SimpleAction, parameter uintptr) {
-		shortcutsWindow.Present()
+		NewShortcutsDialog().Present(&window.Widget)
 	}
 	shortcutsAction.ConnectActivate(&onShortcuts)
 	window.AddAction(shortcutsAction)
@@ -136,5 +134,5 @@ func AddMainMenu(
 
 	menuButton.SetMenuModel(&menu.MenuModel)
 
-	return preferencesDialog, preferencesDialog.MpvCommandInput()
+	return preferencesDialog
 }

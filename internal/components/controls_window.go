@@ -2,16 +2,13 @@ package components
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"runtime"
@@ -24,8 +21,8 @@ import (
 
 	. "github.com/pojntfx/go-gettext/pkg/i18n"
 
+	"codeberg.org/puregotk/puregotk/examples/gstreamer-go/gst"
 	"codeberg.org/puregotk/puregotk/v4/adw"
-	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
@@ -35,10 +32,9 @@ import (
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
+	"github.com/pojntfx/multiplex/internal/player"
 	"github.com/pojntfx/multiplex/internal/utils"
-	mpv "github.com/pojntfx/multiplex/pkg/api/sockets/v1"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
-	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 	"github.com/teivah/broadcast"
@@ -54,7 +50,6 @@ const (
 
 var (
 	readmePlaceholder   = "No README found."
-	errKilled           = errors.New("signal: killed")
 	gTypeControlsWindow gobject.Type
 )
 
@@ -78,12 +73,14 @@ type ControlsWindow struct {
 	adw.ApplicationWindow
 
 	overlay                 *adw.ToastOverlay
+	pictureVideo            *gtk.Picture
+	headerbarRevealer       *gtk.Revealer
+	controlsRevealer        *gtk.Revealer
 	buttonHeaderbarTitle    *gtk.Label
 	buttonHeaderbarSubtitle *gtk.Label
 	playButton              *gtk.Button
 	stopButton              *gtk.Button
 	volumeScale             *gtk.Scale
-	volumeButton            *gtk.MenuButton
 	volumeMuteButton        *gtk.Button
 	subtitleButton          *gtk.Button
 	audiotracksButton       *gtk.Button
@@ -126,9 +123,22 @@ type ControlsWindow struct {
 	bufferedMessages     []interface{}
 	bufferedPeer         *wrtcconn.Peer
 	bufferedDecoder      *json.Decoder
-	command              *exec.Cmd
-	ipcFile              string
-	ipcDir               string
+
+	player *player.Player
+
+	// Dialog state (re-applied each time the dialog is re-presented, since
+	// Adw.Dialog destroys itself on Close()).
+	availableSubtracks   []mediaWithPriorityAndID
+	availableAudiotracks []audioTrack
+	manualSubtitles      []string
+	selectedSubtitle     int
+	selectedAudio        int
+
+	// Progress state, populated by the metrics ticker so on-demand dialogs
+	// (media info) can show the latest values.
+	progressLength    float64
+	progressCompleted float64
+	progressPeers     int
 }
 
 func NewControlsWindow(
@@ -241,23 +251,38 @@ func getStreamURL(base string, magnet, path string) (string, error) {
 	return stream.String(), nil
 }
 
+// buildPlaybackURI turns a stream URL or local path into a URI GStreamer can consume.
+// HTTP(S) URLs get basic-auth credentials embedded as userinfo; local filesystem paths
+// get wrapped as file:// URIs.
+func buildPlaybackURI(streamURL, username, password string) (string, error) {
+	if strings.HasPrefix(streamURL, "http://") || strings.HasPrefix(streamURL, "https://") {
+		u, err := url.Parse(streamURL)
+		if err != nil {
+			return "", err
+		}
+		if username != "" || password != "" {
+			u.User = url.UserPassword(username, password)
+		}
+		return u.String(), nil
+	}
+
+	abs, err := filepath.Abs(streamURL)
+	if err != nil {
+		return "", err
+	}
+	u := &url.URL{Scheme: "file", Path: filepath.ToSlash(abs)}
+	return u.String(), nil
+}
+
 func (c *ControlsWindow) setup() error {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
 	controlsW.app.GetStyleManager().SetColorScheme(adw.ColorSchemePreferDarkValue)
 
-	descriptionWindow := NewDescriptionWindow(&controlsW.ApplicationWindow)
-	subtitlesDialog := NewSubtitlesDialog(&controlsW.ApplicationWindow)
-	audiotracksDialog := NewAudioTracksDialog(&controlsW.ApplicationWindow)
-	preparingWindow := NewPreparingWindow(&controlsW.ApplicationWindow)
+	preparingDialog := NewPreparingDialog()
 
 	controlsW.buttonHeaderbarTitle.SetLabel(controlsW.torrentTitle)
-	descriptionWindow.HeaderbarTitle().SetLabel(controlsW.torrentTitle)
 	controlsW.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(controlsW.selectedTorrentMedia))
-	descriptionWindow.HeaderbarSubtitle().SetVisible(true)
-	descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(controlsW.selectedTorrentMedia))
-
-	descriptionWindow.PreparingProgressBar().SetVisible(true)
 
 	if controlsW.community == "" || controlsW.password == "" || controlsW.key == "" {
 		sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
@@ -370,39 +395,33 @@ func (c *ControlsWindow) setup() error {
 	controlsW.stopButton.ConnectClicked(&onStopButton)
 
 	onMediaInfoButton := func(gtk.Button) {
-		descriptionWindow.SetVisible(true)
+		d := NewDescriptionDialog()
+		d.HeaderbarTitle().SetLabel(controlsW.torrentTitle)
+		d.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(controlsW.selectedTorrentMedia))
+
+		d.Text().SetWrapMode(gtk.WrapWordValue)
+		if !utf8.Valid([]byte(controlsW.torrentReadme)) || strings.TrimSpace(controlsW.torrentReadme) == "" {
+			d.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
+		} else {
+			d.Text().GetBuffer().SetText(controlsW.torrentReadme, -1)
+		}
+
+		pb := d.PreparingProgressBar()
+		pb.SetVisible(true)
+		if controlsW.progressLength > 0 {
+			pb.SetFraction(controlsW.progressCompleted / controlsW.progressLength)
+			pb.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"),
+				int(controlsW.progressCompleted/1000/1000),
+				int(controlsW.progressLength/1000/1000),
+				controlsW.progressPeers))
+		} else {
+			pb.SetText(L("Searching for peers"))
+		}
+
+		d.Present(&controlsW.ApplicationWindow.Widget)
 	}
 	controlsW.mediaInfoButton.ConnectClicked(&onMediaInfoButton)
 
-	ctrl := gtk.NewEventControllerKey()
-	descriptionWindow.AddController(&ctrl.EventController)
-	descriptionWindow.SetTransientFor(&controlsW.ApplicationWindow.Window)
-
-	onDescCloseRequest := func(gtk.Window) bool {
-		descriptionWindow.Close()
-		descriptionWindow.SetVisible(false)
-		return true
-	}
-	descriptionWindow.ConnectCloseRequest(&onDescCloseRequest)
-
-	onDescKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
-		if keycode == keycodeEscape {
-			descriptionWindow.Close()
-			descriptionWindow.SetVisible(false)
-		}
-	}
-	ctrl.ConnectKeyReleased(&onDescKeyReleased)
-
-	descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
-	if !utf8.Valid([]byte(controlsW.torrentReadme)) || strings.TrimSpace(controlsW.torrentReadme) == "" {
-		descriptionWindow.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
-	} else {
-		descriptionWindow.Text().GetBuffer().SetText(controlsW.torrentReadme, -1)
-	}
-
-	preparingWindow.SetTransientFor(&controlsW.ApplicationWindow.Window)
-
-	descriptionProgressBar := descriptionWindow.PreparingProgressBar()
 	progressBarTicker := time.NewTicker(time.Millisecond * 500)
 	go func() {
 		for range progressBarTicker.C {
@@ -437,27 +456,22 @@ func (c *ControlsWindow) setup() error {
 				}
 			}
 
-		n:
-			for _, progressBar := range []*gtk.ProgressBar{preparingWindow.ProgressBar(), descriptionProgressBar} {
-				if length > 0 {
-					progressBar.SetFraction(completed / length)
-					progressBar.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"), int(completed/1000/1000), int(length/1000/1000), peers))
-					continue n
-				}
+			controlsW.progressLength = length
+			controlsW.progressCompleted = completed
+			controlsW.progressPeers = peers
 
-				progressBar.SetText(L("Searching for peers"))
+			pb := preparingDialog.ProgressBar()
+			if length > 0 {
+				pb.SetFraction(completed / length)
+				pb.SetText(fmt.Sprintf(L("%v MB/%v MB (%v peers)"), int(completed/1000/1000), int(length/1000/1000), peers))
+			} else {
+				pb.SetText(L("Searching for peers"))
 			}
 		}
 	}()
 
-	onPrepCloseRequest := func(gtk.Window) bool {
-		preparingWindow.Close()
-		preparingWindow.SetVisible(false)
-
+	preparingDialog.SetCloseRequestCallback(func() bool {
 		return true
-	}
-	preparingWindow.SetCloseRequestCallback(func() bool {
-		return onPrepCloseRequest(gtk.Window{})
 	})
 
 	onPrepCancel := func(gtk.Button) {
@@ -474,41 +488,18 @@ func (c *ControlsWindow) setup() error {
 
 		controlsW.ApplicationWindow.Destroy()
 
-		preparingWindow.Close()
+		preparingDialog.Close()
 
 		mainWindow := NewMainWindow(controlsW.ctx, controlsW.app, controlsW.manager, controlsW.apiAddr, controlsW.apiUsername, controlsW.apiPassword, controlsW.settings, controlsW.gateway, controlsW.cancel, controlsW.tmpDir)
 
 		controlsW.app.AddWindow(&mainWindow.ApplicationWindow.Window)
 		mainWindow.SetVisible(true)
 	}
-	preparingWindow.SetCancelCallback(func() {
+	preparingDialog.SetCancelCallback(func() {
 		onPrepCancel(gtk.Button{})
 	})
 
-	usernameAndPassword := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", controlsW.apiUsername, controlsW.apiPassword)))
-
-	controlsW.ipcDir, err = os.MkdirTemp(os.TempDir(), "mpv-ipc")
-	if err != nil {
-		return err
-	}
-
-	controlsW.ipcFile = filepath.Join(controlsW.ipcDir, "mpv.sock")
-
-	shell := []string{"sh", "-c"}
-	if runtime.GOOS == "windows" {
-		shell = []string{"cmd.exe", "/c", "start"}
-	}
-	commandLine := append(shell, fmt.Sprintf("%v '--no-sub-visibility' '--keep-open=always' '--no-osc' '--no-input-default-bindings' '--pause' '--input-ipc-server=%v' '--http-header-fields=Authorization: Basic %v' '%v'", controlsW.settings.GetString(resources.SchemaMPVKey), controlsW.ipcFile, usernameAndPassword, controlsW.streamURL))
-
-	controlsW.command = exec.Command(
-		commandLine[0],
-		commandLine[1:]...,
-	)
-	utils.AddSysProcAttr(controlsW.command)
-
-	controlsW.command.Stdin = os.Stdin
-	controlsW.command.Stdout = os.Stdout
-	controlsW.command.Stderr = os.Stderr
+	controlsW.player = player.New(controlsW.pictureVideo)
 
 	AddMainMenu(
 		controlsW.ctx,
@@ -523,13 +514,7 @@ func (c *ControlsWindow) setup() error {
 		},
 		func() {
 			controlsW.cancel()
-
-			if controlsW.command.Process != nil {
-				if err := controlsW.command.Process.Kill(); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-			}
+			controlsW.player.Stop()
 		},
 	)
 
@@ -546,16 +531,7 @@ func (c *ControlsWindow) setup() error {
 	}()
 
 	onShow := func(gtk.Widget) {
-		preparingWindow.SetVisible(true)
-
-		go func() {
-			<-controlsW.ready
-
-			if err := controlsW.command.Start(); err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
-		}()
+		preparingDialog.Present(&controlsW.ApplicationWindow.Widget)
 
 		onCloseRequest := func(gtk.Window) bool {
 			controlsW.adapter.Close()
@@ -567,48 +543,69 @@ func (c *ControlsWindow) setup() error {
 
 			progressBarTicker.Stop()
 
-			if controlsW.command.Process != nil {
-				if err := utils.Kill(controlsW.command.Process); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return false
-				}
-			}
+			controlsW.player.Stop()
 
-			if err := os.RemoveAll(controlsW.ipcDir); err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return false
-			}
-
-			return true
+			return false
 		}
 		controlsW.ApplicationWindow.ConnectCloseRequest(&onCloseRequest)
 
 		go func() {
 			<-controlsW.ready
 
-			for {
-				sock, err := net.Dial("unix", controlsW.ipcFile)
-				if err == nil {
-					_ = sock.Close()
-					break
-				}
-
-				time.Sleep(time.Millisecond * 100)
-
-				log.Error().
-					Str("path", controlsW.ipcFile).
-					Err(err).
-					Msg("Could not dial IPC socket, retrying in 100ms")
+			uri, err := buildPlaybackURI(controlsW.streamURL, controlsW.apiUsername, controlsW.apiPassword)
+			if err != nil {
+				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+				return
 			}
+
+			// playbin's gtk4paintablesink requires paintable retrieval on the main
+			// thread, so drop back onto the GTK main loop before loading.
+			loaded := make(chan error, 1)
+			var loadOnMain glib.SourceFunc = func(uintptr) bool {
+				loaded <- controlsW.player.Load(uri, "")
+				return false
+			}
+			glib.IdleAdd(&loadOnMain, 0)
+			if err := <-loaded; err != nil {
+				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+				return
+			}
+
+			controlsW.player.SetCallback(func(ev player.Event, data interface{}) {
+				switch ev {
+				case player.EventError:
+					if gerr, ok := data.(*glib.Error); ok && gerr != nil {
+						log.Error().Str("err", gerr.Error()).Msg("pipeline error")
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, errors.New(gerr.Error()))
+					}
+				case player.EventWarning:
+					if gerr, ok := data.(*glib.Error); ok && gerr != nil {
+						log.Warn().Str("err", gerr.Error()).Msg("pipeline warning")
+					}
+				case player.EventInfo:
+					if gerr, ok := data.(*glib.Error); ok && gerr != nil {
+						log.Info().Str("msg", gerr.Error()).Msg("pipeline info")
+					}
+				case player.EventBuffering:
+					controlsW.headerbarSpinner.SetVisible(true)
+					buffering.Broadcast(true)
+				case player.EventBufferingDone:
+					controlsW.headerbarSpinner.SetVisible(false)
+					buffering.Broadcast(false)
+				case player.EventEOS:
+					log.Info().Msg("end of stream")
+				}
+			})
+
+			// Start paused so setupPlaybackControls drives state changes.
+			controlsW.player.Pause()
 
 			controlsW.setupPlaybackControls(
 				pauses,
 				positions,
 				buffering,
 				syncWatchingWithLabel,
-				subtitlesDialog,
-				audiotracksDialog,
-				preparingWindow,
+				preparingDialog,
 			)
 		}()
 	}
@@ -624,84 +621,55 @@ func (c *ControlsWindow) setupPlaybackControls(
 	positions *broadcast.Relay[float64],
 	buffering *broadcast.Relay[bool],
 	syncWatchingWithLabel func(bool),
-	subtitlesDialog SubtitlesDialog,
-	audiotracksDialog AudioTracksDialog,
-	preparingWindow PreparingWindow,
+	preparingDialog *PreparingDialog,
 ) {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
 	startPlayback := func() {
 		controlsW.playButton.SetIconName(pauseIcon)
-
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			log.Info().Msg("Starting playback")
-
-			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "pause", false}}); err != nil {
-				return err
-			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
-		}
+		log.Info().Msg("Starting playback")
+		controlsW.player.Play()
 	}
 
 	pausePlayback := func() {
 		controlsW.playButton.SetIconName(playIcon)
+		log.Info().Msg("Pausing playback")
+		controlsW.player.Pause()
+	}
 
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			log.Info().Msg("Pausing playback")
-
-			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "pause", true}}); err != nil {
-				return err
+	// Wait for tracks to be discovered before enumerating counts.
+	// playbin populates n-audio/n-text once moved past READY.
+	{
+		deadline := time.Now().Add(5 * time.Second)
+		for {
+			aCount, tCount := controlsW.player.TrackCounts()
+			if aCount+tCount > 0 || time.Now().After(deadline) {
+				controlsW.availableAudiotracks = nil
+				for i := 0; i < aCount; i++ {
+					controlsW.availableAudiotracks = append(controlsW.availableAudiotracks, audioTrack{
+						lang: fmt.Sprintf(L("Track %v"), i+1),
+						id:   i,
+					})
+				}
+				controlsW.availableSubtracks = nil
+				for i := 0; i < tCount; i++ {
+					controlsW.availableSubtracks = append(controlsW.availableSubtracks, mediaWithPriorityAndID{
+						media: media{
+							name: fmt.Sprintf(L("Embedded subtitle %v"), i+1),
+							size: 0,
+						},
+						id:       i,
+						priority: 0,
+					})
+				}
+				break
 			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
+			time.Sleep(50 * time.Millisecond)
 		}
 	}
-
-	var trackListResponse mpv.ResponseTrackList
-	if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-		log.Debug().Msg("Getting tracklist")
-
-		if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "track-list"}}); err != nil {
-			return err
-		}
-
-		return decoder.Decode(&trackListResponse)
-	}); err != nil {
-		OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-		return
-	}
-
-	audiotracks := []audioTrack{}
-	for _, track := range trackListResponse.Data {
-		if track.Type == mpv.TypeAudio {
-			audiotracks = append(audiotracks, audioTrack{
-				lang: track.Lang,
-				id:   track.ID,
-			})
-		}
-	}
-
-	subtracks := []mediaWithPriorityAndID{}
-	for _, track := range trackListResponse.Data {
-		if track.Type == mpv.TypeSub {
-			subtracks = append(subtracks, mediaWithPriorityAndID{
-				media: media{
-					name: track.Title,
-					size: 0,
-				},
-				id:       track.ID,
-				priority: 0,
-			})
-		}
+	controlsW.selectedSubtitle = 0
+	if len(controlsW.availableAudiotracks) > 0 {
+		controlsW.selectedAudio = 1
 	}
 
 	seekerIsSeeking := false
@@ -714,17 +682,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 
 		elapsed := time.Duration(int64(position))
 
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			if err := encoder.Encode(mpv.Request{[]interface{}{"seek", int64(elapsed.Seconds()), "absolute"}}); err != nil {
-				return err
-			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
-		}
+		controlsW.player.Seek(elapsed)
 
 		log.Info().
 			Dur("duration", elapsed).
@@ -859,30 +817,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 			return
 		}
 
-		var elapsedResponse mpv.ResponseFloat64
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "time-pos"}}); err != nil {
-				return err
-			}
-
-			return decoder.Decode(&elapsedResponse)
-		}); err != nil {
-			log.Error().
-				Err(err).
-				Msg("Could not parse JSON from socket")
-
-			return
-		}
-
-		if elapsedResponse.Data != 0 {
-			elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
-			if err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
-
-			positions.Broadcast(float64(elapsed.Nanoseconds()))
-		}
+		positions.Broadcast(float64(controlsW.player.Position().Nanoseconds()))
 
 		for {
 			var j interface{}
@@ -1011,31 +946,19 @@ func (c *ControlsWindow) setupPlaybackControls(
 		}
 	}()
 
-	if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-		if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "volume", 100}}); err != nil {
-			return err
-		}
-
-		var successResponse mpv.ResponseSuccess
-		return decoder.Decode(&successResponse)
-	}); err != nil {
-		OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-		return
-	}
-
-	controlsW.setupSubtitleHandlers(subtracks, subtitlesDialog)
-
-	controlsW.setupAudioTrackHandlers(audiotracks, audiotracksDialog)
+	controlsW.player.SetVolume(1.0)
 
 	controlsW.setupSeekerHandlers(seekToPosition, positions, &seekerIsSeeking, &seekerIsUnderPointer)
 
-	controlsW.setupMonitoringTicker(&total, &seekerIsSeeking, preparingWindow, pauses, buffering, positions)
+	controlsW.setupMonitoringTicker(&total, &seekerIsSeeking, preparingDialog, pauses, buffering, positions)
 
 	controlsW.setupVolumeControls()
 
-	controlsW.setupMediaControls(subtitlesDialog, audiotracksDialog)
+	controlsW.setupMediaControls()
 
 	controlsW.setupFullscreenControl()
+
+	controlsW.setupOSDRevealers()
 
 	togglePlayback := func() {
 		if !controlsW.headerbarSpinner.GetVisible() {
@@ -1073,370 +996,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	controlsW.ApplicationWindow.AddAction(toggleFullscreenAction)
 	controlsW.app.SetAccelsForAction("win.toggleFullscreen", []string{"F11"})
 
-	go func() {
-		if err := controlsW.command.Wait(); err != nil && err.Error() != errKilled.Error() {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
-		}
-
-		controlsW.ApplicationWindow.Destroy()
-	}()
-
 	controlsW.playButton.GrabFocus()
-}
-
-func (c *ControlsWindow) setupSubtitleHandlers(subtracks []mediaWithPriorityAndID, subtitlesDialog SubtitlesDialog) {
-	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
-
-	subtitleActivators := []gtk.CheckButton{}
-
-	for i, file := range append(
-		append([]mediaWithPriorityAndID{
-			{media: media{
-				name: L("None"),
-				size: 0,
-			},
-				priority: -1,
-			},
-		},
-			subtracks...,
-		), controlsW.subtitles...) {
-		row := adw.NewActionRow()
-
-		activator := gtk.NewCheckButton()
-
-		if len(subtitleActivators) > 0 {
-			activator.SetGroup(&subtitleActivators[i-1])
-			activator.SetActive(false)
-		} else {
-			activator.SetActive(true)
-		}
-		subtitleActivators = append(subtitleActivators, *activator)
-
-		m := file.name
-		p := file.priority
-		sid := file.id
-		j := i
-		onSubtitleActivate := func(gtk.CheckButton) {
-			defer func() {
-				if len(subtitleActivators) <= 1 {
-					activator.SetActive(true)
-				}
-			}()
-
-			if j == 0 {
-				log.Info().
-					Msg("Disabling subtitles")
-
-				if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", "no"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpv.ResponseSuccess
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "no"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpv.ResponseSuccess
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				return
-			}
-
-			if p == 0 {
-				if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					log.Debug().
-						Msg("Setting subtitle ID")
-
-					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", sid}}); err != nil {
-						return err
-					}
-
-					var successResponse mpv.ResponseSuccess
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sub-visibility", "yes"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpv.ResponseSuccess
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				return
-			}
-
-			go func() {
-				defer func() {
-					subtitlesDialog.DisableSpinner()
-					subtitlesDialog.EnableOKButton()
-				}()
-
-				subtitlesDialog.DisableOKButton()
-				subtitlesDialog.EnableSpinner()
-
-				streamURL, err := getStreamURL(controlsW.apiAddr, controlsW.magnetLink, m)
-				if err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				log.Info().
-					Str("streamURL", streamURL).
-					Msg("Downloading subtitles")
-
-				hc := &http.Client{}
-
-				req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
-				if err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-				req.SetBasicAuth(controlsW.apiUsername, controlsW.apiPassword)
-
-				res, err := hc.Do(req)
-				if err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-				if res.Body != nil {
-					defer res.Body.Close()
-				}
-				if res.StatusCode != http.StatusOK {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, errors.New(res.Status))
-					return
-				}
-
-				log.Info().
-					Str("streamURL", streamURL).
-					Msg("Finished downloading subtitles")
-
-				if err := utils.SetSubtitles(m, res.Body, controlsW.tmpDir, controlsW.ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-			}()
-		}
-		activator.ConnectActivate(&onSubtitleActivate)
-
-		if i == 0 {
-			row.SetTitle(file.name)
-			row.SetSubtitle(L("Disable subtitles"))
-
-			activator.SetActive(true)
-		} else if file.priority == 0 {
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle(L("Integrated subtitle"))
-		} else if file.priority == 1 {
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle(L("Subtitle from torrent"))
-		} else {
-			row.SetTitle(getDisplayPathWithoutRoot(file.name))
-			row.SetSubtitle(L("Extra file from torrent"))
-		}
-
-		row.SetActivatable(true)
-
-		row.AddPrefix(&activator.Widget)
-		row.SetActivatableWidget(&activator.Widget)
-
-		subtitlesDialog.AddSubtitleTrack(row)
-	}
-
-	onAddSubtitlesFromFileClicked := func(gtk.Button) {
-		filePicker := gtk.NewFileChooserNative(
-			L("Select subtitle file"),
-			&controlsW.ApplicationWindow.Window,
-			gtk.FileChooserActionOpenValue,
-			"",
-			"")
-		filePicker.SetModal(true)
-		onFilePickerResponse := func(dialog gtk.NativeDialog, responseId int32) {
-			if responseId == int32(gtk.ResponseAcceptValue) {
-				log.Info().
-					Str("path", filePicker.GetFile().GetPath()).
-					Msg("Setting subtitles")
-
-				m := filePicker.GetFile().GetPath()
-				subtitlesFile, err := os.Open(m)
-				if err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-				defer subtitlesFile.Close()
-
-				if err := utils.SetSubtitles(m, subtitlesFile, controlsW.tmpDir, controlsW.ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				row := adw.NewActionRow()
-
-				activator := gtk.NewCheckButton()
-
-				activator.SetGroup(&subtitleActivators[len(subtitleActivators)-1])
-				subtitleActivators = append(subtitleActivators, *activator)
-
-				activator.SetActive(true)
-				onFileSubtitleActivate := func(gtk.CheckButton) {
-					m := filePicker.GetFile().GetPath()
-					subtitlesFile, err := os.Open(m)
-					if err != nil {
-						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-						return
-					}
-					defer subtitlesFile.Close()
-
-					if err := utils.SetSubtitles(m, subtitlesFile, controlsW.tmpDir, controlsW.ipcFile, &subtitleActivators[0], subtitlesDialog.Overlay()); err != nil {
-						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-						return
-					}
-				}
-				activator.ConnectActivate(&onFileSubtitleActivate)
-
-				row.SetTitle(filePicker.GetFile().GetBasename())
-				row.SetSubtitle(L("Manually added"))
-
-				row.SetActivatable(true)
-
-				row.AddPrefix(&activator.Widget)
-				row.SetActivatableWidget(&activator.Widget)
-
-				subtitlesDialog.AddSubtitleTrack(row)
-			}
-
-			filePicker.Destroy()
-		}
-		filePicker.ConnectResponse(&onFilePickerResponse)
-
-		filePicker.Show()
-	}
-	subtitlesDialog.SetAddFromFileCallback(func() {
-		onAddSubtitlesFromFileClicked(gtk.Button{})
-	})
-}
-
-func (c *ControlsWindow) setupAudioTrackHandlers(audiotracks []audioTrack, audiotracksDialog AudioTracksDialog) {
-	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
-
-	audiotrackActivators := []gtk.CheckButton{}
-
-	for i, audiotrack := range append(
-		[]audioTrack{
-			{
-				lang: L("None"),
-				id:   -1,
-			},
-		},
-		audiotracks...,
-	) {
-		row := adw.NewActionRow()
-
-		activator := gtk.NewCheckButton()
-
-		if len(audiotrackActivators) > 0 {
-			activator.SetGroup(&audiotrackActivators[i-1])
-			activator.SetActive(false)
-		} else {
-			activator.SetActive(true)
-		}
-		audiotrackActivators = append(audiotrackActivators, *activator)
-
-		a := audiotrack
-		j := i
-		onAudiotrackActivate := func(gtk.CheckButton) {
-			defer func() {
-				if len(audiotrackActivators) <= 1 {
-					activator.SetActive(true)
-				}
-			}()
-
-			if len(audiotrackActivators) <= 1 {
-				// Don't disable audio if the "None" track is the only one
-
-				return
-			}
-
-			if j == 0 {
-				log.Info().
-					Msg("Disabling audio track")
-
-				if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-					if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "aid", "no"}}); err != nil {
-						return err
-					}
-
-					var successResponse mpv.ResponseSuccess
-					return decoder.Decode(&successResponse)
-				}); err != nil {
-					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-					return
-				}
-
-				return
-			}
-
-			if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-				log.Debug().
-					Int("aid", a.id).
-					Msg("Setting audio ID")
-
-				if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "aid", a.id}}); err != nil {
-					return err
-				}
-
-				var successResponse mpv.ResponseSuccess
-				return decoder.Decode(&successResponse)
-			}); err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
-		}
-		activator.ConnectActivate(&onAudiotrackActivate)
-
-		if j == 0 {
-			row.SetSubtitle(L("Disable audio"))
-		} else {
-			row.SetSubtitle(fmt.Sprintf(L("Track %v"), a.id))
-		}
-
-		if i == 1 {
-			activator.SetActive(true)
-		}
-
-		if strings.TrimSpace(a.lang) == "" {
-			row.SetTitle(L("Untitled Track"))
-		} else {
-			row.SetTitle(a.lang)
-		}
-
-		row.SetActivatable(true)
-
-		row.AddPrefix(&activator.Widget)
-		row.SetActivatableWidget(&activator.Widget)
-
-		audiotracksDialog.AddAudioTrack(row)
-	}
 }
 
 func (c *ControlsWindow) setupSeekerHandlers(seekToPosition func(float64), positions *broadcast.Relay[float64], seekerIsSeeking *bool, seekerIsUnderPointer *bool) {
@@ -1461,7 +1021,7 @@ func (c *ControlsWindow) setupSeekerHandlers(seekToPosition func(float64), posit
 	controlsW.seeker.ConnectChangeValue(&onChangeValue)
 }
 
-func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSeeking *bool, preparingWindow PreparingWindow, pauses *broadcast.Relay[bool], buffering *broadcast.Relay[bool], positions *broadcast.Relay[float64]) {
+func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSeeking *bool, preparingDialog *PreparingDialog, pauses *broadcast.Relay[bool], buffering *broadcast.Relay[bool], positions *broadcast.Relay[float64]) {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
 	preparingClosed := false
@@ -1472,71 +1032,19 @@ func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSee
 		t := time.NewTicker(time.Millisecond * 200)
 
 		updateSeeker := func() {
-			var durationResponse mpv.ResponseFloat64
-			if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-				if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "duration"}}); err != nil {
-					return err
-				}
-
-				return decoder.Decode(&durationResponse)
-			}); err != nil {
-				log.Error().
-					Err(err).
-					Msg("Could not parse JSON from socket")
-
-				return
-			}
-
-			var err error
-			*total, err = time.ParseDuration(fmt.Sprintf("%vs", int64(durationResponse.Data)))
-			if err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
+			*total = controlsW.player.Duration()
 
 			if *total != 0 && !preparingClosed {
-				preparingWindow.SetVisible(false)
+				preparingDialog.ForceClose()
 				preparingClosed = true
 			}
 
-			var elapsedResponse mpv.ResponseFloat64
-			if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-				if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "time-pos"}}); err != nil {
-					return err
-				}
+			elapsed := controlsW.player.Position()
+			state := controlsW.player.State()
+			isPaused := state != gst.StatePlayingValue
 
-				return decoder.Decode(&elapsedResponse)
-			}); err != nil {
-				log.Error().
-					Err(err).
-					Msg("Could not parse JSON from socket")
-
-				return
-			}
-
-			elapsed, err := time.ParseDuration(fmt.Sprintf("%vs", int64(elapsedResponse.Data)))
-			if err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
-
-			var pausedResponse mpv.ResponseBool
-			if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-				if err := encoder.Encode(mpv.Request{[]interface{}{"get_property", "core-idle"}}); err != nil {
-					return err
-				}
-
-				return decoder.Decode(&pausedResponse)
-			}); err != nil {
-				log.Error().
-					Err(err).
-					Msg("Could not parse JSON from socket")
-
-				return
-			}
-
-			// If MPV is paused, but the GUI is showing the playing state, assume we're buffering
-			if pausedResponse.Data == (controlsW.playButton.GetIconName() == pauseIcon) {
+			// If GStreamer is paused, but the GUI shows the playing state, we're buffering
+			if isPaused == (controlsW.playButton.GetIconName() == pauseIcon) {
 				if !previouslyBuffered {
 					previouslyBuffered = true
 
@@ -1601,113 +1109,294 @@ func (c *ControlsWindow) setupVolumeControls() {
 	onVolumeValueChanged := func(gtk.Range) {
 		value := controlsW.volumeScale.GetValue()
 
-		if value <= 0 {
-			controlsW.volumeButton.SetIconName("audio-volume-muted-symbolic")
+		switch {
+		case value <= 0:
 			controlsW.volumeMuteButton.SetIconName("audio-volume-muted-symbolic")
-		} else if value <= 0.3 {
-			controlsW.volumeButton.SetIconName("audio-volume-low-symbolic")
-			controlsW.volumeMuteButton.SetIconName("audio-volume-high-symbolic")
-		} else if value <= 0.6 {
-			controlsW.volumeButton.SetIconName("audio-volume-medium-symbolic")
-			controlsW.volumeMuteButton.SetIconName("audio-volume-high-symbolic")
-		} else {
-			controlsW.volumeButton.SetIconName("audio-volume-high-symbolic")
+		case value <= 0.3:
+			controlsW.volumeMuteButton.SetIconName("audio-volume-low-symbolic")
+		case value <= 0.6:
+			controlsW.volumeMuteButton.SetIconName("audio-volume-medium-symbolic")
+		default:
 			controlsW.volumeMuteButton.SetIconName("audio-volume-high-symbolic")
 		}
 
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
+		log.Info().
+			Float64("value", value).
+			Msg("Setting volume")
 
-			log.Info().
-				Float64("value", value).
-				Msg("Setting volume")
-
-			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "volume", value * 100}}); err != nil {
-				return err
-			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-		}
+		controlsW.player.SetVolume(value)
 	}
 	controlsW.volumeScale.ConnectValueChanged(&onVolumeValueChanged)
 }
 
-func (c *ControlsWindow) setupMediaControls(subtitlesDialog SubtitlesDialog, audiotracksDialog AudioTracksDialog) {
+
+func (c *ControlsWindow) buildSubtitleOptions() []mediaWithPriorityAndID {
+	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
+
+	opts := []mediaWithPriorityAndID{{
+		media:    media{name: L("None"), size: 0},
+		priority: -1,
+	}}
+	opts = append(opts, controlsW.availableSubtracks...)
+	opts = append(opts, controlsW.subtitles...)
+	for _, path := range controlsW.manualSubtitles {
+		opts = append(opts, mediaWithPriorityAndID{
+			media:    media{name: path, size: 0},
+			priority: 2,
+		})
+	}
+	return opts
+}
+
+func (c *ControlsWindow) populateSubtitlesDialog(dialog *SubtitlesDialog) {
+	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
+
+	options := controlsW.buildSubtitleOptions()
+
+	activators := make([]*gtk.CheckButton, 0, len(options))
+	for i, file := range options {
+		row := adw.NewActionRow()
+
+		activator := gtk.NewCheckButton()
+		if len(activators) > 0 {
+			activator.SetGroup(activators[i-1])
+		}
+		activators = append(activators, activator)
+		activator.SetActive(i == controlsW.selectedSubtitle)
+
+		idx := i
+		entry := file
+		onActivate := func(gtk.CheckButton) {
+			if !activator.GetActive() {
+				return
+			}
+
+			controlsW.selectedSubtitle = idx
+
+			switch {
+			case idx == 0:
+				log.Info().Msg("Disabling subtitles")
+				controlsW.player.SetSubtitleTrack(-1)
+			case entry.priority == 0:
+				log.Debug().Int("sid", entry.id).Msg("Setting subtitle ID")
+				controlsW.player.SetSubtitleTrack(entry.id)
+			case entry.priority == 2 && isLocalFile(entry.name):
+				subURI := (&url.URL{Scheme: "file", Path: filepath.ToSlash(entry.name)}).String()
+				controlsW.player.SetSubtitleURI(subURI)
+			case entry.priority == 1 || entry.priority == 2:
+				go func() {
+					defer func() {
+						dialog.DisableSpinner()
+						dialog.EnableOKButton()
+					}()
+
+					dialog.DisableOKButton()
+					dialog.EnableSpinner()
+
+					streamURL, err := getStreamURL(controlsW.apiAddr, controlsW.magnetLink, entry.name)
+					if err != nil {
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+						return
+					}
+
+					log.Info().Str("streamURL", streamURL).Msg("Downloading subtitles")
+
+					hc := &http.Client{}
+					req, err := http.NewRequest(http.MethodGet, streamURL, http.NoBody)
+					if err != nil {
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+						return
+					}
+					req.SetBasicAuth(controlsW.apiUsername, controlsW.apiPassword)
+
+					res, err := hc.Do(req)
+					if err != nil {
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+						return
+					}
+					if res.Body != nil {
+						defer res.Body.Close()
+					}
+					if res.StatusCode != http.StatusOK {
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, errors.New(res.Status))
+						return
+					}
+
+					subtitlePath, err := utils.SaveSubtitles(entry.name, res.Body, controlsW.tmpDir)
+					if err != nil {
+						OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+						return
+					}
+
+					subURI := (&url.URL{Scheme: "file", Path: filepath.ToSlash(subtitlePath)}).String()
+					controlsW.player.SetSubtitleURI(subURI)
+				}()
+			}
+		}
+		activator.ConnectActivate(&onActivate)
+
+		switch {
+		case i == 0:
+			row.SetTitle(file.name)
+			row.SetSubtitle(L("Disable subtitles"))
+		case file.priority == 0:
+			row.SetTitle(getDisplayPathWithoutRoot(file.name))
+			row.SetSubtitle(L("Integrated subtitle"))
+		case file.priority == 1:
+			row.SetTitle(getDisplayPathWithoutRoot(file.name))
+			row.SetSubtitle(L("Subtitle from torrent"))
+		default:
+			row.SetTitle(filepath.Base(file.name))
+			row.SetSubtitle(L("Manually added"))
+		}
+
+		row.SetActivatable(true)
+		row.AddPrefix(&activator.Widget)
+		row.SetActivatableWidget(&activator.Widget)
+
+		dialog.AddSubtitleTrack(row)
+	}
+
+	dialog.SetAddFromFileCallback(func() {
+		filePicker := gtk.NewFileChooserNative(
+			L("Select subtitle file"),
+			&controlsW.ApplicationWindow.Window,
+			gtk.FileChooserActionOpenValue,
+			"",
+			"")
+		filePicker.SetModal(true)
+		onFilePickerResponse := func(_ gtk.NativeDialog, responseId int32) {
+			if responseId == int32(gtk.ResponseAcceptValue) {
+				m := filePicker.GetFile().GetPath()
+				log.Info().Str("path", m).Msg("Setting subtitles")
+
+				subtitlesFile, err := os.Open(m)
+				if err != nil {
+					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+					return
+				}
+				defer subtitlesFile.Close()
+
+				subtitlePath, err := utils.SaveSubtitles(m, subtitlesFile, controlsW.tmpDir)
+				if err != nil {
+					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+					return
+				}
+
+				controlsW.manualSubtitles = append(controlsW.manualSubtitles, subtitlePath)
+				controlsW.selectedSubtitle = len(controlsW.buildSubtitleOptions()) - 1
+
+				subURI := (&url.URL{Scheme: "file", Path: filepath.ToSlash(subtitlePath)}).String()
+				controlsW.player.SetSubtitleURI(subURI)
+
+				dialog.Close()
+			}
+
+			filePicker.Destroy()
+		}
+		filePicker.ConnectResponse(&onFilePickerResponse)
+
+		filePicker.Show()
+	})
+}
+
+func isLocalFile(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+func (c *ControlsWindow) buildAudioOptions() []audioTrack {
+	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
+
+	return append([]audioTrack{{lang: L("None"), id: -1}}, controlsW.availableAudiotracks...)
+}
+
+func (c *ControlsWindow) populateAudioTracksDialog(dialog *AudioTracksDialog) {
+	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
+
+	options := controlsW.buildAudioOptions()
+
+	activators := make([]*gtk.CheckButton, 0, len(options))
+	for i, track := range options {
+		row := adw.NewActionRow()
+
+		activator := gtk.NewCheckButton()
+		if len(activators) > 0 {
+			activator.SetGroup(activators[i-1])
+		}
+		activators = append(activators, activator)
+		activator.SetActive(i == controlsW.selectedAudio)
+
+		idx := i
+		a := track
+		onActivate := func(gtk.CheckButton) {
+			if !activator.GetActive() {
+				return
+			}
+
+			if len(options) <= 1 {
+				activator.SetActive(true)
+				return
+			}
+
+			controlsW.selectedAudio = idx
+
+			if idx == 0 {
+				log.Info().Msg("Disabling audio track")
+				controlsW.player.SetAudioTrack(-1)
+				return
+			}
+
+			log.Debug().Int("aid", a.id).Msg("Setting audio ID")
+			controlsW.player.SetAudioTrack(a.id)
+		}
+		activator.ConnectActivate(&onActivate)
+
+		if i == 0 {
+			row.SetSubtitle(L("Disable audio"))
+		} else {
+			row.SetSubtitle(fmt.Sprintf(L("Track %v"), a.id+1))
+		}
+
+		if strings.TrimSpace(a.lang) == "" {
+			row.SetTitle(L("Untitled Track"))
+		} else {
+			row.SetTitle(a.lang)
+		}
+
+		row.SetActivatable(true)
+		row.AddPrefix(&activator.Widget)
+		row.SetActivatableWidget(&activator.Widget)
+
+		dialog.AddAudioTrack(row)
+	}
+}
+
+func (c *ControlsWindow) setupMediaControls() {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
 	onSubtitleClicked := func(gtk.Button) {
-		subtitlesDialog.Present()
+		d := NewSubtitlesDialog()
+		controlsW.populateSubtitlesDialog(d)
+		d.SetCancelCallback(func() {
+			log.Info().Msg("Disabling subtitles")
+			controlsW.selectedSubtitle = 0
+			controlsW.player.SetSubtitleTrack(-1)
+			d.Close()
+		})
+		d.SetOKCallback(func() { d.Close() })
+		d.Present(&controlsW.ApplicationWindow.Widget)
 	}
 	controlsW.subtitleButton.ConnectClicked(&onSubtitleClicked)
 
 	onAudiotracksClicked := func(gtk.Button) {
-		audiotracksDialog.Present()
+		d := NewAudioTracksDialog()
+		controlsW.populateAudioTracksDialog(d)
+		d.SetCancelCallback(func() { d.Close() })
+		d.SetOKCallback(func() { d.Close() })
+		d.Present(&controlsW.ApplicationWindow.Widget)
 	}
 	controlsW.audiotracksButton.ConnectClicked(&onAudiotracksClicked)
-
-	for _, d := range []adw.Window{subtitlesDialog.Window, audiotracksDialog.Window} {
-		dialog := d
-
-		escCtrl := gtk.NewEventControllerKey()
-		dialog.AddController(&escCtrl.EventController)
-		dialog.SetTransientFor(&controlsW.ApplicationWindow.Window)
-
-		onEscKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
-			if keycode == keycodeEscape {
-				dialog.Close()
-				dialog.SetVisible(false)
-			}
-		}
-		escCtrl.ConnectKeyReleased(&onEscKeyReleased)
-	}
-
-	onSubtitlesCancelClicked := func(gtk.Button) {
-		log.Info().
-			Msg("Disabling subtitles")
-
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "sid", "no"}}); err != nil {
-				return err
-			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
-		}
-
-		subtitlesDialog.Close()
-	}
-	subtitlesDialog.SetCancelCallback(func() {
-		onSubtitlesCancelClicked(gtk.Button{})
-	})
-
-	onSubtitlesOKClicked := func(gtk.Button) {
-		subtitlesDialog.Close()
-		subtitlesDialog.SetVisible(false)
-	}
-	subtitlesDialog.SetOKCallback(func() {
-		onSubtitlesOKClicked(gtk.Button{})
-	})
-
-	onAudiotracksCancelClicked := func(gtk.Button) {
-		audiotracksDialog.Close()
-		subtitlesDialog.SetVisible(false)
-	}
-	audiotracksDialog.SetCancelCallback(func() {
-		onAudiotracksCancelClicked(gtk.Button{})
-	})
-
-	onAudiotracksOKClicked := func(gtk.Button) {
-		audiotracksDialog.Close()
-		subtitlesDialog.SetVisible(false)
-	}
-	audiotracksDialog.SetOKCallback(func() {
-		onAudiotracksOKClicked(gtk.Button{})
-	})
 }
 
 func (c *ControlsWindow) setupFullscreenControl() {
@@ -1715,38 +1404,67 @@ func (c *ControlsWindow) setupFullscreenControl() {
 
 	onFullscreenClicked := func(gtk.Button) {
 		if controlsW.fullscreenButton.GetActive() {
-			if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-				log.Info().Msg("Enabling fullscreen")
-
-				if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "fullscreen", true}}); err != nil {
-					return err
-				}
-
-				var successResponse mpv.ResponseSuccess
-				return decoder.Decode(&successResponse)
-			}); err != nil {
-				OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-				return
-			}
-
+			log.Info().Msg("Enabling fullscreen")
+			controlsW.ApplicationWindow.Fullscreen()
 			return
 		}
 
-		if err := mpvClient.ExecuteMPVRequest(controlsW.ipcFile, func(encoder *json.Encoder, decoder *json.Decoder) error {
-			log.Info().Msg("Disabling fullscreen")
-
-			if err := encoder.Encode(mpv.Request{[]interface{}{"set_property", "fullscreen", false}}); err != nil {
-				return err
-			}
-
-			var successResponse mpv.ResponseSuccess
-			return decoder.Decode(&successResponse)
-		}); err != nil {
-			OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
-			return
-		}
+		log.Info().Msg("Disabling fullscreen")
+		controlsW.ApplicationWindow.Unfullscreen()
 	}
 	controlsW.fullscreenButton.ConnectClicked(&onFullscreenClicked)
+}
+
+// setupOSDRevealers hides the headerbar and playback toolbar after a short idle
+// period and brings them back when the user moves the pointer over the video.
+func (c *ControlsWindow) setupOSDRevealers() {
+	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
+
+	const hideAfter = 3 * time.Second
+
+	var hideTimer *time.Timer
+	reveal := func(show bool) {
+		controlsW.headerbarRevealer.SetRevealChild(show)
+		controlsW.controlsRevealer.SetRevealChild(show)
+	}
+
+	scheduleHide := func() {
+		if hideTimer != nil {
+			hideTimer.Stop()
+		}
+		hideTimer = time.AfterFunc(hideAfter, func() {
+			var hideOnMain glib.SourceFunc = func(uintptr) bool {
+				reveal(false)
+				return false
+			}
+			glib.IdleAdd(&hideOnMain, 0)
+		})
+	}
+
+	motion := gtk.NewEventControllerMotion()
+	motion.SetPropagationPhase(gtk.PhaseCaptureValue)
+
+	var lastX, lastY float64
+	onMotion := func(_ gtk.EventControllerMotion, x, y float64) {
+		// GTK occasionally fires motion events with unchanged coordinates (e.g.
+		// during relayout or fullscreen transitions). Ignore those so the hide
+		// timer actually gets a chance to elapse.
+		if x == lastX && y == lastY {
+			return
+		}
+		lastX, lastY = x, y
+
+		reveal(true)
+		scheduleHide()
+	}
+	motion.ConnectMotion(&onMotion)
+	onLeave := func(gtk.EventControllerMotion) {
+		scheduleHide()
+	}
+	motion.ConnectLeave(&onLeave)
+	controlsW.ApplicationWindow.Widget.AddController(&motion.EventController)
+
+	scheduleHide()
 }
 
 func init() {
@@ -1755,12 +1473,14 @@ func init() {
 		typeClass.SetTemplateFromResource(resources.ResourceControlsPath)
 
 		typeClass.BindTemplateChildFull("toast_overlay", false, 0)
+		typeClass.BindTemplateChildFull("picture_video", false, 0)
+		typeClass.BindTemplateChildFull("headerbar_revealer", false, 0)
+		typeClass.BindTemplateChildFull("controls_revealer", false, 0)
 		typeClass.BindTemplateChildFull("button_headerbar_title", false, 0)
 		typeClass.BindTemplateChildFull("button_headerbar_subtitle", false, 0)
 		typeClass.BindTemplateChildFull("play_button", false, 0)
 		typeClass.BindTemplateChildFull("stop_button", false, 0)
 		typeClass.BindTemplateChildFull("volume_scale", false, 0)
-		typeClass.BindTemplateChildFull("volume_button", false, 0)
 		typeClass.BindTemplateChildFull("audiovolume_button_mute_button", false, 0)
 		typeClass.BindTemplateChildFull("subtitle_button", false, 0)
 		typeClass.BindTemplateChildFull("audiotracks_button", false, 0)
@@ -1788,12 +1508,14 @@ func init() {
 
 			var (
 				overlay                 adw.ToastOverlay
+				pictureVideo            gtk.Picture
+				headerbarRevealer       gtk.Revealer
+				controlsRevealer        gtk.Revealer
 				buttonHeaderbarTitle    gtk.Label
 				buttonHeaderbarSubtitle gtk.Label
 				playButton              gtk.Button
 				stopButton              gtk.Button
 				volumeScale             gtk.Scale
-				volumeButton            gtk.MenuButton
 				volumeMuteButton        gtk.Button
 				subtitleButton          gtk.Button
 				audiotracksButton       gtk.Button
@@ -1809,12 +1531,14 @@ func init() {
 				copyStreamCodeButton    gtk.Button
 			)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "toast_overlay").Cast(&overlay)
+			parent.Widget.GetTemplateChild(gTypeControlsWindow, "picture_video").Cast(&pictureVideo)
+			parent.Widget.GetTemplateChild(gTypeControlsWindow, "headerbar_revealer").Cast(&headerbarRevealer)
+			parent.Widget.GetTemplateChild(gTypeControlsWindow, "controls_revealer").Cast(&controlsRevealer)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "button_headerbar_title").Cast(&buttonHeaderbarTitle)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "button_headerbar_subtitle").Cast(&buttonHeaderbarSubtitle)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "play_button").Cast(&playButton)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "stop_button").Cast(&stopButton)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "volume_scale").Cast(&volumeScale)
-			parent.Widget.GetTemplateChild(gTypeControlsWindow, "volume_button").Cast(&volumeButton)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "audiovolume_button_mute_button").Cast(&volumeMuteButton)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "subtitle_button").Cast(&subtitleButton)
 			parent.Widget.GetTemplateChild(gTypeControlsWindow, "audiotracks_button").Cast(&audiotracksButton)
@@ -1832,12 +1556,14 @@ func init() {
 			c := &ControlsWindow{
 				ApplicationWindow:       parent,
 				overlay:                 &overlay,
+				pictureVideo:            &pictureVideo,
+				headerbarRevealer:       &headerbarRevealer,
+				controlsRevealer:        &controlsRevealer,
 				buttonHeaderbarTitle:    &buttonHeaderbarTitle,
 				buttonHeaderbarSubtitle: &buttonHeaderbarSubtitle,
 				playButton:              &playButton,
 				stopButton:              &stopButton,
 				volumeScale:             &volumeScale,
-				volumeButton:            &volumeButton,
 				volumeMuteButton:        &volumeMuteButton,
 				subtitleButton:          &subtitleButton,
 				audiotracksButton:       &audiotracksButton,

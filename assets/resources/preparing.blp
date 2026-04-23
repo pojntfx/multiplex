@@ -1,27 +1,32 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $MultiplexPreparingWindow: Adw.Window {
-  modal: true;
+template $MultiplexPreparingDialog: Adw.Dialog {
+  title: _("Preparing Stream");
+  content-width: 320;
 
-  [content]
-  WindowHandle {
-    Box {
+  child: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      show-title: false;
+    }
+
+    content: Box {
       orientation: vertical;
       valign: center;
       halign: center;
       margin-top: 12;
-      margin-start: 12;
-      margin-end: 12;
-      margin-bottom: 12;
+      margin-start: 24;
+      margin-end: 24;
+      margin-bottom: 24;
+      spacing: 12;
 
       Label {
         styles [
-          "title",
+          "title-2",
         ]
 
         label: _("Preparing Stream...");
-        margin-bottom: 12;
       }
 
       ProgressBar preparing_progress_bar {
@@ -30,18 +35,17 @@ template $MultiplexPreparingWindow: Adw.Window {
         ]
 
         show-text: true;
-        margin-bottom: 8;
       }
 
-      [action]
       Button cancel_preparing_button {
         styles [
           "destructive-action",
+          "pill",
         ]
 
-        margin-top: 8;
+        halign: center;
         label: _("Cancel");
       }
-    }
-  }
+    };
+  };
 }

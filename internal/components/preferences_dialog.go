@@ -22,10 +22,9 @@ var (
 )
 
 type PreferencesDialog struct {
-	adw.PreferencesWindow
+	adw.PreferencesDialog
 
 	storageLocationInput       *gtk.Button
-	mpvCommandInput            *adw.EntryRow
 	verbosityLevelInput        *adw.SpinRow
 	remoteGatewaySwitchInput   *gtk.Switch
 	remoteGatewayURLInput      *adw.EntryRow
@@ -37,7 +36,6 @@ type PreferencesDialog struct {
 	weronForceRelayInput       *gtk.Switch
 
 	preferencesHaveChanged bool
-	closeRequestCallback   func() bool
 
 	ctx      context.Context
 	settings *gio.Settings
@@ -71,33 +69,11 @@ func NewPreferencesDialog(
 	return v
 }
 
-func (p *PreferencesDialog) MpvCommandInput() *adw.EntryRow {
-	return p.mpvCommandInput
-}
-
-func (p *PreferencesDialog) setCloseRequestCallback(callback func() bool) {
-	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
-	prefD.closeRequestCallback = callback
-}
-
 func (p *PreferencesDialog) markPreferencesChanged() {
-	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
-	prefD.preferencesHaveChanged = true
-}
-
-func (p *PreferencesDialog) resetPreferencesChanged() {
-	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
-	prefD.preferencesHaveChanged = false
-}
-
-func (p *PreferencesDialog) havePreferencesChanged() bool {
-	prefD := (*PreferencesDialog)(unsafe.Pointer(p.GetData(dataKeyGoInstance)))
-	return prefD.preferencesHaveChanged
+	p.preferencesHaveChanged = true
 }
 
 func (p *PreferencesDialog) setupBindings() {
-	p.settings.Bind(resources.SchemaMPVKey, &p.mpvCommandInput.Object, "text", gio.GSettingsBindDefaultValue)
-
 	p.verbosityLevelInput.SetAdjustment(gtk.NewAdjustment(0, 0, 8, 1, 1, 1))
 	p.settings.Bind(resources.SchemaVerboseKey, &p.verbosityLevelInput.Object, "value", gio.GSettingsBindDefaultValue)
 
@@ -116,39 +92,29 @@ func (p *PreferencesDialog) setupBindings() {
 }
 
 func (p *PreferencesDialog) setupCallbacks() {
-	p.SetTransientFor(&p.window.Window)
-
 	syncSensitivityState := func() {
-		if p.remoteGatewaySwitchInput.GetActive() {
-			p.remoteGatewayURLInput.SetEditable(true)
-			p.remoteGatewayUsernameInput.SetEditable(true)
-			p.remoteGatewayPasswordInput.SetEditable(true)
-		} else {
-			p.remoteGatewayURLInput.SetEditable(false)
-			p.remoteGatewayUsernameInput.SetEditable(false)
-			p.remoteGatewayPasswordInput.SetEditable(false)
-		}
+		editable := p.remoteGatewaySwitchInput.GetActive()
+		p.remoteGatewayURLInput.SetEditable(editable)
+		p.remoteGatewayUsernameInput.SetEditable(editable)
+		p.remoteGatewayPasswordInput.SetEditable(editable)
 	}
 
-	onCloseRequest := func() bool {
-		p.Close()
-		p.SetVisible(false)
-
-		if p.havePreferencesChanged() {
-			p.settings.Apply()
-
-			toast := adw.NewToast(L("Reopen to apply the changes."))
-			toast.SetButtonLabel(L("Reopen"))
-			toast.SetActionName("win." + applyPreferencesActionName)
-
-			p.overlay.AddToast(toast)
+	onClosed := func(adw.Dialog) {
+		if !p.preferencesHaveChanged {
+			return
 		}
 
-		p.resetPreferencesChanged()
+		p.settings.Apply()
 
-		return true
+		toast := adw.NewToast(L("Reopen to apply the changes."))
+		toast.SetButtonLabel(L("Reopen"))
+		toast.SetActionName("win." + applyPreferencesActionName)
+
+		p.overlay.AddToast(toast)
+
+		p.preferencesHaveChanged = false
 	}
-	p.setCloseRequestCallback(onCloseRequest)
+	p.PreferencesDialog.Dialog.ConnectClosed(&onClosed)
 
 	onShow := func(gtk.Widget) {
 		syncSensitivityState()
@@ -201,7 +167,6 @@ func init() {
 		typeClass.SetTemplateFromResource(resources.ResourcePreferencesPath)
 
 		typeClass.BindTemplateChildFull("storage_location_input", false, 0)
-		typeClass.BindTemplateChildFull("mpv_command_input", false, 0)
 		typeClass.BindTemplateChildFull("verbosity_level_input", false, 0)
 		typeClass.BindTemplateChildFull("htorrent_remote_gateway_switch", false, 0)
 		typeClass.BindTemplateChildFull("htorrent_url_input", false, 0)
@@ -218,14 +183,13 @@ func init() {
 			parentObjClass := (*gobject.ObjectClass)(unsafe.Pointer(tc.PeekParent()))
 			parentObjClass.GetConstructed()(o)
 
-			var parent adw.PreferencesWindow
+			var parent adw.PreferencesDialog
 			o.Cast(&parent)
 
 			parent.InitTemplate()
 
 			var (
 				storageLocationInput       gtk.Button
-				mpvCommandInput            adw.EntryRow
 				verbosityLevelInput        adw.SpinRow
 				remoteGatewaySwitchInput   gtk.Switch
 				remoteGatewayURLInput      adw.EntryRow
@@ -237,7 +201,6 @@ func init() {
 				weronForceRelayInput       gtk.Switch
 			)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "storage_location_input").Cast(&storageLocationInput)
-			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "mpv_command_input").Cast(&mpvCommandInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "verbosity_level_input").Cast(&verbosityLevelInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent_remote_gateway_switch").Cast(&remoteGatewaySwitchInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent_url_input").Cast(&remoteGatewayURLInput)
@@ -249,10 +212,9 @@ func init() {
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron_force_relay_input").Cast(&weronForceRelayInput)
 
 			p := &PreferencesDialog{
-				PreferencesWindow: parent,
+				PreferencesDialog: parent,
 
 				storageLocationInput:       &storageLocationInput,
-				mpvCommandInput:            &mpvCommandInput,
 				verbosityLevelInput:        &verbosityLevelInput,
 				remoteGatewaySwitchInput:   &remoteGatewaySwitchInput,
 				remoteGatewayURLInput:      &remoteGatewayURLInput,
@@ -265,14 +227,6 @@ func init() {
 
 				preferencesHaveChanged: false,
 			}
-
-			onCloseRequest := func(gtk.Window) bool {
-				if p.closeRequestCallback != nil {
-					return p.closeRequestCallback()
-				}
-				return false
-			}
-			parent.ConnectCloseRequest(&onCloseRequest)
 
 			var pinner runtime.Pinner
 			pinner.Pin(p)
@@ -287,7 +241,7 @@ func init() {
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
 	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.PreferencesWindowGLibType(), &parentQuery)
+	gobject.NewTypeQuery(adw.PreferencesDialogGLibType(), &parentQuery)
 
 	gTypePreferencesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,

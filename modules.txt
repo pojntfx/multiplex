@@ -5,7 +5,7 @@ codeberg.org/puregotk/purego/internal/cgo
 codeberg.org/puregotk/purego/internal/fakecgo
 codeberg.org/puregotk/purego/internal/strings
 codeberg.org/puregotk/purego/internal/xreflect
-# codeberg.org/puregotk/puregotk v0.0.0-20260420231554-98419d54d2d2
+# codeberg.org/puregotk/puregotk v0.0.0-20260420231554-98419d54d2d2 => ../puregotk-neo
 ## explicit; go 1.24.0
 codeberg.org/puregotk/puregotk/internal/core
 codeberg.org/puregotk/puregotk/pkg/core
@@ -22,6 +22,9 @@ codeberg.org/puregotk/puregotk/v4/graphene
 codeberg.org/puregotk/puregotk/v4/gsk
 codeberg.org/puregotk/puregotk/v4/gtk
 codeberg.org/puregotk/puregotk/v4/pango
+# codeberg.org/puregotk/puregotk/examples/gstreamer-go v0.0.0-00010101000000-000000000000 => ../puregotk-neo/examples/gstreamer-go
+## explicit; go 1.25.0
+codeberg.org/puregotk/puregotk/examples/gstreamer-go/gst
 # github.com/RoaringBitmap/roaring v1.9.4
 ## explicit; go 1.14
 github.com/RoaringBitmap/roaring
@@ -659,3 +662,5 @@ modernc.org/sqlite/lib
 ## explicit; go 1.23.0
 zombiezen.com/go/sqlite
 zombiezen.com/go/sqlite/sqlitex
+# codeberg.org/puregotk/puregotk => ../puregotk-neo
+# codeberg.org/puregotk/puregotk/examples/gstreamer-go => ../puregotk-neo/examples/gstreamer-go

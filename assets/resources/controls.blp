@@ -2,26 +2,29 @@ using Gtk 4.0;
 using Adw 1;
 
 template $MultiplexControlsWindow: Adw.ApplicationWindow {
-  default-width: 700;
-  default-height: 0;
-  height-request: 0;
+  default-width: 1000;
+  default-height: 700;
   title: _("Multiplex");
-  resizable: false;
 
   content: Adw.ToastOverlay toast_overlay {
-    WindowHandle {
-      Box {
-        orientation: vertical;
+    Overlay {
+      Picture picture_video {
+        hexpand: true;
+        vexpand: true;
+        content-fit: contain;
+      }
+
+      [overlay]
+      Revealer headerbar_revealer {
+        transition-duration: 250;
+        transition-type: crossfade;
+        valign: start;
+        reveal-child: true;
 
         Adw.HeaderBar {
-          styles [
-            "flat",
-          ]
+          show-end-title-buttons: true;
 
-          show-end-title-buttons: false;
-
-          [title]
-          Button media_info_button {
+          title-widget: Button media_info_button {
             styles [
               "flat",
             ]
@@ -29,166 +32,181 @@ template $MultiplexControlsWindow: Adw.ApplicationWindow {
             tooltip-text: _("Open Media Details");
 
             Box {
+              orientation: vertical;
+              halign: center;
+              valign: center;
+
+              Label button_headerbar_title {
+                styles [
+                  "title",
+                ]
+              }
+
+              Label button_headerbar_subtitle {
+                styles [
+                  "subtitle",
+                ]
+              }
+            }
+          };
+
+          [end]
+          Adw.Spinner headerbar_spinner {
+            tooltip-text: _("Preparing Stream...");
+            visible: false;
+            halign: center;
+            valign: center;
+            width-request: 16;
+            height-request: 16;
+          }
+
+          [end]
+          MenuButton menu_button {
+            icon-name: 'open-menu-symbolic';
+            primary: true;
+            tooltip-text: _("Main Menu");
+          }
+
+          [end]
+          MenuButton {
+            styles [
+              "flat",
+            ]
+
+            icon-name: 'system-users-symbolic';
+            popover: users_popover;
+            tooltip-text: _("Show Peers");
+          }
+
+          styles [
+            "osd",
+            "video-player-headerbar",
+          ]
+        }
+      }
+
+      [overlay]
+      Revealer controls_revealer {
+        transition-duration: 250;
+        transition-type: crossfade;
+        valign: end;
+        reveal-child: true;
+
+        Box {
+          orientation: vertical;
+          margin-start: 24;
+          margin-end: 24;
+          margin-bottom: 24;
+
+          Box {
+            spacing: 16;
+            margin-start: 16;
+            margin-end: 16;
+
+            Label elapsed_track_label {
+              styles [
+                "tabular-nums",
+              ]
+
+              label: '00:00:00';
+              tooltip-text: _("Elapsed Time");
+            }
+
+            Scale seeker {
+              hexpand: true;
+              tooltip-text: _("Playback Progress");
+              show-fill-level: true;
+            }
+
+            Label remaining_track_label {
+              styles [
+                "tabular-nums",
+              ]
+
+              label: '-00:00:00';
+              tooltip-text: _("Remaining Playback Time");
+            }
+          }
+
+          Box {
+            spacing: 8;
+
+            Box {
+              spacing: 8;
+
+              Button play_button {
+                icon-name: 'media-playback-start-symbolic';
+                tooltip-text: _("Toggle Playback");
+              }
+
+              Button stop_button {
+                icon-name: 'media-playback-stop-symbolic';
+                tooltip-text: _("Stop Playback");
+              }
+            }
+
+            Box {
+              hexpand: true;
+            }
+
+            Box {
+              spacing: 16;
+
               Box {
-                orientation: vertical;
-                halign: center;
-                valign: center;
+                spacing: 8;
 
-                Label button_headerbar_title {
-                  styles [
-                    "title",
-                  ]
+                Button audiotracks_button {
+                  icon-name: 'media-optical-cd-audio-symbolic';
+                  tooltip-text: _("Change Audio Track");
                 }
 
-                Label button_headerbar_subtitle {
-                  styles [
-                    "subtitle",
-                  ]
+                Button subtitle_button {
+                  icon-name: 'media-view-subtitles-symbolic';
+                  tooltip-text: _("Change Subtitles");
                 }
+              }
+
+              Box {
+                spacing: 8;
+
+                Button audiovolume_button_mute_button {
+                  icon-name: "audio-volume-high-symbolic";
+                  tooltip-text: _("Mute/unmute");
+                }
+
+                Scale volume_scale {
+                  orientation: horizontal;
+                  show-fill-level: true;
+                  width-request: 125;
+
+                  adjustment: Adjustment {
+                    step-increment: 0.05;
+                    lower: 0;
+                    upper: 1;
+                    value: 1;
+                  };
+                }
+              }
+
+              ToggleButton fullscreen_button {
+                icon-name: 'view-fullscreen-symbolic';
+                tooltip-text: _("Toggle Fullscreen");
               }
             }
           }
 
-          [end]
-          Box {
-            orientation: horizontal;
-            spacing: 12;
-            valign: start;
-
-            Adw.Spinner headerbar_spinner {
-              tooltip-text: _("Preparing Stream...");
-              visible: false;
-              halign: center;
-              valign: center;
-              width-request: 16;
-              height-request: 16;
-            }
-
-            MenuButton {
-              styles [
-                "flat",
-              ]
-
-              icon-name: 'system-users-symbolic';
-              popover: users_popover;
-              tooltip-text: _("Show Peers");
-            }
-
-            MenuButton menu_button {
-              icon-name: 'open-menu-symbolic';
-              primary: true;
-              tooltip-text: _("Main Menu");
-            }
-
-            WindowControls {
-              side: end;
-            }
-          }
-        }
-
-        Box {
-          spacing: 6;
-          halign: fill;
-          valign: center;
-          vexpand: true;
-          margin-top: 6;
-          margin-start: 18;
-          margin-end: 18;
-          margin-bottom: 24;
-
-          Button play_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'media-playback-start-symbolic';
-            tooltip-text: _("Toggle Playback");
-          }
-
-          Button stop_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'media-playback-stop-symbolic';
-            tooltip-text: _("Stop Playback");
-          }
-
-          Separator {
-            styles [
-              "spacer",
-            ]
-          }
-
-          Label elapsed_track_label {
-            styles [
-              "tabular_nums",
-            ]
-
-            label: '00:00:00';
-            tooltip-text: _("Elapsed Time");
-          }
-
-          Scale seeker {
-            hexpand: true;
-            tooltip-text: _("Playback Progress");
-          }
-
-          Label remaining_track_label {
-            styles [
-              "tabular_nums",
-            ]
-
-            label: '-00:00:00';
-            tooltip-text: _("Remaining Playback Time");
-          }
-
-          Separator {
-            styles [
-              "spacer",
-            ]
-          }
-
-          MenuButton volume_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'audio-volume-high-symbolic';
-            tooltip-text: _("Change Audio Volume");
-            popover: audiovolume_button_popover;
-          }
-
-          Button audiotracks_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'media-optical-cd-audio-symbolic';
-            tooltip-text: _("Change Audio Track");
-          }
-
-          Button subtitle_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'media-view-subtitles-symbolic';
-            tooltip-text: _("Change Subtitles");
-          }
-
-          ToggleButton fullscreen_button {
-            styles [
-              "flat",
-            ]
-
-            icon-name: 'view-fullscreen-symbolic';
-            tooltip-text: _("Toggle Fullscreen");
-          }
+          styles [
+            "toolbar",
+            "osd",
+          ]
         }
       }
     }
   };
+
+  styles [
+    "video-player-window",
+  ]
 }
 
 Popover users_popover {
@@ -229,37 +247,6 @@ Popover users_popover {
         icon-name: 'edit-copy-symbolic';
         tooltip-text: _("Copy Stream Code to Clipboard");
       }
-    }
-  }
-}
-
-Popover audiovolume_button_popover {
-  width-request: 250;
-
-  Box {
-    margin-top: 6;
-    margin-bottom: 6;
-    margin-start: 6;
-    margin-end: 6;
-
-    Button audiovolume_button_mute_button {
-      icon-name: "audio-volume-high-symbolic";
-      tooltip-text: _("Mute/unmute");
-
-      styles [
-        "circular"
-      ]
-    }
-
-    Scale volume_scale {
-      hexpand: true;
-
-      adjustment: Adjustment {
-        step-increment: 0.2;
-        lower: 0;
-        upper: 1;
-        value: 1;
-      };
     }
   }
 }

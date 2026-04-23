@@ -35,8 +35,6 @@ var (
 	ResourceSubtitlesPath       = path.Join(AppPath, "subtitles.ui")
 	ResourceAudiotracksPath     = path.Join(AppPath, "audiotracks.ui")
 	ResourceErrorPath           = path.Join(AppPath, "error.ui")
-	ResourceWarningPath         = path.Join(AppPath, "warning.ui")
-	ResourceShortcutsWindowPath = path.Join(AppPath, "shortcuts-window.ui")
 
 	ResourceStyleCSSPath = path.Join(AppPath, "style.css")
 	ResourceMetainfoPath = path.Join(AppPath, "metainfo.xml")
@@ -47,7 +45,6 @@ var (
 const (
 	SchemaVerboseKey = "verbose"
 	SchemaStorageKey = "storage"
-	SchemaMPVKey     = "mpv"
 
 	SchemaGatewayRemoteKey   = "gatewayremote"
 	SchemaGatewayURLKey      = "gatewayurl"

@@ -31,10 +31,8 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
-	mpvClient "github.com/pojntfx/multiplex/pkg/client"
 	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
-	"github.com/rymdport/portal/openuri"
 )
 
 var (
@@ -46,17 +44,10 @@ const (
 	mediaPageName   = "media_page"
 	readyPageName   = "ready_page"
 
-	mpvFlathubURL = "https://flathub.org/apps/details/io.mpv.Mpv"
-	mpvWebsiteURL = "https://mpv.io/installation/"
-
 	preferencesActionName      = "preferences"
 	applyPreferencesActionName = "applypreferences"
 	openDownloadsActionName    = "opendownloads"
 	copyMagnetLinkActionName   = "copymagnetlink"
-
-	responseDownloadFlathub     = "download-flathub"
-	responseDownloadWebsite     = "download-website"
-	responseManualConfiguration = "manual-configuration"
 )
 
 type MainWindow struct {
@@ -110,10 +101,8 @@ type MainWindow struct {
 	adapterCtx           context.Context
 	cancelAdapterCtx     func()
 
-	descriptionWindow DescriptionWindow
-	warningDialog     WarningDialog
+	descriptionDialog *DescriptionDialog
 	preferencesDialog *PreferencesDialog
-	mpvCommandInput   *adw.EntryRow
 }
 
 func NewMainWindow(
@@ -144,11 +133,9 @@ func NewMainWindow(
 	v.cancel = cancel
 	v.tmpDir = tmpDir
 
-	v.descriptionWindow = NewDescriptionWindow(&v.ApplicationWindow)
-	v.warningDialog = NewWarningDialog()
-	v.warningDialog.SetResponseCallback(v.onWarningDialogResponse)
+	v.descriptionDialog = NewDescriptionDialog()
 
-	v.preferencesDialog, v.mpvCommandInput = AddMainMenu(
+	v.preferencesDialog = AddMainMenu(
 		ctx,
 		app,
 		&v.ApplicationWindow,
@@ -190,7 +177,7 @@ func (w *MainWindow) setupSignalHandlers() {
 	w.previousButton.ConnectClicked(&onPrevious)
 
 	onMediaInfo := func(gtk.Button) {
-		w.descriptionWindow.SetVisible(true)
+		w.descriptionDialog.Present(&w.ApplicationWindow.Widget)
 	}
 	w.mediaInfoButton.ConnectClicked(&onMediaInfo)
 
@@ -354,16 +341,16 @@ func (w *MainWindow) onNext() {
 				w.previousButton.SetVisible(true)
 
 				w.buttonHeaderbarTitle.SetLabel(w.torrentTitle)
-				w.descriptionWindow.HeaderbarTitle().SetLabel(w.torrentTitle)
+				w.descriptionDialog.HeaderbarTitle().SetLabel(w.torrentTitle)
 
 				w.mediaInfoDisplay.SetVisible(false)
 				w.mediaInfoButton.SetVisible(true)
 
-				w.descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
+				w.descriptionDialog.Text().SetWrapMode(gtk.WrapWordValue)
 				if !utf8.Valid([]byte(w.torrentReadme)) || strings.TrimSpace(w.torrentReadme) == "" {
-					w.descriptionWindow.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
+					w.descriptionDialog.Text().GetBuffer().SetText(L(readmePlaceholder), -1)
 				} else {
-					w.descriptionWindow.Text().GetBuffer().SetText(w.torrentReadme, -1)
+					w.descriptionDialog.Text().GetBuffer().SetText(w.torrentReadme, -1)
 				}
 
 				w.stack.SetVisibleChildName(mediaPageName)
@@ -533,24 +520,24 @@ func (w *MainWindow) onNext() {
 				w.previousButton.SetVisible(true)
 
 				w.buttonHeaderbarTitle.SetLabel(w.torrentTitle)
-				w.descriptionWindow.HeaderbarTitle().SetLabel(w.torrentTitle)
+				w.descriptionDialog.HeaderbarTitle().SetLabel(w.torrentTitle)
 
 				w.mediaInfoDisplay.SetVisible(false)
 				w.mediaInfoButton.SetVisible(true)
 
-				w.descriptionWindow.Text().SetWrapMode(gtk.WrapWordValue)
+				w.descriptionDialog.Text().SetWrapMode(gtk.WrapWordValue)
 				if !utf8.Valid([]byte(w.torrentReadme)) || strings.TrimSpace(w.torrentReadme) == "" {
-					w.descriptionWindow.Text().GetBuffer().SetText(L("No README found."), -1)
+					w.descriptionDialog.Text().GetBuffer().SetText(L("No README found."), -1)
 				} else {
-					w.descriptionWindow.Text().GetBuffer().SetText(w.torrentReadme, -1)
+					w.descriptionDialog.Text().GetBuffer().SetText(w.torrentReadme, -1)
 				}
 
 				w.nextButton.SetVisible(false)
 
 				w.buttonHeaderbarSubtitle.SetVisible(true)
-				w.descriptionWindow.HeaderbarSubtitle().SetVisible(true)
+				w.descriptionDialog.HeaderbarSubtitle().SetVisible(true)
 				w.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
-				w.descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
+				w.descriptionDialog.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
 
 				w.stack.SetVisibleChildName(readyPageName)
 			}()
@@ -559,9 +546,9 @@ func (w *MainWindow) onNext() {
 		w.nextButton.SetVisible(false)
 
 		w.buttonHeaderbarSubtitle.SetVisible(true)
-		w.descriptionWindow.HeaderbarSubtitle().SetVisible(true)
+		w.descriptionDialog.HeaderbarSubtitle().SetVisible(true)
 		w.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
-		w.descriptionWindow.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
+		w.descriptionDialog.HeaderbarSubtitle().SetLabel(getDisplayPathWithoutRoot(w.selectedTorrentMedia))
 
 		w.stack.SetVisibleChildName(readyPageName)
 	}
@@ -581,7 +568,7 @@ func (w *MainWindow) onPrevious(gtk.Button) {
 		w.nextButton.SetVisible(true)
 
 		w.buttonHeaderbarSubtitle.SetVisible(false)
-		w.descriptionWindow.HeaderbarSubtitle().SetVisible(false)
+		w.descriptionDialog.HeaderbarSubtitle().SetVisible(false)
 
 		if !w.isNewSession {
 			if w.adapter != nil {
@@ -741,49 +728,7 @@ func (w *MainWindow) onStreamWithoutDownloading(gtk.Button) {
 	close(ready)
 }
 
-func (w *MainWindow) onWarningDialogResponse(response string) {
-	switch response {
-	case responseDownloadFlathub:
-		_ = openuri.OpenURI("", mpvFlathubURL, nil)
-
-		w.warningDialog.Close()
-
-		os.Exit(0)
-
-	case responseDownloadWebsite:
-		_ = openuri.OpenURI("", mpvWebsiteURL, nil)
-
-		w.warningDialog.Close()
-
-		os.Exit(0)
-
-	default:
-		w.warningDialog.Close()
-
-		w.preferencesDialog.SetTransientFor(&w.ApplicationWindow.Window)
-		w.preferencesDialog.Present()
-		w.mpvCommandInput.GrabFocus()
-	}
-}
-
 func (w *MainWindow) onShow(gtk.Widget) {
-	if oldMPVCommand := w.settings.GetString(resources.SchemaMPVKey); strings.TrimSpace(oldMPVCommand) == "" {
-		newMPVCommand, err := mpvClient.DiscoverMPVExecutable()
-		if err != nil {
-			if runtime.GOOS == "linux" {
-				w.warningDialog.SetResponseEnabled(responseDownloadFlathub, true)
-				w.warningDialog.SetDefaultResponse(responseDownloadFlathub)
-			}
-
-			w.warningDialog.Present(&w.ApplicationWindow.Window.Widget)
-
-			return
-		}
-
-		w.settings.SetString(resources.SchemaMPVKey, newMPVCommand)
-		w.settings.Apply()
-	}
-
 	w.magnetLinkEntry.GrabFocus()
 }
 

@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"codeberg.org/puregotk/puregotk/examples/gstreamer-go/gst"
 	"codeberg.org/puregotk/puregotk/v4/adw"
 	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/gio"
@@ -50,6 +51,8 @@ func init() {
 }
 
 func main() {
+	gst.Init(0, nil)
+
 	tmpDir, err := os.MkdirTemp(os.TempDir(), "multiplex")
 	if err != nil {
 		panic(err)

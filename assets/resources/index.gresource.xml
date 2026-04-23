@@ -4,14 +4,12 @@
         <file>assistant.ui</file>
         <file>controls.ui</file>
         <file>description.ui</file>
-        <file>warning.ui</file>
         <file>error.ui</file>
         <file>menu.ui</file>
         <file>preferences.ui</file>
         <file>subtitles.ui</file>
         <file>audiotracks.ui</file>
         <file>preparing.ui</file>
-        <file>shortcuts-window.ui</file>
         <file>style.css</file>
         <file>metainfo.xml</file>
     </gresource>

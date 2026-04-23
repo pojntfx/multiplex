@@ -5,13 +5,6 @@
     "type": "file"
   },
   {
-    "dest": "vendor/codeberg.org/puregotk/puregotk",
-    "sha256": "e7fded6b4e364e3f2926d9470a991de1e422a712849008a24c347b2ccd96b5cf",
-    "strip-components": 3,
-    "type": "archive",
-    "url": "https://proxy.golang.org/codeberg.org/puregotk/puregotk/@v/v0.0.0-20260420231554-98419d54d2d2.zip"
-  },
-  {
     "dest": "vendor/github.com/anacrolix/torrent",
     "sha256": "58393811685d90f3e4f821cfc41e1b34c60019e6380750c6c8e31976707de0ef",
     "strip-components": 3,

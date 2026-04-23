@@ -5,7 +5,6 @@ import (
 	"unsafe"
 
 	"codeberg.org/puregotk/puregotk/v4/adw"
-	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
@@ -17,7 +16,7 @@ var (
 )
 
 type SubtitlesDialog struct {
-	adw.Window
+	adw.Dialog
 
 	cancelButton      *gtk.Button
 	spinner           *adw.Spinner
@@ -31,62 +30,26 @@ type SubtitlesDialog struct {
 	addFromFileCallback func()
 }
 
-func NewSubtitlesDialog(transientFor *adw.ApplicationWindow) SubtitlesDialog {
-	var w gtk.Window
-	transientFor.Cast(&w)
+func NewSubtitlesDialog() *SubtitlesDialog {
+	obj := gobject.NewObject(gTypeSubtitlesDialog, "css-name")
 
-	obj := gobject.NewObject(gTypeSubtitlesDialog, "transient-for", w)
-
-	var v SubtitlesDialog
-	obj.Cast(&v)
-
-	return v
+	return (*SubtitlesDialog)(unsafe.Pointer(obj.GetData(dataKeyGoInstance)))
 }
 
-func (s *SubtitlesDialog) EnableSpinner() {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.spinner.SetVisible(true)
-}
-
-func (s *SubtitlesDialog) DisableSpinner() {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.spinner.SetVisible(false)
-}
-
-func (s *SubtitlesDialog) EnableOKButton() {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.okButton.SetSensitive(true)
-}
-
-func (s *SubtitlesDialog) DisableOKButton() {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.okButton.SetSensitive(false)
-}
+func (s *SubtitlesDialog) EnableSpinner()   { s.spinner.SetVisible(true) }
+func (s *SubtitlesDialog) DisableSpinner()  { s.spinner.SetVisible(false) }
+func (s *SubtitlesDialog) EnableOKButton()  { s.okButton.SetSensitive(true) }
+func (s *SubtitlesDialog) DisableOKButton() { s.okButton.SetSensitive(false) }
 
 func (s *SubtitlesDialog) AddSubtitleTrack(row *adw.ActionRow) {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.selectionGroup.Add(&row.PreferencesRow.Widget)
+	s.selectionGroup.Add(&row.PreferencesRow.Widget)
 }
 
-func (s *SubtitlesDialog) Overlay() *adw.ToastOverlay {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	return subD.overlay
-}
+func (s *SubtitlesDialog) Overlay() *adw.ToastOverlay { return s.overlay }
 
-func (s *SubtitlesDialog) SetCancelCallback(callback func()) {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.cancelCallback = callback
-}
-
-func (s *SubtitlesDialog) SetOKCallback(callback func()) {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.okCallback = callback
-}
-
-func (s *SubtitlesDialog) SetAddFromFileCallback(callback func()) {
-	subD := (*SubtitlesDialog)(unsafe.Pointer(s.Widget.GetData(dataKeyGoInstance)))
-	subD.addFromFileCallback = callback
-}
+func (s *SubtitlesDialog) SetCancelCallback(callback func())      { s.cancelCallback = callback }
+func (s *SubtitlesDialog) SetOKCallback(callback func())          { s.okCallback = callback }
+func (s *SubtitlesDialog) SetAddFromFileCallback(callback func()) { s.addFromFileCallback = callback }
 
 func init() {
 	var classInit gobject.ClassInitFunc = func(tc *gobject.TypeClass, u uintptr) {
@@ -106,7 +69,7 @@ func init() {
 			parentObjClass := (*gobject.ObjectClass)(unsafe.Pointer(tc.PeekParent()))
 			parentObjClass.GetConstructed()(o)
 
-			var parent adw.Window
+			var parent adw.Dialog
 			o.Cast(&parent)
 
 			parent.InitTemplate()
@@ -127,7 +90,7 @@ func init() {
 			parent.Widget.GetTemplateChild(gTypeSubtitlesDialog, "toast_overlay").Cast(&overlay)
 
 			s := &SubtitlesDialog{
-				Window:            parent,
+				Dialog:            parent,
 				cancelButton:      &cancelButton,
 				spinner:           &spinner,
 				okButton:          &okButton,
@@ -135,24 +98,6 @@ func init() {
 				addFromFileButton: &addFromFileButton,
 				overlay:           &overlay,
 			}
-
-			ctrl := gtk.NewEventControllerKey()
-			parent.AddController(&ctrl.EventController)
-
-			onCloseRequest := func(gtk.Window) bool {
-				parent.Close()
-				parent.SetVisible(false)
-				return true
-			}
-			parent.ConnectCloseRequest(&onCloseRequest)
-
-			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
-				if keycode == keycodeEscape {
-					parent.Close()
-					parent.SetVisible(false)
-				}
-			}
-			ctrl.ConnectKeyReleased(&onKeyReleased)
 
 			onCancelClicked := func(gtk.Button) {
 				if s.cancelCallback != nil {
@@ -188,7 +133,7 @@ func init() {
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
 	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+	gobject.NewTypeQuery(adw.DialogGLibType(), &parentQuery)
 
 	gTypeSubtitlesDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,

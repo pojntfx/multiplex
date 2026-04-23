@@ -5,7 +5,6 @@ import (
 	"unsafe"
 
 	"codeberg.org/puregotk/puregotk/v4/adw"
-	"codeberg.org/puregotk/puregotk/v4/gdk"
 	"codeberg.org/puregotk/puregotk/v4/glib"
 	"codeberg.org/puregotk/puregotk/v4/gobject"
 	"codeberg.org/puregotk/puregotk/v4/gtk"
@@ -17,7 +16,7 @@ var (
 )
 
 type AudioTracksDialog struct {
-	adw.Window
+	adw.Dialog
 
 	cancelButton   *gtk.Button
 	okButton       *gtk.Button
@@ -27,32 +26,18 @@ type AudioTracksDialog struct {
 	okCallback     func()
 }
 
-func NewAudioTracksDialog(transientFor *adw.ApplicationWindow) AudioTracksDialog {
-	var w gtk.Window
-	transientFor.Cast(&w)
+func NewAudioTracksDialog() *AudioTracksDialog {
+	obj := gobject.NewObject(gTypeAudioTracksDialog, "css-name")
 
-	obj := gobject.NewObject(gTypeAudioTracksDialog, "transient-for", w)
-
-	var v AudioTracksDialog
-	obj.Cast(&v)
-
-	return v
+	return (*AudioTracksDialog)(unsafe.Pointer(obj.GetData(dataKeyGoInstance)))
 }
 
 func (a *AudioTracksDialog) AddAudioTrack(row *adw.ActionRow) {
-	audioD := (*AudioTracksDialog)(unsafe.Pointer(a.Widget.GetData(dataKeyGoInstance)))
-	audioD.selectionGroup.Add(&row.PreferencesRow.Widget)
+	a.selectionGroup.Add(&row.PreferencesRow.Widget)
 }
 
-func (a *AudioTracksDialog) SetCancelCallback(callback func()) {
-	audioD := (*AudioTracksDialog)(unsafe.Pointer(a.Widget.GetData(dataKeyGoInstance)))
-	audioD.cancelCallback = callback
-}
-
-func (a *AudioTracksDialog) SetOKCallback(callback func()) {
-	audioD := (*AudioTracksDialog)(unsafe.Pointer(a.Widget.GetData(dataKeyGoInstance)))
-	audioD.okCallback = callback
-}
+func (a *AudioTracksDialog) SetCancelCallback(callback func()) { a.cancelCallback = callback }
+func (a *AudioTracksDialog) SetOKCallback(callback func())     { a.okCallback = callback }
 
 func init() {
 	var classInit gobject.ClassInitFunc = func(tc *gobject.TypeClass, u uintptr) {
@@ -69,7 +54,7 @@ func init() {
 			parentObjClass := (*gobject.ObjectClass)(unsafe.Pointer(tc.PeekParent()))
 			parentObjClass.GetConstructed()(o)
 
-			var parent adw.Window
+			var parent adw.Dialog
 			o.Cast(&parent)
 
 			parent.InitTemplate()
@@ -84,29 +69,11 @@ func init() {
 			parent.Widget.GetTemplateChild(gTypeAudioTracksDialog, "audiotracks").Cast(&selectionGroup)
 
 			a := &AudioTracksDialog{
-				Window:         parent,
+				Dialog:         parent,
 				cancelButton:   &cancelButton,
 				okButton:       &okButton,
 				selectionGroup: &selectionGroup,
 			}
-
-			ctrl := gtk.NewEventControllerKey()
-			parent.AddController(&ctrl.EventController)
-
-			onCloseRequest := func(gtk.Window) bool {
-				parent.Close()
-				parent.SetVisible(false)
-				return true
-			}
-			parent.ConnectCloseRequest(&onCloseRequest)
-
-			onKeyReleased := func(ctrl gtk.EventControllerKey, keyval, keycode uint32, state gdk.ModifierType) {
-				if keycode == keycodeEscape {
-					parent.Close()
-					parent.SetVisible(false)
-				}
-			}
-			ctrl.ConnectKeyReleased(&onKeyReleased)
 
 			onCancelClicked := func(gtk.Button) {
 				if a.cancelCallback != nil {
@@ -135,7 +102,7 @@ func init() {
 	var instanceInit gobject.InstanceInitFunc = func(ti *gobject.TypeInstance, tc *gobject.TypeClass) {}
 
 	var parentQuery gobject.TypeQuery
-	gobject.NewTypeQuery(adw.WindowGLibType(), &parentQuery)
+	gobject.NewTypeQuery(adw.DialogGLibType(), &parentQuery)
 
 	gTypeAudioTracksDialog = gobject.TypeRegisterStaticSimple(
 		parentQuery.Type,

@@ -1,49 +1,35 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $MultiplexDescriptionWindow: Adw.Window {
-  default-width: 450;
-  default-height: 250;
-  modal: true;
+template $MultiplexDescriptionDialog: Adw.Dialog {
+  title: _("Media Details");
+  content-width: 450;
+  content-height: 350;
 
-  [content]
-  Box {
-    orientation: vertical;
-
+  child: Adw.ToolbarView {
+    [top]
     Adw.HeaderBar {
-      styles [
-        "flat",
-      ]
-
-      [title]
-      Box {
-        orientation: vertical;
-        halign: center;
-        valign: center;
-
-        Label headerbar_title {
-          styles [
-            "title",
-          ]
-        }
-
-        Label headerbar_subtitle {
-          styles [
-            "subtitle",
-          ]
-
-          visible: false;
-        }
-      }
+      title-widget: Adw.WindowTitle {
+        title: bind headerbar_title.label;
+        subtitle: bind headerbar_subtitle.label;
+      };
     }
 
-    ScrolledWindow {
+    content: ScrolledWindow {
       margin-start: 12;
       margin-end: 12;
       margin-bottom: 12;
 
       Box {
         orientation: vertical;
+
+        Label headerbar_title {
+          visible: false;
+        }
+
+        Label headerbar_subtitle {
+          visible: false;
+        }
 
         ProgressBar preparing_progress_bar {
           styles [
@@ -66,6 +52,6 @@ template $MultiplexDescriptionWindow: Adw.Window {
           hexpand: true;
         }
       }
-    }
-  }
+    };
+  };
 }

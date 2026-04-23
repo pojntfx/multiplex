@@ -1,13 +1,12 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $MultiplexSubtitlesDialog: Adw.Window {
-  modal: true;
+template $MultiplexSubtitlesDialog: Adw.Dialog {
   title: _("Subtitles");
-  default-width: 500;
-  default-height: 500;
+  content-width: 500;
+  content-height: 500;
 
-  Adw.ToolbarView {
+  child: Adw.ToolbarView {
     [top]
     Adw.HeaderBar {
       show-end-title-buttons: false;
@@ -53,7 +52,7 @@ template $MultiplexSubtitlesDialog: Adw.Window {
       }
     }
 
-    Adw.ToastOverlay toast_overlay {
+    content: Adw.ToastOverlay toast_overlay {
       ScrolledWindow {
         Adw.Clamp {
           maximum-size: 600;
@@ -90,7 +89,6 @@ template $MultiplexSubtitlesDialog: Adw.Window {
           }
         }
       }
-    }
-  }
+    };
+  };
 }
-
