@@ -7,11 +7,8 @@
 
   <name xml:lang="en">Multiplex</name>
   <shortdesc xml:lang="en">Watch torrents with your friends</shortdesc>
-  <description xml:lang="en">Multiplex is an app to watch torrents together, providing an experience
-    similar to Apple's SharePlay and Amazon's Prime Video Watch Party.</description>
 
   <homepage rdf:resource="https://github.com/pojntfx/multiplex/" />
-  <download-page rdf:resource="https://flathub.org/apps/com.pojtinger.felicitas.Multiplex" />
   <bug-database rdf:resource="https://github.com/pojntfx/multiplex/issues/" />
 
   <programming-language>Go</programming-language>
@@ -21,6 +18,7 @@
   <maintainer>
     <foaf:Person>
       <foaf:name>Felicitas Pojtinger</foaf:name>
+      <foaf:mbox rdf:resource="mailto:felicitas@pojtinger.com" />
       <foaf:account>
         <foaf:OnlineAccount>
           <foaf:accountServiceHomepage rdf:resource="https://github.com" />
