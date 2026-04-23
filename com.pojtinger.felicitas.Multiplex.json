@@ -15,7 +15,8 @@
     "--filesystem=xdg-download:rw",
     "--filesystem=xdg-videos:rw",
     "--filesystem=/tmp:rw",
-    "--talk-name=org.freedesktop.Flatpak"
+    "--talk-name=org.freedesktop.Flatpak",
+    "--own-name=org.mpris.MediaPlayer2.com.pojtinger.felicitas.Multiplex"
   ],
   "modules": [
     {

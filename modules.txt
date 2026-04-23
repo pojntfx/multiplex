@@ -215,6 +215,8 @@ github.com/goccy/go-yaml/token
 # github.com/godbus/dbus/v5 v5.2.2
 ## explicit; go 1.20
 github.com/godbus/dbus/v5
+github.com/godbus/dbus/v5/introspect
+github.com/godbus/dbus/v5/prop
 # github.com/google/btree v1.1.3
 ## explicit; go 1.18
 github.com/google/btree
@@ -243,6 +245,9 @@ github.com/json-iterator/go
 # github.com/klauspost/cpuid/v2 v2.3.0
 ## explicit; go 1.22
 github.com/klauspost/cpuid/v2
+# github.com/leberKleber/go-mpris v1.1.0
+## explicit; go 1.19
+github.com/leberKleber/go-mpris
 # github.com/mattn/go-colorable v0.1.14
 ## explicit; go 1.18
 github.com/mattn/go-colorable

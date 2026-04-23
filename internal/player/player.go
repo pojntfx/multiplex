@@ -346,8 +346,12 @@ func (p *Player) SetSubtitleURI(uri string) {
 	p.mu.Lock()
 	mainURI := p.uri
 	var pos int64
+	wasPlaying := false
 	if p.pipeline != nil {
 		p.pipeline.QueryPosition(gst.FormatTimeValue, &pos)
+		var cur, pending gst.State
+		p.pipeline.GetState(&cur, &pending, 0)
+		wasPlaying = cur == gst.StatePlayingValue
 	}
 	p.mu.Unlock()
 
@@ -373,7 +377,9 @@ func (p *Player) SetSubtitleURI(uri string) {
 		if pos > 0 {
 			pipeline.SeekSimple(gst.FormatTimeValue, gst.SeekFlagFlushValue|gst.SeekFlagKeyUnitValue, pos)
 		}
-		pipeline.SetState(gst.StatePlayingValue)
+		if wasPlaying {
+			pipeline.SetState(gst.StatePlayingValue)
+		}
 		return false
 	}
 	glib.IdleAdd(&onMain, 0)

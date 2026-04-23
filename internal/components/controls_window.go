@@ -32,6 +32,7 @@ import (
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
+	"github.com/pojntfx/multiplex/internal/mpris"
 	"github.com/pojntfx/multiplex/internal/player"
 	"github.com/pojntfx/multiplex/internal/utils"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
@@ -125,6 +126,7 @@ type ControlsWindow struct {
 	bufferedDecoder      *json.Decoder
 
 	player *player.Player
+	mpris  *mpris.Service
 
 	// Dialog state (re-applied each time the dialog is re-presented, since
 	// Adw.Dialog destroys itself on Close()).
@@ -501,6 +503,12 @@ func (c *ControlsWindow) setup() error {
 
 	controlsW.player = player.New(controlsW.pictureVideo)
 
+	if svc, err := mpris.New(resources.AppID, resources.AppID, &mprisController{c: controlsW}); err == nil {
+		controlsW.mpris = svc
+	} else {
+		log.Warn().Err(err).Msg("Could not register MPRIS service")
+	}
+
 	AddMainMenu(
 		controlsW.ctx,
 		controlsW.app,
@@ -544,6 +552,11 @@ func (c *ControlsWindow) setup() error {
 			progressBarTicker.Stop()
 
 			controlsW.player.Stop()
+
+			if controlsW.mpris != nil {
+				_ = controlsW.mpris.Close()
+				controlsW.mpris = nil
+			}
 
 			return false
 		}
@@ -1081,6 +1094,8 @@ func (c *ControlsWindow) setupMonitoringTicker(total *time.Duration, seekerIsSee
 				controlsW.elapsedTrackLabel.SetLabel(formatDuration(elapsed))
 				controlsW.remainingTrackLabel.SetLabel("-" + formatDuration(remaining))
 			}
+
+			controlsW.mpris.Refresh()
 		}
 
 		for {
@@ -1465,6 +1480,90 @@ func (c *ControlsWindow) setupOSDRevealers() {
 	controlsW.ApplicationWindow.Widget.AddController(&motion.EventController)
 
 	scheduleHide()
+}
+
+// mprisController adapts a *ControlsWindow to the mpris.Controller interface.
+// D-Bus methods land on an MPRIS worker goroutine, so widget calls must be
+// marshalled onto the GTK main loop via glib.IdleAdd.
+type mprisController struct {
+	c *ControlsWindow
+}
+
+func (m *mprisController) onMain(fn func()) {
+	var cb glib.SourceFunc = func(uintptr) bool {
+		fn()
+		return false
+	}
+	glib.IdleAdd(&cb, 0)
+}
+
+func (m *mprisController) Play() {
+	m.onMain(func() {
+		m.c.playButton.SetIconName(pauseIcon)
+		m.c.player.Play()
+	})
+}
+
+func (m *mprisController) Pause() {
+	m.onMain(func() {
+		m.c.playButton.SetIconName(playIcon)
+		m.c.player.Pause()
+	})
+}
+
+func (m *mprisController) PlayPause() {
+	m.onMain(func() {
+		if m.c.player.IsPlaying() {
+			m.c.playButton.SetIconName(playIcon)
+			m.c.player.Pause()
+		} else {
+			m.c.playButton.SetIconName(pauseIcon)
+			m.c.player.Play()
+		}
+	})
+}
+
+func (m *mprisController) Stop() {
+	m.onMain(func() {
+		m.c.player.Stop()
+		m.c.ApplicationWindow.Close()
+	})
+}
+
+func (m *mprisController) Seek(offset time.Duration) {
+	m.onMain(func() {
+		pos := m.c.player.Position() + offset
+		if pos < 0 {
+			pos = 0
+		}
+		m.c.player.Seek(pos)
+	})
+}
+
+func (m *mprisController) SetPosition(pos time.Duration) {
+	m.onMain(func() { m.c.player.Seek(pos) })
+}
+
+func (m *mprisController) Raise() {
+	m.onMain(func() { m.c.ApplicationWindow.Present() })
+}
+
+func (m *mprisController) Quit() {
+	m.onMain(func() { m.c.app.Application.Quit() })
+}
+
+func (m *mprisController) Position() time.Duration { return m.c.player.Position() }
+func (m *mprisController) Duration() time.Duration { return m.c.player.Duration() }
+func (m *mprisController) IsPlaying() bool         { return m.c.player.IsPlaying() }
+func (m *mprisController) IsPaused() bool {
+	return m.c.player.State() == gst.StatePausedValue
+}
+
+func (m *mprisController) Title() string {
+	if m.c.torrentTitle != "" {
+		return m.c.torrentTitle
+	}
+	return getDisplayPathWithoutRoot(m.c.selectedTorrentMedia)
 }
 
 func init() {

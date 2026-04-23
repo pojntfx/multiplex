@@ -109,64 +109,64 @@ msgstr "OK"
 msgid "Preparing Stream..."
 msgstr "Preparando o fluxo..."
 
-#: ../assets/resources/controls.blp:78 ../assets/resources/controls.ui:86
+#: ../assets/resources/controls.blp:79 ../assets/resources/controls.ui:87
 msgid "Show Peers"
 msgstr "Mostrar colegas"
 
-#: ../assets/resources/controls.blp:112 ../assets/resources/controls.ui:120
+#: ../assets/resources/controls.blp:114 ../assets/resources/controls.ui:122
 msgid "Elapsed Time"
 msgstr "Tempo decorrido"
 
-#: ../assets/resources/controls.blp:117 ../assets/resources/controls.ui:126
+#: ../assets/resources/controls.blp:119 ../assets/resources/controls.ui:128
 msgid "Playback Progress"
 msgstr "Progresso da reprodução"
 
-#: ../assets/resources/controls.blp:127 ../assets/resources/controls.ui:136
+#: ../assets/resources/controls.blp:129 ../assets/resources/controls.ui:138
 msgid "Remaining Playback Time"
 msgstr "Tempo de reprodução restante"
 
-#: ../assets/resources/controls.blp:139
+#: ../assets/resources/controls.blp:141
 #: ../internal/components/shortcuts_dialog.go:33
-#: ../assets/resources/controls.ui:150
+#: ../assets/resources/controls.ui:152
 msgid "Toggle Playback"
 msgstr "Alternar reprodução"
 
-#: ../assets/resources/controls.blp:144 ../assets/resources/controls.ui:156
+#: ../assets/resources/controls.blp:146 ../assets/resources/controls.ui:158
 msgid "Stop Playback"
 msgstr "Interromper reprodução"
 
-#: ../assets/resources/controls.blp:160 ../assets/resources/controls.ui:175
+#: ../assets/resources/controls.blp:162 ../assets/resources/controls.ui:177
 msgid "Change Audio Track"
 msgstr "Alterar faixa de áudio"
 
-#: ../assets/resources/controls.blp:165 ../assets/resources/controls.ui:181
+#: ../assets/resources/controls.blp:167 ../assets/resources/controls.ui:183
 msgid "Change Subtitles"
 msgstr "Alterar legendas"
 
-#: ../assets/resources/controls.blp:174 ../assets/resources/controls.ui:192
+#: ../assets/resources/controls.blp:176 ../assets/resources/controls.ui:194
 msgid "Mute/unmute"
 msgstr "Silenciar/ativar som"
 
-#: ../assets/resources/controls.blp:193
+#: ../assets/resources/controls.blp:195
 #: ../internal/components/shortcuts_dialog.go:36
-#: ../assets/resources/controls.ui:215
+#: ../assets/resources/controls.ui:217
 msgid "Toggle Fullscreen"
 msgstr "Alternar tela cheia"
 
-#: ../assets/resources/controls.blp:228
-#: ../internal/components/controls_window.go:370
-#: ../assets/resources/controls.ui:254
+#: ../assets/resources/controls.blp:230
+#: ../internal/components/controls_window.go:372
+#: ../assets/resources/controls.ui:256
 msgid "You're currently watching alone."
 msgstr "Você está assistindo sozinho(a)."
 
-#: ../assets/resources/controls.blp:233 ../assets/resources/controls.ui:260
+#: ../assets/resources/controls.blp:235 ../assets/resources/controls.ui:262
 msgid ""
 "Ask the people you want to watch with to enter the following stream code:"
 msgstr ""
 "Peça às pessoas com quem você deseja assistir que insiram o seguinte código "
 "de transmissão:"
 
-#: ../assets/resources/controls.blp:248 ../assets/resources/controls.ui:277
+#: ../assets/resources/controls.blp:250 ../assets/resources/controls.ui:279
 msgid "Copy Stream Code to Clipboard"
 msgstr "Copiar código de fluxo para a área de transferência"
 
@@ -433,72 +433,72 @@ msgstr "Fechar Janela"
 msgid "Quit"
 msgstr "Sair"
 
-#: ../internal/components/controls_window.go:360
+#: ../internal/components/controls_window.go:362
 msgid "Someone joined the session."
 msgstr "Alguém entrou na sessão."
 
-#: ../internal/components/controls_window.go:365
+#: ../internal/components/controls_window.go:367
 msgid "Someone left the session."
 msgstr "Alguém saiu da sessão."
 
-#: ../internal/components/controls_window.go:375
+#: ../internal/components/controls_window.go:377
 msgid "You're currently watching with %v other person."
 msgstr "Você está assistindo a este vídeo com %v outra pessoa."
 
-#: ../internal/components/controls_window.go:379
+#: ../internal/components/controls_window.go:381
 msgid "You're currently watching with %v other people."
 msgstr "Você está assistindo a esta transmissão com %v outras pessoas."
 
-#: ../internal/components/controls_window.go:413
-#: ../internal/components/controls_window.go:466
+#: ../internal/components/controls_window.go:415
+#: ../internal/components/controls_window.go:468
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v MB/%v MB (%v pares)"
 
-#: ../internal/components/controls_window.go:418
-#: ../internal/components/controls_window.go:468
+#: ../internal/components/controls_window.go:420
+#: ../internal/components/controls_window.go:470
 msgid "Searching for peers"
 msgstr "Em busca de colegas"
 
-#: ../internal/components/controls_window.go:650
-#: ../internal/components/controls_window.go:1358
+#: ../internal/components/controls_window.go:663
+#: ../internal/components/controls_window.go:1373
 msgid "Track %v"
 msgstr "Rastrear %v"
 
-#: ../internal/components/controls_window.go:658
+#: ../internal/components/controls_window.go:671
 #, fuzzy
 msgid "Embedded subtitle %v"
 msgstr "Legendas integradas"
 
-#: ../internal/components/controls_window.go:1137
-#: ../internal/components/controls_window.go:1311
+#: ../internal/components/controls_window.go:1152
+#: ../internal/components/controls_window.go:1326
 msgid "None"
 msgstr "Nenhum"
 
-#: ../internal/components/controls_window.go:1241
+#: ../internal/components/controls_window.go:1256
 msgid "Disable subtitles"
 msgstr "Desativar legendas"
 
-#: ../internal/components/controls_window.go:1244
+#: ../internal/components/controls_window.go:1259
 msgid "Integrated subtitle"
 msgstr "Legendas integradas"
 
-#: ../internal/components/controls_window.go:1247
+#: ../internal/components/controls_window.go:1262
 msgid "Subtitle from torrent"
 msgstr "Legenda do torrent"
 
-#: ../internal/components/controls_window.go:1250
+#: ../internal/components/controls_window.go:1265
 msgid "Manually added"
 msgstr "Adicionado manualmente"
 
-#: ../internal/components/controls_window.go:1262
+#: ../internal/components/controls_window.go:1277
 msgid "Select subtitle file"
 msgstr "Selecione o arquivo de legenda"
 
-#: ../internal/components/controls_window.go:1356
+#: ../internal/components/controls_window.go:1371
 msgid "Disable audio"
 msgstr "Desativar áudio"
 
-#: ../internal/components/controls_window.go:1362
+#: ../internal/components/controls_window.go:1377
 msgid "Untitled Track"
 msgstr "Faixa sem título"
 

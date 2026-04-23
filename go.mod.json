@@ -397,6 +397,13 @@
     "url": "https://proxy.golang.org/github.com/klauspost/cpuid/v2/@v/v2.3.0.zip"
   },
   {
+    "dest": "vendor/github.com/leberKleber/go-mpris",
+    "sha256": "ea297faefb69d219a0cc97554504644c879c073efe9d4f0a690369bfb154b318",
+    "strip-components": 3,
+    "type": "archive",
+    "url": "https://proxy.golang.org/github.com/leber!kleber/go-mpris/@v/v1.1.0.zip"
+  },
+  {
     "dest": "vendor/github.com/mattn/go-colorable",
     "sha256": "5e0e7925a070bb5bd11b4097e1a7b608167f0217ee83901b44c135f6e5e85c78",
     "strip-components": 3,
