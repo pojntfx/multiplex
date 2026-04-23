@@ -17,8 +17,9 @@ msgstr ""
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
-#: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
+#: ../assets/resources/metainfo.xml.in:7 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:144 ../assets/resources/controls.ui:13
+#: ../mockups/playback/out/window.ui:12
 msgid "Multiplex"
 msgstr "Multiplex"
 
@@ -113,9 +114,8 @@ msgid "Show Peers"
 msgstr "Hiển thị thiết bị"
 
 #: ../assets/resources/controls.blp:105
-#: ../internal/components/shortcuts_window.go:83
+#: ../internal/components/shortcuts_window.go:85
 #: ../assets/resources/controls.ui:118
-#: ../assets/resources/shortcuts-dialog.ui:44
 msgid "Toggle Playback"
 msgstr "Chuyển đổi phát lại"
 
@@ -148,9 +148,8 @@ msgid "Change Subtitles"
 msgstr "Thay đổi phụ đề"
 
 #: ../assets/resources/controls.blp:186
-#: ../internal/components/shortcuts_window.go:84
+#: ../internal/components/shortcuts_window.go:86
 #: ../assets/resources/controls.ui:202
-#: ../assets/resources/shortcuts-dialog.ui:50
 msgid "Toggle Fullscreen"
 msgstr "Bật/tắt toàn màn hình"
 
@@ -206,17 +205,15 @@ msgid "_About Multiplex"
 msgstr "_Giới thiệu về Multiplex"
 
 #: ../assets/resources/preferences.blp:8
-#: ../internal/components/shortcuts_window.go:81
+#: ../internal/components/shortcuts_window.go:83
 #: ../assets/resources/preferences.ui:13
-#: ../assets/resources/shortcuts-dialog.ui:41
 msgid "Playback"
 msgstr "Phát lại"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
-#: ../internal/components/shortcuts_window.go:73
+#: ../internal/components/shortcuts_window.go:74
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
-#: ../assets/resources/shortcuts-dialog.ui:12
 msgid "General"
 msgstr "Tổng quan"
 
@@ -365,6 +362,11 @@ msgstr ""
 "Danh sách máy chủ weron STUN (ở định dạng stun:host:port) và TURN được phân "
 "tách bằng dấu phẩy (ở định dạng tên người dùng:credential@turn:host:port)"
 
+#: ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/shortcuts-window.ui:13
+msgid "Keyboard Shortcuts"
+msgstr "Phím tắt"
+
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
 msgid "Subtitles"
@@ -401,71 +403,6 @@ msgstr "Tải từ mpv.io"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Cấu hình thủ công"
-
-#: ../assets/resources/shortcuts-window.blp:8
-#: ../assets/resources/shortcuts-window.ui:13
-msgid "Keyboard Shortcuts"
-msgstr "Phím tắt"
-
-#: ../internal/components/main_window.go:245
-msgid "Could not get info for this magnet link."
-msgstr "Không thể lấy thông tin cho magnet link này."
-
-#: ../internal/components/main_window.go:339
-msgid "Media (%v MB)"
-msgstr "Phương tiện (%v MB)"
-
-#: ../internal/components/main_window.go:341
-msgid "Extra file (%v MB)"
-msgstr "Tệp bổ sung (%v MB)"
-
-#: ../internal/components/main_window.go:385
-msgid "This stream code is invalid."
-msgstr "Stream code này không hợp lệ."
-
-#: ../internal/components/main_window.go:543
-msgid "No README found."
-msgstr "Không tìm thấy README."
-
-#: ../internal/components/main_window.go:637
-msgid "Manual Downloads"
-msgstr "Tải Xuống Thủ Công"
-
-#: ../internal/components/error_dialog.go:51
-msgid "Could not continue due to a fatal error"
-msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
-
-#. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
-#: ../internal/components/main_menu.go:41
-msgid "translator-credits"
-msgstr "Loc Huynh <huynhloc.contact@gmail.com>"
-
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "Mở lại để áp dụng các thay đổi."
-
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "Mở lại"
-
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Chọn vị trí lưu trữ"
-
-#: ../internal/components/shortcuts_window.go:75
-#: ../assets/resources/shortcuts-dialog.ui:21
-msgid "Show Keyboard Shortcuts"
-msgstr "Hiển thị phím tắt"
-
-#: ../internal/components/shortcuts_window.go:76
-#: ../assets/resources/shortcuts-dialog.ui:27
-msgid "Close Window"
-msgstr "Đóng cửa sổ"
-
-#: ../internal/components/shortcuts_window.go:77
-#: ../assets/resources/shortcuts-dialog.ui:33
-msgid "Quit"
-msgstr "Thoát"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
@@ -532,12 +469,73 @@ msgstr "Track %v"
 msgid "Untitled Track"
 msgstr "Bản nhạc không có tiêu đề"
 
+#: ../internal/components/error_dialog.go:51
+msgid "Could not continue due to a fatal error"
+msgstr "Không thể tiếp tục do lỗi nghiêm trọng"
+
+#. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#: ../internal/components/main_menu.go:41
+msgid "translator-credits"
+msgstr "Loc Huynh <huynhloc.contact@gmail.com>"
+
+#: ../internal/components/main_window.go:245
+msgid "Could not get info for this magnet link."
+msgstr "Không thể lấy thông tin cho magnet link này."
+
+#: ../internal/components/main_window.go:339
+msgid "Media (%v MB)"
+msgstr "Phương tiện (%v MB)"
+
+#: ../internal/components/main_window.go:341
+msgid "Extra file (%v MB)"
+msgstr "Tệp bổ sung (%v MB)"
+
+#: ../internal/components/main_window.go:385
+msgid "This stream code is invalid."
+msgstr "Stream code này không hợp lệ."
+
+#: ../internal/components/main_window.go:543
+msgid "No README found."
+msgstr "Không tìm thấy README."
+
+#: ../internal/components/main_window.go:637
+msgid "Manual Downloads"
+msgstr "Tải Xuống Thủ Công"
+
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "Mở lại để áp dụng các thay đổi."
+
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "Mở lại"
+
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Chọn vị trí lưu trữ"
+
+#: ../internal/components/shortcuts_window.go:76
+msgid "Open Menu"
+msgstr "Mở menu"
+
+#: ../internal/components/shortcuts_window.go:77
+msgid "Show Keyboard Shortcuts"
+msgstr "Hiển thị phím tắt"
+
+#: ../internal/components/shortcuts_window.go:78
+msgid "Close Window"
+msgstr "Đóng cửa sổ"
+
+#: ../internal/components/shortcuts_window.go:79
+msgid "Quit"
+msgstr "Thoát"
+
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
 msgstr "Tập tin này không chứa phụ đề."
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
-#: ../assets/resources/metainfo.xml.in:5
+#: ../assets/resources/metainfo.xml.in:8
 msgid "Watch torrents with your friends"
 msgstr "Xem torrent với bạn bè"
 
@@ -552,7 +550,7 @@ msgstr ""
 "xem torrent cùng bạn bè;truyền phát video;phát lại video ngang hàng;xem "
 "chung;trình xem torrent;"
 
-#: ../assets/resources/metainfo.xml.in:51
+#: ../assets/resources/metainfo.xml.in:10
 msgid ""
 "Multiplex is an app to watch torrents together, providing an experience "
 "similar to Apple's SharePlay and Amazon's Prime Video Watch Party."
@@ -560,11 +558,11 @@ msgstr ""
 "Multiplex là một ứng dụng để xem torrent cùng nhau, mang lại trải nghiệm "
 "tương tự như SharePlay của Apple và Prime Video Watch Party của Amazon."
 
-#: ../assets/resources/metainfo.xml.in:53
+#: ../assets/resources/metainfo.xml.in:12
 msgid "It enables you to:"
 msgstr "Nó cho phép bạn:"
 
-#: ../assets/resources/metainfo.xml.in:55
+#: ../assets/resources/metainfo.xml.in:14
 msgid ""
 "Stream any file directly using a wide range of video and audio formats with "
 "the mpv video player"
@@ -572,7 +570,7 @@ msgstr ""
 "Stream bất kỳ tệp nào bằng nhiều định dạng video và âm thanh với trình phát "
 "video mpv"
 
-#: ../assets/resources/metainfo.xml.in:57
+#: ../assets/resources/metainfo.xml.in:16
 msgid ""
 "Host online watch parties while preserving your privacy by synchronizing "
 "video playback with friends without a central server"
@@ -581,7 +579,7 @@ msgstr ""
 "bạn bằng cách đồng bộ hóa việc phát lại video với bạn bè mà không cần máy "
 "chủ trung tâm"
 
-#: ../assets/resources/metainfo.xml.in:59
+#: ../assets/resources/metainfo.xml.in:18
 msgid ""
 "Bypass internet restrictions by optionally separating the backend and user "
 "interface into two separate components"
@@ -589,49 +587,45 @@ msgstr ""
 "Bỏ qua các hạn chế về internet bằng cách tùy chọn tách backend và giao diện "
 "người dùng thành hai thành phần riêng biệt"
 
-#: ../assets/resources/metainfo.xml.in:68
+#: ../assets/resources/metainfo.xml.in:67
 msgid "Entering a magnet link or stream code"
 msgstr "Nhập magnet link hoặc stream code"
 
-#: ../assets/resources/metainfo.xml.in:73
+#: ../assets/resources/metainfo.xml.in:72
 msgid "Media selection"
 msgstr "Lựa chọn phương tiện"
 
-#: ../assets/resources/metainfo.xml.in:78
+#: ../assets/resources/metainfo.xml.in:77
 msgid "Confirming playback"
 msgstr "Xác nhận phát lại"
 
-#: ../assets/resources/metainfo.xml.in:83
+#: ../assets/resources/metainfo.xml.in:82
 msgid "Media controls"
 msgstr "Điều khiển phương tiện"
 
-#: ../assets/resources/metainfo.xml.in:88
+#: ../assets/resources/metainfo.xml.in:87
 msgid "Playing media with MPV"
 msgstr "Chơi media với MPV"
 
-#: ../assets/resources/metainfo.xml.in:93
+#: ../assets/resources/metainfo.xml.in:92
 msgid "Selecting audio tracks"
 msgstr "Lựa chọn các bản âm thanh"
 
-#: ../assets/resources/metainfo.xml.in:98
+#: ../assets/resources/metainfo.xml.in:97
 msgid "Selecting subtitles"
 msgstr "Chọn phụ đề"
 
-#: ../assets/resources/metainfo.xml.in:103
+#: ../assets/resources/metainfo.xml.in:102
 msgid "Playback preferences"
 msgstr "Tùy chọn phát lại"
 
-#: ../assets/resources/metainfo.xml.in:108
+#: ../assets/resources/metainfo.xml.in:107
 msgid "Remoting preferences"
 msgstr "Tùy chọn từ xa"
 
-#: ../assets/resources/metainfo.xml.in:113
+#: ../assets/resources/metainfo.xml.in:112
 msgid "Synchronization preferences"
 msgstr "Tùy chọn đồng bộ hóa"
-
-#: ../assets/resources/shortcuts-dialog.ui:15
-msgid "Open Menu"
-msgstr "Mở menu"
 
 #: ../assets/resources/index.gschema.xml:18
 msgid "mpv command"

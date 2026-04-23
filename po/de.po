@@ -7,8 +7,9 @@ msgstr ""
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:4
-#: ../assets/resources/metainfo.xml.in:4 ../assets/resources/assistant.ui:12
+#: ../assets/resources/metainfo.xml.in:7 ../assets/resources/assistant.ui:12
 #: ../assets/resources/assistant.ui:144 ../assets/resources/controls.ui:13
+#: ../mockups/playback/out/window.ui:12
 msgid "Multiplex"
 msgstr "Multiplex"
 
@@ -104,9 +105,8 @@ msgid "Show Peers"
 msgstr "Knoten anzeigen"
 
 #: ../assets/resources/controls.blp:105
-#: ../internal/components/shortcuts_window.go:83
+#: ../internal/components/shortcuts_window.go:85
 #: ../assets/resources/controls.ui:118
-#: ../assets/resources/shortcuts-dialog.ui:44
 msgid "Toggle Playback"
 msgstr "Wiedergabe umschalten"
 
@@ -139,9 +139,8 @@ msgid "Change Subtitles"
 msgstr "Untertitel wechseln"
 
 #: ../assets/resources/controls.blp:186
-#: ../internal/components/shortcuts_window.go:84
+#: ../internal/components/shortcuts_window.go:86
 #: ../assets/resources/controls.ui:202
-#: ../assets/resources/shortcuts-dialog.ui:50
 msgid "Toggle Fullscreen"
 msgstr "Vollbild umschalten"
 
@@ -199,17 +198,15 @@ msgid "_About Multiplex"
 msgstr "_Über Multiplex"
 
 #: ../assets/resources/preferences.blp:8
-#: ../internal/components/shortcuts_window.go:81
+#: ../internal/components/shortcuts_window.go:83
 #: ../assets/resources/preferences.ui:13
-#: ../assets/resources/shortcuts-dialog.ui:41
 msgid "Playback"
 msgstr "Wiedergabe"
 
 #: ../assets/resources/preferences.blp:12
 #: ../assets/resources/preferences.blp:128
-#: ../internal/components/shortcuts_window.go:73
+#: ../internal/components/shortcuts_window.go:74
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
-#: ../assets/resources/shortcuts-dialog.ui:12
 msgid "General"
 msgstr "Allgemein"
 
@@ -359,6 +356,11 @@ msgstr ""
 "Kommagetrennte Liste von weron-STUN-Servern (im Format stun:host:port) und "
 "TURN-Servern (im Format username:credential@turn:host:port)"
 
+#: ../assets/resources/shortcuts-window.blp:8
+#: ../assets/resources/shortcuts-window.ui:13
+msgid "Keyboard Shortcuts"
+msgstr "Tastenkürzel"
+
 #: ../assets/resources/subtitles.blp:6 ../assets/resources/subtitles.blp:38
 #: ../assets/resources/subtitles.ui:11 ../assets/resources/subtitles.ui:43
 msgid "Subtitles"
@@ -395,72 +397,6 @@ msgstr "Von mpv.io herunterladen"
 #: ../assets/resources/warning.blp:13 ../assets/resources/warning.ui:17
 msgid "Manual configuration"
 msgstr "Manuelle Konfiguration"
-
-#: ../assets/resources/shortcuts-window.blp:8
-#: ../assets/resources/shortcuts-window.ui:13
-msgid "Keyboard Shortcuts"
-msgstr "Tastenkürzel"
-
-#: ../internal/components/main_window.go:245
-msgid "Could not get info for this magnet link."
-msgstr "Informationen für diesen Magnet-Link konnten nicht abgerufen werden."
-
-#: ../internal/components/main_window.go:339
-msgid "Media (%v MB)"
-msgstr "Medien (%v MB)"
-
-#: ../internal/components/main_window.go:341
-msgid "Extra file (%v MB)"
-msgstr "Zusatzdatei (%v MB)"
-
-#: ../internal/components/main_window.go:385
-msgid "This stream code is invalid."
-msgstr "Dieser Stream-Code ist ungültig."
-
-#: ../internal/components/main_window.go:543
-msgid "No README found."
-msgstr "Keine README-Datei gefunden."
-
-#: ../internal/components/main_window.go:637
-msgid "Manual Downloads"
-msgstr "Manuelle Downloads"
-
-#: ../internal/components/error_dialog.go:51
-msgid "Could not continue due to a fatal error"
-msgstr ""
-"Aufgrund eines schwerwiegenden Fehlers konnte nicht fortgefahren werden"
-
-#. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
-#: ../internal/components/main_menu.go:41
-msgid "translator-credits"
-msgstr "Felicitas Pojtinger <felicitas@pojtinger.com>"
-
-#: ../internal/components/preferences_dialog.go:140
-msgid "Reopen to apply the changes."
-msgstr "Die App muss neugestartet werden um die Änderungen anzuwenden."
-
-#: ../internal/components/preferences_dialog.go:141
-msgid "Reopen"
-msgstr "App neustarten"
-
-#: ../internal/components/preferences_dialog.go:160
-msgid "Select storage location"
-msgstr "Speicherort auswählen"
-
-#: ../internal/components/shortcuts_window.go:75
-#: ../assets/resources/shortcuts-dialog.ui:21
-msgid "Show Keyboard Shortcuts"
-msgstr "Tastenkürzel anzeigen"
-
-#: ../internal/components/shortcuts_window.go:76
-#: ../assets/resources/shortcuts-dialog.ui:27
-msgid "Close Window"
-msgstr "Fenster schließen"
-
-#: ../internal/components/shortcuts_window.go:77
-#: ../assets/resources/shortcuts-dialog.ui:33
-msgid "Quit"
-msgstr "Beenden"
 
 #: ../internal/components/controls_window.go:335
 msgid "Someone joined the session."
@@ -527,12 +463,74 @@ msgstr "Spur %v"
 msgid "Untitled Track"
 msgstr "Unbenannte Spur"
 
+#: ../internal/components/error_dialog.go:51
+msgid "Could not continue due to a fatal error"
+msgstr ""
+"Aufgrund eines schwerwiegenden Fehlers konnte nicht fortgefahren werden"
+
+#. TRANSLATORS: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#: ../internal/components/main_menu.go:41
+msgid "translator-credits"
+msgstr "Felicitas Pojtinger <felicitas@pojtinger.com>"
+
+#: ../internal/components/main_window.go:245
+msgid "Could not get info for this magnet link."
+msgstr "Informationen für diesen Magnet-Link konnten nicht abgerufen werden."
+
+#: ../internal/components/main_window.go:339
+msgid "Media (%v MB)"
+msgstr "Medien (%v MB)"
+
+#: ../internal/components/main_window.go:341
+msgid "Extra file (%v MB)"
+msgstr "Zusatzdatei (%v MB)"
+
+#: ../internal/components/main_window.go:385
+msgid "This stream code is invalid."
+msgstr "Dieser Stream-Code ist ungültig."
+
+#: ../internal/components/main_window.go:543
+msgid "No README found."
+msgstr "Keine README-Datei gefunden."
+
+#: ../internal/components/main_window.go:637
+msgid "Manual Downloads"
+msgstr "Manuelle Downloads"
+
+#: ../internal/components/preferences_dialog.go:140
+msgid "Reopen to apply the changes."
+msgstr "Die App muss neugestartet werden um die Änderungen anzuwenden."
+
+#: ../internal/components/preferences_dialog.go:141
+msgid "Reopen"
+msgstr "App neustarten"
+
+#: ../internal/components/preferences_dialog.go:160
+msgid "Select storage location"
+msgstr "Speicherort auswählen"
+
+#: ../internal/components/shortcuts_window.go:76
+msgid "Open Menu"
+msgstr "Hauptmenü"
+
+#: ../internal/components/shortcuts_window.go:77
+msgid "Show Keyboard Shortcuts"
+msgstr "Tastenkürzel anzeigen"
+
+#: ../internal/components/shortcuts_window.go:78
+msgid "Close Window"
+msgstr "Fenster schließen"
+
+#: ../internal/components/shortcuts_window.go:79
+msgid "Quit"
+msgstr "Beenden"
+
 #: ../internal/utils/subtitles.go:100
 msgid "This file does not contain subtitles."
 msgstr "Diese Datei enthält keine Untertitel."
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
-#: ../assets/resources/metainfo.xml.in:5
+#: ../assets/resources/metainfo.xml.in:8
 msgid "Watch torrents with your friends"
 msgstr "Schauen Sie Torrents mit Ihren Freunden"
 
@@ -547,7 +545,7 @@ msgstr ""
 "Torrents mit Freunden schauen;Video-Streaming;Peer-to-Peer-"
 "Videowiedergabe;Watch-Party;Torrent-Viewer;"
 
-#: ../assets/resources/metainfo.xml.in:51
+#: ../assets/resources/metainfo.xml.in:10
 msgid ""
 "Multiplex is an app to watch torrents together, providing an experience "
 "similar to Apple's SharePlay and Amazon's Prime Video Watch Party."
@@ -555,11 +553,11 @@ msgstr ""
 "Multiplex ist eine App zum gemeinsamen Anschauen von Torrents, ähnlich wie "
 "Apples SharePlay und Amazons Prime Video Watch Party."
 
-#: ../assets/resources/metainfo.xml.in:53
+#: ../assets/resources/metainfo.xml.in:12
 msgid "It enables you to:"
 msgstr "Es ermöglicht Ihnen:"
 
-#: ../assets/resources/metainfo.xml.in:55
+#: ../assets/resources/metainfo.xml.in:14
 msgid ""
 "Stream any file directly using a wide range of video and audio formats with "
 "the mpv video player"
@@ -567,7 +565,7 @@ msgstr ""
 "Jegliche Datei direkt mit einer Vielzahl von Video- und Audioformaten mit "
 "dem mpv-Videoplayer streamen"
 
-#: ../assets/resources/metainfo.xml.in:57
+#: ../assets/resources/metainfo.xml.in:16
 msgid ""
 "Host online watch parties while preserving your privacy by synchronizing "
 "video playback with friends without a central server"
@@ -575,7 +573,7 @@ msgstr ""
 "Online-Watch-Partys veranstalten und dabei Ihre Privatsphäre wahren, indem "
 "Sie die Videowiedergabe mit Freunden ohne zentralen Server synchronisieren"
 
-#: ../assets/resources/metainfo.xml.in:59
+#: ../assets/resources/metainfo.xml.in:18
 msgid ""
 "Bypass internet restrictions by optionally separating the backend and user "
 "interface into two separate components"
@@ -583,49 +581,45 @@ msgstr ""
 "Internetbeschränkungen umgehen, indem Sie optional den Backend und die "
 "Benutzeroberfläche in zwei separate Komponenten trennen"
 
-#: ../assets/resources/metainfo.xml.in:68
+#: ../assets/resources/metainfo.xml.in:67
 msgid "Entering a magnet link or stream code"
 msgstr "Eingeben eines Magnet-Links oder Stream-Codes"
 
-#: ../assets/resources/metainfo.xml.in:73
+#: ../assets/resources/metainfo.xml.in:72
 msgid "Media selection"
 msgstr "Medienauswahl"
 
-#: ../assets/resources/metainfo.xml.in:78
+#: ../assets/resources/metainfo.xml.in:77
 msgid "Confirming playback"
 msgstr "Wiedergabe bestätigen"
 
-#: ../assets/resources/metainfo.xml.in:83
+#: ../assets/resources/metainfo.xml.in:82
 msgid "Media controls"
 msgstr "Mediensteuerung"
 
-#: ../assets/resources/metainfo.xml.in:88
+#: ../assets/resources/metainfo.xml.in:87
 msgid "Playing media with MPV"
 msgstr "Medien mit MPV abspielen"
 
-#: ../assets/resources/metainfo.xml.in:93
+#: ../assets/resources/metainfo.xml.in:92
 msgid "Selecting audio tracks"
 msgstr "Audiospuren auswählen"
 
-#: ../assets/resources/metainfo.xml.in:98
+#: ../assets/resources/metainfo.xml.in:97
 msgid "Selecting subtitles"
 msgstr "Untertitel auswählen"
 
-#: ../assets/resources/metainfo.xml.in:103
+#: ../assets/resources/metainfo.xml.in:102
 msgid "Playback preferences"
 msgstr "Wiedergabeeinstellungen"
 
-#: ../assets/resources/metainfo.xml.in:108
+#: ../assets/resources/metainfo.xml.in:107
 msgid "Remoting preferences"
 msgstr "Remote-Gateway-Einstellungen"
 
-#: ../assets/resources/metainfo.xml.in:113
+#: ../assets/resources/metainfo.xml.in:112
 msgid "Synchronization preferences"
 msgstr "Synchronisierungseinstellungen"
-
-#: ../assets/resources/shortcuts-dialog.ui:15
-msgid "Open Menu"
-msgstr "Hauptmenü"
 
 #: ../assets/resources/index.gschema.xml:18
 msgid "mpv command"

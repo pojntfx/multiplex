@@ -6,11 +6,11 @@ import (
 
 	. "github.com/pojntfx/go-gettext/pkg/i18n"
 
-	"github.com/jwijenbergh/puregotk/v4/adw"
-	"github.com/jwijenbergh/puregotk/v4/gdk"
-	"github.com/jwijenbergh/puregotk/v4/glib"
-	"github.com/jwijenbergh/puregotk/v4/gobject"
-	"github.com/jwijenbergh/puregotk/v4/gtk"
+	"codeberg.org/puregotk/puregotk/v4/adw"
+	"codeberg.org/puregotk/puregotk/v4/gdk"
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/gobject"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"github.com/pojntfx/multiplex/assets/resources"
 )
 
@@ -19,8 +19,9 @@ var (
 )
 
 type shortcutInfo struct {
-	title      string
-	actionName string
+	title       string
+	actionName  string
+	accelerator string
 }
 
 type shortcutSection struct {
@@ -72,6 +73,7 @@ func (s *ShortcutsWindow) populateShortcuts() {
 		{
 			title: L("General"),
 			shortcuts: []shortcutInfo{
+				{title: L("Open Menu"), accelerator: "F10"},
 				{title: L("Show Keyboard Shortcuts"), actionName: "win.shortcuts"},
 				{title: L("Close Window"), actionName: "win.closeWindow"},
 				{title: L("Quit"), actionName: "app.quit"},
@@ -91,18 +93,22 @@ func (s *ShortcutsWindow) populateShortcuts() {
 
 		sectionHasActiveShortcuts := false
 		for _, shortcut := range section.shortcuts {
-			accels := a.GetAccelsForAction(shortcut.actionName)
-			if len(accels) == 0 {
-				// The accelerators for some shortcuts (e.g. for the control window) don't get
-				// registered until the window they are attached to has been opened, so don't render their label
+			accel := shortcut.accelerator
+			if accel == "" {
+				accels := a.GetAccelsForAction(shortcut.actionName)
+				if len(accels) == 0 {
+					// The accelerators for some shortcuts (e.g. for the control window) don't get
+					// registered until the window they are attached to has been opened, so don't render their label
 
-				continue
+					continue
+				}
+				accel = accels[0]
 			}
 
 			row := adw.NewActionRow()
 			row.SetTitle(shortcut.title)
 
-			shortcutLabel := adw.NewShortcutLabel(accels[0])
+			shortcutLabel := adw.NewShortcutLabel(accel)
 			shortcutLabel.SetValign(gtk.AlignCenterValue)
 			row.AddSuffix(&shortcutLabel.Widget)
 

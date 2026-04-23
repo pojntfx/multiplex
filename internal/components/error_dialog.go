@@ -8,10 +8,10 @@ import (
 
 	. "github.com/pojntfx/go-gettext/pkg/i18n"
 
-	"github.com/jwijenbergh/puregotk/v4/adw"
-	"github.com/jwijenbergh/puregotk/v4/glib"
-	"github.com/jwijenbergh/puregotk/v4/gobject"
-	"github.com/jwijenbergh/puregotk/v4/gtk"
+	"codeberg.org/puregotk/puregotk/v4/adw"
+	"codeberg.org/puregotk/puregotk/v4/glib"
+	"codeberg.org/puregotk/puregotk/v4/gobject"
+	"codeberg.org/puregotk/puregotk/v4/gtk"
 	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/rs/zerolog/log"
 	"github.com/rymdport/portal/openuri"
