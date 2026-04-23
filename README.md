@@ -10,6 +10,7 @@ Watch torrents with your friends.
   <img alt="Screenshot of two peers synchronizing playback" width="90%" src="./assets/meta/screenshot-sync-playback.png" />
 </p>
 
+[![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
 [![Flatpak CI](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml/badge.svg)](https://github.com/pojntfx/multiplex/actions/workflows/flatpak.yaml)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.25-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/multiplex.svg)](https://pkg.go.dev/github.com/pojntfx/multiplex)
@@ -158,7 +159,7 @@ Click on an image to see a larger version.
 
 - [Brage Fuglseth](https://bragefuglseth.dev/) contributed the icon.
 - [mpv](https://mpv.io/) provides the media player.
-- [jwijenbergh/puregotk](https://github.com/jwijenbergh/puregotk) provides the GTK4 and `libadwaita` bindings for Go.
+- [puregotk](https://codeberg.org/puregotk/puregotk) provides the GTK4 and `libadwaita` bindings for Go.
 - [hTorrent](https://github.com/pojntfx/htorrent) provides the torrent gateway.
 - [weron](https://github.com/pojntfx/weron) provides the WebRTC library for playback synchronization.
 
@@ -175,7 +176,21 @@ $ go generate ./...
 $ go run -ldflags="-X 'main.LocaleDir=${PWD}/po' -X 'main.SchemaDir=${PWD}/assets/resources'" .
 ```
 
-You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gnome.Builder) and run it by clicking the play button in the header bar. Note that GNOME Builder doesn't automatically download the sources specified in [go.mod.json](./go.mod.json), so you need to either run `go mod vendor` manually or copy the contents of [go.mod.json](./go.mod.json) into the `.modules[] | select(.name == "multiplex") | .sources` field of [com.pojtinger.felicitas.Multiplex.json](./com.pojtinger.felicitas.Multiplex.json).
+You can also open the project in [GNOME Builder](https://flathub.org/apps/org.gnome.Builder) and run it by clicking the play button in the header bar, or use [Foundry](https://gitlab.gnome.org/GNOME/foundry) directly:
+
+```shell
+$ foundry init
+$ foundry run
+```
+
+If you want to reproduce the build from Flathub, you can use [flatpak-builder](https://docs.flathub.org/docs/for-app-authors/submission#before-submission) directly:
+
+```shell
+$ flatpak run --command=flathub-build org.flatpak.Builder --install com.pojtinger.felicitas.Multiplex.json
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest com.pojtinger.felicitas.Multiplex.json
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
+$ flatpak run com.pojtinger.felicitas.Multiplex
+```
 
 To translate Multiplex, you can use [Weblate](https://hosted.weblate.org/engage/multiplex/). This is the current translation status:
 
