@@ -1,13 +1,10 @@
 {
   "id": "com.pojtinger.felicitas.Multiplex",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "49",
+  "runtime-version": "50",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": ["org.freedesktop.Sdk.Extension.golang"],
   "command": "multiplex",
-  "build-options": {
-    "build-args": ["--filesystem=home"]
-  },
   "finish-args": [
     "--socket=wayland",
     "--socket=fallback-x11",
@@ -24,13 +21,13 @@
       "name": "multiplex",
       "buildsystem": "simple",
       "build-commands": [
-        "mkdir -p vendor && cp modules.txt vendor/modules.txt",
-        ". /usr/lib/sdk/golang/enable.sh && export GOBIN=\"/app/bin\" && go generate ./... && go install -v -mod=vendor -ldflags='-X main.LocaleDir=/app/share/locale' .",
-        "desktop-file-install --dir=/app/share/applications assets/meta/$FLATPAK_ID.desktop",
-        "install -D -m 0644 assets/resources/metainfo.xml /app/share/metainfo/$FLATPAK_ID.metainfo.xml",
-        "install -D -m 0644 assets/meta/icon.svg /app/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg",
-        "mkdir -p /app/share/locale && (cd po && find . -name '*.mo' -exec cp --parents {} /app/share/locale/ \\;)",
-        "install -D -m 0644 assets/resources/index.gschema.xml /app/share/glib-2.0/schemas/$FLATPAK_ID.gschema.xml",
+        "bash -c '. /usr/lib/sdk/golang/enable.sh && ([ -f vendor/modules.txt ] || go mod vendor) && cp modules.txt vendor/modules.txt'",
+        "bash -c '. /usr/lib/sdk/golang/enable.sh && export GOBIN=\"/app/bin\" && go generate ./... && go install -v -mod=vendor -ldflags=\"-X main.LocaleDir=/app/share/locale\" .'",
+        "bash -c 'desktop-file-install --dir=/app/share/applications assets/meta/$FLATPAK_ID.desktop'",
+        "bash -c 'install -D -m 0644 assets/resources/metainfo.xml /app/share/metainfo/$FLATPAK_ID.metainfo.xml'",
+        "bash -c 'install -D -m 0644 assets/meta/icon.svg /app/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg'",
+        "bash -c 'mkdir -p /app/share/locale && (cd po && find . -name \"*.mo\" -exec cp --parents {} /app/share/locale/ \\;)'",
+        "bash -c 'install -D -m 0644 assets/resources/index.gschema.xml /app/share/glib-2.0/schemas/$FLATPAK_ID.gschema.xml'",
         "glib-compile-schemas /app/share/glib-2.0/schemas"
       ],
       "sources": [{ "type": "dir", "path": "." }, "go.mod.json"]
