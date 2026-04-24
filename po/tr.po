@@ -155,7 +155,7 @@ msgid "Toggle Fullscreen"
 msgstr "Tam Ekran Yap"
 
 #: ../assets/resources/controls.blp:230
-#: ../internal/components/controls_window.go:353
+#: ../internal/components/controls_window.go:343
 #: ../assets/resources/controls.ui:256
 msgid "You're currently watching alone."
 msgstr "Şu anda tek başınıza izliyorsunuz."
@@ -387,71 +387,71 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: ../internal/components/controls_window.go:343
+#: ../internal/components/controls_window.go:333
 msgid "Someone joined the session."
 msgstr ""
 
-#: ../internal/components/controls_window.go:348
+#: ../internal/components/controls_window.go:338
 msgid "Someone left the session."
 msgstr ""
 
-#: ../internal/components/controls_window.go:358
+#: ../internal/components/controls_window.go:348
 msgid "You're currently watching with %v other person."
 msgstr ""
 
-#: ../internal/components/controls_window.go:362
+#: ../internal/components/controls_window.go:352
 msgid "You're currently watching with %v other people."
 msgstr ""
 
-#: ../internal/components/controls_window.go:396
-#: ../internal/components/controls_window.go:449
+#: ../internal/components/controls_window.go:386
+#: ../internal/components/controls_window.go:439
 msgid "%v MB/%v MB (%v peers)"
 msgstr ""
 
-#: ../internal/components/controls_window.go:401
-#: ../internal/components/controls_window.go:451
+#: ../internal/components/controls_window.go:391
+#: ../internal/components/controls_window.go:441
 msgid "Searching for peers"
 msgstr ""
 
-#: ../internal/components/controls_window.go:646
-#: ../internal/components/controls_window.go:1312
+#: ../internal/components/controls_window.go:638
+#: ../internal/components/controls_window.go:1309
 msgid "Track %v"
 msgstr ""
 
-#: ../internal/components/controls_window.go:654
+#: ../internal/components/controls_window.go:646
 msgid "Embedded subtitle %v"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1091
-#: ../internal/components/controls_window.go:1265
+#: ../internal/components/controls_window.go:1088
+#: ../internal/components/controls_window.go:1262
 msgid "None"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1195
+#: ../internal/components/controls_window.go:1192
 msgid "Disable subtitles"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1198
+#: ../internal/components/controls_window.go:1195
 msgid "Integrated subtitle"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1201
+#: ../internal/components/controls_window.go:1198
 msgid "Subtitle from torrent"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1204
+#: ../internal/components/controls_window.go:1201
 msgid "Manually added"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1216
+#: ../internal/components/controls_window.go:1213
 msgid "Select subtitle file"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1310
+#: ../internal/components/controls_window.go:1307
 msgid "Disable audio"
 msgstr ""
 
-#: ../internal/components/controls_window.go:1316
+#: ../internal/components/controls_window.go:1313
 msgid "Untitled Track"
 msgstr ""
 

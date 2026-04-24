@@ -272,17 +272,12 @@ func (c *ControlsWindow) setup() error {
 	controlsW.buttonHeaderbarTitle.SetLabel(controlsW.torrentTitle)
 	controlsW.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(controlsW.selectedTorrentMedia))
 
-	log.Info().Msg("ControlsWindow.setup: entering p2panda session setup")
-
 	if controlsW.topicHex == "" {
 		var buf [32]byte
 		if _, err := rand.Read(buf[:]); err != nil {
 			return err
 		}
 		controlsW.topicHex = hex.EncodeToString(buf[:])
-		log.Info().Str("topic", controlsW.topicHex).Msg("Generated new topic id")
-	} else {
-		log.Info().Str("topic", controlsW.topicHex).Msg("Reusing topic id from MainWindow")
 	}
 
 	pauses := broadcast.NewRelay[bool]()
@@ -291,18 +286,17 @@ func (c *ControlsWindow) setup() error {
 
 	// sessionReady is closed once the p2panda session is Opened and publishing
 	// is safe. On the host path we open asynchronously so the GTK main loop
-	// keeps running — the iroh node spawn relies on it. On the joiner path the
-	// MainWindow already opened the session, so we can close the signal eagerly.
+	// keeps running — iroh's node spawn relies on it. On the joiner path the
+	// MainWindow already opened the session, so we close the signal eagerly.
 	sessionReady := make(chan struct{})
 
-	if controlsW.session == nil {
-		log.Info().
-			Str("relay", controlsW.settings.GetString(resources.SchemaP2pandaRelayKey)).
-			Str("network", controlsW.settings.GetString(resources.SchemaP2pandaNetworkKey)).
-			Str("bootstrap", controlsW.settings.GetString(resources.SchemaP2pandaBootstrapKey)).
-			Str("topic", controlsW.topicHex).
-			Msg("Creating new p2panda session (host path)")
+	// isHost distinguishes a fresh-session creator from a joiner. The joiner
+	// must not announce initial Magnet/Pause/Position — it would overwrite the
+	// host's authoritative state (especially Position=0 while its player is
+	// still loading).
+	isHost := controlsW.session == nil
 
+	if controlsW.session == nil {
 		controlsW.sessionCtx, controlsW.cancelSessionCtx = context.WithCancel(context.Background())
 
 		controlsW.session = p2panda.NewSession(
@@ -313,9 +307,8 @@ func (c *ControlsWindow) setup() error {
 		)
 
 		go func() {
-			log.Info().Msg("Calling session.Open (host, background)")
 			if err := controlsW.session.Open(controlsW.sessionCtx); err != nil {
-				log.Error().Err(err).Msg("session.Open failed")
+				log.Error().Err(err).Msg("Could not open p2panda session")
 				var showErr glib.SourceFunc = func(uintptr) bool {
 					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
 					return false
@@ -324,16 +317,13 @@ func (c *ControlsWindow) setup() error {
 				controlsW.cancelSessionCtx()
 				return
 			}
-			log.Info().Str("pubkey", controlsW.session.NodeIDHex()).Msg("session.Open returned successfully")
 			close(sessionReady)
 		}()
 	} else {
-		log.Info().Str("pubkey", controlsW.session.NodeIDHex()).Msg("Reusing session from MainWindow (joiner path)")
 		close(sessionReady)
 	}
 
 	controlsW.streamCodeInput.SetText(controlsW.topicHex)
-	log.Info().Msg("ControlsWindow.setup: stream code set")
 
 	connectedPeers := new(int32)
 	syncWatchingWithLabel := func(connected bool) {
@@ -601,6 +591,7 @@ func (c *ControlsWindow) setup() error {
 				syncWatchingWithLabel,
 				preparingDialog,
 				sessionReady,
+				isHost,
 			)
 		}()
 	}
@@ -618,6 +609,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	syncWatchingWithLabel func(bool),
 	preparingDialog *PreparingDialog,
 	sessionReady <-chan struct{},
+	isHost bool,
 ) {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
@@ -785,7 +777,6 @@ func (c *ControlsWindow) setupPlaybackControls(
 		case <-controlsW.ctx.Done():
 			return
 		}
-		log.Info().Msg("Outbound publisher: session ready, starting")
 
 		pl := pauses.Listener(0)
 		defer pl.Close()
@@ -840,33 +831,39 @@ func (c *ControlsWindow) setupPlaybackControls(
 				if !ok {
 					return
 				}
-				log.Info().Str("peer", ev.Pubkey).Msg("Peer joined")
-				syncWatchingWithLabel(true)
+				if ev.Joined {
+					log.Info().Str("peer", ev.Pubkey).Msg("Peer joined")
+				} else {
+					log.Info().Str("peer", ev.Pubkey).Msg("Peer left")
+				}
+				syncWatchingWithLabel(ev.Joined)
 			}
 		}
 	}()
 
-	// Announce the current magnet and paused state once the session is ready.
-	go func() {
-		select {
-		case <-sessionReady:
-		case <-controlsW.ctx.Done():
-			return
-		}
-		log.Info().Msg("Session ready, publishing initial Magnet + Pause")
+	// Host-only: announce the current magnet + paused state once the session
+	// is ready. Joiners must not do this — they'd overwrite host state.
+	if isHost {
+		go func() {
+			select {
+			case <-sessionReady:
+			case <-controlsW.ctx.Done():
+				return
+			}
 
-		subs := []api.Subtitle{}
-		for _, subtitle := range controlsW.subtitles {
-			subs = append(subs, api.Subtitle{Name: subtitle.name, Size: subtitle.size})
-		}
-		if err := publish(api.NewMagnetLink(controlsW.magnetLink, controlsW.selectedTorrentMedia, controlsW.torrentTitle, controlsW.torrentReadme, subs), false); err != nil {
-			log.Debug().Err(err).Msg("Could not publish magnet link")
-		}
-		if err := publish(api.NewPause(true), true); err != nil {
-			log.Debug().Err(err).Msg("Could not publish initial pause")
-		}
-		positions.Broadcast(float64(controlsW.player.Position().Nanoseconds()))
-	}()
+			subs := []api.Subtitle{}
+			for _, subtitle := range controlsW.subtitles {
+				subs = append(subs, api.Subtitle{Name: subtitle.name, Size: subtitle.size})
+			}
+			if err := publish(api.NewMagnetLink(controlsW.magnetLink, controlsW.selectedTorrentMedia, controlsW.torrentTitle, controlsW.torrentReadme, subs), false); err != nil {
+				log.Debug().Err(err).Msg("Could not publish magnet link")
+			}
+			if err := publish(api.NewPause(true), true); err != nil {
+				log.Debug().Err(err).Msg("Could not publish initial pause")
+			}
+			positions.Broadcast(float64(controlsW.player.Position().Nanoseconds()))
+		}()
+	}
 
 	// Drain messages buffered during the MainWindow join handshake first, then
 	// consume live messages from the session.

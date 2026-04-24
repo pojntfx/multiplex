@@ -27,11 +27,11 @@ type Message struct {
 	Ephemeral bool
 }
 
-// PeerEvent signals when a previously-unseen peer sent their first message
-// (Joined=true) or — currently — is just a new observation. The underlying
-// p2panda library does not expose reliable disconnect events without using the
-// sync-started/sync-ended signals, so Joined=false is unused for now but kept
-// for API symmetry.
+// PeerEvent reports that a remote peer has just joined the topic
+// (Joined=true) or just left it (Joined=false). Joins are emitted when the
+// first sync session with a given remote opens; leaves when the last one
+// closes. A single node can have multiple concurrent sync sessions; the
+// Session coalesces them so PeerEvent reflects presence, not session churn.
 type PeerEvent struct {
 	Pubkey string
 	Joined bool
@@ -55,14 +55,19 @@ type Session struct {
 
 	// Keep the signal callbacks alive for the lifetime of the session so GC
 	// doesn't collect them while p2panda still holds the references.
-	onMsgCB *func(p2panda.Topic, uintptr, uintptr, uintptr) bool
-	onEphCB *func(p2panda.Topic, uintptr, uintptr, uintptr)
+	onMsgCB       *func(p2panda.Topic, uintptr, uintptr, uintptr) bool
+	onEphCB       *func(p2panda.Topic, uintptr, uintptr, uintptr)
+	onSyncStartCB *func(p2panda.Topic, uintptr, uint64, uint64, uint64, uint64, uint64)
+	onSyncEndCB   *func(p2panda.Topic, uintptr, uint64)
 
 	messages chan Message
 	peers    chan PeerEvent
 
-	mu       sync.Mutex
-	seenPeer map[string]struct{}
+	mu sync.Mutex
+	// peerSessions counts active sync sessions per remote pubkey. A peer is
+	// considered joined once it has at least one session and left when the
+	// last one closes.
+	peerSessions map[string]int
 
 	closeOnce sync.Once
 	closed    chan struct{}
@@ -91,14 +96,14 @@ func ptrHex(ptr uintptr, n int) string {
 // node or topic — call Open for that.
 func NewSession(relayURL, networkHex, topicHex, bootstrapHex string) *Session {
 	return &Session{
-		relayURL:   relayURL,
-		networkHex: networkHex,
-		topicHex:   topicHex,
-		bootstrap:  bootstrapHex,
-		messages:   make(chan Message, 64),
-		peers:     make(chan PeerEvent, 16),
-		seenPeer:   map[string]struct{}{},
-		closed:     make(chan struct{}),
+		relayURL:     relayURL,
+		networkHex:   networkHex,
+		topicHex:     topicHex,
+		bootstrap:    bootstrapHex,
+		messages:     make(chan Message, 64),
+		peers:        make(chan PeerEvent, 16),
+		peerSessions: map[string]int{},
+		closed:       make(chan struct{}),
 	}
 }
 
@@ -121,38 +126,33 @@ func (s *Session) Done() <-chan struct{} { return s.closed }
 
 // Open spawns the node and topic. It blocks until both are ready or ctx is
 // cancelled. Must be called from outside the GLib main thread — it uses
-// glib.IdleAdd internally to marshal work onto the main loop.
+// glib.IdleAdd internally to marshal work onto the main loop, so calling from
+// the main thread would deadlock.
 func (s *Session) Open(ctx context.Context) error {
-	log.Info().Str("relay", s.relayURL).Msg("Session.Open: parsing relay URL")
 	relayURI, err := glib.UriParse(s.relayURL, glib.GUriFlagsNoneValue)
 	if err != nil {
 		return fmt.Errorf("parse relay URL: %w", err)
 	}
 	s.relayURI = relayURI
 
-	log.Info().Str("network", s.networkHex).Msg("Session.Open: decoding network id")
 	networkBytes, err := hexTo32(s.networkHex)
 	if err != nil {
 		return fmt.Errorf("network id: %w", err)
 	}
 	s.networkID = p2panda.NewNetworkIdFromData(networkBytes)
 
-	log.Info().Str("topic", s.topicHex).Msg("Session.Open: decoding topic id")
 	topicBytes, err := hexTo32(s.topicHex)
 	if err != nil {
 		return fmt.Errorf("topic id: %w", err)
 	}
 	s.topicID = p2panda.NewTopicIdFromData(topicBytes)
 
-	log.Info().Msg("Session.Open: generating private key")
 	s.privateKey = p2panda.NewPrivateKey()
 	ownPub := s.privateKey.GetPublicKey()
 	s.ownPubHex = ptrHex(ownPub.GetData(), PubkeySize)
 	ownPub.Free()
-	log.Info().Str("pubkey", s.ownPubHex).Msg("Session.Open: generated key pair")
 
 	if s.bootstrap != "" {
-		log.Info().Str("bootstrap", s.bootstrap).Msg("Session.Open: configuring bootstrap")
 		bootBytes, err := hexTo32(s.bootstrap)
 		if err != nil {
 			return fmt.Errorf("bootstrap node id: %w", err)
@@ -162,11 +162,8 @@ func (s *Session) Open(ctx context.Context) error {
 			return fmt.Errorf("construct bootstrap node id: %w", err)
 		}
 		s.bootstrapN = b
-	} else {
-		log.Info().Msg("Session.Open: no bootstrap configured, relying on relay and mDNS")
 	}
 
-	log.Info().Msg("Session.Open: creating Node")
 	s.node = p2panda.NewNode(
 		s.privateKey,
 		"sqlite::memory:",
@@ -179,17 +176,20 @@ func (s *Session) Open(ctx context.Context) error {
 		return errors.New("p2panda.NewNode returned nil")
 	}
 
+	log.Info().
+		Str("pubkey", s.ownPubHex).
+		Str("topic", s.topicHex).
+		Str("relay", s.relayURL).
+		Msg("Spawning p2panda node")
+
 	nodeReady := make(chan error, 1)
 	topicReady := make(chan error, 1)
 
 	var onNodeSpawn gio.AsyncReadyCallback = func(_, resultPtr, _ uintptr) {
-		log.Info().Msg("Session.Open: onNodeSpawn callback fired")
 		if _, err := s.node.SpawnFinish(&gio.AsyncResultBase{Ptr: resultPtr}); err != nil {
-			log.Error().Err(err).Msg("Session.Open: SpawnFinish(node) failed")
 			nodeReady <- err
 			return
 		}
-		log.Info().Msg("Session.Open: node spawned, creating topic")
 
 		s.topic = p2panda.NewTopic(
 			s.node,
@@ -197,7 +197,6 @@ func (s *Session) Open(ctx context.Context) error {
 			uint32(p2panda.TopicEphemeralValue|p2panda.TopicPersistentValue),
 		)
 		if s.topic == nil {
-			log.Error().Msg("Session.Open: p2panda.NewTopic returned nil")
 			nodeReady <- errors.New("NewTopic returned nil")
 			return
 		}
@@ -205,60 +204,48 @@ func (s *Session) Open(ctx context.Context) error {
 		s.connectSignals()
 
 		var onTopicSpawn gio.AsyncReadyCallback = func(_, tpResultPtr, _ uintptr) {
-			log.Info().Msg("Session.Open: onTopicSpawn callback fired")
 			if _, err := s.topic.SpawnFinish(&gio.AsyncResultBase{Ptr: tpResultPtr}); err != nil {
-				log.Error().Err(err).Msg("Session.Open: SpawnFinish(topic) failed")
 				topicReady <- err
 				return
 			}
-			log.Info().Msg("Session.Open: topic spawned successfully")
 			topicReady <- nil
 		}
 
-		log.Info().Msg("Session.Open: calling topic.SpawnAsync")
 		s.topic.SpawnAsync(nil, &onTopicSpawn, 0)
 		nodeReady <- nil
 	}
 
-	log.Info().Msg("Session.Open: scheduling node.SpawnAsync on main loop")
 	var kick glib.SourceFunc = func(uintptr) bool {
-		log.Info().Msg("Session.Open: kick fired on main loop, calling node.SpawnAsync")
 		s.node.SpawnAsync(nil, &onNodeSpawn, 0)
 		return false
 	}
 	glib.IdleAdd(&kick, 0)
 
-	log.Info().Msg("Session.Open: waiting for nodeReady")
 	select {
 	case err := <-nodeReady:
 		if err != nil {
 			return fmt.Errorf("spawn node: %w", err)
 		}
-		log.Info().Msg("Session.Open: nodeReady received")
 	case <-ctx.Done():
-		log.Warn().Msg("Session.Open: ctx cancelled while waiting for node")
 		return ctx.Err()
 	}
 
-	log.Info().Msg("Session.Open: waiting for topicReady")
 	select {
 	case err := <-topicReady:
 		if err != nil {
 			return fmt.Errorf("spawn topic: %w", err)
 		}
-		log.Info().Msg("Session.Open: topicReady received")
 	case <-ctx.Done():
-		log.Warn().Msg("Session.Open: ctx cancelled while waiting for topic")
 		return ctx.Err()
 	}
 
-	log.Info().Msg("Session.Open: complete")
+	log.Info().Str("pubkey", s.ownPubHex).Msg("p2panda topic ready")
 	return nil
 }
 
-// connectSignals wires the topic's message/ephemeral-message signals into the
-// Session's channels. Callbacks are closed over `s`, filter self-sent messages,
-// and drop events if the consumer isn't keeping up (preferring recent state).
+// connectSignals wires the topic's signals into the Session's channels.
+// Callbacks are closed over `s`, filter self-sent messages, and drop events if
+// the consumer isn't keeping up (preferring recent state).
 func (s *Session) connectSignals() {
 	deliver := func(pkPtr, bPtr uintptr, ephemeral bool) {
 		from := ptrHex((*p2panda.PublicKey)(unsafe.Pointer(pkPtr)).GetData(), PubkeySize)
@@ -271,20 +258,6 @@ func (s *Session) connectSignals() {
 		raw := unsafe.Slice((*byte)(unsafe.Pointer(msg.GetData(&sz))), sz)
 		data := make([]byte, len(raw))
 		copy(data, raw)
-
-		s.mu.Lock()
-		_, seen := s.seenPeer[from]
-		if !seen {
-			s.seenPeer[from] = struct{}{}
-		}
-		s.mu.Unlock()
-
-		if !seen {
-			select {
-			case s.peers <- PeerEvent{Pubkey: from, Joined: true}:
-			default:
-			}
-		}
 
 		select {
 		case s.messages <- Message{From: from, Data: data, Ephemeral: ephemeral}:
@@ -304,6 +277,56 @@ func (s *Session) connectSignals() {
 	}
 	s.onEphCB = &onEph
 	s.topic.ConnectEphemeralMessage(s.onEphCB)
+
+	// Presence: increment active-session count per remote on sync-started,
+	// decrement on sync-ended. Emit PeerEvent on the 0→1 and 1→0 transitions
+	// so the consumer only sees presence changes.
+	onSyncStart := func(_ p2panda.Topic, remoteNodeIDPtr uintptr, _, _, _, _, _ uint64) {
+		remote := ptrHex((*p2panda.NodeId)(unsafe.Pointer(remoteNodeIDPtr)).GetData(), PubkeySize)
+		if remote == s.ownPubHex {
+			return
+		}
+
+		s.mu.Lock()
+		prev := s.peerSessions[remote]
+		s.peerSessions[remote] = prev + 1
+		s.mu.Unlock()
+
+		if prev == 0 {
+			select {
+			case s.peers <- PeerEvent{Pubkey: remote, Joined: true}:
+			case <-s.closed:
+			}
+		}
+	}
+	s.onSyncStartCB = &onSyncStart
+	s.topic.ConnectSyncStarted(s.onSyncStartCB)
+
+	onSyncEnd := func(_ p2panda.Topic, remoteNodeIDPtr uintptr, _ uint64) {
+		remote := ptrHex((*p2panda.NodeId)(unsafe.Pointer(remoteNodeIDPtr)).GetData(), PubkeySize)
+		if remote == s.ownPubHex {
+			return
+		}
+
+		s.mu.Lock()
+		prev := s.peerSessions[remote]
+		next := prev - 1
+		if next <= 0 {
+			delete(s.peerSessions, remote)
+		} else {
+			s.peerSessions[remote] = next
+		}
+		s.mu.Unlock()
+
+		if prev == 1 {
+			select {
+			case s.peers <- PeerEvent{Pubkey: remote, Joined: false}:
+			case <-s.closed:
+			}
+		}
+	}
+	s.onSyncEndCB = &onSyncEnd
+	s.topic.ConnectSyncEnded(s.onSyncEndCB)
 }
 
 // Publish enqueues a publish on the main loop and returns once the call
