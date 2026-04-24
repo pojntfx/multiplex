@@ -144,7 +144,7 @@ msgid "Toggle Fullscreen"
 msgstr "Toggle Fullscreen"
 
 #: ../assets/resources/controls.blp:230
-#: ../internal/components/controls_window.go:372
+#: ../internal/components/controls_window.go:353
 #: ../assets/resources/controls.ui:256
 msgid "You're currently watching alone."
 msgstr "You're currently watching alone."
@@ -196,6 +196,24 @@ msgstr "_Keyboard Shortcuts"
 msgid "_About Multiplex"
 msgstr "_About Multiplex"
 
+#: ../assets/resources/preparing.blp:5 ../assets/resources/preparing.ui:10
+#, fuzzy
+msgid "Preparing Stream"
+msgstr "Preparing Stream..."
+
+#: ../assets/resources/subtitles.blp:5 ../assets/resources/subtitles.blp:37
+#: ../assets/resources/subtitles.ui:10 ../assets/resources/subtitles.ui:42
+msgid "Subtitles"
+msgstr "Subtitles"
+
+#: ../assets/resources/subtitles.blp:67 ../assets/resources/subtitles.ui:75
+msgid "Tracks"
+msgstr "Tracks"
+
+#: ../assets/resources/subtitles.blp:85 ../assets/resources/subtitles.ui:92
+msgid "Add from File"
+msgstr "Add from File"
+
 #: ../assets/resources/preferences.blp:6
 #: ../internal/components/shortcuts_dialog.go:31
 #: ../assets/resources/preferences.ui:12
@@ -219,9 +237,7 @@ msgstr "Storage location"
 msgid "Path to store downloaded torrents in"
 msgstr "Path to store downloaded torrents in"
 
-#: ../assets/resources/preferences.blp:30
-#: ../assets/resources/preferences.blp:147
-#: ../assets/resources/preferences.ui:37 ../assets/resources/preferences.ui:167
+#: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:37
 msgid "Advanced"
 msgstr "Advanced"
 
@@ -258,10 +274,12 @@ msgstr "URL"
 #: ../assets/resources/preferences.blp:97
 #: ../assets/resources/preferences.blp:123
 #: ../assets/resources/preferences.blp:139
+#: ../assets/resources/preferences.blp:155
 #: ../assets/resources/preferences.ui:73 ../assets/resources/preferences.ui:91
 #: ../assets/resources/preferences.ui:109
 #: ../assets/resources/preferences.ui:139
 #: ../assets/resources/preferences.ui:156
+#: ../assets/resources/preferences.ui:173
 msgid "Show Help"
 msgstr "Show Help"
 
@@ -281,83 +299,55 @@ msgstr "Synchronisation"
 
 #: ../assets/resources/preferences.blp:114
 #: ../assets/resources/preferences.ui:131
-msgid "Signaling server URL"
-msgstr "Signalling server URL"
+#, fuzzy
+msgid "Relay URL"
+msgstr "Relay mode"
 
 #: ../assets/resources/preferences.blp:130
 #: ../assets/resources/preferences.ui:148
-msgid "STUN/TURN servers"
-msgstr "STUN/TURN servers"
+msgid "Network ID"
+msgstr ""
 
-#: ../assets/resources/preferences.blp:150
-#: ../assets/resources/preferences.ui:170
-msgid "Connection timeout"
-msgstr "Connection timeout"
+#: ../assets/resources/preferences.blp:146
+#: ../assets/resources/preferences.ui:165
+msgid "Bootstrap node"
+msgstr ""
 
-#: ../assets/resources/preferences.blp:151
-#: ../assets/resources/preferences.ui:171
-#: ../assets/resources/index.gschema.xml:49
-msgid "Time to wait to connect to the weron signaling server"
-msgstr "Time to wait to connect to the weron signalling server"
-
-#: ../assets/resources/preferences.blp:157
-#: ../assets/resources/preferences.ui:179
-msgid "Relay mode"
-msgstr "Relay mode"
-
-#: ../assets/resources/preferences.blp:158
-#: ../assets/resources/preferences.ui:180
-#: ../assets/resources/index.gschema.xml:63
-msgid "Force usage of TURN servers for weron"
-msgstr "Force usage of TURN servers for weron"
-
-#: ../assets/resources/preferences.blp:171
-#: ../assets/resources/preferences.ui:197
+#: ../assets/resources/preferences.blp:166
+#: ../assets/resources/preferences.ui:188
 msgid "API address of the remote gateway"
 msgstr "API address of the remote gateway"
 
-#: ../assets/resources/preferences.blp:177
-#: ../assets/resources/preferences.ui:204
+#: ../assets/resources/preferences.blp:172
+#: ../assets/resources/preferences.ui:195
 msgid "The remote gateway's username"
 msgstr "The remote gateway's username"
 
-#: ../assets/resources/preferences.blp:183
-#: ../assets/resources/preferences.ui:211
+#: ../assets/resources/preferences.blp:178
+#: ../assets/resources/preferences.ui:202
 msgid "The remote gateway's password"
 msgstr "The remote gateway's password"
 
-#: ../assets/resources/preferences.blp:189
-#: ../assets/resources/preferences.ui:218
+#: ../assets/resources/preferences.blp:184
+#: ../assets/resources/preferences.ui:209
 #: ../assets/resources/index.gschema.xml:43
-msgid "URL for the weron signaling server"
-msgstr "URL for the weron signalling server"
-
-#: ../assets/resources/preferences.blp:195
-#: ../assets/resources/preferences.ui:225
-msgid ""
-"Comma-separated list of weron STUN (in format stun:host:port) and TURN "
-"servers (in format username:credential@turn:host:port)"
+msgid "URL of the iroh relay server used for NAT traversal"
 msgstr ""
-"Comma-separated list of weron STUN (in format stun:host:port) and TURN "
-"servers (in format username:credential@turn:host:port)"
 
-#: ../assets/resources/preparing.blp:5 ../assets/resources/preparing.ui:10
-#, fuzzy
-msgid "Preparing Stream"
-msgstr "Preparing Stream..."
+#: ../assets/resources/preferences.blp:190
+#: ../assets/resources/preferences.ui:216
+#: ../assets/resources/index.gschema.xml:49
+msgid ""
+"32-byte hex-encoded network identifier separating multiplex traffic from "
+"other p2panda apps"
+msgstr ""
 
-#: ../assets/resources/subtitles.blp:5 ../assets/resources/subtitles.blp:37
-#: ../assets/resources/subtitles.ui:10 ../assets/resources/subtitles.ui:42
-msgid "Subtitles"
-msgstr "Subtitles"
-
-#: ../assets/resources/subtitles.blp:67 ../assets/resources/subtitles.ui:75
-msgid "Tracks"
-msgstr "Tracks"
-
-#: ../assets/resources/subtitles.blp:85 ../assets/resources/subtitles.ui:92
-msgid "Add from File"
-msgstr "Add from File"
+#: ../assets/resources/preferences.blp:196
+#: ../assets/resources/preferences.ui:223
+msgid ""
+"Hex-encoded public key of a bootstrap node used for peer discovery across "
+"networks"
+msgstr ""
 
 #: ../internal/components/error_dialog.go:51
 msgid "Could not continue due to a fatal error"
@@ -367,42 +357,6 @@ msgstr "Could not continue due to a fatal error"
 #: ../internal/components/main_menu.go:41
 msgid "translator-credits"
 msgstr "Felicitas Pojtinger <felicitas@pojtinger.com>"
-
-#: ../internal/components/main_window.go:232
-msgid "Could not get info for this magnet link."
-msgstr "Could not get info for this magnet link."
-
-#: ../internal/components/main_window.go:326
-msgid "Media (%v MB)"
-msgstr "Media (%v MB)"
-
-#: ../internal/components/main_window.go:328
-msgid "Extra file (%v MB)"
-msgstr "Extra file (%v MB)"
-
-#: ../internal/components/main_window.go:372
-msgid "This stream code is invalid."
-msgstr "This stream code is invalid."
-
-#: ../internal/components/main_window.go:530
-msgid "No README found."
-msgstr "No README found."
-
-#: ../internal/components/main_window.go:624
-msgid "Manual Downloads"
-msgstr "Manual Downloads"
-
-#: ../internal/components/preferences_dialog.go:109
-msgid "Reopen to apply the changes."
-msgstr "Reopen to apply the changes."
-
-#: ../internal/components/preferences_dialog.go:110
-msgid "Reopen"
-msgstr "Reopen"
-
-#: ../internal/components/preferences_dialog.go:126
-msgid "Select storage location"
-msgstr "Select storage location"
 
 #: ../internal/components/shortcuts_dialog.go:17
 msgid "Open Menu"
@@ -420,74 +374,110 @@ msgstr "Close Window"
 msgid "Quit"
 msgstr "Quit"
 
-#: ../internal/components/controls_window.go:362
+#: ../internal/components/controls_window.go:343
 msgid "Someone joined the session."
 msgstr "Someone joined the session."
 
-#: ../internal/components/controls_window.go:367
+#: ../internal/components/controls_window.go:348
 msgid "Someone left the session."
 msgstr "Someone left the session."
 
-#: ../internal/components/controls_window.go:377
+#: ../internal/components/controls_window.go:358
 msgid "You're currently watching with %v other person."
 msgstr "You're currently watching with %v other person."
 
-#: ../internal/components/controls_window.go:381
+#: ../internal/components/controls_window.go:362
 msgid "You're currently watching with %v other people."
 msgstr "You're currently watching with %v other people."
 
-#: ../internal/components/controls_window.go:415
-#: ../internal/components/controls_window.go:468
+#: ../internal/components/controls_window.go:396
+#: ../internal/components/controls_window.go:449
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v MB/%v MB (%v peers)"
 
-#: ../internal/components/controls_window.go:420
-#: ../internal/components/controls_window.go:470
+#: ../internal/components/controls_window.go:401
+#: ../internal/components/controls_window.go:451
 msgid "Searching for peers"
 msgstr "Searching for peers"
 
-#: ../internal/components/controls_window.go:663
-#: ../internal/components/controls_window.go:1373
+#: ../internal/components/controls_window.go:646
+#: ../internal/components/controls_window.go:1312
 msgid "Track %v"
 msgstr "Track %v"
 
-#: ../internal/components/controls_window.go:671
+#: ../internal/components/controls_window.go:654
 #, fuzzy
 msgid "Embedded subtitle %v"
 msgstr "Integrated subtitle"
 
-#: ../internal/components/controls_window.go:1152
-#: ../internal/components/controls_window.go:1326
+#: ../internal/components/controls_window.go:1091
+#: ../internal/components/controls_window.go:1265
 msgid "None"
 msgstr "None"
 
-#: ../internal/components/controls_window.go:1256
+#: ../internal/components/controls_window.go:1195
 msgid "Disable subtitles"
 msgstr "Disable subtitles"
 
-#: ../internal/components/controls_window.go:1259
+#: ../internal/components/controls_window.go:1198
 msgid "Integrated subtitle"
 msgstr "Integrated subtitle"
 
-#: ../internal/components/controls_window.go:1262
+#: ../internal/components/controls_window.go:1201
 msgid "Subtitle from torrent"
 msgstr "Subtitle from torrent"
 
-#: ../internal/components/controls_window.go:1265
+#: ../internal/components/controls_window.go:1204
 msgid "Manually added"
 msgstr "Manually added"
 
-#: ../internal/components/controls_window.go:1277
+#: ../internal/components/controls_window.go:1216
 msgid "Select subtitle file"
 msgstr "Select subtitle file"
 
-#: ../internal/components/controls_window.go:1371
+#: ../internal/components/controls_window.go:1310
 msgid "Disable audio"
 msgstr "Disable audio"
 
-#: ../internal/components/controls_window.go:1377
+#: ../internal/components/controls_window.go:1316
 msgid "Untitled Track"
 msgstr "Untitled Track"
+
+#: ../internal/components/main_window.go:226
+msgid "Could not get info for this magnet link."
+msgstr "Could not get info for this magnet link."
+
+#: ../internal/components/main_window.go:320
+msgid "Media (%v MB)"
+msgstr "Media (%v MB)"
+
+#: ../internal/components/main_window.go:322
+msgid "Extra file (%v MB)"
+msgstr "Extra file (%v MB)"
+
+#: ../internal/components/main_window.go:366
+msgid "This stream code is invalid."
+msgstr "This stream code is invalid."
+
+#: ../internal/components/main_window.go:477
+msgid "No README found."
+msgstr "No README found."
+
+#: ../internal/components/main_window.go:568
+msgid "Manual Downloads"
+msgstr "Manual Downloads"
+
+#: ../internal/components/preferences_dialog.go:103
+msgid "Reopen to apply the changes."
+msgstr "Reopen to apply the changes."
+
+#: ../internal/components/preferences_dialog.go:104
+msgid "Reopen"
+msgstr "Reopen"
+
+#: ../internal/components/preferences_dialog.go:120
+msgid "Select storage location"
+msgstr "Select storage location"
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:8
@@ -606,30 +596,68 @@ msgid "Password for the remote hTorrent gateway"
 msgstr "Password for the remote hTorrent gateway"
 
 #: ../assets/resources/index.gschema.xml:42
-msgid "weron URL"
-msgstr "weron URL"
+msgid "p2panda relay URL"
+msgstr ""
 
 #: ../assets/resources/index.gschema.xml:48
-msgid "weron timeout"
-msgstr "weron timeout"
+msgid "p2panda network ID"
+msgstr ""
 
 #: ../assets/resources/index.gschema.xml:54
-msgid "weron STUN/TURN servers"
-msgstr "weron STUN/TURN servers"
+msgid "p2panda bootstrap node"
+msgstr ""
 
 #: ../assets/resources/index.gschema.xml:55
 msgid ""
-"Comma-separated list of STUN servers (in format stun:host:port) and TURN "
-"servers to use (in format username:credential@turn:host:port) (i.e. "
-"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+"Hex-encoded public key of a bootstrap node to use for peer discovery across "
+"networks. Empty means rely on the relay and mDNS only."
 msgstr ""
-"Comma-separated list of STUN servers (in format stun:host:port) and TURN "
-"servers to use (in format username:credential@turn:host:port) (i.e. "
-"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
 
-#: ../assets/resources/index.gschema.xml:62
-msgid "weron relay mode"
-msgstr "weron relay mode"
+#~ msgid "Signaling server URL"
+#~ msgstr "Signalling server URL"
+
+#~ msgid "STUN/TURN servers"
+#~ msgstr "STUN/TURN servers"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Connection timeout"
+
+#~ msgid "Time to wait to connect to the weron signaling server"
+#~ msgstr "Time to wait to connect to the weron signalling server"
+
+#~ msgid "Force usage of TURN servers for weron"
+#~ msgstr "Force usage of TURN servers for weron"
+
+#~ msgid "URL for the weron signaling server"
+#~ msgstr "URL for the weron signalling server"
+
+#~ msgid ""
+#~ "Comma-separated list of weron STUN (in format stun:host:port) and TURN "
+#~ "servers (in format username:credential@turn:host:port)"
+#~ msgstr ""
+#~ "Comma-separated list of weron STUN (in format stun:host:port) and TURN "
+#~ "servers (in format username:credential@turn:host:port)"
+
+#~ msgid "weron URL"
+#~ msgstr "weron URL"
+
+#~ msgid "weron timeout"
+#~ msgstr "weron timeout"
+
+#~ msgid "weron STUN/TURN servers"
+#~ msgstr "weron STUN/TURN servers"
+
+#~ msgid ""
+#~ "Comma-separated list of STUN servers (in format stun:host:port) and TURN "
+#~ "servers to use (in format username:credential@turn:host:port) (i.e. "
+#~ "username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+#~ msgstr ""
+#~ "Comma-separated list of STUN servers (in format stun:host:port) and TURN "
+#~ "servers to use (in format username:credential@turn:host:port) (i.e. "
+#~ "username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+
+#~ msgid "weron relay mode"
+#~ msgstr "weron relay mode"
 
 #~ msgid "Extra file from torrent"
 #~ msgstr "Extra file from torrent"

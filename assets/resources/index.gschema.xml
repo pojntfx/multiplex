@@ -37,30 +37,22 @@
             <description>Password for the remote hTorrent gateway</description>
         </key>
 
-        <key name='weronurl' type='s'>
-            <default>"wss://weron.up.railway.app/"</default>
-            <summary>weron URL</summary>
-            <description>URL for the weron signaling server</description>
+        <key name='p2pandarelay' type='s'>
+            <default>"https://euc1-1.relay.n0.iroh-canary.iroh.link"</default>
+            <summary>p2panda relay URL</summary>
+            <description>URL of the iroh relay server used for NAT traversal</description>
         </key>
 
-        <key name='werontimeout' type='x'>
-            <default>10</default>
-            <summary>weron timeout</summary>
-            <description>Time to wait to connect to the weron signaling server</description>
+        <key name='p2pandanetwork' type='s'>
+            <default>"a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2"</default>
+            <summary>p2panda network ID</summary>
+            <description>32-byte hex-encoded network identifier separating multiplex traffic from other p2panda apps</description>
         </key>
 
-        <key name='weronice' type='s'>
-            <default>"stun:stun.l.google.com:19302"</default>
-            <summary>weron STUN/TURN servers</summary>
-            <description>Comma-separated list of STUN servers (in format stun:host:port) and TURN
-                servers to use (in format username:credential@turn:host:port) (i.e.
-                username:credential@turn:global.turn.twilio.com:3478?transport=tcp)</description>
-        </key>
-
-        <key name='weronforcerelay' type='b'>
-            <default>false</default>
-            <summary>weron relay mode</summary>
-            <description>Force usage of TURN servers for weron</description>
+        <key name='p2pandabootstrap' type='s'>
+            <default>""</default>
+            <summary>p2panda bootstrap node</summary>
+            <description>Hex-encoded public key of a bootstrap node to use for peer discovery across networks. Empty means rely on the relay and mDNS only.</description>
         </key>
     </schema>
 </schemalist>

@@ -2,7 +2,6 @@ package components
 
 import (
 	"context"
-	"math"
 	"runtime"
 	"unsafe"
 
@@ -30,10 +29,9 @@ type PreferencesDialog struct {
 	remoteGatewayURLInput      *adw.EntryRow
 	remoteGatewayUsernameInput *adw.EntryRow
 	remoteGatewayPasswordInput *adw.PasswordEntryRow
-	weronURLInput              *adw.EntryRow
-	weronICEInput              *adw.EntryRow
-	weronTimeoutInput          *adw.SpinRow
-	weronForceRelayInput       *gtk.Switch
+	p2pandaRelayInput          *adw.EntryRow
+	p2pandaNetworkInput        *adw.EntryRow
+	p2pandaBootstrapInput      *adw.EntryRow
 
 	preferencesHaveChanged bool
 
@@ -82,13 +80,9 @@ func (p *PreferencesDialog) setupBindings() {
 	p.settings.Bind(resources.SchemaGatewayUsernameKey, &p.remoteGatewayUsernameInput.Object, "text", gio.GSettingsBindDefaultValue)
 	p.settings.Bind(resources.SchemaGatewayPasswordKey, &p.remoteGatewayPasswordInput.Object, "text", gio.GSettingsBindDefaultValue)
 
-	p.settings.Bind(resources.SchemaWeronURLKey, &p.weronURLInput.Object, "text", gio.GSettingsBindDefaultValue)
-
-	p.weronTimeoutInput.SetAdjustment(gtk.NewAdjustment(0, 0, math.MaxFloat64, 1, 1, 1))
-	p.settings.Bind(resources.SchemaWeronTimeoutKey, &p.weronTimeoutInput.Object, "value", gio.GSettingsBindDefaultValue)
-
-	p.settings.Bind(resources.SchemaWeronICEKey, &p.weronICEInput.Object, "text", gio.GSettingsBindDefaultValue)
-	p.settings.Bind(resources.SchemaWeronForceRelayKey, &p.weronForceRelayInput.Object, "active", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaP2pandaRelayKey, &p.p2pandaRelayInput.Object, "text", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaP2pandaNetworkKey, &p.p2pandaNetworkInput.Object, "text", gio.GSettingsBindDefaultValue)
+	p.settings.Bind(resources.SchemaP2pandaBootstrapKey, &p.p2pandaBootstrapInput.Object, "text", gio.GSettingsBindDefaultValue)
 }
 
 func (p *PreferencesDialog) setupCallbacks() {
@@ -152,13 +146,6 @@ func (p *PreferencesDialog) setupCallbacks() {
 		return false
 	}
 	p.remoteGatewaySwitchInput.ConnectStateSet(&onRemoteGatewayStateSet)
-
-	onWeronForceRelayStateSet := func(gtk.Switch, bool) bool {
-		p.markPreferencesChanged()
-
-		return false
-	}
-	p.weronForceRelayInput.ConnectStateSet(&onWeronForceRelayStateSet)
 }
 
 func init() {
@@ -172,10 +159,9 @@ func init() {
 		typeClass.BindTemplateChildFull("htorrent_url_input", false, 0)
 		typeClass.BindTemplateChildFull("htorrent_username_input", false, 0)
 		typeClass.BindTemplateChildFull("htorrent_password_input", false, 0)
-		typeClass.BindTemplateChildFull("weron_url_input", false, 0)
-		typeClass.BindTemplateChildFull("weron_ice_input", false, 0)
-		typeClass.BindTemplateChildFull("weron_timeout_input", false, 0)
-		typeClass.BindTemplateChildFull("weron_force_relay_input", false, 0)
+		typeClass.BindTemplateChildFull("p2panda_relay_input", false, 0)
+		typeClass.BindTemplateChildFull("p2panda_network_input", false, 0)
+		typeClass.BindTemplateChildFull("p2panda_bootstrap_input", false, 0)
 
 		objClass := (*gobject.ObjectClass)(unsafe.Pointer(tc))
 
@@ -195,10 +181,9 @@ func init() {
 				remoteGatewayURLInput      adw.EntryRow
 				remoteGatewayUsernameInput adw.EntryRow
 				remoteGatewayPasswordInput adw.PasswordEntryRow
-				weronURLInput              adw.EntryRow
-				weronICEInput              adw.EntryRow
-				weronTimeoutInput          adw.SpinRow
-				weronForceRelayInput       gtk.Switch
+				p2pandaRelayInput          adw.EntryRow
+				p2pandaNetworkInput        adw.EntryRow
+				p2pandaBootstrapInput      adw.EntryRow
 			)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "storage_location_input").Cast(&storageLocationInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "verbosity_level_input").Cast(&verbosityLevelInput)
@@ -206,10 +191,9 @@ func init() {
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent_url_input").Cast(&remoteGatewayURLInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent_username_input").Cast(&remoteGatewayUsernameInput)
 			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "htorrent_password_input").Cast(&remoteGatewayPasswordInput)
-			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron_url_input").Cast(&weronURLInput)
-			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron_ice_input").Cast(&weronICEInput)
-			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron_timeout_input").Cast(&weronTimeoutInput)
-			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "weron_force_relay_input").Cast(&weronForceRelayInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "p2panda_relay_input").Cast(&p2pandaRelayInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "p2panda_network_input").Cast(&p2pandaNetworkInput)
+			parent.Widget.GetTemplateChild(gTypePreferencesDialog, "p2panda_bootstrap_input").Cast(&p2pandaBootstrapInput)
 
 			p := &PreferencesDialog{
 				PreferencesDialog: parent,
@@ -220,10 +204,9 @@ func init() {
 				remoteGatewayURLInput:      &remoteGatewayURLInput,
 				remoteGatewayUsernameInput: &remoteGatewayUsernameInput,
 				remoteGatewayPasswordInput: &remoteGatewayPasswordInput,
-				weronURLInput:              &weronURLInput,
-				weronICEInput:              &weronICEInput,
-				weronTimeoutInput:          &weronTimeoutInput,
-				weronForceRelayInput:       &weronForceRelayInput,
+				p2pandaRelayInput:          &p2pandaRelayInput,
+				p2pandaNetworkInput:        &p2pandaNetworkInput,
+				p2pandaBootstrapInput:      &p2pandaBootstrapInput,
 
 				preferencesHaveChanged: false,
 			}

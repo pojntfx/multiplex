@@ -110,8 +110,8 @@ template $MultiplexPreferencesDialog: Adw.PreferencesDialog {
     Adw.PreferencesGroup {
       title: _("General");
 
-      Adw.EntryRow weron_url_input {
-        title: _("Signaling server URL");
+      Adw.EntryRow p2panda_relay_input {
+        title: _("Relay URL");
 
         MenuButton {
           styles [
@@ -122,12 +122,12 @@ template $MultiplexPreferencesDialog: Adw.PreferencesDialog {
           icon-name: 'help-about';
           tooltip-text: _("Show Help");
           valign: center;
-          popover: weron_url_input_popover;
+          popover: p2panda_relay_input_popover;
         }
       }
 
-      Adw.EntryRow weron_ice_input {
-        title: _("STUN/TURN servers");
+      Adw.EntryRow p2panda_network_input {
+        title: _("Network ID");
 
         MenuButton {
           styles [
@@ -138,28 +138,23 @@ template $MultiplexPreferencesDialog: Adw.PreferencesDialog {
           icon-name: 'help-about';
           tooltip-text: _("Show Help");
           valign: center;
-          popover: weron_ice_input_popover;
+          popover: p2panda_network_input_popover;
         }
       }
-    }
 
-    Adw.PreferencesGroup {
-      title: _("Advanced");
+      Adw.EntryRow p2panda_bootstrap_input {
+        title: _("Bootstrap node");
 
-      Adw.SpinRow weron_timeout_input {
-        title: _("Connection timeout");
-        subtitle: _("Time to wait to connect to the weron signaling server");
+        MenuButton {
+          styles [
+            "flat",
+            "circular",
+          ]
 
-        adjustment: Adjustment {};
-      }
-
-      Adw.ActionRow {
-        title: _("Relay mode");
-        subtitle: _("Force usage of TURN servers for weron");
-        activatable-widget: weron_force_relay_input;
-
-        Switch weron_force_relay_input {
+          icon-name: 'help-about';
+          tooltip-text: _("Show Help");
           valign: center;
+          popover: p2panda_bootstrap_input_popover;
         }
       }
     }
@@ -184,14 +179,20 @@ Popover htorrent_password_input_popover {
   }
 }
 
-Popover weron_url_input_popover {
+Popover p2panda_relay_input_popover {
   Label {
-    label: _("URL for the weron signaling server");
+    label: _("URL of the iroh relay server used for NAT traversal");
   }
 }
 
-Popover weron_ice_input_popover {
+Popover p2panda_network_input_popover {
   Label {
-    label: _("Comma-separated list of weron STUN (in format stun:host:port) and TURN servers (in format username:credential@turn:host:port)");
+    label: _("32-byte hex-encoded network identifier separating multiplex traffic from other p2panda apps");
+  }
+}
+
+Popover p2panda_bootstrap_input_popover {
+  Label {
+    label: _("Hex-encoded public key of a bootstrap node used for peer discovery across networks");
   }
 }

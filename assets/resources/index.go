@@ -51,8 +51,7 @@ const (
 	SchemaGatewayUsernameKey = "gatewayusername"
 	SchemaGatewayPasswordKey = "gatewaypassword"
 
-	SchemaWeronURLKey        = "weronurl"
-	SchemaWeronTimeoutKey    = "werontimeout"
-	SchemaWeronICEKey        = "weronice"
-	SchemaWeronForceRelayKey = "weronforcerelay"
+	SchemaP2pandaRelayKey     = "p2pandarelay"
+	SchemaP2pandaNetworkKey   = "p2pandanetwork"
+	SchemaP2pandaBootstrapKey = "p2pandabootstrap"
 )

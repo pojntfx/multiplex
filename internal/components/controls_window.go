@@ -2,6 +2,8 @@ package components
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -33,13 +35,12 @@ import (
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
 	"github.com/pojntfx/multiplex/internal/mpris"
+	"github.com/pojntfx/multiplex/internal/p2panda"
 	"github.com/pojntfx/multiplex/internal/player"
 	"github.com/pojntfx/multiplex/internal/utils"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
-	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 	"github.com/teivah/broadcast"
-	"github.com/teris-io/shortid"
 )
 
 const (
@@ -114,16 +115,11 @@ type ControlsWindow struct {
 	torrentReadme        string
 	ready                chan struct{}
 	cancelDownload       func()
-	adapter              *wrtcconn.Adapter
-	ids                  chan string
-	adapterCtx           context.Context
-	cancelAdapterCtx     func()
-	community            string
-	password             string
-	key                  string
-	bufferedMessages     []interface{}
-	bufferedPeer         *wrtcconn.Peer
-	bufferedDecoder      *json.Decoder
+	session              *p2panda.Session
+	sessionCtx           context.Context
+	cancelSessionCtx     func()
+	topicHex             string
+	bufferedMessages     []p2panda.Message
 
 	player *player.Player
 	mpris  *mpris.Service
@@ -161,16 +157,11 @@ func NewControlsWindow(
 	tmpDir string,
 	ready chan struct{},
 	cancelDownload func(),
-	adapter *wrtcconn.Adapter,
-	ids chan string,
-	adapterCtx context.Context,
-	cancelAdapterCtx func(),
-	community,
-	password,
-	key string,
-	bufferedMessages []interface{},
-	bufferedPeer *wrtcconn.Peer,
-	bufferedDecoder *json.Decoder,
+	session *p2panda.Session,
+	sessionCtx context.Context,
+	cancelSessionCtx func(),
+	topicHex string,
+	bufferedMessages []p2panda.Message,
 ) (ControlsWindow, error) {
 	obj := gobject.NewObject(gTypeControlsWindow, "application", app)
 
@@ -196,16 +187,11 @@ func NewControlsWindow(
 	controlsW.torrentReadme = torrentReadme
 	controlsW.ready = ready
 	controlsW.cancelDownload = cancelDownload
-	controlsW.adapter = adapter
-	controlsW.ids = ids
-	controlsW.adapterCtx = adapterCtx
-	controlsW.cancelAdapterCtx = cancelAdapterCtx
-	controlsW.community = community
-	controlsW.password = password
-	controlsW.key = key
+	controlsW.session = session
+	controlsW.sessionCtx = sessionCtx
+	controlsW.cancelSessionCtx = cancelSessionCtx
+	controlsW.topicHex = topicHex
 	controlsW.bufferedMessages = bufferedMessages
-	controlsW.bufferedPeer = bufferedPeer
-	controlsW.bufferedDecoder = bufferedDecoder
 
 	if err := controlsW.setup(); err != nil {
 		return v, err
@@ -286,73 +272,68 @@ func (c *ControlsWindow) setup() error {
 	controlsW.buttonHeaderbarTitle.SetLabel(controlsW.torrentTitle)
 	controlsW.buttonHeaderbarSubtitle.SetLabel(getDisplayPathWithoutRoot(controlsW.selectedTorrentMedia))
 
-	if controlsW.community == "" || controlsW.password == "" || controlsW.key == "" {
-		sid, err := shortid.New(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
-		if err != nil {
-			return err
-		}
+	log.Info().Msg("ControlsWindow.setup: entering p2panda session setup")
 
-		controlsW.community, err = sid.Generate()
-		if err != nil {
+	if controlsW.topicHex == "" {
+		var buf [32]byte
+		if _, err := rand.Read(buf[:]); err != nil {
 			return err
 		}
-
-		controlsW.password, err = sid.Generate()
-		if err != nil {
-			return err
-		}
-
-		controlsW.key, err = sid.Generate()
-		if err != nil {
-			return err
-		}
+		controlsW.topicHex = hex.EncodeToString(buf[:])
+		log.Info().Str("topic", controlsW.topicHex).Msg("Generated new topic id")
+	} else {
+		log.Info().Str("topic", controlsW.topicHex).Msg("Reusing topic id from MainWindow")
 	}
-
-	if controlsW.adapter == nil {
-		controlsW.adapterCtx, controlsW.cancelAdapterCtx = context.WithCancel(context.Background())
-	}
-
-	u, err := url.Parse(controlsW.settings.GetString(resources.SchemaWeronURLKey))
-	if err != nil {
-		controlsW.cancelAdapterCtx()
-		return err
-	}
-
-	q := u.Query()
-	q.Set("community", controlsW.community)
-	q.Set("password", controlsW.password)
-	u.RawQuery = q.Encode()
 
 	pauses := broadcast.NewRelay[bool]()
 	positions := broadcast.NewRelay[float64]()
 	buffering := broadcast.NewRelay[bool]()
 
-	if controlsW.adapter == nil {
-		controlsW.adapter = wrtcconn.NewAdapter(
-			u.String(),
-			controlsW.key,
-			strings.Split(controlsW.settings.GetString(resources.SchemaWeronICEKey), ","),
-			[]string{"multiplex/sync"},
-			&wrtcconn.AdapterConfig{
-				Timeout:    time.Duration(time.Second * time.Duration(controlsW.settings.GetInt64(resources.SchemaWeronTimeoutKey))),
-				ForceRelay: controlsW.settings.GetBoolean(resources.SchemaWeronForceRelayKey),
-				OnSignalerReconnect: func() {
-					log.Info().
-						Str("raddr", controlsW.settings.GetString(resources.SchemaWeronURLKey)).
-						Msg("Reconnecting to signaler")
-				},
-			},
-			controlsW.adapterCtx,
+	// sessionReady is closed once the p2panda session is Opened and publishing
+	// is safe. On the host path we open asynchronously so the GTK main loop
+	// keeps running — the iroh node spawn relies on it. On the joiner path the
+	// MainWindow already opened the session, so we can close the signal eagerly.
+	sessionReady := make(chan struct{})
+
+	if controlsW.session == nil {
+		log.Info().
+			Str("relay", controlsW.settings.GetString(resources.SchemaP2pandaRelayKey)).
+			Str("network", controlsW.settings.GetString(resources.SchemaP2pandaNetworkKey)).
+			Str("bootstrap", controlsW.settings.GetString(resources.SchemaP2pandaBootstrapKey)).
+			Str("topic", controlsW.topicHex).
+			Msg("Creating new p2panda session (host path)")
+
+		controlsW.sessionCtx, controlsW.cancelSessionCtx = context.WithCancel(context.Background())
+
+		controlsW.session = p2panda.NewSession(
+			controlsW.settings.GetString(resources.SchemaP2pandaRelayKey),
+			controlsW.settings.GetString(resources.SchemaP2pandaNetworkKey),
+			controlsW.topicHex,
+			controlsW.settings.GetString(resources.SchemaP2pandaBootstrapKey),
 		)
 
-		controlsW.ids, err = controlsW.adapter.Open()
-		if err != nil {
-			controlsW.cancelAdapterCtx()
-			return err
-		}
+		go func() {
+			log.Info().Msg("Calling session.Open (host, background)")
+			if err := controlsW.session.Open(controlsW.sessionCtx); err != nil {
+				log.Error().Err(err).Msg("session.Open failed")
+				var showErr glib.SourceFunc = func(uintptr) bool {
+					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+					return false
+				}
+				glib.IdleAdd(&showErr, 0)
+				controlsW.cancelSessionCtx()
+				return
+			}
+			log.Info().Str("pubkey", controlsW.session.NodeIDHex()).Msg("session.Open returned successfully")
+			close(sessionReady)
+		}()
+	} else {
+		log.Info().Str("pubkey", controlsW.session.NodeIDHex()).Msg("Reusing session from MainWindow (joiner path)")
+		close(sessionReady)
 	}
 
-	controlsW.streamCodeInput.SetText(fmt.Sprintf("%v:%v:%v", controlsW.community, controlsW.password, controlsW.key))
+	controlsW.streamCodeInput.SetText(controlsW.topicHex)
+	log.Info().Msg("ControlsWindow.setup: stream code set")
 
 	connectedPeers := new(int32)
 	syncWatchingWithLabel := func(connected bool) {
@@ -477,8 +458,8 @@ func (c *ControlsWindow) setup() error {
 	})
 
 	onPrepCancel := func(gtk.Button) {
-		controlsW.adapter.Close()
-		controlsW.cancelAdapterCtx()
+		controlsW.session.Close()
+		controlsW.cancelSessionCtx()
 
 		pauses.Close()
 		positions.Close()
@@ -542,8 +523,8 @@ func (c *ControlsWindow) setup() error {
 		preparingDialog.Present(&controlsW.ApplicationWindow.Widget)
 
 		onCloseRequest := func(gtk.Window) bool {
-			controlsW.adapter.Close()
-			controlsW.cancelAdapterCtx()
+			controlsW.session.Close()
+			controlsW.cancelSessionCtx()
 
 			pauses.Close()
 			positions.Close()
@@ -619,6 +600,7 @@ func (c *ControlsWindow) setup() error {
 				buffering,
 				syncWatchingWithLabel,
 				preparingDialog,
+				sessionReady,
 			)
 		}()
 	}
@@ -635,6 +617,7 @@ func (c *ControlsWindow) setupPlaybackControls(
 	buffering *broadcast.Relay[bool],
 	syncWatchingWithLabel func(bool),
 	preparingDialog *PreparingDialog,
+	sessionReady <-chan struct{},
 ) {
 	controlsW := (*ControlsWindow)(unsafe.Pointer(c.Widget.GetData(dataKeyGoInstance)))
 
@@ -728,233 +711,189 @@ func (c *ControlsWindow) setupPlaybackControls(
 		)
 	}
 
-	handlePeer := func(peer *wrtcconn.Peer, decoder *json.Decoder) {
-		defer func() {
-			log.Info().
-				Str("peerID", peer.PeerID).
-				Str("channel", peer.ChannelID).
-				Msg("Disconnected from peer")
+	publish := func(msg interface{}, ephemeral bool) error {
+		data, err := json.Marshal(msg)
+		if err != nil {
+			return err
+		}
+		return controlsW.session.Publish(data, ephemeral)
+	}
 
-			controlsW.headerbarSpinner.SetVisible(false)
-
-			syncWatchingWithLabel(false)
-		}()
-
-		log.Info().
-			Str("peerID", peer.PeerID).
-			Str("channel", peer.ChannelID).
-			Msg("Connected to peer")
-
-		syncWatchingWithLabel(true)
-
-		encoder := json.NewEncoder(peer.Conn)
-		if decoder == nil {
-			decoder = json.NewDecoder(peer.Conn)
+	dispatch := func(data []byte) {
+		var j interface{}
+		if err := json.Unmarshal(data, &j); err != nil {
+			log.Debug().Err(err).Msg("Could not decode structure, skipping")
+			return
 		}
 
-		go func() {
-			pl := pauses.Listener(0)
-			defer pl.Close()
+		var message api.Message
+		if err := mapstructure.Decode(j, &message); err != nil {
+			log.Debug().Err(err).Msg("Could not decode message, skipping")
+			return
+		}
 
-			ol := positions.Listener(0)
-			defer ol.Close()
+		log.Info().Interface("message", message).Msg("Decoded message")
 
-			bl := buffering.Listener(0)
-			defer bl.Close()
-
-			for {
-				select {
-				case <-controlsW.ctx.Done():
-					return
-				case pause, ok := <-pl.Ch():
-					if !ok {
-						continue
-					}
-
-					if err := encoder.Encode(api.NewPause(pause)); err != nil {
-						log.Debug().
-							Err(err).
-							Msg("Could not encode pause, stopping")
-
-						return
-					}
-				case position, ok := <-ol.Ch():
-					if !ok {
-						continue
-					}
-
-					if err := encoder.Encode(api.NewPosition(position)); err != nil {
-						log.Debug().
-							Err(err).
-							Msg("Could not encode pause, stopping")
-
-						return
-					}
-				case buffering, ok := <-bl.Ch():
-					if !ok {
-						continue
-					}
-
-					if err := encoder.Encode(api.NewBuffering(buffering)); err != nil {
-						log.Debug().
-							Err(err).
-							Msg("Could not encode buffering, stopping")
-
-						return
-					}
-				}
+		switch message.Type {
+		case api.TypePause:
+			var p api.Pause
+			if err := mapstructure.Decode(j, &p); err != nil {
+				log.Debug().Err(err).Msg("Could not decode pause, skipping")
+				return
 			}
-		}()
+			if p.Pause {
+				pausePlayback()
+			} else {
+				startPlayback()
+			}
+		case api.TypePosition:
+			var p api.Position
+			if err := mapstructure.Decode(j, &p); err != nil {
+				log.Debug().Err(err).Msg("Could not decode position, skipping")
+				return
+			}
+			seekToPosition(p.Position)
+		case api.TypeMagnet:
+			var m api.Magnet
+			if err := mapstructure.Decode(j, &m); err != nil {
+				log.Debug().Err(err).Msg("Could not decode magnet, skipping")
+				return
+			}
+			log.Info().Str("magnet", m.Magnet).Str("path", m.Path).Msg("Got magnet link")
+		case api.TypeBuffering:
+			var b api.Buffering
+			if err := mapstructure.Decode(j, &b); err != nil {
+				log.Debug().Err(err).Msg("Could not decode buffering, skipping")
+				return
+			}
+			if b.Buffering {
+				controlsW.headerbarSpinner.SetVisible(true)
+				pausePlayback()
+				controlsW.playButton.SetIconName(pauseIcon)
+			} else {
+				controlsW.headerbarSpinner.SetVisible(false)
+				startPlayback()
+			}
+		}
+	}
 
-		if err := encoder.Encode(api.NewPause(true)); err != nil {
-			log.Debug().
-				Err(err).
-				Msg("Could not encode pause, stopping")
-
+	// Publish outbound state changes triggered by the local player to the topic.
+	// Waits for session readiness before pumping.
+	go func() {
+		select {
+		case <-sessionReady:
+		case <-controlsW.ctx.Done():
 			return
 		}
+		log.Info().Msg("Outbound publisher: session ready, starting")
 
-		s := []api.Subtitle{}
-		for _, subtitle := range controlsW.subtitles {
-			s = append(s, api.Subtitle{
-				Name: subtitle.name,
-				Size: subtitle.size,
-			})
-		}
+		pl := pauses.Listener(0)
+		defer pl.Close()
 
-		if err := encoder.Encode(api.NewMagnetLink(controlsW.magnetLink, controlsW.selectedTorrentMedia, controlsW.torrentTitle, controlsW.torrentReadme, s)); err != nil {
-			log.Debug().
-				Err(err).
-				Msg("Could not encode magnet link, stopping")
+		ol := positions.Listener(0)
+		defer ol.Close()
 
-			return
-		}
-
-		positions.Broadcast(float64(controlsW.player.Position().Nanoseconds()))
+		bl := buffering.Listener(0)
+		defer bl.Close()
 
 		for {
-			var j interface{}
-			if len(controlsW.bufferedMessages) > 0 {
-				j = controlsW.bufferedMessages[len(controlsW.bufferedMessages)-1]
-				controlsW.bufferedMessages = controlsW.bufferedMessages[:len(controlsW.bufferedMessages)-1]
-			} else {
-				if err := decoder.Decode(&j); err != nil {
-					log.Debug().
-						Err(err).
-						Msg("Could not decode structure, skipping")
-
-					return
-				}
-			}
-
-			var message api.Message
-			if err := mapstructure.Decode(j, &message); err != nil {
-				log.Debug().
-					Err(err).
-					Msg("Could not decode message, skipping")
-
-				continue
-			}
-
-			log.Info().Interface("message", message).Msg("Decoded message")
-
-			switch message.Type {
-			case api.TypePause:
-				var p api.Pause
-				if err := mapstructure.Decode(j, &p); err != nil {
-					log.Debug().
-						Err(err).
-						Msg("Could not decode pause, skipping")
-
+			select {
+			case <-controlsW.ctx.Done():
+				return
+			case pause, ok := <-pl.Ch():
+				if !ok {
 					continue
 				}
-
-				if p.Pause {
-					if pausePlayback != nil {
-						pausePlayback()
-					}
-				} else {
-					if startPlayback != nil {
-						startPlayback()
-					}
+				if err := publish(api.NewPause(pause), true); err != nil {
+					log.Debug().Err(err).Msg("Could not publish pause")
 				}
-			case api.TypePosition:
-				var p api.Position
-				if err := mapstructure.Decode(j, &p); err != nil {
-					log.Debug().
-						Err(err).
-						Msg("Could not decode position, skipping")
-
+			case position, ok := <-ol.Ch():
+				if !ok {
 					continue
 				}
-
-				if seekToPosition != nil {
-					seekToPosition(p.Position)
+				if err := publish(api.NewPosition(position), true); err != nil {
+					log.Debug().Err(err).Msg("Could not publish position")
 				}
-			case api.TypeMagnet:
-				var m api.Magnet
-				if err := mapstructure.Decode(j, &m); err != nil {
-					log.Debug().
-						Err(err).
-						Msg("Could not decode magnet, skipping")
-
+			case buf, ok := <-bl.Ch():
+				if !ok {
 					continue
 				}
-
-				log.Info().
-					Str("magnet", m.Magnet).
-					Str("path", m.Path).
-					Msg("Got magnet link")
-			case api.TypeBuffering:
-				var b api.Buffering
-				if err := mapstructure.Decode(j, &b); err != nil {
-					log.Debug().
-						Err(err).
-						Msg("Could not decode buffering, skipping")
-
-					continue
-				}
-
-				if b.Buffering {
-					controlsW.headerbarSpinner.SetVisible(true)
-
-					if pausePlayback != nil {
-						pausePlayback()
-					}
-
-					controlsW.playButton.SetIconName(pauseIcon)
-				} else {
-					controlsW.headerbarSpinner.SetVisible(false)
-
-					if startPlayback != nil {
-						startPlayback()
-					}
+				if err := publish(api.NewBuffering(buf), true); err != nil {
+					log.Debug().Err(err).Msg("Could not publish buffering")
 				}
 			}
 		}
-	}
+	}()
 
-	if controlsW.bufferedPeer != nil {
-		go handlePeer(controlsW.bufferedPeer, controlsW.bufferedDecoder)
-	}
-
+	// Track unique peers that send at least one message.
 	go func() {
+		select {
+		case <-sessionReady:
+		case <-controlsW.ctx.Done():
+			return
+		}
+		for {
+			select {
+			case <-controlsW.ctx.Done():
+				return
+			case ev, ok := <-controlsW.session.Peers():
+				if !ok {
+					return
+				}
+				log.Info().Str("peer", ev.Pubkey).Msg("Peer joined")
+				syncWatchingWithLabel(true)
+			}
+		}
+	}()
+
+	// Announce the current magnet and paused state once the session is ready.
+	go func() {
+		select {
+		case <-sessionReady:
+		case <-controlsW.ctx.Done():
+			return
+		}
+		log.Info().Msg("Session ready, publishing initial Magnet + Pause")
+
+		subs := []api.Subtitle{}
+		for _, subtitle := range controlsW.subtitles {
+			subs = append(subs, api.Subtitle{Name: subtitle.name, Size: subtitle.size})
+		}
+		if err := publish(api.NewMagnetLink(controlsW.magnetLink, controlsW.selectedTorrentMedia, controlsW.torrentTitle, controlsW.torrentReadme, subs), false); err != nil {
+			log.Debug().Err(err).Msg("Could not publish magnet link")
+		}
+		if err := publish(api.NewPause(true), true); err != nil {
+			log.Debug().Err(err).Msg("Could not publish initial pause")
+		}
+		positions.Broadcast(float64(controlsW.player.Position().Nanoseconds()))
+	}()
+
+	// Drain messages buffered during the MainWindow join handshake first, then
+	// consume live messages from the session.
+	go func() {
+		for _, m := range controlsW.bufferedMessages {
+			dispatch(m.Data)
+		}
+		controlsW.bufferedMessages = nil
+
+		select {
+		case <-sessionReady:
+		case <-controlsW.ctx.Done():
+			return
+		}
+
 		for {
 			select {
 			case <-controlsW.ctx.Done():
 				if err := controlsW.ctx.Err(); err != context.Canceled {
 					OpenErrorDialog(controlsW.ctx, &controlsW.ApplicationWindow, err)
+				}
+				return
+			case msg, ok := <-controlsW.session.Messages():
+				if !ok {
 					return
 				}
-
-				return
-			case rid := <-controlsW.ids:
-				log.Info().
-					Str("raddr", controlsW.settings.GetString(resources.SchemaWeronURLKey)).
-					Str("id", rid).
-					Msg("Reconnecting to signaler")
-			case peer := <-controlsW.adapter.Accept():
-				go handlePeer(peer, nil)
+				dispatch(msg.Data)
 			}
 		}
 	}()

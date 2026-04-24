@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
@@ -30,8 +29,8 @@ import (
 	"github.com/pojntfx/htorrent/pkg/client"
 	"github.com/pojntfx/htorrent/pkg/server"
 	"github.com/pojntfx/multiplex/assets/resources"
+	"github.com/pojntfx/multiplex/internal/p2panda"
 	api "github.com/pojntfx/multiplex/pkg/api/webrtc/v1"
-	"github.com/pojntfx/weron/pkg/wrtcconn"
 	"github.com/rs/zerolog/log"
 )
 
@@ -90,16 +89,11 @@ type MainWindow struct {
 	activators           []*gtk.CheckButton
 	mediaRows            []*adw.ActionRow
 	subtitles            []mediaWithPriorityAndID
-	community            string
-	password             string
-	key                  string
-	bufferedMessages     []interface{}
-	bufferedPeer         *wrtcconn.Peer
-	bufferedDecoder      *json.Decoder
-	adapter              *wrtcconn.Adapter
-	ids                  chan string
-	adapterCtx           context.Context
-	cancelAdapterCtx     func()
+	topicHex             string
+	bufferedMessages     []p2panda.Message
+	session              *p2panda.Session
+	sessionCtx           context.Context
+	cancelSessionCtx     func()
 
 	descriptionDialog *DescriptionDialog
 	preferencesDialog *PreferencesDialog
@@ -367,19 +361,11 @@ func (w *MainWindow) onNext() {
 
 				w.isNewSession = false
 
-				streamCodeParts := strings.Split(magnetLinkOrStreamCode, ":")
-				if len(streamCodeParts) < 3 {
+				w.topicHex = strings.TrimSpace(magnetLinkOrStreamCode)
+				if len(w.topicHex) != 64 {
 					toast := adw.NewToast(L("This stream code is invalid."))
 
 					w.overlay.AddToast(toast)
-
-					return
-				}
-				w.community, w.password, w.key = streamCodeParts[0], streamCodeParts[1], streamCodeParts[2]
-
-				wu, err := url.Parse(w.settings.GetString(resources.SchemaWeronURLKey))
-				if err != nil {
-					OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
 					return
 				}
@@ -387,33 +373,17 @@ func (w *MainWindow) onNext() {
 				w.headerbarSpinner.SetVisible(true)
 				w.magnetLinkEntry.SetSensitive(false)
 
-				q := wu.Query()
-				q.Set("community", streamCodeParts[0])
-				q.Set("password", streamCodeParts[1])
-				wu.RawQuery = q.Encode()
+				w.sessionCtx, w.cancelSessionCtx = context.WithCancel(context.Background())
 
-				w.adapterCtx, w.cancelAdapterCtx = context.WithCancel(context.Background())
-
-				w.adapter = wrtcconn.NewAdapter(
-					wu.String(),
-					streamCodeParts[2],
-					strings.Split(w.settings.GetString(resources.SchemaWeronICEKey), ","),
-					[]string{"multiplex/sync"},
-					&wrtcconn.AdapterConfig{
-						Timeout:    time.Duration(time.Second * time.Duration(w.settings.GetInt64(resources.SchemaWeronTimeoutKey))),
-						ForceRelay: w.settings.GetBoolean(resources.SchemaWeronForceRelayKey),
-						OnSignalerReconnect: func() {
-							log.Info().
-								Str("raddr", w.settings.GetString(resources.SchemaWeronURLKey)).
-								Msg("Reconnecting to signaler")
-						},
-					},
-					w.adapterCtx,
+				w.session = p2panda.NewSession(
+					w.settings.GetString(resources.SchemaP2pandaRelayKey),
+					w.settings.GetString(resources.SchemaP2pandaNetworkKey),
+					w.topicHex,
+					w.settings.GetString(resources.SchemaP2pandaBootstrapKey),
 				)
 
-				w.ids, err = w.adapter.Open()
-				if err != nil {
-					w.cancelAdapterCtx()
+				if err := w.session.Open(w.sessionCtx); err != nil {
+					w.cancelSessionCtx()
 
 					OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
@@ -427,77 +397,54 @@ func (w *MainWindow) onNext() {
 					case <-w.ctx.Done():
 						if err := w.ctx.Err(); err != context.Canceled {
 							OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
-
-							w.adapter.Close()
-							w.cancelAdapterCtx()
-
-							return
 						}
 
-						w.adapter.Close()
-						w.cancelAdapterCtx()
+						w.session.Close()
+						w.cancelSessionCtx()
 
 						return
-					case rid := <-w.ids:
-						log.Info().
-							Str("raddr", w.settings.GetString(resources.SchemaWeronURLKey)).
-							Str("id", rid).
-							Msg("Reconnecting to signaler")
-					case peer := <-w.adapter.Accept():
-						log.Info().
-							Str("peerID", peer.PeerID).
-							Str("channel", peer.ChannelID).
-							Msg("Connected to peer")
+					case msg := <-w.session.Messages():
+						var j interface{}
+						if err := json.Unmarshal(msg.Data, &j); err != nil {
+							log.Debug().
+								Err(err).
+								Msg("Could not decode structure, skipping")
 
-						w.bufferedPeer = peer
-						w.bufferedDecoder = json.NewDecoder(peer.Conn)
+							continue
+						}
 
-						for {
-							var j interface{}
-							if err := w.bufferedDecoder.Decode(&j); err != nil {
+						var message api.Message
+						if err := mapstructure.Decode(j, &message); err != nil {
+							log.Debug().
+								Err(err).
+								Msg("Could not decode message, skipping")
+
+							continue
+						}
+
+						log.Info().Interface("message", message).Msg("Decoded message")
+
+						switch message.Type {
+						case api.TypeMagnet:
+							var m api.Magnet
+							if err := mapstructure.Decode(j, &m); err != nil {
 								log.Debug().
 									Err(err).
-									Msg("Could not decode structure, skipping")
-
-								w.adapter.Close()
-								w.cancelAdapterCtx()
-
-								return
-							}
-
-							var message api.Message
-							if err := mapstructure.Decode(j, &message); err != nil {
-								log.Debug().
-									Err(err).
-									Msg("Could not decode message, skipping")
+									Msg("Could not decode magnet, skipping")
 
 								continue
 							}
 
-							log.Info().Interface("message", message).Msg("Decoded message")
+							log.Info().
+								Str("magnet", m.Magnet).
+								Str("path", m.Path).
+								Msg("Got magnet link")
 
-							switch message.Type {
-							case api.TypeMagnet:
-								var m api.Magnet
-								if err := mapstructure.Decode(j, &m); err != nil {
-									log.Debug().
-										Err(err).
-										Msg("Could not decode magnet, skipping")
+							receivedMagnetLink = m
 
-									continue
-								}
-
-								log.Info().
-									Str("magnet", m.Magnet).
-									Str("path", m.Path).
-									Msg("Got magnet link")
-
-								receivedMagnetLink = m
-
-								break l
-							default:
-								w.bufferedMessages = append(w.bufferedMessages, j)
-							}
+							break l
+						default:
+							w.bufferedMessages = append(w.bufferedMessages, msg)
 						}
 					}
 				}
@@ -571,22 +518,19 @@ func (w *MainWindow) onPrevious(gtk.Button) {
 		w.descriptionDialog.HeaderbarSubtitle().SetVisible(false)
 
 		if !w.isNewSession {
-			if w.adapter != nil {
-				w.adapter.Close()
+			if w.session != nil {
+				w.session.Close()
 			}
 
-			if w.cancelAdapterCtx != nil {
-				w.cancelAdapterCtx()
+			if w.cancelSessionCtx != nil {
+				w.cancelSessionCtx()
 			}
 
-			w.adapter = nil
-			w.ids = nil
-			w.adapterCtx = nil
-			w.cancelAdapterCtx = nil
+			w.session = nil
+			w.sessionCtx = nil
+			w.cancelSessionCtx = nil
 
-			w.community = ""
-			w.password = ""
-			w.key = ""
+			w.topicHex = ""
 
 			w.previousButton.SetVisible(false)
 			w.nextButton.SetSensitive(true)
@@ -631,7 +575,7 @@ func (w *MainWindow) onDownloadAndPlay(adw.SplitButton) {
 
 	ctxDownload, cancel := context.WithCancel(context.Background())
 	ready := make(chan struct{})
-	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, dstFile, w.settings, w.gateway, w.cancel, w.tmpDir, ready, cancel, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
+	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, dstFile, w.settings, w.gateway, w.cancel, w.tmpDir, ready, cancel, w.session, w.sessionCtx, w.cancelSessionCtx, w.topicHex, w.bufferedMessages); err != nil {
 		OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
 		return
@@ -719,7 +663,7 @@ func (w *MainWindow) onStreamWithoutDownloading(gtk.Button) {
 	}
 
 	ready := make(chan struct{})
-	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, streamURL, w.settings, w.gateway, w.cancel, w.tmpDir, ready, func() {}, w.adapter, w.ids, w.adapterCtx, w.cancelAdapterCtx, w.community, w.password, w.key, w.bufferedMessages, w.bufferedPeer, w.bufferedDecoder); err != nil {
+	if _, err := NewControlsWindow(w.ctx, w.app, w.torrentTitle, w.subtitles, w.selectedTorrentMedia, w.torrentReadme, w.manager, w.apiAddr, w.apiUsername, w.apiPassword, w.magnetLink, streamURL, w.settings, w.gateway, w.cancel, w.tmpDir, ready, func() {}, w.session, w.sessionCtx, w.cancelSessionCtx, w.topicHex, w.bufferedMessages); err != nil {
 		OpenErrorDialog(w.ctx, &w.ApplicationWindow, err)
 
 		return
@@ -843,7 +787,7 @@ func init() {
 				activators:                     []*gtk.CheckButton{},
 				mediaRows:                      []*adw.ActionRow{},
 				subtitles:                      []mediaWithPriorityAndID{},
-				bufferedMessages:               []interface{}{},
+				bufferedMessages:               []p2panda.Message{},
 			}
 
 			var pinner runtime.Pinner

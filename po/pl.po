@@ -155,7 +155,7 @@ msgid "Toggle Fullscreen"
 msgstr "Przełącz Pelny Ekran"
 
 #: ../assets/resources/controls.blp:230
-#: ../internal/components/controls_window.go:372
+#: ../internal/components/controls_window.go:353
 #: ../assets/resources/controls.ui:256
 msgid "You're currently watching alone."
 msgstr "Aktualnie oglądasz sam."
@@ -207,6 +207,24 @@ msgstr "_Skróty Klawiszowe"
 msgid "_About Multiplex"
 msgstr "_O Multiplex"
 
+#: ../assets/resources/preparing.blp:5 ../assets/resources/preparing.ui:10
+#, fuzzy
+msgid "Preparing Stream"
+msgstr "Przygotowywanie strumienia..."
+
+#: ../assets/resources/subtitles.blp:5 ../assets/resources/subtitles.blp:37
+#: ../assets/resources/subtitles.ui:10 ../assets/resources/subtitles.ui:42
+msgid "Subtitles"
+msgstr "Napisy"
+
+#: ../assets/resources/subtitles.blp:67 ../assets/resources/subtitles.ui:75
+msgid "Tracks"
+msgstr "Ścieżki"
+
+#: ../assets/resources/subtitles.blp:85 ../assets/resources/subtitles.ui:92
+msgid "Add from File"
+msgstr "Dodaj z Pliku"
+
 #: ../assets/resources/preferences.blp:6
 #: ../internal/components/shortcuts_dialog.go:31
 #: ../assets/resources/preferences.ui:12
@@ -230,9 +248,7 @@ msgstr "Miejsce zapisu"
 msgid "Path to store downloaded torrents in"
 msgstr "Ścieżka do zachowywania pobranych torrentów"
 
-#: ../assets/resources/preferences.blp:30
-#: ../assets/resources/preferences.blp:147
-#: ../assets/resources/preferences.ui:37 ../assets/resources/preferences.ui:167
+#: ../assets/resources/preferences.blp:30 ../assets/resources/preferences.ui:37
 msgid "Advanced"
 msgstr "Zaawansowane"
 
@@ -271,10 +287,12 @@ msgstr "URL"
 #: ../assets/resources/preferences.blp:97
 #: ../assets/resources/preferences.blp:123
 #: ../assets/resources/preferences.blp:139
+#: ../assets/resources/preferences.blp:155
 #: ../assets/resources/preferences.ui:73 ../assets/resources/preferences.ui:91
 #: ../assets/resources/preferences.ui:109
 #: ../assets/resources/preferences.ui:139
 #: ../assets/resources/preferences.ui:156
+#: ../assets/resources/preferences.ui:173
 msgid "Show Help"
 msgstr "Pokaż Pomoc"
 
@@ -294,84 +312,55 @@ msgstr "Synchronizacja"
 
 #: ../assets/resources/preferences.blp:114
 #: ../assets/resources/preferences.ui:131
-msgid "Signaling server URL"
-msgstr "URL Serwera sygnalizującego"
+#, fuzzy
+msgid "Relay URL"
+msgstr "Tryb przekaźnika"
 
 #: ../assets/resources/preferences.blp:130
 #: ../assets/resources/preferences.ui:148
-msgid "STUN/TURN servers"
-msgstr "Serwery STUN/TURN"
+msgid "Network ID"
+msgstr ""
 
-#: ../assets/resources/preferences.blp:150
-#: ../assets/resources/preferences.ui:170
-msgid "Connection timeout"
-msgstr "Upłynął limit czasu połączenia"
+#: ../assets/resources/preferences.blp:146
+#: ../assets/resources/preferences.ui:165
+msgid "Bootstrap node"
+msgstr ""
 
-#: ../assets/resources/preferences.blp:151
-#: ../assets/resources/preferences.ui:171
-#: ../assets/resources/index.gschema.xml:49
-msgid "Time to wait to connect to the weron signaling server"
-msgstr "Czas oczekiwania na połączenie do serwera sygnalizującego weron"
-
-#: ../assets/resources/preferences.blp:157
-#: ../assets/resources/preferences.ui:179
-msgid "Relay mode"
-msgstr "Tryb przekaźnika"
-
-#: ../assets/resources/preferences.blp:158
-#: ../assets/resources/preferences.ui:180
-#: ../assets/resources/index.gschema.xml:63
-msgid "Force usage of TURN servers for weron"
-msgstr "Wymuś użycie serwerów TURN dla werona"
-
-#: ../assets/resources/preferences.blp:171
-#: ../assets/resources/preferences.ui:197
+#: ../assets/resources/preferences.blp:166
+#: ../assets/resources/preferences.ui:188
 msgid "API address of the remote gateway"
 msgstr "Adres API zdalnej bramki"
 
-#: ../assets/resources/preferences.blp:177
-#: ../assets/resources/preferences.ui:204
+#: ../assets/resources/preferences.blp:172
+#: ../assets/resources/preferences.ui:195
 msgid "The remote gateway's username"
 msgstr "Nazwa użytkownika zdalnej bramki"
 
-#: ../assets/resources/preferences.blp:183
-#: ../assets/resources/preferences.ui:211
+#: ../assets/resources/preferences.blp:178
+#: ../assets/resources/preferences.ui:202
 msgid "The remote gateway's password"
 msgstr "Hasło zdalnej bramki"
 
-#: ../assets/resources/preferences.blp:189
-#: ../assets/resources/preferences.ui:218
+#: ../assets/resources/preferences.blp:184
+#: ../assets/resources/preferences.ui:209
 #: ../assets/resources/index.gschema.xml:43
-msgid "URL for the weron signaling server"
-msgstr "URL Serwera sygnalizującego weron"
-
-#: ../assets/resources/preferences.blp:195
-#: ../assets/resources/preferences.ui:225
-msgid ""
-"Comma-separated list of weron STUN (in format stun:host:port) and TURN "
-"servers (in format username:credential@turn:host:port)"
+msgid "URL of the iroh relay server used for NAT traversal"
 msgstr ""
-"Lista rozdzielana przecinkami dla serwerów weron STUN (w formacie "
-"stun:host:port) i serwerów TURN (w formacie "
-"username:credential@turn:host:port)"
 
-#: ../assets/resources/preparing.blp:5 ../assets/resources/preparing.ui:10
-#, fuzzy
-msgid "Preparing Stream"
-msgstr "Przygotowywanie strumienia..."
+#: ../assets/resources/preferences.blp:190
+#: ../assets/resources/preferences.ui:216
+#: ../assets/resources/index.gschema.xml:49
+msgid ""
+"32-byte hex-encoded network identifier separating multiplex traffic from "
+"other p2panda apps"
+msgstr ""
 
-#: ../assets/resources/subtitles.blp:5 ../assets/resources/subtitles.blp:37
-#: ../assets/resources/subtitles.ui:10 ../assets/resources/subtitles.ui:42
-msgid "Subtitles"
-msgstr "Napisy"
-
-#: ../assets/resources/subtitles.blp:67 ../assets/resources/subtitles.ui:75
-msgid "Tracks"
-msgstr "Ścieżki"
-
-#: ../assets/resources/subtitles.blp:85 ../assets/resources/subtitles.ui:92
-msgid "Add from File"
-msgstr "Dodaj z Pliku"
+#: ../assets/resources/preferences.blp:196
+#: ../assets/resources/preferences.ui:223
+msgid ""
+"Hex-encoded public key of a bootstrap node used for peer discovery across "
+"networks"
+msgstr ""
 
 #: ../internal/components/error_dialog.go:51
 msgid "Could not continue due to a fatal error"
@@ -381,42 +370,6 @@ msgstr "Nie można kontynuować z powodu krytycznego błędu"
 #: ../internal/components/main_menu.go:41
 msgid "translator-credits"
 msgstr "hexxadd <sirma31@hotmail.com>"
-
-#: ../internal/components/main_window.go:232
-msgid "Could not get info for this magnet link."
-msgstr "Nie można uzyskać informacji dla tego linku magnet."
-
-#: ../internal/components/main_window.go:326
-msgid "Media (%v MB)"
-msgstr ""
-
-#: ../internal/components/main_window.go:328
-msgid "Extra file (%v MB)"
-msgstr "Dodatkowy plik (%v MB)"
-
-#: ../internal/components/main_window.go:372
-msgid "This stream code is invalid."
-msgstr "Kod strumienia jest nieprawidłowy."
-
-#: ../internal/components/main_window.go:530
-msgid "No README found."
-msgstr "Nie znaleziono README."
-
-#: ../internal/components/main_window.go:624
-msgid "Manual Downloads"
-msgstr ""
-
-#: ../internal/components/preferences_dialog.go:109
-msgid "Reopen to apply the changes."
-msgstr "Uruchom ponownie aby zapisać zmiany."
-
-#: ../internal/components/preferences_dialog.go:110
-msgid "Reopen"
-msgstr "Uruchom ponownie"
-
-#: ../internal/components/preferences_dialog.go:126
-msgid "Select storage location"
-msgstr "Wybierz lokalizacje zapisu"
 
 #: ../internal/components/shortcuts_dialog.go:17
 #, fuzzy
@@ -435,74 +388,110 @@ msgstr "Zamknij Okno"
 msgid "Quit"
 msgstr "Wyjdź"
 
-#: ../internal/components/controls_window.go:362
+#: ../internal/components/controls_window.go:343
 msgid "Someone joined the session."
 msgstr "Ktoś dołączył do sesji."
 
-#: ../internal/components/controls_window.go:367
+#: ../internal/components/controls_window.go:348
 msgid "Someone left the session."
 msgstr "Ktoś opuścił sesje."
 
-#: ../internal/components/controls_window.go:377
+#: ../internal/components/controls_window.go:358
 msgid "You're currently watching with %v other person."
 msgstr "Aktualnie oglądasz z %v inną osobą."
 
-#: ../internal/components/controls_window.go:381
+#: ../internal/components/controls_window.go:362
 msgid "You're currently watching with %v other people."
 msgstr "Aktualnie oglądasz z %v innymi osobami."
 
-#: ../internal/components/controls_window.go:415
-#: ../internal/components/controls_window.go:468
+#: ../internal/components/controls_window.go:396
+#: ../internal/components/controls_window.go:449
 msgid "%v MB/%v MB (%v peers)"
 msgstr "%v MB/%v MB (%v peerów)"
 
-#: ../internal/components/controls_window.go:420
-#: ../internal/components/controls_window.go:470
+#: ../internal/components/controls_window.go:401
+#: ../internal/components/controls_window.go:451
 msgid "Searching for peers"
 msgstr "Szukanie peerów"
 
-#: ../internal/components/controls_window.go:663
-#: ../internal/components/controls_window.go:1373
+#: ../internal/components/controls_window.go:646
+#: ../internal/components/controls_window.go:1312
 msgid "Track %v"
 msgstr "Ścieżka %v"
 
-#: ../internal/components/controls_window.go:671
+#: ../internal/components/controls_window.go:654
 #, fuzzy
 msgid "Embedded subtitle %v"
 msgstr "Zintegrowane napisy"
 
-#: ../internal/components/controls_window.go:1152
-#: ../internal/components/controls_window.go:1326
+#: ../internal/components/controls_window.go:1091
+#: ../internal/components/controls_window.go:1265
 msgid "None"
 msgstr "Żadna"
 
-#: ../internal/components/controls_window.go:1256
+#: ../internal/components/controls_window.go:1195
 msgid "Disable subtitles"
 msgstr "Wyłącz napisy"
 
-#: ../internal/components/controls_window.go:1259
+#: ../internal/components/controls_window.go:1198
 msgid "Integrated subtitle"
 msgstr "Zintegrowane napisy"
 
-#: ../internal/components/controls_window.go:1262
+#: ../internal/components/controls_window.go:1201
 msgid "Subtitle from torrent"
 msgstr "Napisy z torrenta"
 
-#: ../internal/components/controls_window.go:1265
+#: ../internal/components/controls_window.go:1204
 msgid "Manually added"
 msgstr "Manualnie dodano"
 
-#: ../internal/components/controls_window.go:1277
+#: ../internal/components/controls_window.go:1216
 msgid "Select subtitle file"
 msgstr "Wybierz plik z napisami"
 
-#: ../internal/components/controls_window.go:1371
+#: ../internal/components/controls_window.go:1310
 msgid "Disable audio"
 msgstr "Wyłącz audio"
 
-#: ../internal/components/controls_window.go:1377
+#: ../internal/components/controls_window.go:1316
 msgid "Untitled Track"
 msgstr "Ścieżka bez tytulu"
+
+#: ../internal/components/main_window.go:226
+msgid "Could not get info for this magnet link."
+msgstr "Nie można uzyskać informacji dla tego linku magnet."
+
+#: ../internal/components/main_window.go:320
+msgid "Media (%v MB)"
+msgstr ""
+
+#: ../internal/components/main_window.go:322
+msgid "Extra file (%v MB)"
+msgstr "Dodatkowy plik (%v MB)"
+
+#: ../internal/components/main_window.go:366
+msgid "This stream code is invalid."
+msgstr "Kod strumienia jest nieprawidłowy."
+
+#: ../internal/components/main_window.go:477
+msgid "No README found."
+msgstr "Nie znaleziono README."
+
+#: ../internal/components/main_window.go:568
+msgid "Manual Downloads"
+msgstr ""
+
+#: ../internal/components/preferences_dialog.go:103
+msgid "Reopen to apply the changes."
+msgstr "Uruchom ponownie aby zapisać zmiany."
+
+#: ../internal/components/preferences_dialog.go:104
+msgid "Reopen"
+msgstr "Uruchom ponownie"
+
+#: ../internal/components/preferences_dialog.go:120
+msgid "Select storage location"
+msgstr "Wybierz lokalizacje zapisu"
 
 #: ../assets/meta/com.pojtinger.felicitas.Multiplex.desktop.in:5
 #: ../assets/resources/metainfo.xml.in:8
@@ -617,27 +606,48 @@ msgid "Password for the remote hTorrent gateway"
 msgstr ""
 
 #: ../assets/resources/index.gschema.xml:42
-msgid "weron URL"
+msgid "p2panda relay URL"
 msgstr ""
 
 #: ../assets/resources/index.gschema.xml:48
-msgid "weron timeout"
+msgid "p2panda network ID"
 msgstr ""
 
 #: ../assets/resources/index.gschema.xml:54
-msgid "weron STUN/TURN servers"
+msgid "p2panda bootstrap node"
 msgstr ""
 
 #: ../assets/resources/index.gschema.xml:55
 msgid ""
-"Comma-separated list of STUN servers (in format stun:host:port) and TURN "
-"servers to use (in format username:credential@turn:host:port) (i.e. "
-"username:credential@turn:global.turn.twilio.com:3478?transport=tcp)"
+"Hex-encoded public key of a bootstrap node to use for peer discovery across "
+"networks. Empty means rely on the relay and mDNS only."
 msgstr ""
 
-#: ../assets/resources/index.gschema.xml:62
-msgid "weron relay mode"
-msgstr ""
+#~ msgid "Signaling server URL"
+#~ msgstr "URL Serwera sygnalizującego"
+
+#~ msgid "STUN/TURN servers"
+#~ msgstr "Serwery STUN/TURN"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Upłynął limit czasu połączenia"
+
+#~ msgid "Time to wait to connect to the weron signaling server"
+#~ msgstr "Czas oczekiwania na połączenie do serwera sygnalizującego weron"
+
+#~ msgid "Force usage of TURN servers for weron"
+#~ msgstr "Wymuś użycie serwerów TURN dla werona"
+
+#~ msgid "URL for the weron signaling server"
+#~ msgstr "URL Serwera sygnalizującego weron"
+
+#~ msgid ""
+#~ "Comma-separated list of weron STUN (in format stun:host:port) and TURN "
+#~ "servers (in format username:credential@turn:host:port)"
+#~ msgstr ""
+#~ "Lista rozdzielana przecinkami dla serwerów weron STUN (w formacie "
+#~ "stun:host:port) i serwerów TURN (w formacie "
+#~ "username:credential@turn:host:port)"
 
 #~ msgid "Extra file from torrent"
 #~ msgstr "Dodatkowy plik z torrenta"
