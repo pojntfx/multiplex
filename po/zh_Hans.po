@@ -3,15 +3,17 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-21 16:36+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-07-19 08:01+0000\n"
+"Last-Translator: reducedradius "
+"<137701630+flytothehighest@users.noreply.github.com>\n"
+"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
+"projects/multiplex/multiplex/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Translate Toolkit 3.17.5\n"
+"X-Generator: Weblate 2026.8.dev0\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
@@ -63,7 +65,7 @@ msgstr ""
 
 #: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Media"
-msgstr ""
+msgstr "媒体"
 
 #: ../assets/resources/assistant.blp:153 ../assets/resources/assistant.ui:171
 msgid "Select the file you want to play"
