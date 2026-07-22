@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-21 16:36+0200\n"
-"PO-Revision-Date: 2026-07-19 08:01+0000\n"
+"PO-Revision-Date: 2026-07-23 02:01+0000\n"
 "Last-Translator: reducedradius "
 "<137701630+flytothehighest@users.noreply.github.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
@@ -31,7 +31,7 @@ msgstr ""
 #: ../assets/resources/assistant.blp:40 ../assets/resources/assistant.blp:63
 #: ../assets/resources/assistant.ui:43 ../assets/resources/assistant.ui:67
 msgid "Welcome"
-msgstr ""
+msgstr "欢迎"
 
 #: ../assets/resources/assistant.blp:50 ../assets/resources/controls.blp:29
 #: ../assets/resources/assistant.ui:54 ../assets/resources/controls.ui:33
@@ -61,7 +61,7 @@ msgstr ""
 
 #: ../assets/resources/assistant.blp:134 ../assets/resources/assistant.ui:148
 msgid "Magnet link or stream code"
-msgstr ""
+msgstr "Magnet 链接或流代码"
 
 #: ../assets/resources/assistant.blp:152 ../assets/resources/assistant.ui:170
 msgid "Media"
@@ -73,7 +73,7 @@ msgstr ""
 
 #: ../assets/resources/assistant.blp:172 ../assets/resources/assistant.ui:194
 msgid "You're all set!"
-msgstr ""
+msgstr "准备已完成！"
 
 #: ../assets/resources/assistant.blp:181 ../assets/resources/assistant.ui:203
 msgid "I have the right to stream the selected media"
@@ -85,17 +85,17 @@ msgstr ""
 
 #: ../assets/resources/assistant.blp:216 ../assets/resources/assistant.ui:246
 msgid "Stream without Downloading"
-msgstr ""
+msgstr "不下载流式播放"
 
 #: ../assets/resources/audiotracks.blp:6 ../assets/resources/audiotracks.ui:11
 msgid "Audio Tracks"
-msgstr ""
+msgstr "音频轨道"
 
 #: ../assets/resources/audiotracks.blp:18 ../assets/resources/preparing.blp:43
 #: ../assets/resources/subtitles.blp:18 ../assets/resources/audiotracks.ui:22
 #: ../assets/resources/preparing.ui:46 ../assets/resources/subtitles.ui:22
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: ../assets/resources/audiotracks.blp:23 ../assets/resources/subtitles.blp:48
 #: ../assets/resources/audiotracks.ui:27 ../assets/resources/subtitles.ui:53
@@ -105,11 +105,11 @@ msgstr ""
 #: ../assets/resources/controls.blp:59 ../assets/resources/preparing.blp:23
 #: ../assets/resources/controls.ui:68 ../assets/resources/preparing.ui:27
 msgid "Preparing Stream..."
-msgstr ""
+msgstr "正在准备流..."
 
 #: ../assets/resources/controls.blp:74 ../assets/resources/controls.ui:83
 msgid "Show Peers"
-msgstr ""
+msgstr "显示同伴"
 
 #: ../assets/resources/controls.blp:105
 #: ../internal/components/shortcuts_window.go:85
@@ -127,7 +127,7 @@ msgstr ""
 
 #: ../assets/resources/controls.blp:134 ../assets/resources/controls.ui:149
 msgid "Playback Progress"
-msgstr ""
+msgstr "播放进度"
 
 #: ../assets/resources/controls.blp:143 ../assets/resources/controls.ui:158
 msgid "Remaining Playback Time"
@@ -155,7 +155,7 @@ msgstr ""
 #: ../internal/components/controls_window.go:345
 #: ../assets/resources/controls.ui:230
 msgid "You're currently watching alone."
-msgstr ""
+msgstr "您现在是一人观看。"
 
 #: ../assets/resources/controls.blp:215 ../assets/resources/controls.ui:236
 msgid ""
@@ -176,7 +176,7 @@ msgstr ""
 
 #: ../assets/resources/error.blp:10 ../assets/resources/error.ui:14
 msgid "Report Error"
-msgstr ""
+msgstr "报告错误"
 
 #: ../assets/resources/error.blp:11 ../assets/resources/error.ui:15
 msgid "Close Multiplex"
@@ -184,23 +184,23 @@ msgstr ""
 
 #: ../assets/resources/menu.blp:6 ../assets/resources/menu.ui:12
 msgid "_Open Downloads"
-msgstr ""
+msgstr "打开下载(&O)"
 
 #: ../assets/resources/menu.blp:11 ../assets/resources/menu.ui:16
 msgid "_Copy Magnet Link"
-msgstr ""
+msgstr "复制Magnet链接(&C)"
 
 #: ../assets/resources/menu.blp:16 ../assets/resources/menu.ui:20
 msgid "_Preferences"
-msgstr ""
+msgstr "偏好设置(&P)"
 
 #: ../assets/resources/menu.blp:22 ../assets/resources/menu.ui:25
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "快捷键(&K)"
 
 #: ../assets/resources/menu.blp:27 ../assets/resources/menu.ui:29
 msgid "_About Multiplex"
-msgstr ""
+msgstr "关于 Multiplex(&A)"
 
 #: ../assets/resources/preferences.blp:8
 #: ../internal/components/shortcuts_window.go:83
@@ -213,7 +213,7 @@ msgstr ""
 #: ../internal/components/shortcuts_window.go:74
 #: ../assets/resources/preferences.ui:17 ../assets/resources/preferences.ui:146
 msgid "General"
-msgstr ""
+msgstr "常规设置"
 
 #: ../assets/resources/preferences.blp:15 ../assets/resources/preferences.ui:20
 #: ../assets/resources/index.gschema.xml:12
@@ -241,7 +241,7 @@ msgstr ""
 #: ../assets/resources/preferences.ui:157
 #: ../assets/resources/preferences.ui:174
 msgid "Show Help"
-msgstr ""
+msgstr "显示帮助"
 
 #: ../assets/resources/preferences.blp:47
 #: ../assets/resources/preferences.blp:164
