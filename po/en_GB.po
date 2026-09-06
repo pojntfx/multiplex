@@ -3,6 +3,14 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-15 00:00-0700\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"PO-Revision-Date: 2026-09-07 15:51+0000\n"
+"Last-Translator: Andi Chandler <andi@gowling.com>\n"
+"Language-Team: English (United Kingdom) <https://hosted.weblate.org/projects/"
+"multiplex/multiplex/en_GB/>\n"
+"Language: en_GB\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.9.1.dev0\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../assets/resources/assistant.blp:7 ../assets/resources/assistant.blp:130
 #: ../assets/resources/controls.blp:8 ../mockups/playback/window.blp:7
@@ -507,7 +515,7 @@ msgstr "Select storage location"
 
 #: ../internal/components/shortcuts_window.go:76
 msgid "Open Menu"
-msgstr "Main Menu"
+msgstr "Open Menu"
 
 #: ../internal/components/shortcuts_window.go:77
 msgid "Show Keyboard Shortcuts"
